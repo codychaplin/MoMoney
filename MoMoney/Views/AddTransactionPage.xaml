@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MoMoney.Views.AddTransactionPage"
+             NavigationPage.HasNavigationBar="False"
+             Title="">
+    
+    <ContentPage.Resources>
+        <Style TargetType="{x:Type Label}">
+            <Setter Property="Padding" Value="10" />
+        </Style>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="CornerRadius" Value="5" />
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="BackgroundColor" Value="{StaticResource Gray900}" />
+        </Style>
+        <Style TargetType="{x:Type Image}">
+            <Setter Property="HeightRequest" Value="25" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="VerticalOptions" Value="Center" />
+        </Style>
+        <Style TargetType="{x:Type Frame}">
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="CornerRadius" Value="5" />
+            <Setter Property="Margin" Value="10,0,10,10" />
+            <Setter Property="BackgroundColor" Value="{StaticResource Gray900}" />
+        </Style>
+    </ContentPage.Resources>
+    
+    <!-- main page -->
+    <VerticalStackLayout>
+        
+        <!-- transaction type buttons -->
+        <Frame Margin="10" Padding="2" BackgroundColor="{StaticResource Gray900}">
+            <Grid x:Name="grdTransactionTypeButtons" Margin="1" ColumnSpacing="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button x:Name="btnIncome" Grid.Column="0" Text="Income" Clicked="btnIncome_Clicked" />
+                <Button x:Name="btnExpense" Grid.Column="1" Text="Expense" Clicked="btnExpense_Clicked" />
+                <Button x:Name="btnTransfer" Grid.Column="2" Text="Transfer" Clicked="btnTransfer_Clicked" />
+            </Grid>
+        </Frame>
+        <!-- Date -->
+        <Frame>
+            <HorizontalStackLayout>
+                <Image Source="calendar.png" />
+                <DatePicker VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </Frame>
+        <!-- Account -->
+        <Frame>
+            <HorizontalStackLayout>
+                    <Image Source="credit_card.png" />
+                    <Entry Placeholder="Account" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </Frame>
+        <!-- Amount -->
+        <Frame>
+            <HorizontalStackLayout>
+                    <Image Source="dollar_symbol.png" />
+                    <Entry Placeholder="$0.00" />
+            </HorizontalStackLayout>
+        </Frame>
+        <!-- Category -->
+        <Frame>
+            <HorizontalStackLayout>
+                <Image Source="category.png" />
+                <Picker />
+            </HorizontalStackLayout>
+        </Frame>
+        <!-- Subcategory -->
+        <Frame>
+            <HorizontalStackLayout>
+                <Image Source="subcategory.png" />
+                <Picker />
+            </HorizontalStackLayout>
+        </Frame>
+        <!-- Payee -->
+        <Frame>
+            <HorizontalStackLayout>
+                <Image Source="account.png" />
+                <Entry Placeholder="Payee" />
+            </HorizontalStackLayout>
+        </Frame>
+        <!-- back/clear/enter buttons -->
+        <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="btnBack" Grid.Column="0" Text="Back" BackgroundColor="{StaticResource Red}" />
+            <Button x:Name="btnClear" Grid.Column="1" Text="Clear" BackgroundColor="{StaticResource Blue}" />
+            <Button x:Name="btnEnter" Grid.Column="2" Text="Accept" BackgroundColor="{StaticResource Green}" />
+        </Grid>
+    </VerticalStackLayout>
+    
+</ContentPage>

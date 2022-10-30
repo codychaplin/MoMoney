@@ -1,3 +1,5 @@
+using Syncfusion.Maui.Charts;
+
 namespace MoMoney.Views;
 
 public partial class MainPage : ContentPage

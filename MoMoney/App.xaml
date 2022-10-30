@@ -2,13 +2,33 @@
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:MoMoney"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="MoMoney.App">
     <Application.Resources>
+        
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+        
+            <!-- default font -->
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="FontFamily" Value="Metropolis" />
+            </Style>
+            
+            <!-- binds colour to theme for ImageButtons and Images -->
+            <Style TargetType="{x:Type ImageButton}">
+                <Style.Behaviors>
+                    <toolkit:IconTintColorBehavior  TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                </Style.Behaviors>
+            </Style>
+            <Style TargetType="{x:Type Image}">
+                <Style.Behaviors>
+                    <toolkit:IconTintColorBehavior  TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                </Style.Behaviors>
+            </Style>
         </ResourceDictionary>
+        
     </Application.Resources>
 </Application>

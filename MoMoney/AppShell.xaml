@@ -6,15 +6,21 @@
     xmlns:local="clr-namespace:MoMoney.Views"
     NavigationPage.HasNavigationBar="False"
     Shell.FlyoutBehavior="Disabled">
-        
+
     <TabBar x:Name="TabBar">
-        <Tab Title="Transactions" Icon="tab_money.png">
+        <Tab Icon="tab_money.png">
             <ShellContent ContentTemplate="{DataTemplate local:TransactionsPage}" Route="TransactionsPage" />
         </Tab>
-        <Tab x:Name="HomePage" Title="Home" Icon="tab_home.png">
+        <Tab x:Name="HomePage" Icon="tab_home.png">
             <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" />
         </Tab>
-        <Tab Title="Settings" Icon="tab_settings.png">
+        <Tab Icon="tab_add.png">
+            <ShellContent ContentTemplate="{DataTemplate local:AddTransactionPage}" Route="AddTransactionPage" />
+        </Tab>
+        <Tab Icon="tab_stats.png">
+            <ShellContent ContentTemplate="{DataTemplate local:StatsPage}" Route="StatsPage" />
+        </Tab>
+        <Tab Icon="tab_settings.png">
             <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" Route="SettingsPage" />
         </Tab>
     </TabBar>

@@ -3,13 +3,76 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.MainPage"
              NavigationPage.HasNavigationBar="False"
-             Title="">
+             Title=""
+             xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts">
 
-    <VerticalStackLayout>
-        <Label 
-            Text="Home"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+    <ScrollView>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="200" />
+                <RowDefinition Height="200" />
+                <RowDefinition Height="200" />
+            </Grid.RowDefinitions>
+
+            <!-- gradient background -->
+            <Grid Grid.RowSpan="2">
+                <Grid.Background>
+                    <LinearGradientBrush EndPoint="0,1">
+                        <GradientStop Color="#37DB97" Offset="0.1" />
+                        <GradientStop Color="#238C60" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Grid.Background>
+            </Grid>
+            <!--back button -->
+            <ImageButton Source="left_arrow.png"
+                         HorizontalOptions="Start"
+                         CornerRadius="0"
+                         HeightRequest="20"
+                         WidthRequest="20"
+                         Margin="10" />
+            <!-- title -->
+            <Label Text="Dashboard"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   VerticalTextAlignment="Center"
+                   HorizontalOptions="Center" />
+            <!-- calendar button -->
+            <ImageButton Source="calendar.png"
+                         HorizontalOptions="End"
+                         CornerRadius="0"
+                         HeightRequest="20"
+                         WidthRequest="20"
+                         Margin="10" />
+
+            <!-- balance over time chart -->
+            <chart:SfCartesianChart x:Name="chrtBalance"
+                                    Grid.Row="1"
+                                    BackgroundColor="Transparent"
+                                    HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand">
+                <chart:SfCartesianChart.Title>
+                    <Label x:Name="chrtBalanceTitle"
+                           Text="$1234.56"
+                           Margin="5"
+                           HorizontalOptions="Fill"
+                           HorizontalTextAlignment="Center"
+                           VerticalOptions="Center"
+                           FontSize="25"
+                           FontAttributes="Bold" />
+                </chart:SfCartesianChart.Title>
+            </chart:SfCartesianChart>
+
+            <!-- stats -->
+            <Grid Grid.Row="2" Margin="0">
+                <Label Text="Statistics" />
+            </Grid>
+
+            <!-- transactions -->
+            <Grid Grid.Row="3" Margin="0">
+                <Label Text="Transactions" />
+            </Grid>
+        </Grid>
+    </ScrollView>
 
 </ContentPage>
