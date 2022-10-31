@@ -37,4 +37,20 @@ public partial class AddTransactionPage : ContentPage
 
         }
     }
+
+    private void btnClear_Clicked(object sender, EventArgs e)
+    {
+        // clear all fields
+        dtDate.Date = DateTime.Now;
+        pckAccount.SelectedItem = null;
+        txtAmount.Text = "";
+        pckCategory.SelectedItem = null;
+        pckSubcategory.SelectedItem = null;
+        txtPayee.Text = "";
+    }
+
+    private void btnEnter_Clicked(object sender, EventArgs e)
+    {
+        // enter transaction into database
+    }
 }

@@ -2,77 +2,53 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.MainPage"
-             NavigationPage.HasNavigationBar="False"
-             Title=""
-             xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts">
+             xmlns:views="clr-namespace:MoMoney.Views;assembly=MoMoney"
+             xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView"
+             Title="">
 
-    <ScrollView>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
-                <RowDefinition Height="200" />
-                <RowDefinition Height="200" />
-                <RowDefinition Height="200" />
-            </Grid.RowDefinitions>
+    <ContentPage.Content>
+        <tabView:SfTabView TabBarPlacement="Bottom"
+                           TabBarHeight="40"
+                           BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Background}}"
+                           IndicatorBackground="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}">
+            <!-- tabs -->
+            <tabView:SfTabView.Items>
+                
+                <!-- transactions page -->
+                <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_money_black.png, Dark=tab_money_white.png}">
+                    <Grid>
+                        <views:TransactionsPage />
+                    </Grid>
+                </tabView:SfTabItem>
 
-            <!-- gradient background -->
-            <Grid Grid.RowSpan="2">
-                <Grid.Background>
-                    <LinearGradientBrush EndPoint="0,1">
-                        <GradientStop Color="#37DB97" Offset="0.1" />
-                        <GradientStop Color="#238C60" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Grid.Background>
-            </Grid>
-            <!--back button -->
-            <ImageButton Source="left_arrow.png"
-                         HorizontalOptions="Start"
-                         CornerRadius="0"
-                         HeightRequest="20"
-                         WidthRequest="20"
-                         Margin="10" />
-            <!-- title -->
-            <Label Text="Dashboard"
-                   FontSize="18"
-                   FontAttributes="Bold"
-                   VerticalTextAlignment="Center"
-                   HorizontalOptions="Center" />
-            <!-- calendar button -->
-            <ImageButton Source="calendar.png"
-                         HorizontalOptions="End"
-                         CornerRadius="0"
-                         HeightRequest="20"
-                         WidthRequest="20"
-                         Margin="10" />
+                <!-- home page -->
+                <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_home_black.png, Dark=tab_home_white.png}">
+                    <Grid>
+                        <views:HomePage />
+                    </Grid>
+                </tabView:SfTabItem>
 
-            <!-- balance over time chart -->
-            <chart:SfCartesianChart x:Name="chrtBalance"
-                                    Grid.Row="1"
-                                    BackgroundColor="Transparent"
-                                    HorizontalOptions="FillAndExpand"
-                                    VerticalOptions="FillAndExpand">
-                <chart:SfCartesianChart.Title>
-                    <Label x:Name="chrtBalanceTitle"
-                           Text="$1234.56"
-                           Margin="5"
-                           HorizontalOptions="Fill"
-                           HorizontalTextAlignment="Center"
-                           VerticalOptions="Center"
-                           FontSize="25"
-                           FontAttributes="Bold" />
-                </chart:SfCartesianChart.Title>
-            </chart:SfCartesianChart>
+                <!-- add transaction page -->
+                <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_add_black.png, Dark=tab_add_white.png}">
+                    <Grid>
+                        <views:AddTransactionPage />
+                    </Grid>
+                </tabView:SfTabItem>
 
-            <!-- stats -->
-            <Grid Grid.Row="2" Margin="0">
-                <Label Text="Statistics" />
-            </Grid>
+                <!-- stats page -->
+                <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_stats_black.png, Dark=tab_stats_white.png}">
+                    <Grid>
+                        <views:StatsPage />
+                    </Grid>
+                </tabView:SfTabItem>
 
-            <!-- transactions -->
-            <Grid Grid.Row="3" Margin="0">
-                <Label Text="Transactions" />
-            </Grid>
-        </Grid>
-    </ScrollView>
-
+                <!-- settings page -->
+                <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_settings_black.png, Dark=tab_settings_white.png}">
+                    <Grid>
+                        <views:SettingsPage />
+                    </Grid>
+                </tabView:SfTabItem>
+            </tabView:SfTabView.Items>
+        </tabView:SfTabView>
+    </ContentPage.Content>
 </ContentPage>

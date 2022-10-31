@@ -5,7 +5,7 @@
              NavigationPage.HasNavigationBar="False"
              Title="">
     <VerticalStackLayout>
-        <Label 
+        <Label
             Text="Transactions"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />

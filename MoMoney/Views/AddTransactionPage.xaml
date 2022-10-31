@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.AddTransactionPage"
              NavigationPage.HasNavigationBar="False"
-             Title="">
+             Title=""
+             BackgroundColor="{StaticResource Background}">
     
     <ContentPage.Resources>
         <Style TargetType="{x:Type Label}">
@@ -47,42 +48,42 @@
         <Frame>
             <HorizontalStackLayout>
                 <Image Source="calendar.png" />
-                <DatePicker VerticalOptions="Center" />
+                <DatePicker x:Name="dtDate" VerticalOptions="Center" />
             </HorizontalStackLayout>
         </Frame>
         <!-- Account -->
         <Frame>
             <HorizontalStackLayout>
                     <Image Source="credit_card.png" />
-                    <Entry Placeholder="Account" VerticalOptions="Center" />
+                    <Picker x:Name="pckAccount" />
             </HorizontalStackLayout>
         </Frame>
         <!-- Amount -->
         <Frame>
             <HorizontalStackLayout>
                     <Image Source="dollar_symbol.png" />
-                    <Entry Placeholder="$0.00" />
+                    <Entry x:Name="txtAmount" Placeholder="$0.00" />
             </HorizontalStackLayout>
         </Frame>
         <!-- Category -->
         <Frame>
             <HorizontalStackLayout>
                 <Image Source="category.png" />
-                <Picker />
+                <Picker x:Name="pckCategory" />
             </HorizontalStackLayout>
         </Frame>
         <!-- Subcategory -->
         <Frame>
             <HorizontalStackLayout>
                 <Image Source="subcategory.png" />
-                <Picker />
+                <Picker x:Name="pckSubcategory" />
             </HorizontalStackLayout>
         </Frame>
         <!-- Payee -->
         <Frame>
             <HorizontalStackLayout>
                 <Image Source="account.png" />
-                <Entry Placeholder="Payee" />
+                <Entry x:Name="txtPayee" Placeholder="Payee" />
             </HorizontalStackLayout>
         </Frame>
         <!-- back/clear/enter buttons -->
@@ -90,11 +91,9 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
-                <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button x:Name="btnBack" Grid.Column="0" Text="Back" BackgroundColor="{StaticResource Red}" />
-            <Button x:Name="btnClear" Grid.Column="1" Text="Clear" BackgroundColor="{StaticResource Blue}" />
-            <Button x:Name="btnEnter" Grid.Column="2" Text="Accept" BackgroundColor="{StaticResource Green}" />
+            <Button x:Name="btnClear" Grid.Column="0" Text="Clear" BackgroundColor="{StaticResource Blue}" Clicked="btnClear_Clicked" />
+            <Button x:Name="btnEnter" Grid.Column="1" Text="Accept" BackgroundColor="{StaticResource Green}" Clicked="btnEnter_Clicked" />
         </Grid>
     </VerticalStackLayout>
     

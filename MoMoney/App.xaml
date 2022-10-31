@@ -20,12 +20,12 @@
             <!-- binds colour to theme for ImageButtons and Images -->
             <Style TargetType="{x:Type ImageButton}">
                 <Style.Behaviors>
-                    <toolkit:IconTintColorBehavior  TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                    <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                 </Style.Behaviors>
             </Style>
             <Style TargetType="{x:Type Image}">
                 <Style.Behaviors>
-                    <toolkit:IconTintColorBehavior  TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                    <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                 </Style.Behaviors>
             </Style>
         </ResourceDictionary>

@@ -42,6 +42,7 @@
     <Color x:Key="Blue300Accent">#A7CBF6</Color>
 
     <!-- custom colours -->
+    <Color x:Key="Background">#171717</Color>
     <Color x:Key="Red">#df4759</Color>
     <Color x:Key="Blue">#467fd0</Color>
     <Color x:Key="Yellow">#ffc107</Color>

@@ -7,22 +7,9 @@
     NavigationPage.HasNavigationBar="False"
     Shell.FlyoutBehavior="Disabled">
 
-    <TabBar x:Name="TabBar">
-        <Tab Icon="tab_money.png">
-            <ShellContent ContentTemplate="{DataTemplate local:TransactionsPage}" Route="TransactionsPage" />
-        </Tab>
-        <Tab x:Name="HomePage" Icon="tab_home.png">
-            <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" />
-        </Tab>
-        <Tab Icon="tab_add.png">
-            <ShellContent ContentTemplate="{DataTemplate local:AddTransactionPage}" Route="AddTransactionPage" />
-        </Tab>
-        <Tab Icon="tab_stats.png">
-            <ShellContent ContentTemplate="{DataTemplate local:StatsPage}" Route="StatsPage" />
-        </Tab>
-        <Tab Icon="tab_settings.png">
-            <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" Route="SettingsPage" />
-        </Tab>
-    </TabBar>
+    <ShellContent
+        Title=""
+        ContentTemplate="{DataTemplate local:MainPage}"
+        Route="MainPage" />
 
 </Shell>
