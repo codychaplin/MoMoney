@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
              x:Class="MoMoney.Views.HomePage"
              NavigationPage.HasNavigationBar="False"
              Title=""
-             xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
              BackgroundColor="{StaticResource Background}">
 
     <ScrollView>
@@ -49,15 +49,10 @@
                     </LinearGradientBrush>
                 </Grid.Background>
             </Grid>
-            <!--back button -->
-            <ImageButton Source="left_arrow.png"
-                         HorizontalOptions="Start"
-                         CornerRadius="0"
-                         HeightRequest="20"
-                         WidthRequest="20"
-                         Margin="10" />
+            
             <!-- title -->
             <Label Text="Dashboard" HorizontalOptions="Center" />
+            
             <!-- calendar button -->
             <ImageButton Source="calendar.png"
                          HorizontalOptions="End"

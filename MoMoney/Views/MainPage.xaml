@@ -2,29 +2,55 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.MainPage"
-             xmlns:views="clr-namespace:MoMoney.Views;assembly=MoMoney"
+             xmlns:views="clr-namespace:MoMoney.Views"
              xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView"
-             Title="">
+             Title=""
+             BackgroundColor="{StaticResource Background}">
 
     <ContentPage.Content>
-        <tabView:SfTabView TabBarPlacement="Bottom"
+        
+        <!-- tab bar -->
+        <tabView:SfTabView x:Name="tvTabBar"
+                           TabBarPlacement="Bottom"
                            TabBarHeight="40"
-                           BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Background}}"
-                           IndicatorBackground="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}">
+                           BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                           IndicatorBackground="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource White}}">
+
+            <tabView:SfTabView.Resources>
+                <Style TargetType="tabView:SfTabItem">
+                    <Setter Property="VisualStateManager.VisualStateGroups">
+                        <VisualStateGroupList>
+                            <VisualStateGroup>
+                                <VisualState x:Name="Normal" >
+                                    <VisualState.Setters>
+                                        <Setter Property="Scale" Value="0.9" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Property="Scale" Value="1.1" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateGroupList>
+                    </Setter>
+                </Style>
+            </tabView:SfTabView.Resources>
+            
             <!-- tabs -->
             <tabView:SfTabView.Items>
-                
-                <!-- transactions page -->
-                <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_money_black.png, Dark=tab_money_white.png}">
-                    <Grid>
-                        <views:TransactionsPage />
-                    </Grid>
-                </tabView:SfTabItem>
 
                 <!-- home page -->
                 <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_home_black.png, Dark=tab_home_white.png}">
                     <Grid>
                         <views:HomePage />
+                    </Grid>
+                </tabView:SfTabItem>
+
+                <!-- transactions page -->
+                <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_transactions_black.png, Dark=tab_transactions_white.png}">
+                    <Grid>
+                        <views:TransactionsPage />
                     </Grid>
                 </tabView:SfTabItem>
 
@@ -47,8 +73,10 @@
                     <Grid>
                         <views:SettingsPage />
                     </Grid>
+
                 </tabView:SfTabItem>
             </tabView:SfTabView.Items>
+            
         </tabView:SfTabView>
     </ContentPage.Content>
 </ContentPage>

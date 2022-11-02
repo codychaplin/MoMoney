@@ -23,7 +23,7 @@
                     <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                 </Style.Behaviors>
             </Style>
-            <Style TargetType="{x:Type Image}">
+            <Style x:Key="imgTinted" TargetType="{x:Type Image}">
                 <Style.Behaviors>
                     <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                 </Style.Behaviors>

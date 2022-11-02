@@ -15,7 +15,7 @@
             <Setter Property="TextColor" Value="White" />
             <Setter Property="BackgroundColor" Value="{StaticResource Gray900}" />
         </Style>
-        <Style TargetType="{x:Type Image}">
+        <Style TargetType="{x:Type Image}" BasedOn="{x:StaticResource imgTinted}">
             <Setter Property="HeightRequest" Value="25" />
             <Setter Property="Margin" Value="0,0,10,0" />
             <Setter Property="VerticalOptions" Value="Center" />
@@ -32,13 +32,8 @@
     <VerticalStackLayout>
         
         <!-- transaction type buttons -->
-        <Frame Margin="10" Padding="2" BackgroundColor="{StaticResource Gray900}">
-            <Grid x:Name="grdTransactionTypeButtons" Margin="1" ColumnSpacing="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
+        <Frame Margin="10" Padding="2">
+            <Grid x:Name="grdTransactionTypeButtons" Margin="1" ColumnDefinitions="*,*,*" ColumnSpacing="10">
                 <Button x:Name="btnIncome" Grid.Column="0" Text="Income" Clicked="btnIncome_Clicked" />
                 <Button x:Name="btnExpense" Grid.Column="1" Text="Expense" Clicked="btnExpense_Clicked" />
                 <Button x:Name="btnTransfer" Grid.Column="2" Text="Transfer" Clicked="btnTransfer_Clicked" />
@@ -46,52 +41,56 @@
         </Frame>
         <!-- Date -->
         <Frame>
-            <HorizontalStackLayout>
+            <Grid ColumnDefinitions="0.15*,*">
                 <Image Source="calendar.png" />
-                <DatePicker x:Name="dtDate" VerticalOptions="Center" />
-            </HorizontalStackLayout>
+                <DatePicker x:Name="dtDate" Grid.Column="1" VerticalOptions="Center" />
+            </Grid>
         </Frame>
         <!-- Account -->
         <Frame>
-            <HorizontalStackLayout>
-                    <Image Source="credit_card.png" />
-                    <Picker x:Name="pckAccount" />
-            </HorizontalStackLayout>
+            <Grid ColumnDefinitions="0.15*,*">
+                <Image Source="credit_card.png" />
+                <Picker x:Name="pckAccount" Grid.Column="1" Title="Select an Account">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Tan Check</x:String>
+                            <x:String>Tan Savings</x:String>
+                            <x:String>Tan TFSA</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+            </Grid>
         </Frame>
         <!-- Amount -->
         <Frame>
-            <HorizontalStackLayout>
-                    <Image Source="dollar_symbol.png" />
-                    <Entry x:Name="txtAmount" Placeholder="$0.00" />
-            </HorizontalStackLayout>
+            <Grid ColumnDefinitions="0.15*,*">
+                <Image Source="dollar_symbol.png" />
+                <Entry x:Name="txtAmount" Grid.Column="1" Placeholder="$0.00" />
+            </Grid>
         </Frame>
         <!-- Category -->
         <Frame>
-            <HorizontalStackLayout>
+            <Grid ColumnDefinitions="0.15*,*">
                 <Image Source="category.png" />
-                <Picker x:Name="pckCategory" />
-            </HorizontalStackLayout>
+                <Picker x:Name="pckCategory" Grid.Column="1" Title="Select a Category" />
+            </Grid>
         </Frame>
         <!-- Subcategory -->
         <Frame>
-            <HorizontalStackLayout>
+            <Grid ColumnDefinitions="0.15*,*">
                 <Image Source="subcategory.png" />
-                <Picker x:Name="pckSubcategory" />
-            </HorizontalStackLayout>
+                <Picker x:Name="pckSubcategory" Grid.Column="1" Title="Select a Subcategory" />
+            </Grid>
         </Frame>
         <!-- Payee -->
         <Frame>
-            <HorizontalStackLayout>
+            <Grid ColumnDefinitions="0.15*,*">
                 <Image Source="account.png" />
-                <Entry x:Name="txtPayee" Placeholder="Payee" />
-            </HorizontalStackLayout>
+                <Entry x:Name="txtPayee" Grid.Column="1" Placeholder="Payee" />
+            </Grid>
         </Frame>
         <!-- back/clear/enter buttons -->
-        <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnSpacing="10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+        <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnDefinitions="*,*" ColumnSpacing="10">
             <Button x:Name="btnClear" Grid.Column="0" Text="Clear" BackgroundColor="{StaticResource Blue}" Clicked="btnClear_Clicked" />
             <Button x:Name="btnEnter" Grid.Column="1" Text="Accept" BackgroundColor="{StaticResource Green}" Clicked="btnEnter_Clicked" />
         </Grid>
