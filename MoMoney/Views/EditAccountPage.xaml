@@ -5,7 +5,11 @@
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
              x:DataType="viewmodel:EditAccountViewModel"
-             Title="{Binding AccountName}">
+             Title="Edit Account">
+
+    <ContentPage.BindingContext>
+        <viewmodel:EditAccountViewModel />
+    </ContentPage.BindingContext>
 
     <!-- page styles -->
     <ContentPage.Resources>
@@ -35,7 +39,10 @@
         <Frame>
             <Grid ColumnDefinitions="0.15*,*">
                 <Image Source="account.png" />
-                <Entry x:Name="txtName" Grid.Column="1" Placeholder="Account Name" Text="{Binding AccountName}" />
+                <Entry x:Name="txtName"
+                       Grid.Column="1"
+                       Placeholder="Account Name"
+                       Text="{Binding Account.AccountName}" />
             </Grid>
         </Frame>
         
@@ -43,7 +50,10 @@
         <Frame>
             <Grid ColumnDefinitions="0.15*,*">
                 <Image Source="piggy_bank.png" />
-                <Picker x:Name="pckType" Grid.Column="1" Title="Select a type" SelectedItem="{Binding AccountType}">
+                <Picker x:Name="pckType"
+                        Grid.Column="1"
+                        Title="Select a type"
+                        SelectedItem="{Binding Account.AccountType}">
                     <Picker.Items>
                         <x:String>Checkings</x:String>
                         <x:String>Savings</x:String>
@@ -58,7 +68,11 @@
         <Frame>
             <Grid ColumnDefinitions="0.15*,*">
                 <Image Source="dollar_symbol.png" />
-                <Entry x:Name="txtStartingBalance" Grid.Column="1" Placeholder="Starting Balance" Text="{Binding StartingBalance}" />
+                <Entry x:Name="txtStartingBalance"
+                       Grid.Column="1"
+                       Keyboard="Numeric"
+                       Placeholder="Starting Balance"
+                       Text="{Binding Account.StartingBalance}" />
             </Grid>
         </Frame>
         
@@ -67,7 +81,8 @@
             <Button x:Name="btnDelete"
                     Grid.Column="0"
                     Text="Delete"
-                    BackgroundColor="{StaticResource Red}"  />
+                    BackgroundColor="{StaticResource Red}"
+                    Command="{Binding RemoveCommand}" />
             <Button x:Name="btnClear"
                     Grid.Column="1"
                     Text="Clear"
@@ -75,9 +90,9 @@
                     Clicked="btnClear_Clicked" />
             <Button x:Name="btnEnter"
                     Grid.Column="2"
-                    Text="Accept"
+                    Text="Update"
                     BackgroundColor="{StaticResource Green}"
-                    Clicked="btnEnter_Clicked" />
+                    Command="{Binding EditCommand}" />
         </Grid>
         
     </VerticalStackLayout>

@@ -2,10 +2,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.AccountsPage"
-             Title="Accounts"
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
-             x:DataType="viewmodel:AccountsViewModel">
+             x:DataType="viewmodel:AccountsViewModel"
+             Title="Accounts">
 
     <ContentPage.BindingContext>
         <viewmodel:AccountsViewModel />
@@ -37,7 +37,6 @@
                                          VerticalOptions="Center"
                                          WidthRequest="50"
                                          Padding="9"
-                                         Clicked="ImageButton_Clicked"
                                          Command="{Binding Path=GoToEditAccountCommand, Source={RelativeSource AncestorType={x:Type viewmodel:AccountsViewModel}}}"
                                          CommandParameter="{Binding AccountID}"/>
                         </Grid>

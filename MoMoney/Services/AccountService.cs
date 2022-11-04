@@ -10,8 +10,10 @@ namespace MoMoney.Services
         /// </summary>
         public static async Task Init()
         {
-            MoMoneydb.Init();
-            await MoMoneydb.db.CreateTableAsync<Account>();
+            if (MoMoneydb.Init())
+                await MoMoneydb.db.CreateTableAsync<Account>();
+            else
+                return;
         }
 
         /// <summary>
@@ -48,6 +50,8 @@ namespace MoMoney.Services
 
             var updatedAccount = new Account
             {
+                AccountID = account.AccountID,
+                AccountName = account.AccountName,
                 AccountType = account.AccountType,
                 StartingBalance = account.StartingBalance,
                 CurrentBalance = account.StartingBalance,

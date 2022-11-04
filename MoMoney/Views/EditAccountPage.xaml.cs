@@ -1,24 +1,22 @@
-using MoMoney.Services;
+using MoMoney.ViewModels;
 
 namespace MoMoney.Views;
 
-[QueryProperty(nameof(ID), nameof(ID))]
 public partial class EditAccountPage : ContentPage
 {
-    public string ID { get; set; }
+    EditAccountViewModel vm;
 
     public EditAccountPage()
 	{
 		InitializeComponent();
-	}
+        vm = (EditAccountViewModel)BindingContext;
+    }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
 
-        // converts string ID parameter to int, gets Account using id, sets that as BindingContext
-        int.TryParse(ID, out int id);
-        BindingContext = await AccountService.GetAccount(id);
+        await vm.GetAccount();
     }
 
     private void btnClear_Clicked(object sender, EventArgs e)
@@ -26,10 +24,5 @@ public partial class EditAccountPage : ContentPage
 		txtName.Text = "";
         pckType.SelectedIndex = -1;
 		txtStartingBalance.Text = "";
-    }
-
-    private async void btnEnter_Clicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("..");
     }
 }

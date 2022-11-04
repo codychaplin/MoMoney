@@ -9,12 +9,14 @@ namespace MoMoney
         /// <summary>
         /// Creates new database connection, if none exist
         /// </summary>
-        public static void Init()
+        /// <returns>true if not initialized, false if already initialized</returns>
+        public static bool Init()
         {
             if (db is not null)
-                return;
-
+                return false;
+            
             db = new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
+            return true;
         }
     }
 }

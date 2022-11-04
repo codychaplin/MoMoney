@@ -18,9 +18,4 @@ public partial class AccountsPage : ContentPage
 
 		await vm.Refresh();
     }
-
-	private void ImageButton_Clicked(object sender, EventArgs e)
-	{
-
-	}
 }
