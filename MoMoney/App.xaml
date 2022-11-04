@@ -18,15 +18,24 @@
             </Style>
             
             <!-- binds colour to theme for ImageButtons and Images -->
-            <Style TargetType="{x:Type ImageButton}">
+            <Style x:Key="ibtnTinted" TargetType="{x:Type ImageButton}">
                 <Style.Behaviors>
                     <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                 </Style.Behaviors>
+                <Setter Property="CornerRadius" Value="5" />
             </Style>
             <Style x:Key="imgTinted" TargetType="{x:Type Image}">
                 <Style.Behaviors>
                     <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                 </Style.Behaviors>
+            </Style>
+
+            <!-- sets default corner radius for various controls -->
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="CornerRadius" Value="5" />
+            </Style>
+            <Style TargetType="{x:Type Frame}">
+                <Setter Property="CornerRadius" Value="5" />
             </Style>
         </ResourceDictionary>
         

@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace MoMoney.Database
+namespace MoMoney
 {
     public static class MoMoneydb
     {

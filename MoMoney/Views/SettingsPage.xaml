@@ -3,14 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.SettingsPage"
              NavigationPage.HasNavigationBar="False"
-             Title=""
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
-             x:DataType="viewmodel:SettingsPageViewModel"
-             BackgroundColor="{StaticResource Background}">
+             x:DataType="viewmodel:SettingsViewModel"
+             Title="">
 
     <ContentPage.BindingContext>
-        <viewmodel:SettingsPageViewModel />
+        <viewmodel:SettingsViewModel />
     </ContentPage.BindingContext>
+
+    <!-- styles -->
     <ContentPage.Resources>
         <Style TargetType="{x:Type Button}">
             <Setter Property="TextColor" Value="White" />
@@ -19,11 +20,11 @@
         </Style>
     </ContentPage.Resources>
 
+    <!-- main page -->
     <Frame BackgroundColor="{StaticResource Gray900}" Margin="10">
         <VerticalStackLayout>
             <Label Text="Data" FontSize="18" Margin="0,0,0,10" />
-            <Button x:Name="btnAccounts" Text="Accounts" Command="{Binding AccountsCommand}" />
-            <Button x:Name="btnAccountTypes" Text="Account Types" />
+            <Button x:Name="btnAccounts" Text="Accounts" Command="{Binding GoToAccountsCommand}" />
             <Button x:Name="btnCategories" Text="Categories" />
             <Button x:Name="btnSubcategories" Text="Subcategories" />
         </VerticalStackLayout>

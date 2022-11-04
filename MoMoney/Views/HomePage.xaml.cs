@@ -1,4 +1,3 @@
-using MoMoney.Database;
 using Syncfusion.Maui.Charts;
 
 namespace MoMoney.Views;

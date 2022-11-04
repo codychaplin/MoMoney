@@ -4,11 +4,11 @@ using MoMoney.Views;
 
 namespace MoMoney.ViewModels
 {
-    public partial class SettingsPageViewModel : ObservableObject
+    public partial class SettingsViewModel : ObservableObject
     {
 
         [RelayCommand]
-        async Task Accounts()
+        async Task GoToAccounts()
         {
             await Shell.Current.GoToAsync(nameof(AccountsPage));
         }

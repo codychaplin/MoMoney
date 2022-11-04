@@ -3,15 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.AddTransactionPage"
              NavigationPage.HasNavigationBar="False"
-             Title=""
-             BackgroundColor="{StaticResource Background}">
-    
+             Title="">
+
+    <!-- page styles -->
     <ContentPage.Resources>
         <Style TargetType="{x:Type Label}">
             <Setter Property="Padding" Value="10" />
         </Style>
         <Style TargetType="{x:Type Button}">
-            <Setter Property="CornerRadius" Value="5" />
             <Setter Property="TextColor" Value="White" />
             <Setter Property="BackgroundColor" Value="{StaticResource Gray900}" />
         </Style>
@@ -22,7 +21,6 @@
         </Style>
         <Style TargetType="{x:Type Frame}">
             <Setter Property="Padding" Value="10" />
-            <Setter Property="CornerRadius" Value="5" />
             <Setter Property="Margin" Value="10,0,10,10" />
             <Setter Property="BackgroundColor" Value="{StaticResource Gray900}" />
         </Style>
@@ -89,7 +87,7 @@
                 <Entry x:Name="txtPayee" Grid.Column="1" Placeholder="Payee" />
             </Grid>
         </Frame>
-        <!-- back/clear/enter buttons -->
+        <!-- clear/enter buttons -->
         <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnDefinitions="*,*" ColumnSpacing="10">
             <Button x:Name="btnClear" Grid.Column="0" Text="Clear" BackgroundColor="{StaticResource Blue}" Clicked="btnClear_Clicked" />
             <Button x:Name="btnEnter" Grid.Column="1" Text="Accept" BackgroundColor="{StaticResource Green}" Clicked="btnEnter_Clicked" />

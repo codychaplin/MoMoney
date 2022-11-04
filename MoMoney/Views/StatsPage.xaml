@@ -3,12 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.StatsPage"
              NavigationPage.HasNavigationBar="False"
-             Title=""
-             BackgroundColor="{StaticResource Background}">
+             Title="">
+
+    <!-- main page -->
     <VerticalStackLayout>
+
         <Label 
             Text="Statistics"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
+        
     </VerticalStackLayout>
 </ContentPage>

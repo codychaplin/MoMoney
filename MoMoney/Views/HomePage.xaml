@@ -4,18 +4,13 @@
              xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
              x:Class="MoMoney.Views.HomePage"
              NavigationPage.HasNavigationBar="False"
-             Title=""
-             BackgroundColor="{StaticResource Background}">
+             Title="">
 
+    <!-- main page -->
     <ScrollView>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
-                <RowDefinition Height="200" />
-                <RowDefinition Height="200" />
-                <RowDefinition Height="200" />
-            </Grid.RowDefinitions>
+        <Grid RowDefinitions="40,200,200,200">
 
+            <!-- grid styles -->
             <Grid.Resources>
                 <Style TargetType="{x:Type Frame}">
                     <Setter Property="BackgroundColor" Value="{StaticResource Gray900}" />
@@ -59,7 +54,11 @@
                          CornerRadius="0"
                          HeightRequest="20"
                          WidthRequest="20"
-                         Margin="10" />
+                         Margin="10">
+                <ImageButton.Style>
+                    <Style TargetType="{x:Type ImageButton}" BasedOn="{StaticResource ibtnTinted}" />
+                </ImageButton.Style>
+            </ImageButton>
 
             <!-- balance over time chart -->
             <chart:SfCartesianChart x:Name="chrtBalance"
@@ -99,6 +98,7 @@
                 <Button x:Name="btnViewAllTransactions" Text="View All" Clicked="btnViewAllTransactions_Clicked" Routing.Route="TransactionsPage" />
                 <Frame Grid.Row="1" />
             </Grid>
+            
         </Grid>
     </ScrollView>
 

@@ -4,8 +4,7 @@
              x:Class="MoMoney.Views.MainPage"
              xmlns:views="clr-namespace:MoMoney.Views"
              xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView"
-             Title=""
-             BackgroundColor="{StaticResource Background}">
+             Title="">
 
     <ContentPage.Content>
         
@@ -16,6 +15,7 @@
                            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                            IndicatorBackground="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource White}}">
 
+            <!-- tab bar styles -->
             <tabView:SfTabView.Resources>
                 <Style TargetType="tabView:SfTabItem">
                     <Setter Property="VisualStateManager.VisualStateGroups">

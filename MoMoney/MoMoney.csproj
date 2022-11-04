@@ -58,6 +58,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\EditAccountPage.xaml.cs">
+	    <DependentUpon>EditAccountPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\AddAccountPage.xaml.cs">
+	    <DependentUpon>AddAccountPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\AddTransactionPage.xaml.cs">
 	    <DependentUpon>AddTransactionPage.xaml</DependentUpon>
 	  </Compile>
@@ -71,6 +77,12 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="Views\AccountsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\EditAccountPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\AddAccountPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\AddTransactionPage.xaml">
