@@ -90,6 +90,17 @@ namespace MoMoney.Services
         }
 
         /// <summary>
+        /// Gets enabled categories from Categories table as a list
+        /// </summary>
+        /// <returns>List of active Category objects</returns>
+        public static async Task<IEnumerable<Category>> GetActiveCategories()
+        {
+            await Init();
+
+            return await MoMoneydb.db.Table<Category>().Where(c => c.Enabled).ToListAsync();
+        }
+
+        /// <summary>
         /// Gets parent Category from Categories table
         /// </summary>
         /// <returns>Parent of specified category</returns>
@@ -109,6 +120,28 @@ namespace MoMoney.Services
             await Init();
 
             return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "").ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets all enabled parent Categories from Categories table as a list
+        /// </summary>
+        /// <returns>List of active parent Category objects</returns>
+        public static async Task<IEnumerable<Category>> GetActiveParentCategories()
+        {
+            await Init();
+
+            return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "" && c.Enabled).ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets all parent Categories from Categories table as a list
+        /// </summary>
+        /// <returns>List of parent Category objects</returns>
+        public static async Task<IEnumerable<Category>> GetSubcategories(Category parentCategory)
+        {
+            await Init();
+
+            return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == parentCategory.CategoryName).ToListAsync();
         }
     }
 }

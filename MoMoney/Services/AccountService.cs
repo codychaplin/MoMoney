@@ -94,5 +94,16 @@ namespace MoMoney.Services
 
             return await MoMoneydb.db.Table<Account>().ToListAsync();
         }
+
+        /// <summary>
+        /// Gets enabled accounts from Accounts table as a list
+        /// </summary>
+        /// <returns>List of active Account objects</returns>
+        public static async Task<IEnumerable<Account>> GetActiveAccounts()
+        {
+            await Init();
+
+            return await MoMoneydb.db.Table<Account>().Where(a => a.Enabled).ToListAsync();
+        }
     }
 }

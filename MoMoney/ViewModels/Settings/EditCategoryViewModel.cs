@@ -81,7 +81,7 @@ namespace MoMoney.ViewModels.Settings
         [RelayCommand]
         async Task Remove()
         {
-            bool flag = await Shell.Current.DisplayAlert("Error", $"Are you sure you want to delete {Category.CategoryName}", "Yes", "No");
+            bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Category.CategoryName}\"", "Yes", "No");
 
             if (flag)
             {

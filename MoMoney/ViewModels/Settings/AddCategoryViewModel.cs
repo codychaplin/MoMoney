@@ -15,7 +15,7 @@ namespace MoMoney.ViewModels.Settings
         public string name; // category name
 
         [ObservableProperty]
-        public string parent; // category parent
+        public string parent; // category parentz
 
         /// <summary>
         /// adds Category to database using input fields from view

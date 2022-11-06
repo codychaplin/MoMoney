@@ -3,7 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.AddTransactionPage"
              NavigationPage.HasNavigationBar="False"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
+             xmlns:model="clr-namespace:MoMoney.Models"
+             x:DataType="viewmodel:AddTransactionViewModel"
+             Loaded="ContentPage_Loaded"
              Title="">
+
+    <ContentPage.BindingContext>
+        <viewmodel:AddTransactionViewModel />
+    </ContentPage.BindingContext>
 
     <!-- main page -->
     <VerticalStackLayout>
@@ -27,15 +35,12 @@
         <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
                 <Image Source="credit_card.png" Style="{StaticResource icon}" />
-                <Picker x:Name="pckAccount" Grid.Column="1" Title="Select an Account">
-                    <Picker.ItemsSource>
-                        <x:Array Type="{x:Type x:String}">
-                            <x:String>Tan Check</x:String>
-                            <x:String>Tan Savings</x:String>
-                            <x:String>Tan TFSA</x:String>
-                        </x:Array>
-                    </Picker.ItemsSource>
-                </Picker>
+                <Picker x:Name="pckAccount"
+                        Grid.Column="1"
+                        Title="Select an Account"
+                        x:DataType="model:Account"
+                        ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
+                        ItemDisplayBinding="{Binding AccountName}" />
             </Grid>
         </Frame>
         <!-- Amount -->
@@ -49,14 +54,25 @@
         <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
                 <Image Source="category.png" Style="{StaticResource icon}" />
-                <Picker x:Name="pckCategory" Grid.Column="1" Title="Select a Category" />
+                <Picker x:Name="pckCategory"
+                        Grid.Column="1"
+                        Title="Select a Category"
+                        x:DataType="model:Category"
+                        ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
+                        ItemDisplayBinding="{Binding CategoryName}"
+                        SelectedIndexChanged="pckCategory_SelectedIndexChanged" />
             </Grid>
         </Frame>
         <!-- Subcategory -->
         <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
                 <Image Source="subcategory.png" Style="{StaticResource icon}" />
-                <Picker x:Name="pckSubcategory" Grid.Column="1" Title="Select a Subcategory" />
+                <Picker x:Name="pckSubcategory"
+                        Grid.Column="1"
+                        Title="Select a Subcategory"
+                        x:DataType="model:Category"
+                        ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
+                        ItemDisplayBinding="{Binding CategoryName}" />
             </Grid>
         </Frame>
         <!-- Payee -->

@@ -1,13 +1,30 @@
+using MoMoney.Models;
+using MoMoney.ViewModels;
+
 namespace MoMoney.Views;
 
 public partial class AddTransactionPage : ContentPage
 {
+    AddTransactionViewModel vm;
+
 	public AddTransactionPage()
 	{
 		InitializeComponent();
-	}
+        vm = (AddTransactionViewModel)BindingContext;
+    }
 
-	private void btnIncome_Clicked(object sender, EventArgs e)
+    /// <summary>
+    /// Updates subcategories for picker
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void pckCategory_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        var parentCategory = (Category)pckCategory.SelectedItem;
+        await vm.GetSubcategories(parentCategory);
+    }
+
+    private void btnIncome_Clicked(object sender, EventArgs e)
 	{
         ChangeButtonColour(sender as Button);
     }
@@ -52,5 +69,10 @@ public partial class AddTransactionPage : ContentPage
     private void btnEnter_Clicked(object sender, EventArgs e)
     {
         // enter transaction into database
+    }
+
+    private async void ContentPage_Loaded(object sender, EventArgs e)
+    {
+        await vm.Refresh();
     }
 }
