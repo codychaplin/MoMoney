@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using MoMoney.Services;
 
-namespace MoMoney.ViewModels
+namespace MoMoney.ViewModels.Settings
 {
     public partial class AddAccountViewModel : ObservableObject
     {

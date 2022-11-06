@@ -2,10 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 using MoMoney.Services;
 using MoMoney.Models;
-using MoMoney.Views;
+using MoMoney.Views.Settings;
 using System.Collections.ObjectModel;
 
-namespace MoMoney.ViewModels
+namespace MoMoney.ViewModels.Settings
 {
     public partial class AccountsViewModel : ObservableObject
     {
@@ -33,7 +33,6 @@ namespace MoMoney.ViewModels
         /// <summary>
         /// Gets updated accounts from database and refreshes Accounts collection
         /// </summary>
-        [RelayCommand]
         public async Task Refresh()
         {
             Accounts.Clear();

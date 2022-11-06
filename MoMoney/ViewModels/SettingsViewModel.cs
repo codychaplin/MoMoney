@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MoMoney.Views;
+using MoMoney.Views.Settings;
 
 namespace MoMoney.ViewModels
 {
@@ -11,6 +11,12 @@ namespace MoMoney.ViewModels
         async Task GoToAccounts()
         {
             await Shell.Current.GoToAsync(nameof(AccountsPage));
+        }
+
+        [RelayCommand]
+        async Task GoToCategories()
+        {
+            await Shell.Current.GoToAsync(nameof(CategoriesPage));
         }
     }
 }

@@ -30,13 +30,56 @@
                 </Style.Behaviors>
             </Style>
 
-            <!-- sets default corner radius for various controls -->
+            <!-- default button style -->
             <Style TargetType="{x:Type Button}">
                 <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="HeightRequest" Value="35" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray700}}" />
             </Style>
+
+            <!-- default button style -->
             <Style TargetType="{x:Type Frame}">
                 <Setter Property="CornerRadius" Value="5" />
             </Style>
+
+            <!-- Label tile -->
+            <Style x:Key="lblTile" TargetType="{x:Type Label}">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Padding" Value="5,0,0,0" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+                <Setter Property="VerticalTextAlignment" Value="Center" />
+            </Style>
+            <!-- frame tile -->
+            <Style x:Key="frTile" TargetType="{x:Type Frame}">
+                <Setter Property="Padding" Value="10" />
+                <Setter Property="HeightRequest" Value="55" />
+                <Setter Property="Margin" Value="10,0,10,10" />
+                <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
+            </Style>
+            <!-- condensed frame tile -->
+            <Style x:Key="confrTile" TargetType="{x:Type Frame}">
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Margin" Value="10,0,10,5" />
+                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
+            </Style>
+            <!-- ImageButton tile -->
+            <Style x:Key="ibtnTile" TargetType="{x:Type ImageButton}" BasedOn="{StaticResource ibtnTinted}">
+                <Setter Property="Padding" Value="7" />
+                <Setter Property="WidthRequest" Value="40" />
+                <Setter Property="HorizontalOptions" Value="End" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+            <!-- tile icon -->
+            <Style x:Key="icon" TargetType="{x:Type Image}" BasedOn="{x:StaticResource imgTinted}">
+                <Setter Property="HeightRequest" Value="25" />
+                <Setter Property="Margin" Value="0,0,10,0" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
         </ResourceDictionary>
         
     </Application.Resources>

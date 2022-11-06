@@ -31,9 +31,9 @@ public partial class AddTransactionPage : ContentPage
         foreach (Button btn in grdTransactionTypeButtons.Children)
         {
             if (btn == button)
-                btn.BackgroundColor = Color.FromArgb("404040");
-            else
                 btn.BackgroundColor = Color.FromArgb("212121");
+            else
+                btn.BackgroundColor = Color.FromArgb("303030");
 
         }
     }

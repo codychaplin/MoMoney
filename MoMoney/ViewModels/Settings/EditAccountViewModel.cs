@@ -3,17 +3,20 @@ using CommunityToolkit.Mvvm.Input;
 using MoMoney.Services;
 using MoMoney.Models;
 
-namespace MoMoney.ViewModels
+namespace MoMoney.ViewModels.Settings
 {
     [QueryProperty(nameof(ID), nameof(ID))]
     public partial class EditAccountViewModel : ObservableObject
     {
-        public string ID { get; set; } // account ID
-        int id = 0;
-
         [ObservableProperty]
         public Account account = new();
 
+        public string ID { get; set; } // account ID
+        int id = 0;
+
+        /// <summary>
+        /// Gets Account using ID
+        /// </summary>
         public async Task GetAccount()
         {
             if (int.TryParse(ID, out id))
@@ -37,8 +40,7 @@ namespace MoMoney.ViewModels
             }
             else
             {
-                // if valid, update Account
-                Account = new Account
+                Account = new Account // if valid, update Account
                 {
                     AccountID = id,
                     AccountName = Account.AccountName,

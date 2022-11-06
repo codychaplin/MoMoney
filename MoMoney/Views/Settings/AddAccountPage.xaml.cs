@@ -1,4 +1,4 @@
-namespace MoMoney.Views;
+namespace MoMoney.Views.Settings;
 
 public partial class AddAccountPage : ContentPage
 {

@@ -1,50 +1,29 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.AddAccountPage"
+             x:Class="MoMoney.Views.Settings.AddAccountPage"
              Title="Add Account"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
              x:DataType="viewmodel:AddAccountViewModel">
 
     <ContentPage.BindingContext>
         <viewmodel:AddAccountViewModel />
     </ContentPage.BindingContext>
 
-    <!-- page styles -->
-    <ContentPage.Resources>
-        <Style TargetType="{x:Type Label}">
-            <Setter Property="Padding" Value="10" />
-        </Style>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="TextColor" Value="White" />
-            <Setter Property="BackgroundColor" Value="{StaticResource Gray900}" />
-        </Style>
-        <Style TargetType="{x:Type Image}" BasedOn="{x:StaticResource imgTinted}">
-            <Setter Property="HeightRequest" Value="25" />
-            <Setter Property="Margin" Value="0,0,10,0" />
-            <Setter Property="VerticalOptions" Value="Center" />
-        </Style>
-        <Style TargetType="{x:Type Frame}">
-            <Setter Property="Padding" Value="10" />
-            <Setter Property="Margin" Value="10,0,10,10" />
-            <Setter Property="BackgroundColor" Value="{StaticResource Gray900}" />
-        </Style>
-    </ContentPage.Resources>
-
     <!-- main page -->
     <VerticalStackLayout>
 
         <!-- account name -->
-        <Frame>
+        <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="account.png" />
+                <Image Source="account.png" Style="{StaticResource icon}" />
                 <Entry x:Name="txtName" Grid.Column="1" Placeholder="Account Name" Text="{Binding Name}" />
             </Grid>
         </Frame>
         <!-- account type with predefined values -->
-        <Frame>
+        <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="piggy_bank.png" />
+                <Image Source="piggy_bank.png" Style="{StaticResource icon}" />
                 <Picker x:Name="pckType" Grid.Column="1" Title="Select a type" SelectedItem="{Binding Type}">
                     <Picker.Items>
                         <x:String>Checkings</x:String>
@@ -56,9 +35,9 @@
             </Grid>
         </Frame>
         <!-- starting balance -->
-        <Frame>
+        <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="dollar_symbol.png" />
+                <Image Source="dollar_symbol.png" Style="{StaticResource icon}" />
                 <Entry x:Name="txtStartingBalance" Grid.Column="1" Placeholder="Starting Balance" Text="{Binding StartingBalance}" />
             </Grid>
         </Frame>

@@ -5,32 +5,11 @@
              NavigationPage.HasNavigationBar="False"
              Title="">
 
-    <!-- page styles -->
-    <ContentPage.Resources>
-        <Style TargetType="{x:Type Label}">
-            <Setter Property="Padding" Value="10" />
-        </Style>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="TextColor" Value="White" />
-            <Setter Property="BackgroundColor" Value="{StaticResource Gray900}" />
-        </Style>
-        <Style TargetType="{x:Type Image}" BasedOn="{x:StaticResource imgTinted}">
-            <Setter Property="HeightRequest" Value="25" />
-            <Setter Property="Margin" Value="0,0,10,0" />
-            <Setter Property="VerticalOptions" Value="Center" />
-        </Style>
-        <Style TargetType="{x:Type Frame}">
-            <Setter Property="Padding" Value="10" />
-            <Setter Property="Margin" Value="10,0,10,10" />
-            <Setter Property="BackgroundColor" Value="{StaticResource Gray900}" />
-        </Style>
-    </ContentPage.Resources>
-    
     <!-- main page -->
     <VerticalStackLayout>
         
         <!-- transaction type buttons -->
-        <Frame Margin="10" Padding="2">
+        <Frame Style="{StaticResource confrTile}" Margin="10" Padding="2">
             <Grid x:Name="grdTransactionTypeButtons" Margin="1" ColumnDefinitions="*,*,*" ColumnSpacing="10">
                 <Button x:Name="btnIncome" Grid.Column="0" Text="Income" Clicked="btnIncome_Clicked" />
                 <Button x:Name="btnExpense" Grid.Column="1" Text="Expense" Clicked="btnExpense_Clicked" />
@@ -38,16 +17,16 @@
             </Grid>
         </Frame>
         <!-- Date -->
-        <Frame>
+        <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="calendar.png" />
+                <Image Source="calendar.png" Style="{StaticResource icon}" />
                 <DatePicker x:Name="dtDate" Grid.Column="1" VerticalOptions="Center" />
             </Grid>
         </Frame>
         <!-- Account -->
-        <Frame>
+        <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="credit_card.png" />
+                <Image Source="credit_card.png" Style="{StaticResource icon}" />
                 <Picker x:Name="pckAccount" Grid.Column="1" Title="Select an Account">
                     <Picker.ItemsSource>
                         <x:Array Type="{x:Type x:String}">
@@ -60,30 +39,30 @@
             </Grid>
         </Frame>
         <!-- Amount -->
-        <Frame>
+        <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="dollar_symbol.png" />
+                <Image Source="dollar_symbol.png" Style="{StaticResource icon}" />
                 <Entry x:Name="txtAmount" Grid.Column="1" Placeholder="$0.00" />
             </Grid>
         </Frame>
         <!-- Category -->
-        <Frame>
+        <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="category.png" />
+                <Image Source="category.png" Style="{StaticResource icon}" />
                 <Picker x:Name="pckCategory" Grid.Column="1" Title="Select a Category" />
             </Grid>
         </Frame>
         <!-- Subcategory -->
-        <Frame>
+        <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="subcategory.png" />
+                <Image Source="subcategory.png" Style="{StaticResource icon}" />
                 <Picker x:Name="pckSubcategory" Grid.Column="1" Title="Select a Subcategory" />
             </Grid>
         </Frame>
         <!-- Payee -->
-        <Frame>
+        <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="account.png" />
+                <Image Source="account.png" Style="{StaticResource icon}" />
                 <Entry x:Name="txtPayee" Grid.Column="1" Placeholder="Payee" />
             </Grid>
         </Frame>

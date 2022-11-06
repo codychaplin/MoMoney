@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.AccountsPage"
+             x:Class="MoMoney.Views.Settings.AccountsPage"
              xmlns:models="clr-namespace:MoMoney.Models"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
              x:DataType="viewmodel:AccountsViewModel"
              Title="Accounts">
 
     <ContentPage.BindingContext>
         <viewmodel:AccountsViewModel />
     </ContentPage.BindingContext>
-    
+
     <!-- main page -->
     <Grid>
         
@@ -20,23 +20,11 @@
                 <DataTemplate x:DataType="models:Account">
                     
                     <!-- template -->
-                    <Frame BackgroundColor="{StaticResource Gray900}"
-                           Margin="10,0,10,10"
-                           HeightRequest="50"
-                           Padding="0">
+                    <Frame Style="{StaticResource confrTile}">
                         <Grid>
-                            <Label Text="{Binding AccountName}"
-                                   FontSize="16"
-                                   Padding="5,0,0,0" 
-                                   TextColor="White"
-                                   HorizontalOptions="Start"
-                                   VerticalTextAlignment="Center" />
+                            <Label Style="{StaticResource lblTile}" Text="{Binding AccountName}" />
                             <ImageButton Source="right_arrow.png"
-                                         Style="{x:StaticResource ibtnTinted}"
-                                         HorizontalOptions="End"
-                                         VerticalOptions="Center"
-                                         WidthRequest="50"
-                                         Padding="9"
+                                         Style="{StaticResource ibtnTile}"
                                          Command="{Binding Path=GoToEditAccountCommand, Source={RelativeSource AncestorType={x:Type viewmodel:AccountsViewModel}}}"
                                          CommandParameter="{Binding AccountID}"/>
                         </Grid>

@@ -58,10 +58,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Views\EditAccountPage.xaml.cs">
+	  <Compile Update="Views\Settings\CategoriesPage.xaml.cs">
+	    <DependentUpon>CategoriesPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Settings\AddCategoryPage.xaml.cs">
+	    <DependentUpon>AddCategoryPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Settings\EditCategoryPage.xaml.cs">
+	    <DependentUpon>EditCategoryPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Settings\EditAccountPage.xaml.cs">
 	    <DependentUpon>EditAccountPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\AddAccountPage.xaml.cs">
+	  <Compile Update="Views\Settings\AddAccountPage.xaml.cs">
 	    <DependentUpon>AddAccountPage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\AddTransactionPage.xaml.cs">
@@ -76,13 +85,22 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Views\AccountsPage.xaml">
+	  <MauiXaml Update="Views\Settings\CategoriesPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\EditAccountPage.xaml">
+	  <MauiXaml Update="Views\Settings\AccountsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\AddAccountPage.xaml">
+	  <MauiXaml Update="Views\Settings\AddCategoryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Settings\EditCategoryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Settings\EditAccountPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Settings\AddAccountPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\AddTransactionPage.xaml">

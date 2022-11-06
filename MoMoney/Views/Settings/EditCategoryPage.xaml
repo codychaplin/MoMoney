@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MoMoney.Views.Settings.EditCategoryPage"
+             xmlns:model="clr-namespace:MoMoney.Models"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
+             x:DataType="viewmodel:EditCategoryViewModel"
+             Title="Edit Category">
+
+    <ContentPage.BindingContext>
+        <viewmodel:EditCategoryViewModel />
+    </ContentPage.BindingContext>
+
+    <!-- main page -->
+    <VerticalStackLayout>
+
+        <!-- category name -->
+        <Frame Style="{StaticResource frTile}">
+            <Grid ColumnDefinitions="0.15*,*">
+                <Image Source="subcategory.png" Style="{StaticResource icon}" />
+                <Entry x:Name="txtName"
+                       Grid.Column="1"
+                       Placeholder="Category Name"
+                       Text="{Binding Category.CategoryName}" />
+            </Grid>
+        </Frame>
+
+        <!-- parent category -->
+        <Frame Style="{StaticResource frTile}">
+            <Grid ColumnDefinitions="0.15*,*">
+                <Image Source="category.png" Style="{StaticResource icon}" />
+                <Picker x:Name="pckParent"
+                        Grid.Column="1"
+                        Title="Select a Parent"
+                        x:DataType="model:Category"
+                        ItemsSource="{Binding Path=Parents, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}"
+                        ItemDisplayBinding="{Binding CategoryName}"
+                        SelectedIndexChanged="pckParent_SelectedIndexChanged">
+                </Picker>
+            </Grid>
+        </Frame>
+
+        <!-- delete/clear/enter buttons -->
+        <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnDefinitions="*,*,*" ColumnSpacing="10">
+            <Button x:Name="btnDelete"
+                    Grid.Column="0"
+                    Text="Delete"
+                    BackgroundColor="{StaticResource Red}"
+                    Command="{Binding RemoveCommand}" />
+            <Button x:Name="btnClear"
+                    Grid.Column="1"
+                    Text="Clear"
+                    BackgroundColor="{StaticResource Blue}"
+                    Clicked="btnClear_Clicked" />
+            <Button x:Name="btnEnter"
+                    Grid.Column="2"
+                    Text="Update"
+                    BackgroundColor="{StaticResource Green}"
+                    Command="{Binding EditCommand}" />
+        </Grid>
+        
+    </VerticalStackLayout>
+</ContentPage>

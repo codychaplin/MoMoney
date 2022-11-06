@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MoMoney.Views.Settings.CategoriesPage"
+             xmlns:models="clr-namespace:MoMoney.Models"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
+             x:DataType="viewmodel:CategoriesViewModel"
+             Title="Categories">
+
+    <ContentPage.BindingContext>
+        <viewmodel:CategoriesViewModel />
+    </ContentPage.BindingContext>
+    
+    <!-- main page -->
+    <Grid>
+        
+        <!-- list of categories -->
+        <CollectionView ItemsSource="{Binding Categories}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Category">
+                    
+                    <!-- template -->
+                    <Frame Style="{StaticResource confrTile}">
+                        <Grid>
+                            <Label Style="{StaticResource lblTile}" Text="{Binding CategoryName}" />
+                            <ImageButton Source="right_arrow.png"
+                                         Style="{x:StaticResource ibtnTile}"
+                                         Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}"
+                                         CommandParameter="{Binding CategoryID}"/>
+                        </Grid>
+                    </Frame>
+                    
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
+        <!-- add account button -->
+        <ImageButton Source="add.png"
+                     Margin="20"
+                     WidthRequest="40"
+                     HeightRequest="40"
+                     VerticalOptions="End"
+                     HorizontalOptions="End"
+                     Command="{Binding GoToAddCategoryCommand}">
+        </ImageButton>
+    </Grid>
+</ContentPage>
