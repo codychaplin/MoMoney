@@ -6,14 +6,11 @@ namespace MoMoney.Services
     {
 
         /// <summary>
-        /// Creates Account table, if none exist
+        /// Calls db Init
         /// </summary>
         public static async Task Init()
         {
-            if (MoMoneydb.Init())
-                await MoMoneydb.db.CreateTableAsync<Account>();
-            else
-                return;
+            await MoMoneydb.Init();
         }
 
         /// <summary>

@@ -23,7 +23,7 @@ namespace MoMoney.ViewModels.Settings
         [RelayCommand]
         async Task Add()
         {
-            await CategoryService.AddCategory(Name, Parent, true);
+            await CategoryService.AddCategory(Name, Parent);
             await Shell.Current.GoToAsync("..");
         }
 

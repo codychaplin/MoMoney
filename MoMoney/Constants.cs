@@ -14,7 +14,13 @@ namespace MoMoney
         // enable multi-threaded database access
         SQLite.SQLiteOpenFlags.SharedCache;
 
-        public static string DatabasePath =>
-            Path.Combine(FileSystem.AppDataDirectory, dbName);
+        public static string DatabasePath => Path.Combine(FileSystem.AppDataDirectory, dbName);
+
+        // category IDs
+        public const int INCOME_ID = 1;
+        public const int TRANSFER_ID = 2;
+        public const int DEBIT_ID = 3;
+        public const int CREDIT_ID = 4;
+        public const int EXPENSE_ID = 5;
     }
 }

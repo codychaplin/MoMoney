@@ -6,14 +6,11 @@ namespace MoMoney.Services
     {
 
         /// <summary>
-        /// Creates Category table, if none exist
+        /// Calls db Init
         /// </summary>
         public static async Task Init()
         {
-            if (MoMoneydb.Init())
-                await MoMoneydb.db.CreateTableAsync<Category>();
-            else
-                return;
+            await MoMoneydb.Init();
         }
 
         /// <summary>
@@ -21,16 +18,14 @@ namespace MoMoney.Services
         /// </summary>
         /// <param name="categoryName"></param>
         /// <param name="parentName"></param>
-        /// <param name="enabled"></param>
-        public static async Task AddCategory(string categoryName, string parentName, bool enabled)
+        public static async Task AddCategory(string categoryName, string parentName)
         {
             await Init();
 
             var category = new Category
             {
                 CategoryName = categoryName,
-                ParentName = string.IsNullOrEmpty(parentName) ? "" : parentName,
-                Enabled = enabled
+                ParentName = string.IsNullOrEmpty(parentName) ? "" : parentName
             };
 
             await MoMoneydb.db.InsertAsync(category);
@@ -48,8 +43,7 @@ namespace MoMoney.Services
             {
                 CategoryID = category.CategoryID,
                 CategoryName = category.CategoryName,
-                ParentName = category.ParentName,
-                Enabled = category.Enabled
+                ParentName = category.ParentName
             };
 
             await MoMoneydb.db.UpdateAsync(updatedCategory);
@@ -73,9 +67,9 @@ namespace MoMoney.Services
         /// <returns>Category object</returns>
         public static async Task<Category>GetCategory(int id)
         {
-            var category = await MoMoneydb.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryID == id);
+            await Init();
 
-            return category;
+            return await MoMoneydb.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryID == id);
         }
 
         /// <summary>
@@ -86,18 +80,8 @@ namespace MoMoney.Services
         {
             await Init();
 
-            return await MoMoneydb.db.Table<Category>().ToListAsync();
-        }
-
-        /// <summary>
-        /// Gets enabled categories from Categories table as a list
-        /// </summary>
-        /// <returns>List of active Category objects</returns>
-        public static async Task<IEnumerable<Category>> GetActiveCategories()
-        {
-            await Init();
-
-            return await MoMoneydb.db.Table<Category>().Where(c => c.Enabled).ToListAsync();
+            // CategoryID > 4 so users can't select income/transfer categories
+            return await MoMoneydb.db.Table<Category>().Where(c => c.CategoryID > 4).ToListAsync();
         }
 
         /// <summary>
@@ -119,18 +103,20 @@ namespace MoMoney.Services
         {
             await Init();
 
-            return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "").ToListAsync();
+            // CategoryID != 4 so users can't select transfer categories
+            return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "" && c.CategoryID != 4).ToListAsync();
         }
 
         /// <summary>
-        /// Gets all enabled parent Categories from Categories table as a list
+        /// Gets all expense Categories from Categories table as a list
         /// </summary>
-        /// <returns>List of active parent Category objects</returns>
-        public static async Task<IEnumerable<Category>> GetActiveParentCategories()
+        /// <returns>List of parent Category objects</returns>
+        public static async Task<IEnumerable<Category>> GetExpenseCategories()
         {
             await Init();
 
-            return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "" && c.Enabled).ToListAsync();
+            // CategoryID > 4 so users can't select income/transfer categories
+            return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "" && c.CategoryID > 4).ToListAsync();
         }
 
         /// <summary>

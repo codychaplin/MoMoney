@@ -66,8 +66,7 @@ namespace MoMoney.ViewModels.Settings
                 {
                     CategoryID = id,
                     CategoryName = Category.CategoryName,
-                    ParentName = Parent.CategoryName,
-                    Enabled = Category.Enabled
+                    ParentName = Parent.CategoryName
                 };
 
                 await CategoryService.UpdateCategory(Category);

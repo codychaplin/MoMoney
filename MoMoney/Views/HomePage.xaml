@@ -3,12 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
              x:Class="MoMoney.Views.HomePage"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
+             xmlns:models="clr-namespace:MoMoney.Models"
+             xmlns:local="clr-namespace:MoMoney"
              NavigationPage.HasNavigationBar="False"
+             Loaded="ContentPage_Loaded"
              Title="">
+
+    <ContentPage.BindingContext>
+        <viewmodel:HomePageViewModel />
+    </ContentPage.BindingContext>
+
+    <!-- converters -->
+    <ContentPage.Resources>
+        <local:IdToCategoryConverter x:Key="IdToCategory" />
+        <local:AmountColourConverter x:Key="AmountColour" />
+        <local:IconConverter x:Key="Icon" />
+    </ContentPage.Resources>
 
     <!-- main page -->
     <ScrollView>
-        <Grid RowDefinitions="40,200,200,200">
+        <Grid RowDefinitions="40,200,200,*">
 
             <!-- grid styles -->
             <Grid.Resources>
@@ -49,16 +64,13 @@
             <Label Text="Dashboard" HorizontalOptions="Center" />
             
             <!-- calendar button -->
-            <ImageButton Source="calendar.png"
+            <ImageButton Style="{StaticResource ibtnTinted}"
+                         Source="calendar.png"
                          HorizontalOptions="End"
                          CornerRadius="0"
                          HeightRequest="20"
                          WidthRequest="20"
-                         Margin="10">
-                <ImageButton.Style>
-                    <Style TargetType="{x:Type ImageButton}" BasedOn="{StaticResource ibtnTinted}" />
-                </ImageButton.Style>
-            </ImageButton>
+                         Margin="10" />
 
             <!-- balance over time chart -->
             <chart:SfCartesianChart x:Name="chrtBalance"
@@ -96,7 +108,64 @@
                 </Grid.RowDefinitions>
                 <Label Text="Transactions" />
                 <Button x:Name="btnViewAllTransactions" Text="View All" Clicked="btnViewAllTransactions_Clicked" Routing.Route="TransactionsPage" />
-                <Frame Grid.Row="1" />
+                
+                <Frame Grid.Row="1" Padding="0,10,0,0" >
+                    <!-- list of transactions -->
+                    <CollectionView ItemsSource="{Binding RecentTransactions}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Transaction">
+
+                                <!-- template -->
+                                <Frame Style="{StaticResource frTile}">
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer />
+                                    </Frame.GestureRecognizers>
+                                    <Grid ColumnDefinitions="30,*">
+                                        <!-- icon -->
+                                        <Image>
+                                            <Image.Source>
+                                                <MultiBinding Converter="{StaticResource Icon}">
+                                                    <Binding Path="CategoryID" />
+                                                    <Binding Path="SubcategoryID" />
+                                                </MultiBinding>
+                                            </Image.Source>
+                                        </Image>
+                                        <!-- category -->
+                                        <Label Grid.Column="1"
+                                               FontSize="18"
+                                               VerticalOptions="Start"
+                                               HorizontalOptions="Start"
+                                               Style="{StaticResource lblTile}"
+                                               Text="{Binding CategoryID, Converter={StaticResource IdToCategory}}" />
+                                        <!-- subcategory -->
+                                        <Label Grid.Column="1"
+                                               VerticalOptions="End"
+                                               HorizontalOptions="Start"
+                                               Style="{StaticResource lblTile}"
+                                               TextColor="{StaticResource Gray300}"
+                                               Text="{Binding SubcategoryID, Converter={StaticResource IdToCategory}}" />
+                                        <!-- amount -->
+                                        <Label Grid.Column="1"
+                                               FontSize="18"
+                                               VerticalOptions="Start"
+                                               HorizontalOptions="End"
+                                               Style="{StaticResource lblTile}"
+                                               TextColor="{Binding CategoryID, Converter={StaticResource AmountColour}}"
+                                               Text="{Binding Amount, StringFormat='{0:C2}'}" />
+                                        <!-- date -->
+                                        <Label Grid.Column="1"
+                                               VerticalOptions="End"
+                                               HorizontalOptions="End"
+                                               Style="{StaticResource lblTile}"
+                                               TextColor="{StaticResource Gray300}"
+                                               Text="{Binding Date, StringFormat='{0:yyyy-MM-dd}'}" />
+                                    </Grid>
+                                </Frame>
+
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Frame>
             </Grid>
             
         </Grid>
