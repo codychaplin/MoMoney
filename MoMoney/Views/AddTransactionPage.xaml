@@ -39,9 +39,9 @@
                         Grid.Column="1"
                         Title="Select an Account"
                         x:DataType="model:Account"
-                        ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                         ItemDisplayBinding="{Binding AccountName}"
-                        SelectedIndexChanged="pckAccount_SelectedIndexChanged" />
+                        SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
+                        ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
             </Grid>
         </Frame>
         <!-- Amount -->
@@ -59,8 +59,9 @@
                         Grid.Column="1"
                         Title="Select a Category"
                         x:DataType="model:Category"
-                        ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                         ItemDisplayBinding="{Binding CategoryName}"
+                        SelectedItem="{Binding Path=Category, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
+                        ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                         SelectedIndexChanged="pckCategory_SelectedIndexChanged" />
             </Grid>
         </Frame>
@@ -72,9 +73,9 @@
                         Grid.Column="1"
                         Title="Select a Subcategory"
                         x:DataType="model:Category"
-                        ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                         ItemDisplayBinding="{Binding CategoryName}"
-                        SelectedIndexChanged="pckSubcategory_SelectedIndexChanged" />
+                        SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
+                        ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
             </Grid>
         </Frame>
         <!-- Payee -->
@@ -92,9 +93,9 @@
                         Grid.Column="1"
                         Title="Select an Account"
                         x:DataType="model:Account"
-                        ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                         ItemDisplayBinding="{Binding AccountName}"
-                        SelectedIndexChanged="pckTransferTo_SelectedIndexChanged"/>
+                        SelectedItem="{Binding Path=TransferAccount, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
+                        ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
             </Grid>
         </Frame>
         <!-- clear/enter buttons -->

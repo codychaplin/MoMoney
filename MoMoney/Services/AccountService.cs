@@ -40,20 +40,10 @@ namespace MoMoney.Services
         /// <summary>
         /// Given an Account object, updates the corresponding account in the Accounts table
         /// </summary>
-        /// <param name="account"></param>
-        public static async Task UpdateAccount(Account account)
+        /// <param name="updatedAccount"></param>
+        public static async Task UpdateAccount(Account updatedAccount)
         {
             await Init();
-
-            var updatedAccount = new Account
-            {
-                AccountID = account.AccountID,
-                AccountName = account.AccountName,
-                AccountType = account.AccountType,
-                StartingBalance = account.StartingBalance,
-                CurrentBalance = account.StartingBalance,
-                Enabled = account.Enabled
-            };
 
             await MoMoneydb.db.UpdateAsync(updatedAccount);
         }

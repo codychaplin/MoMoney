@@ -58,6 +58,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\EditTransactionPage.xaml.cs">
+	    <DependentUpon>EditTransactionPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\Settings\CategoriesPage.xaml.cs">
 	    <DependentUpon>CategoriesPage.xaml</DependentUpon>
 	  </Compile>
@@ -85,6 +88,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Views\EditTransactionPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Settings\CategoriesPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

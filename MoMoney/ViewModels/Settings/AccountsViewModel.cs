@@ -22,7 +22,7 @@ namespace MoMoney.ViewModels.Settings
         }
 
         /// <summary>
-        /// Goes to EditAccountPage.xaml with an Account object as a parameter
+        /// Goes to EditAccountPage.xaml with an Account ID as a parameter
         /// </summary>
         [RelayCommand]
         async Task GoToEditAccount(int ID)

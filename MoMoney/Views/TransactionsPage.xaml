@@ -53,7 +53,9 @@
                         <!-- template -->
                         <Frame Style="{StaticResource frTile}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer />
+                                <TapGestureRecognizer Command="{Binding Path=GoToEditTransactionCommand, Source={RelativeSource
+                                                                        AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                                                      CommandParameter="{Binding TransactionID}" />
                             </Frame.GestureRecognizers>
                             <Grid ColumnDefinitions="30,*">
                                 <!-- icon -->

@@ -22,14 +22,13 @@ namespace MoMoney.ViewModels.Settings
         public string name; // category name
 
         public string ID { get; set; } // category ID
-        int id = 0;
 
         /// <summary>
         /// Gets category using ID
         /// </summary>
         public async Task GetCategory()
         {
-            if (int.TryParse(ID, out id))
+            if (int.TryParse(ID, out int id))
             {
                 Category = await CategoryService.GetCategory(id);
                 Parent = await CategoryService.GetParentCategory(Category.ParentName);
@@ -62,13 +61,6 @@ namespace MoMoney.ViewModels.Settings
             }
             else
             {
-                Category = new Category // if valid, update Category
-                {
-                    CategoryID = id,
-                    CategoryName = Category.CategoryName,
-                    ParentName = Parent.CategoryName
-                };
-
                 await CategoryService.UpdateCategory(Category);
                 await Shell.Current.GoToAsync("..");
             }
@@ -80,7 +72,7 @@ namespace MoMoney.ViewModels.Settings
         [RelayCommand]
         async Task Remove()
         {
-            bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Category.CategoryName}\"", "Yes", "No");
+            bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Category.CategoryName}\"?", "Yes", "No");
 
             if (flag)
             {

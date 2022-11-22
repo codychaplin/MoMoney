@@ -34,17 +34,10 @@ namespace MoMoney.Services
         /// <summary>
         /// Given an Category object, updates the corresponding category in the Categories table
         /// </summary>
-        /// <param name="category"></param>
-        public static async Task UpdateCategory(Category category)
+        /// <param name="updatedCategory"></param>
+        public static async Task UpdateCategory(Category updatedCategory)
         {
             await Init();
-
-            var updatedCategory = new Category
-            {
-                CategoryID = category.CategoryID,
-                CategoryName = category.CategoryName,
-                ParentName = category.ParentName
-            };
 
             await MoMoneydb.db.UpdateAsync(updatedCategory);
         }

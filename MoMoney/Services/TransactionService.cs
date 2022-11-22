@@ -55,6 +55,17 @@ namespace MoMoney.Services
         }
 
         /// <summary>
+        /// Given an Transaction object, updates the corresponding transaction in the Transactions table
+        /// </summary>
+        /// <param name="updatedTransaction"></param>
+        public static async Task UpdateTransaction(Transaction updatedTransaction)
+        {
+            await Init();
+
+            await MoMoneydb.db.UpdateAsync(updatedTransaction);
+        }
+
+        /// <summary>
         /// Gets an transaction from the transactions table using an ID
         /// </summary>
         /// <param name="id"></param>
@@ -86,6 +97,19 @@ namespace MoMoney.Services
             await Init();
 
             return await MoMoneydb.db.Table<Transaction>().OrderByDescending(t => t.Date).Take(5).ToListAsync();
+        }
+
+
+
+        /// <summary>
+        /// Removes Transaction from Transactions table
+        /// </summary>
+        /// <param name="ID"></param>
+        public static async Task RemoveTransaction(int ID)
+        {
+            await Init();
+
+            await MoMoneydb.db.DeleteAsync<Transaction>(ID);
         }
     }
 }

@@ -12,14 +12,13 @@ namespace MoMoney.ViewModels.Settings
         public Account account = new();
 
         public string ID { get; set; } // account ID
-        int id = 0;
 
         /// <summary>
         /// Gets Account using ID
         /// </summary>
         public async Task GetAccount()
         {
-            if (int.TryParse(ID, out id))
+            if (int.TryParse(ID, out int id))
                 Account = await AccountService.GetAccount(id);
             else
                 await Shell.Current.DisplayAlert("Error", "Could not find account", "OK");
@@ -40,16 +39,6 @@ namespace MoMoney.ViewModels.Settings
             }
             else
             {
-                Account = new Account // if valid, update Account
-                {
-                    AccountID = id,
-                    AccountName = Account.AccountName,
-                    AccountType = Account.AccountType,
-                    StartingBalance = Account.StartingBalance,
-                    CurrentBalance = Account.StartingBalance,
-                    Enabled = Account.Enabled
-                };
-
                 await AccountService.UpdateAccount(Account);
                 await Shell.Current.GoToAsync("..");
             }
@@ -61,7 +50,7 @@ namespace MoMoney.ViewModels.Settings
         [RelayCommand]
         async Task Remove()
         {
-            bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Account.AccountName}\"", "Yes", "No");
+            bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Account.AccountName}\"?", "Yes", "No");
 
             if (flag)
             {

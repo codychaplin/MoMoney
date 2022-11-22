@@ -22,7 +22,7 @@ namespace MoMoney.ViewModels.Settings
         }
 
         /// <summary>
-        /// Goes to EditCategoryPage.xaml with a Category object as a parameter
+        /// Goes to EditCategoryPage.xaml with a Category ID as a parameter
         /// </summary>
         [RelayCommand]
         async Task GoToEditCategory(int ID)

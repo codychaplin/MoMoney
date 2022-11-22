@@ -21,12 +21,13 @@
                     
                     <!-- template -->
                     <Frame Style="{StaticResource confrTile}">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource
+                                                                    AncestorType={x:Type viewmodel:CategoriesViewModel}}}"
+                                         CommandParameter="{Binding CategoryID}" />
+                        </Frame.GestureRecognizers>
                         <Grid>
                             <Label Style="{StaticResource lblTile}" Text="{Binding CategoryName}" />
-                            <ImageButton Source="right_arrow.png"
-                                         Style="{x:StaticResource ibtnTile}"
-                                         Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}"
-                                         CommandParameter="{Binding CategoryID}"/>
                         </Grid>
                     </Frame>
                     

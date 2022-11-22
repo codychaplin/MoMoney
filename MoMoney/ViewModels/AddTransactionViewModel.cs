@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
-using System.Collections.ObjectModel;
 
 namespace MoMoney.ViewModels
 {
@@ -21,22 +21,22 @@ namespace MoMoney.ViewModels
         public DateTime date;
 
         [ObservableProperty]
-        public int accountID;
+        public Account account = new();
 
         [ObservableProperty]
         public decimal amount;
 
         [ObservableProperty]
-        public int categoryID;
+        public Category category = new();
 
         [ObservableProperty]
-        public int subcategoryID;
+        public Category subcategory = new();
 
         [ObservableProperty]
         public string payee;
 
         [ObservableProperty]
-        public int? transferID;
+        public Account transferAccount = new();
 
         /// <summary>
         /// Gets accounts from database and refreshes Accounts collection
@@ -56,7 +56,7 @@ namespace MoMoney.ViewModels
         public async Task GetIncomeCategory()
         {
             Categories.Clear();
-            var income = await CategoryService.GetCategory(1);
+            var income = await CategoryService.GetCategory(Constants.INCOME_ID);
             Categories.Add(income);
 
             Subcategories.Clear();
@@ -68,7 +68,7 @@ namespace MoMoney.ViewModels
         public async Task GetTransferCategory()
         {
             Categories.Clear();
-            var transfer = await CategoryService.GetCategory(2);
+            var transfer = await CategoryService.GetCategory(Constants.TRANSFER_ID);
             Categories.Add(transfer);
 
             Subcategories.Clear();
@@ -110,25 +110,24 @@ namespace MoMoney.ViewModels
         {
             try
             {
-                if (CategoryID == Constants.INCOME_ID) // income = regular
+                if (Category.CategoryID == Constants.INCOME_ID) // income = regular
                 {
-                    await TransactionService.AddTransaction(Date, AccountID, Amount, CategoryID, SubcategoryID, Payee, null);
+                    await TransactionService.AddTransaction(Date, Account.AccountID, Amount, Category.CategoryID, Subcategory.CategoryID, Payee, null);
                 }
-                else if (CategoryID == Constants.TRANSFER_ID) // transfer = 2 transactions
+                else if (Category.CategoryID == Constants.TRANSFER_ID) // transfer = 2 transactions
                 {
                     // must cache Observable Properties because they reset after being added to db
                     var _date = Date;
-                    var _accountID = AccountID;
+                    var _accountID = Account.AccountID;
                     var _amount = Amount;
-                    var _categoryID = CategoryID;
-                    var _payee = Payee;
-                    var _transferID = TransferID;
-                    await TransactionService.AddTransaction(_date, _accountID, -_amount, _categoryID, Constants.DEBIT_ID, _payee, _transferID);
-                    await TransactionService.AddTransaction(_date, (int)_transferID, _amount, _categoryID, Constants.CREDIT_ID, _payee, _accountID);
+                    var _categoryID = Category.CategoryID;
+                    var _transferID = TransferAccount.AccountID;
+                    await TransactionService.AddTransaction(_date, _accountID, -_amount, _categoryID, Constants.DEBIT_ID, "", _transferID);
+                    await TransactionService.AddTransaction(_date, _transferID, _amount, _categoryID, Constants.CREDIT_ID, "", _accountID);
                 }
-                else if (CategoryID >= Constants.EXPENSE_ID) // expense = negative amount
+                else if (Category.CategoryID >= Constants.EXPENSE_ID) // expense = negative amount
                 {
-                    await TransactionService.AddTransaction(Date, AccountID, -Amount, CategoryID, SubcategoryID, Payee, null);
+                    await TransactionService.AddTransaction(Date, Account.AccountID, -Amount, Category.CategoryID, Category.CategoryID, Payee, null);
                 }
             }
             catch (Exception ex)
