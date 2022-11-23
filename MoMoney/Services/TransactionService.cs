@@ -85,7 +85,7 @@ namespace MoMoney.Services
         {
             await Init();
 
-            return await MoMoneydb.db.Table<Transaction>().ToListAsync();
+            return await MoMoneydb.db.Table<Transaction>().OrderBy(t => t.Date).ToListAsync();
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
+using MoMoney.Views;
 
 namespace MoMoney.ViewModels
 {
@@ -39,6 +40,7 @@ namespace MoMoney.ViewModels
         public Category InitialCategory { get; private set; }
         public Category InitialSubcategory { get; private set; }
         public Account InitialPayeeAccount { get; private set; }
+        Transaction InitialTransaction;
 
         /// <summary>
         /// Gets Transaction using ID and updates Account, Category, and Subcategory
@@ -48,6 +50,16 @@ namespace MoMoney.ViewModels
             if (int.TryParse(ID, out int id))
             {
                 Transaction = await TransactionService.GetTransaction(id);
+                InitialTransaction = new Transaction
+                {
+                    Date = Transaction.Date,
+                    AccountID = Transaction.AccountID,
+                    Amount = Transaction.Amount,
+                    CategoryID = Transaction.CategoryID,
+                    SubcategoryID = Transaction.SubcategoryID,
+                    Payee = Transaction.Payee,
+                    TransferID = Transaction.TransferID
+                };
                 InitialAccount = await AccountService.GetAccount(Transaction.AccountID);
                 InitialCategory = await CategoryService.GetCategory(Transaction.CategoryID);
                 InitialSubcategory = await CategoryService.GetCategory(Transaction.SubcategoryID);
@@ -164,6 +176,13 @@ namespace MoMoney.ViewModels
                 Transaction.CategoryID = Category.CategoryID;
                 Transaction.SubcategoryID = Subcategory.CategoryID;
                 Transaction.TransferID = (PayeeAccount != null) ? PayeeAccount.AccountID : null;
+
+                if (Transaction == InitialTransaction) // if nothing has changed, don't update
+                {
+                    await Shell.Current.GoToAsync("..");
+                    return;
+                }
+
                 await TransactionService.UpdateTransaction(Transaction);
 
                 // if transfer, update other side of transfer
@@ -178,6 +197,8 @@ namespace MoMoney.ViewModels
                         otherTrans.Amount = Transaction.Amount * -1;
                     await TransactionService.UpdateTransaction(otherTrans);
                 }
+
+                TransactionsPage.TabSelectionChanged?.Invoke(this, new EventArgs());
                 await Shell.Current.GoToAsync("..");
             }
         }
@@ -193,6 +214,7 @@ namespace MoMoney.ViewModels
             if (flag)
             {
                 await TransactionService.RemoveTransaction(Transaction.TransactionID);
+                TransactionsPage.TabSelectionChanged?.Invoke(this, new EventArgs());
                 await Shell.Current.GoToAsync("..");
             }
         }

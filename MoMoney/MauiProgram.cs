@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using MoMoney.Views;
 using Syncfusion.Maui.Core.Hosting;
 
 namespace MoMoney;

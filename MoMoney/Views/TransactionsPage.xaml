@@ -3,11 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.TransactionsPage"
              NavigationPage.HasNavigationBar="False"
+             xmlns:local="clr-namespace:MoMoney"
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
-             xmlns:local="clr-namespace:MoMoney"
              x:DataType="viewmodel:TransactionsViewModel"
-             Loaded="ContentPage_Loaded"
              Title="">
 
     <ContentPage.BindingContext>

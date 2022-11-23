@@ -1,9 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using MoMoney.Views;
 using MoMoney.Models;
 using MoMoney.Services;
-using MoMoney.Views;
-using System.Collections.ObjectModel;
 
 namespace MoMoney.ViewModels
 {
@@ -11,6 +11,8 @@ namespace MoMoney.ViewModels
     {
         [ObservableProperty]
         public ObservableCollection<Transaction> transactions = new();
+
+        public bool HasChanged { get; set; }
 
         /// <summary>
         /// Gets updated transactions from database and refreshes Transactions collection

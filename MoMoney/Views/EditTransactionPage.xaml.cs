@@ -38,17 +38,15 @@ public partial class EditTransactionPage : ContentPage
         await Task.Delay(200); // delay needed to give 'pckCategory_SelectedIndexChanged' time to process
         pckSubcategory.SelectedIndex = pckSubcategory.Items.IndexOf(vm.InitialSubcategory.CategoryName);
 
-        if (vm.InitialCategory.CategoryID == Constants.TRANSFER_ID)
-            pckPayeeAccount.SelectedIndex = pckPayeeAccount.Items.IndexOf(vm.InitialPayeeAccount.AccountName);
-
         // if income, disable category change
-        // if transfer, disable category/subcategory change and make frPayeeAccount visible
+        // if transfer, select index, disable category/subcategory change, and make frPayeeAccount visible
         if (vm.InitialCategory.CategoryID == Constants.INCOME_ID)
         {
             pckCategory.IsEnabled = false;
         }
         else if (vm.InitialCategory.CategoryID == Constants.TRANSFER_ID)
         {
+            pckPayeeAccount.SelectedIndex = pckPayeeAccount.Items.IndexOf(vm.InitialPayeeAccount.AccountName);
             pckCategory.IsEnabled = false;
             pckSubcategory.IsEnabled = false;
             frPayee.IsVisible = false;

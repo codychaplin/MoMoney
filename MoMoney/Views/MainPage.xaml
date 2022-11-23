@@ -12,6 +12,7 @@
         <tabView:SfTabView x:Name="tvTabBar"
                            TabBarPlacement="Bottom"
                            TabBarHeight="40"
+                           SelectionChanged="tvTabBar_SelectionChanged"
                            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                            IndicatorBackground="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource White}}">
 
