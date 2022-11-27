@@ -1,21 +1,36 @@
-﻿using SQLite;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SQLite;
 
 namespace MoMoney.Models
 {
     #pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
     #pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
 
-    public class Transaction
+    public partial class Transaction : ObservableObject
     {
         [PrimaryKey, AutoIncrement]
         public int TransactionID { get; set; }
-        public DateTime Date { get; set; }
-        public int AccountID { get; set; }
-        public decimal Amount { get; set; }
-        public int CategoryID { get; set; }
-        public int SubcategoryID { get; set; }
-        public string Payee { get; set; }
-        public int? TransferID { get; set; }
+
+        [ObservableProperty]
+        public DateTime date;
+
+        [ObservableProperty]
+        public int accountID;
+
+        [ObservableProperty]
+        public decimal amount;
+
+        [ObservableProperty]
+        public int categoryID;
+
+        [ObservableProperty]
+        public int subcategoryID;
+
+        [ObservableProperty]
+        public string payee;
+
+        [ObservableProperty]
+        public int? transferID;
 
         public static bool operator ==(Transaction trans1, Transaction trans2)
         {

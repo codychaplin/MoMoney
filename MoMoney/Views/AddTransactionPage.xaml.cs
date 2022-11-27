@@ -131,6 +131,7 @@ public partial class AddTransactionPage : ContentPage
     private void btnClear_Clicked(object sender, EventArgs e)
     {
         Clear();
+        vm.Categories.Clear();
         pckCategory.IsEnabled = false;
         pckSubcategory.IsEnabled = false;
         ChangeButtonColour(new Button());
@@ -144,6 +145,8 @@ public partial class AddTransactionPage : ContentPage
     private void btnEnter_Clicked(object sender, EventArgs e)
     {
         Clear();
+        pckCategory.SelectedIndex = -1;
+        pckSubcategory.SelectedIndex = -1;
     }
 
     /// <summary>
@@ -152,11 +155,9 @@ public partial class AddTransactionPage : ContentPage
     void Clear()
     {
         dtDate.Date = DateTime.Now;
-        pckAccount.SelectedItem = null;
-        txtAmount.Text = "";
-        txtPayee.Text = "";
+        pckAccount.SelectedIndex = -1;
         vm.Amount = 0;
-        vm.Categories.Clear();
+        vm.Payee = "";
         vm.Subcategories.Clear();
     }
 }

@@ -2,7 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
+using MoMoney.Views;
 using MoMoney.Services;
+using MoMoney.Exceptions;
 
 namespace MoMoney.ViewModels
 {
@@ -110,9 +112,11 @@ namespace MoMoney.ViewModels
         {
             try
             {
+                Transaction transaction = new();
+
                 if (Category.CategoryID == Constants.INCOME_ID) // income = regular
                 {
-                    await TransactionService.AddTransaction(Date, Account.AccountID, Amount, Category.CategoryID, Subcategory.CategoryID, Payee, null);
+                    transaction = await TransactionService.AddTransaction(Date, Account.AccountID, Amount, Category.CategoryID, Subcategory.CategoryID, Payee, null);
                 }
                 else if (Category.CategoryID == Constants.TRANSFER_ID) // transfer = 2 transactions
                 {
@@ -122,15 +126,22 @@ namespace MoMoney.ViewModels
                     var _amount = Amount;
                     var _categoryID = Category.CategoryID;
                     var _transferID = TransferAccount.AccountID;
-                    await TransactionService.AddTransaction(_date, _accountID, -_amount, _categoryID, Constants.DEBIT_ID, "", _transferID);
+                    transaction = await TransactionService.AddTransaction(_date, _accountID, -_amount, _categoryID, Constants.DEBIT_ID, "", _transferID);
                     await TransactionService.AddTransaction(_date, _transferID, _amount, _categoryID, Constants.CREDIT_ID, "", _accountID);
                 }
                 else if (Category.CategoryID >= Constants.EXPENSE_ID) // expense = negative amount
                 {
-                    await TransactionService.AddTransaction(Date, Account.AccountID, -Amount, Category.CategoryID, Category.CategoryID, Payee, null);
+                    transaction = await TransactionService.AddTransaction(Date, Account.AccountID, -Amount, Category.CategoryID, Subcategory.CategoryID, Payee, null);
                 }
+
+                if (transaction is null)
+                    throw new InvalidTransactionException("Could not get new Transaction from database");
+
+                // update TransactionsPage Transactions
+                var args = new TransactionEventArgs(transaction, TransactionEventArgs.CRUD.Create);
+                TransactionsPage.TransactionsChanged?.Invoke(this, args);
             }
-            catch (Exception ex)
+            catch (InvalidTransactionException ex)
             {
                 // if invalid, display error
                 await Shell.Current.DisplayAlert("Error", ex.Message, "OK");

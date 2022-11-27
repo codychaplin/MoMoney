@@ -1,9 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MoMoney.Views;
 using MoMoney.Models;
 using MoMoney.Services;
-using MoMoney.Views;
+using MoMoney.Exceptions;
 
 namespace MoMoney.ViewModels
 {
@@ -40,6 +41,7 @@ namespace MoMoney.ViewModels
         public Category InitialCategory { get; private set; }
         public Category InitialSubcategory { get; private set; }
         public Account InitialPayeeAccount { get; private set; }
+
         Transaction InitialTransaction;
 
         /// <summary>
@@ -49,33 +51,41 @@ namespace MoMoney.ViewModels
         {
             if (int.TryParse(ID, out int id))
             {
-                Transaction = await TransactionService.GetTransaction(id);
-                InitialTransaction = new Transaction
+                try
                 {
-                    Date = Transaction.Date,
-                    AccountID = Transaction.AccountID,
-                    Amount = Transaction.Amount,
-                    CategoryID = Transaction.CategoryID,
-                    SubcategoryID = Transaction.SubcategoryID,
-                    Payee = Transaction.Payee,
-                    TransferID = Transaction.TransferID
-                };
-                InitialAccount = await AccountService.GetAccount(Transaction.AccountID);
-                InitialCategory = await CategoryService.GetCategory(Transaction.CategoryID);
-                InitialSubcategory = await CategoryService.GetCategory(Transaction.SubcategoryID);
+                    Transaction = await TransactionService.GetTransaction(id);
 
-                if (InitialCategory.CategoryID >= Constants.EXPENSE_ID) // if expense, make amount appear positive for user
-                    Transaction.Amount *= -1;
-                else if (InitialCategory.CategoryID == Constants.TRANSFER_ID) // if transfer, set initial payee account
-                {
-                    // if debit, make amount appear positive for user
-                    if (InitialSubcategory.CategoryID == Constants.DEBIT_ID)
+                    InitialTransaction = new Transaction
+                    {
+                        Date = Transaction.Date,
+                        AccountID = Transaction.AccountID,
+                        Amount = Transaction.Amount,
+                        CategoryID = Transaction.CategoryID,
+                        SubcategoryID = Transaction.SubcategoryID,
+                        Payee = Transaction.Payee,
+                        TransferID = Transaction.TransferID
+                    };
+                    InitialAccount = await AccountService.GetAccount(InitialTransaction.AccountID);
+                    InitialCategory = await CategoryService.GetCategory(InitialTransaction.CategoryID);
+                    InitialSubcategory = await CategoryService.GetCategory(InitialTransaction.SubcategoryID);
+
+                    if (InitialCategory.CategoryID >= Constants.EXPENSE_ID) // if expense, make amount appear positive for user
                         Transaction.Amount *= -1;
-                    InitialPayeeAccount = await AccountService.GetAccount((int)Transaction.TransferID);
+                    else if (InitialCategory.CategoryID == Constants.TRANSFER_ID) // if transfer, set initial payee account
+                    {
+                        // if debit, make amount appear positive for user
+                        if (InitialSubcategory.CategoryID == Constants.DEBIT_ID)
+                            Transaction.Amount *= -1;
+                        InitialPayeeAccount = await AccountService.GetAccount((int)Transaction.TransferID);
+                    }
+                }
+                catch (TransactionNotFoundException)
+                {
+                    await Shell.Current.DisplayAlert("Error", "Could not find transaction", "OK");
                 }
             }
             else
-                await Shell.Current.DisplayAlert("Error", "Could not find transaction", "OK");
+                await Shell.Current.DisplayAlert("Error", "Invalid Transaction ID", "OK");
         }
 
         /// <summary>
@@ -185,20 +195,37 @@ namespace MoMoney.ViewModels
 
                 await TransactionService.UpdateTransaction(Transaction);
 
+                // update TransactionsPage Transactions
+                var args = new TransactionEventArgs(Transaction, TransactionEventArgs.CRUD.Update);
+                TransactionsPage.TransactionsChanged?.Invoke(this, args);
+
                 // if transfer, update other side of transfer
                 if (Transaction.CategoryID == Constants.TRANSFER_ID)
                 {
+                    // get other Transaction
                     int transID = Transaction.TransactionID;
                     int otherTransID = (Transaction.SubcategoryID == Constants.DEBIT_ID) ? transID + 1 : transID - 1;
-                    Transaction otherTrans = await TransactionService.GetTransaction(otherTransID);
-                    otherTrans.AccountID = (int)Transaction.TransferID;
-                    otherTrans.TransferID = Transaction.AccountID;
-                    if (otherTrans.CategoryID == Constants.DEBIT_ID) // if debit, convert back to negative
+
+                    try
+                    {
+                        Transaction otherTrans = await TransactionService.GetTransaction(otherTransID);
+
+                        // update
+                        otherTrans.AccountID = (int)Transaction.TransferID;
+                        otherTrans.TransferID = Transaction.AccountID;
                         otherTrans.Amount = Transaction.Amount * -1;
-                    await TransactionService.UpdateTransaction(otherTrans);
+                        await TransactionService.UpdateTransaction(otherTrans);
+
+                        // update TransactionsPage Transactions
+                        args.Transaction = otherTrans;
+                        TransactionsPage.TransactionsChanged?.Invoke(this, args);
+                    }
+                    catch (TransactionNotFoundException)
+                    {
+                        await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
+                    }
                 }
 
-                TransactionsPage.TabSelectionChanged?.Invoke(this, new EventArgs());
                 await Shell.Current.GoToAsync("..");
             }
         }
@@ -214,7 +241,32 @@ namespace MoMoney.ViewModels
             if (flag)
             {
                 await TransactionService.RemoveTransaction(Transaction.TransactionID);
-                TransactionsPage.TabSelectionChanged?.Invoke(this, new EventArgs());
+
+                // update TransactionsPage Transactions
+                var args = new TransactionEventArgs(Transaction, TransactionEventArgs.CRUD.Delete);
+                TransactionsPage.TransactionsChanged?.Invoke(this, args);
+
+                if (Transaction.CategoryID == Constants.TRANSFER_ID)
+                {
+                    try
+                    {
+                        // get other Transaction
+                        int transID = Transaction.TransactionID;
+                        int otherTransID = (Transaction.SubcategoryID == Constants.DEBIT_ID) ? transID + 1 : transID - 1;
+                        Transaction otherTrans = await TransactionService.GetTransaction(otherTransID);
+
+                        await TransactionService.RemoveTransaction(otherTransID);
+
+                        // update TransactionsPage Transactions
+                        args.Transaction = otherTrans;
+                        TransactionsPage.TransactionsChanged?.Invoke(this, args);
+                    }
+                    catch (TransactionNotFoundException)
+                    {
+                        await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
+                    }
+                }
+
                 await Shell.Current.GoToAsync("..");
             }
         }

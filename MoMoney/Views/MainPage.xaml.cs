@@ -16,7 +16,8 @@ public partial class MainPage : ContentPage
 	{
 		if (tvTabBar.SelectedIndex == 1) // TransactionPage
 		{
-			TransactionsPage.TabSelectionChanged?.Invoke(this, e);
+			var args = new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read);
+			TransactionsPage.TransactionsChanged?.Invoke(this, args);
 		}
 	}
 }

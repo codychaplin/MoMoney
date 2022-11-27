@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace MoMoney
 {
     public static class Constants

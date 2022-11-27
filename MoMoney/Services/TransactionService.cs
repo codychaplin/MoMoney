@@ -1,4 +1,5 @@
 ﻿using MoMoney.Models;
+using MoMoney.Exceptions;
 
 namespace MoMoney.Services
 {
@@ -22,11 +23,18 @@ namespace MoMoney.Services
         /// <param name="subcategoryID"></param>
         /// <param name="payee"></param>
         /// <param name="transferID"></param>
-        public static async Task AddTransaction(DateTime date, int accountID, decimal amount, int categoryID, int subcategoryID, string payee, int? transferID)
+        /// <returns>Newly created Transaction</returns>
+        public static async Task<Transaction> AddTransaction(DateTime date, int accountID, decimal amount, int categoryID, int subcategoryID, string payee, int? transferID)
         {
             await Init();
 
-            if (accountID > 0 || categoryID > 0 || subcategoryID > 0)
+            if (date.Year > 2000 ||
+                accountID > 0 ||
+                amount != 0 ||
+                categoryID > 0 ||
+                subcategoryID > 0 ||
+                !string.IsNullOrEmpty(payee) ||
+                (transferID == null || transferID > 0))
             {
                 if (accountID != transferID)
                 {
@@ -42,15 +50,16 @@ namespace MoMoney.Services
                     };
 
                     await MoMoneydb.db.InsertAsync(transaction);
+                    return transaction;
                 }
                 else
                 {
-                    throw new Exception("Cannot transfer to and from the same account");
+                    throw new InvalidTransactionException("Cannot transfer to and from the same account");
                 }
             }
             else
             {
-                throw new Exception("Transaction not valid");
+                throw new InvalidTransactionException("Transaction not valid");
             }
         }
 
@@ -66,15 +75,31 @@ namespace MoMoney.Services
         }
 
         /// <summary>
-        /// Gets an transaction from the transactions table using an ID
+        /// Removes Transaction from Transactions table
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns>Transaction object</returns>
-        public static async Task<Transaction> GetTransaction(int id)
+        /// <param name="ID"></param>
+        public static async Task RemoveTransaction(int ID)
         {
             await Init();
 
-            return await MoMoneydb.db.Table<Transaction>().FirstOrDefaultAsync(t => t.TransactionID == id);
+            await MoMoneydb.db.DeleteAsync<Transaction>(ID);
+        }
+
+        /// <summary>
+        /// Gets an transaction from the transactions table using an ID
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns>Transaction object</returns>
+        public static async Task<Transaction> GetTransaction(int ID)
+        {
+            await Init();
+
+            var transaction = await MoMoneydb.db.Table<Transaction>().FirstOrDefaultAsync(t => t.TransactionID == ID);
+
+            if (transaction is null)
+                throw new TransactionNotFoundException();
+            else
+                return transaction;
         }
 
         /// <summary>
@@ -97,19 +122,6 @@ namespace MoMoney.Services
             await Init();
 
             return await MoMoneydb.db.Table<Transaction>().OrderByDescending(t => t.Date).Take(5).ToListAsync();
-        }
-
-
-
-        /// <summary>
-        /// Removes Transaction from Transactions table
-        /// </summary>
-        /// <param name="ID"></param>
-        public static async Task RemoveTransaction(int ID)
-        {
-            await Init();
-
-            await MoMoneydb.db.DeleteAsync<Transaction>(ID);
         }
     }
 }
