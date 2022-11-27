@@ -18,5 +18,11 @@ namespace MoMoney.ViewModels
         {
             await Shell.Current.GoToAsync(nameof(CategoriesPage));
         }
+
+        [RelayCommand]
+        async Task CalculateBalance()
+        {
+            
+        }
     }
 }

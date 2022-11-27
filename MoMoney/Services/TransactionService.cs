@@ -24,43 +24,26 @@ namespace MoMoney.Services
         /// <param name="payee"></param>
         /// <param name="transferID"></param>
         /// <returns>Newly created Transaction</returns>
-        public static async Task<Transaction> AddTransaction(DateTime date, int accountID, decimal amount, int categoryID, int subcategoryID, string payee, int? transferID)
+        public static async Task<Transaction> AddTransaction(DateTime date, int accountID, decimal amount, int categoryID,
+            int subcategoryID, string payee, int? transferID)
         {
             await Init();
 
-            if (date.Year > 2000 ||
-                accountID > 0 ||
-                amount != 0 ||
-                categoryID > 0 ||
-                subcategoryID > 0 ||
-                !string.IsNullOrEmpty(payee) ||
-                (transferID == null || transferID > 0))
-            {
-                if (accountID != transferID)
-                {
-                    var transaction = new Transaction
-                    {
-                        Date = date,
-                        AccountID = accountID,
-                        Amount = amount,
-                        CategoryID = categoryID,
-                        SubcategoryID = subcategoryID,
-                        Payee = payee,
-                        TransferID = transferID
-                    };
+            ValidateTransaction(date, accountID, amount, categoryID, subcategoryID, payee, transferID);
 
-                    await MoMoneydb.db.InsertAsync(transaction);
-                    return transaction;
-                }
-                else
-                {
-                    throw new InvalidTransactionException("Cannot transfer to and from the same account");
-                }
-            }
-            else
+            var transaction = new Transaction
             {
-                throw new InvalidTransactionException("Transaction not valid");
-            }
+                Date = date,
+                AccountID = accountID,
+                Amount = amount,
+                CategoryID = categoryID,
+                SubcategoryID = subcategoryID,
+                Payee = payee,
+                TransferID = transferID
+            };
+
+            await MoMoneydb.db.InsertAsync(transaction);
+            return transaction;
         }
 
         /// <summary>
@@ -70,6 +53,10 @@ namespace MoMoney.Services
         public static async Task UpdateTransaction(Transaction updatedTransaction)
         {
             await Init();
+
+            ValidateTransaction(updatedTransaction.Date, updatedTransaction.AccountID, updatedTransaction.Amount,
+                                updatedTransaction.CategoryID, updatedTransaction.SubcategoryID, updatedTransaction.Payee,
+                                updatedTransaction.TransferID);
 
             await MoMoneydb.db.UpdateAsync(updatedTransaction);
         }
@@ -122,6 +109,27 @@ namespace MoMoney.Services
             await Init();
 
             return await MoMoneydb.db.Table<Transaction>().OrderByDescending(t => t.Date).Take(5).ToListAsync();
+        }
+
+        static void ValidateTransaction(DateTime date, int accountID, decimal amount, int categoryID,
+            int subcategoryID, string payee, int? transferID)
+        {
+            if (date.Year < 2000)
+                throw new InvalidTransactionException("Invalid Date");
+            if (accountID < 1)
+                throw new InvalidTransactionException("Invalid Account");
+            if (amount == 0)
+                throw new InvalidTransactionException("Amount cannot be 0");
+            if (categoryID < 1)
+                throw new InvalidTransactionException("Invalid Category");
+            if (subcategoryID < 1)
+                throw new InvalidTransactionException("Invalid Subcategory");
+            if (string.IsNullOrEmpty(payee))
+                throw new InvalidTransactionException("Payee cannot be blank");
+            if (transferID != null || transferID < 1)
+                throw new InvalidTransactionException("Invalid Transfer Account");
+            if (accountID == transferID)
+                throw new InvalidTransactionException("Cannot transfer to and from the same Account");
         }
     }
 }

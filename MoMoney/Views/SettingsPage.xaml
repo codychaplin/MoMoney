@@ -24,6 +24,7 @@
             <Label Text="Data" FontSize="18" Margin="0,0,0,10" />
             <Button x:Name="btnAccounts" Text="Accounts" Command="{Binding GoToAccountsCommand}" />
             <Button x:Name="btnCategories" Text="Categories" Command="{Binding GoToCategoriesCommand}" />
+            <Button x:Name="btnTest" Text="Calculate Account Balance" Command="{Binding CalculateBalanceCommand}" />
         </VerticalStackLayout>
     </Frame>
 

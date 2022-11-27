@@ -185,7 +185,7 @@ namespace MoMoney.ViewModels
                 Transaction.AccountID = Account.AccountID;
                 Transaction.CategoryID = Category.CategoryID;
                 Transaction.SubcategoryID = Subcategory.CategoryID;
-                Transaction.TransferID = (PayeeAccount != null) ? PayeeAccount.AccountID : null;
+                Transaction.TransferID = PayeeAccount?.AccountID;
 
                 if (Transaction == InitialTransaction) // if nothing has changed, don't update
                 {

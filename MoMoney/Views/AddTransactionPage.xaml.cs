@@ -159,5 +159,7 @@ public partial class AddTransactionPage : ContentPage
         vm.Amount = 0;
         vm.Payee = "";
         vm.Subcategories.Clear();
+        frPayee.IsVisible = true;
+        frTransferTo.IsVisible = false;
     }
 }
