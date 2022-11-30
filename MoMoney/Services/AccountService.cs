@@ -92,5 +92,15 @@ namespace MoMoney.Services
 
             return await MoMoneydb.db.Table<Account>().Where(a => a.Enabled).ToListAsync();
         }
+
+        /// <summary>
+        /// Updates CurrentBalance of specified Account
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="amount"></param>
+        public static async Task UpdateBalance(int ID, decimal amount)
+        {
+            await MoMoneydb.db.QueryAsync<Account>($"UPDATE Account SET CurrentBalance=CurrentBalance + {amount} WHERE AccountID={ID}");
+        }
     }
 }

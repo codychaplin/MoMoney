@@ -77,6 +77,7 @@ namespace MoMoney.Services
         /// </summary>
         /// <param name="ID"></param>
         /// <returns>Transaction object</returns>
+        /// <exception cref="TransactionNotFoundException"></exception>
         public static async Task<Transaction> GetTransaction(int ID)
         {
             await Init();
@@ -111,6 +112,17 @@ namespace MoMoney.Services
             return await MoMoneydb.db.Table<Transaction>().OrderByDescending(t => t.Date).Take(5).ToListAsync();
         }
 
+        /// <summary>
+        /// Validates input fields for Transactions
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="accountID"></param>
+        /// <param name="amount"></param>
+        /// <param name="categoryID"></param>
+        /// <param name="subcategoryID"></param>
+        /// <param name="payee"></param>
+        /// <param name="transferID"></param>
+        /// <exception cref="InvalidTransactionException"></exception>
         static void ValidateTransaction(DateTime date, int accountID, decimal amount, int categoryID,
             int subcategoryID, string payee, int? transferID)
         {
@@ -124,12 +136,10 @@ namespace MoMoney.Services
                 throw new InvalidTransactionException("Invalid Category");
             if (subcategoryID < 1)
                 throw new InvalidTransactionException("Invalid Subcategory");
-            if (string.IsNullOrEmpty(payee))
+            if (categoryID != Constants.TRANSFER_ID && string.IsNullOrEmpty(payee))
                 throw new InvalidTransactionException("Payee cannot be blank");
-            if (transferID != null || transferID < 1)
+            if (transferID != null && transferID < 1)
                 throw new InvalidTransactionException("Invalid Transfer Account");
-            if (accountID == transferID)
-                throw new InvalidTransactionException("Cannot transfer to and from the same Account");
         }
     }
 }

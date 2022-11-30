@@ -178,22 +178,41 @@ namespace MoMoney.ViewModels
             }
             else
             {
-                // update transaction
-                if (InitialCategory.CategoryID >= Constants.EXPENSE_ID ||
-                    InitialSubcategory.CategoryID == Constants.DEBIT_ID) // if expense or transfer debit, convert back to negative
+                // if expense or transfer debit, convert back to negative
+                if (InitialCategory.CategoryID >= Constants.EXPENSE_ID || InitialSubcategory.CategoryID == Constants.DEBIT_ID)
                     Transaction.Amount *= -1;
+                // update transaction
                 Transaction.AccountID = Account.AccountID;
                 Transaction.CategoryID = Category.CategoryID;
                 Transaction.SubcategoryID = Subcategory.CategoryID;
                 Transaction.TransferID = PayeeAccount?.AccountID;
 
-                if (Transaction == InitialTransaction) // if nothing has changed, don't update
+                // if nothing has changed, don't update
+                if (Transaction == InitialTransaction)
                 {
                     await Shell.Current.GoToAsync("..");
                     return;
                 }
 
+                // if account and transfer account are same, don't update
+                if (Transaction.AccountID == Transaction.TransferID)
+                {
+                    await Shell.Current.DisplayAlert("Error", "Cannot transfer to and from the same Account", "OK");
+                    return;
+                }
+
                 await TransactionService.UpdateTransaction(Transaction);
+
+                // if account unchanged, update account balance
+                if (InitialAccount.AccountID == Transaction.AccountID)
+                {
+                    await AccountService.UpdateBalance(Transaction.AccountID, Transaction.Amount - InitialTransaction.Amount);
+                }
+                else // if account changed, updated original and new account balance
+                {
+                    await AccountService.UpdateBalance(InitialAccount.AccountID, -InitialTransaction.Amount);
+                    await AccountService.UpdateBalance(Transaction.AccountID, Transaction.Amount);
+                }
 
                 // update TransactionsPage Transactions
                 var args = new TransactionEventArgs(Transaction, TransactionEventArgs.CRUD.Update);
@@ -215,6 +234,17 @@ namespace MoMoney.ViewModels
                         otherTrans.TransferID = Transaction.AccountID;
                         otherTrans.Amount = Transaction.Amount * -1;
                         await TransactionService.UpdateTransaction(otherTrans);
+
+                        // if payee unchanged, update payee account balance
+                        if (InitialTransaction.TransferID == Transaction.TransferID)
+                        {
+                            await AccountService.UpdateBalance(otherTrans.AccountID, InitialTransaction.Amount - Transaction.Amount);
+                        }
+                        else
+                        {
+                            await AccountService.UpdateBalance((int)InitialTransaction.TransferID, InitialTransaction.Amount);
+                            await AccountService.UpdateBalance(otherTrans.AccountID, -Transaction.Amount);
+                        }
 
                         // update TransactionsPage Transactions
                         args.Transaction = otherTrans;
@@ -240,7 +270,10 @@ namespace MoMoney.ViewModels
 
             if (flag)
             {
+                // remove Transaction and update corresponding Account balance
                 await TransactionService.RemoveTransaction(Transaction.TransactionID);
+                decimal amount = (Transaction.CategoryID == Constants.INCOME_ID) ? -Transaction.Amount : Transaction.Amount;
+                await AccountService.UpdateBalance(Transaction.AccountID, amount);
 
                 // update TransactionsPage Transactions
                 var args = new TransactionEventArgs(Transaction, TransactionEventArgs.CRUD.Delete);
@@ -255,7 +288,9 @@ namespace MoMoney.ViewModels
                         int otherTransID = (Transaction.SubcategoryID == Constants.DEBIT_ID) ? transID + 1 : transID - 1;
                         Transaction otherTrans = await TransactionService.GetTransaction(otherTransID);
 
+                        // remove Transaction and update corresponding Account balance
                         await TransactionService.RemoveTransaction(otherTransID);
+                        await AccountService.UpdateBalance(otherTrans.AccountID, -amount);
 
                         // update TransactionsPage Transactions
                         args.Transaction = otherTrans;

@@ -1,5 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Views.Settings;
 
 namespace MoMoney.ViewModels
@@ -17,12 +17,6 @@ namespace MoMoney.ViewModels
         async Task GoToCategories()
         {
             await Shell.Current.GoToAsync(nameof(CategoriesPage));
-        }
-
-        [RelayCommand]
-        async Task CalculateBalance()
-        {
-            
         }
     }
 }

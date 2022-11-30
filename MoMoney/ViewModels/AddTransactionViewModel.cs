@@ -116,7 +116,7 @@ namespace MoMoney.ViewModels
 
                 if (Category.CategoryID == Constants.INCOME_ID) // income = regular
                 {
-                    transaction = await TransactionService.AddTransaction(Date, Account.AccountID, Amount, Category.CategoryID, Subcategory.CategoryID, Payee, null);
+                    transaction = await TransactionService.AddTransaction(Date, Account.AccountID, Amount,Category.CategoryID, Subcategory.CategoryID, Payee, null);
                 }
                 else if (Category.CategoryID == Constants.TRANSFER_ID) // transfer = 2 transactions
                 {
@@ -128,6 +128,8 @@ namespace MoMoney.ViewModels
                     var _transferID = TransferAccount.AccountID;
                     transaction = await TransactionService.AddTransaction(_date, _accountID, -_amount, _categoryID, Constants.DEBIT_ID, "", _transferID);
                     await TransactionService.AddTransaction(_date, _transferID, _amount, _categoryID, Constants.CREDIT_ID, "", _accountID);
+
+                    await AccountService.UpdateBalance(_transferID, _amount); // update corresponding Account balance
                 }
                 else if (Category.CategoryID >= Constants.EXPENSE_ID) // expense = negative amount
                 {
@@ -136,6 +138,8 @@ namespace MoMoney.ViewModels
 
                 if (transaction is null)
                     throw new InvalidTransactionException("Could not get new Transaction from database");
+
+                await AccountService.UpdateBalance(transaction.AccountID, transaction.Amount); // update corresponding Account balance
 
                 // update TransactionsPage Transactions
                 var args = new TransactionEventArgs(transaction, TransactionEventArgs.CRUD.Create);
