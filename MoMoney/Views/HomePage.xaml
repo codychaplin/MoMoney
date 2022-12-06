@@ -77,10 +77,13 @@
                                     Grid.Row="1"
                                     BackgroundColor="Transparent"
                                     HorizontalOptions="FillAndExpand"
-                                    VerticalOptions="FillAndExpand">
+                                    VerticalOptions="FillAndExpand"
+                                    Margin="0,0,10,0">
+
+                <!-- title -->
                 <chart:SfCartesianChart.Title>
                     <Label x:Name="chrtBalanceTitle"
-                           Text="$1234.56"
+                           Text="{Binding Total, StringFormat='{0:C2}'}"
                            Margin="5"
                            HorizontalOptions="Fill"
                            HorizontalTextAlignment="Center"
@@ -88,6 +91,51 @@
                            FontSize="25"
                            FontAttributes="Bold" />
                 </chart:SfCartesianChart.Title>
+
+                <!-- X axis -->
+                <chart:SfCartesianChart.XAxes>
+                    <chart:DateTimeAxis ShowMajorGridLines="False" ShowMinorGridLines="False">
+                        <!-- label -->
+                        <chart:DateTimeAxis.LabelStyle>
+                            <chart:ChartAxisLabelStyle TextColor="White" LabelFormat="MMM-dd" />
+                        </chart:DateTimeAxis.LabelStyle>
+                        <!-- axis lines -->
+                        <chart:DateTimeAxis.AxisLineStyle>
+                            <chart:ChartLineStyle StrokeWidth ="1" Stroke="{StaticResource Gray300}"/>
+                        </chart:DateTimeAxis.AxisLineStyle>
+                        <!-- tick lines -->
+                        <chart:DateTimeAxis.MajorTickStyle>
+                            <chart:ChartAxisTickStyle StrokeWidth ="0" />
+                        </chart:DateTimeAxis.MajorTickStyle>
+                    </chart:DateTimeAxis>
+                </chart:SfCartesianChart.XAxes>
+
+                <!-- Y axis -->
+                <chart:SfCartesianChart.YAxes>
+                    <chart:NumericalAxis ShowMajorGridLines="False" ShowMinorGridLines="False">
+                        <!-- label -->
+                        <chart:NumericalAxis.LabelStyle>
+                            <chart:ChartAxisLabelStyle TextColor="White" LabelFormat="c0" />
+                        </chart:NumericalAxis.LabelStyle>
+                        <!-- axis lines -->
+                        <chart:NumericalAxis.AxisLineStyle>
+                            <chart:ChartLineStyle StrokeWidth ="1" Stroke="{StaticResource Gray300}"/>
+                        </chart:NumericalAxis.AxisLineStyle>
+                        <!-- tick lines -->
+                        <chart:NumericalAxis.MajorTickStyle>
+                            <chart:ChartAxisTickStyle StrokeWidth ="0" />
+                        </chart:NumericalAxis.MajorTickStyle>
+                    </chart:NumericalAxis>
+                </chart:SfCartesianChart.YAxes>
+
+                <!-- series -->
+                <chart:SplineSeries ItemsSource="{Binding Data}"
+                                    XBindingPath="Date"
+					                YBindingPath="Balance"
+                                    Fill="White"
+                                    StrokeWidth="2"
+                                    Type="Natural" />
+                
             </chart:SfCartesianChart>
 
             <!-- stats -->

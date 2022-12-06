@@ -113,6 +113,20 @@ namespace MoMoney.Services
         }
 
         /// <summary>
+        /// Gets all Transactions between specified dates from Transaction table as a list
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns>List of Transaction objects between the specified dates</returns>
+        public static async Task<IEnumerable<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to)
+        {
+            await Init();
+
+            return await MoMoneydb.db.Table<Transaction>().Where(t => t.Date >= from && t.Date <= to)
+                                                          .OrderBy(t => t.Date).ToListAsync();
+        }
+
+        /// <summary>
         /// Validates input fields for Transactions
         /// </summary>
         /// <param name="date"></param>

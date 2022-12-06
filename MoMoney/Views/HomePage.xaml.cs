@@ -20,6 +20,8 @@ public partial class HomePage : ContentPage
 
 	private async void ContentPage_Loaded(object sender, EventArgs e)
 	{
-		await vm.Refresh();
+		await vm.GetTotalBalance();
+		await vm.GetChartData();
+		await vm.GetRecentTransactions();
 	}
 }
