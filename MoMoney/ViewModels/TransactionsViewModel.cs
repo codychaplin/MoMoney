@@ -14,7 +14,7 @@ namespace MoMoney.ViewModels
         public ObservableCollection<Transaction> transactions = new();
 
         /// <summary>
-        /// Depending on CRUD operation, update Transactions collection
+        /// Depending on CRUD operation, update Transactions collection.
         /// </summary>
         public async Task Refresh(TransactionEventArgs e)
         {
@@ -42,7 +42,7 @@ namespace MoMoney.ViewModels
                 case TransactionEventArgs.CRUD.Read:
                 {
                     // get transactions from db, if count has changed, refresh Transactions collection
-                    var transactions = await TransactionService.GetTransactions();
+                    var transactions = await TransactionService.GetTransactionsFromTo(new DateTime(DateTime.Now.Year, 1, 1), DateTime.Now);
                     if (transactions.Count() != Transactions.Count)
                     {
                         Transactions.Clear();
@@ -53,6 +53,7 @@ namespace MoMoney.ViewModels
                 }
                 case TransactionEventArgs.CRUD.Update:
                 {
+                    // finds transaction via ID and update values
                     Transaction transaction = e.Transaction;
                     foreach (var trans in Transactions.Where(t => t.TransactionID == transaction.TransactionID))
                     {
@@ -68,6 +69,7 @@ namespace MoMoney.ViewModels
                 }
                 case TransactionEventArgs.CRUD.Delete:
                 {
+                    // removes transaction from collection
                     Transaction trans = Transactions.Where(t => t.TransactionID == e.Transaction.TransactionID).FirstOrDefault();
                     if (trans is not null)
                         Transactions.Remove(trans);
@@ -79,8 +81,9 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Goes to EditTransactionPage.xaml with a Transaction ID as a parameter
+        /// Goes to EditTransactionPage.xaml with a Transaction ID as a parameter.
         /// </summary>
+        /// <param name="ID"></param>
         [RelayCommand]
         async Task GoToEditTransaction(int ID)
         {

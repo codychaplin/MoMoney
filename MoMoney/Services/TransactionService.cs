@@ -6,7 +6,7 @@ namespace MoMoney.Services
     public static class TransactionService
     {
         /// <summary>
-        /// Creates Category table, if doesn't exist, add default categories
+        /// Calls db Init.
         /// </summary>
         public static async Task Init()
         {
@@ -14,7 +14,7 @@ namespace MoMoney.Services
         }
 
         /// <summary>
-        /// Creates new Transaction object and inserts into Transaction table
+        /// Creates new Transaction object and inserts into Transaction table.
         /// </summary>
         /// <param name="date"></param>
         /// <param name="accountID"></param>
@@ -47,7 +47,7 @@ namespace MoMoney.Services
         }
 
         /// <summary>
-        /// Given an Transaction object, updates the corresponding transaction in the Transactions table
+        /// Given an Transaction object, updates the corresponding transaction in the Transactions table.
         /// </summary>
         /// <param name="updatedTransaction"></param>
         public static async Task UpdateTransaction(Transaction updatedTransaction)
@@ -62,7 +62,7 @@ namespace MoMoney.Services
         }
 
         /// <summary>
-        /// Removes Transaction from Transactions table
+        /// Removes Transaction from Transactions table.
         /// </summary>
         /// <param name="ID"></param>
         public static async Task RemoveTransaction(int ID)
@@ -73,7 +73,7 @@ namespace MoMoney.Services
         }
 
         /// <summary>
-        /// Gets an transaction from the transactions table using an ID
+        /// Gets an transaction from the transactions table using an ID.
         /// </summary>
         /// <param name="ID"></param>
         /// <returns>Transaction object</returns>
@@ -91,7 +91,7 @@ namespace MoMoney.Services
         }
 
         /// <summary>
-        /// Gets all Transactions from Transaction table as a list
+        /// Gets all Transactions from Transaction table as a list.
         /// </summary>
         /// <returns>List of Transaction objects</returns>
         public static async Task<IEnumerable<Transaction>> GetTransactions()
@@ -102,7 +102,7 @@ namespace MoMoney.Services
         }
 
         /// <summary>
-        /// Gets last 5 Transactions from Transaction table as a list
+        /// Gets last 5 Transactions from Transaction table as a list.
         /// </summary>
         /// <returns>List of Transaction objects</returns>
         public static async Task<IEnumerable<Transaction>> GetRecentTransactions()
@@ -113,7 +113,7 @@ namespace MoMoney.Services
         }
 
         /// <summary>
-        /// Gets all Transactions between specified dates from Transaction table as a list
+        /// Gets all Transactions between specified dates from Transaction table as a list.
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
@@ -127,7 +127,7 @@ namespace MoMoney.Services
         }
 
         /// <summary>
-        /// Validates input fields for Transactions
+        /// Validates input fields for Transactions.
         /// </summary>
         /// <param name="date"></param>
         /// <param name="accountID"></param>

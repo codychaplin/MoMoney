@@ -19,6 +19,11 @@ public partial class EditAccountPage : ContentPage
         await vm.GetAccount();
     }
 
+    /// <summary>
+    /// Clears input fields in view.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void btnClear_Clicked(object sender, EventArgs e)
 	{
 		txtName.Text = "";

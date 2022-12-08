@@ -21,5 +21,14 @@ namespace MoMoney
         public const int DEBIT_ID = 3;
         public const int CREDIT_ID = 4;
         public const int EXPENSE_ID = 5;
+
+        public enum AccountTypes
+        {
+            Checkings,
+            Savings,
+            Credit,
+            Investments
+        }
+
     }
 }

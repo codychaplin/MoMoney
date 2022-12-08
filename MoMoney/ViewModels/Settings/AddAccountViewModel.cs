@@ -16,7 +16,7 @@ namespace MoMoney.ViewModels.Settings
         public decimal startingBalance; // starting balance
 
         /// <summary>
-        /// adds Account to database using input fields from view
+        /// adds Account to database using input fields from view.
         /// </summary>
         [RelayCommand]
         async Task Add()

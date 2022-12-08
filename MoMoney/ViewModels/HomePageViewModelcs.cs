@@ -20,7 +20,7 @@ namespace MoMoney.ViewModels
         DateTime To = DateTime.Today;
 
         /// <summary>
-        /// Gets updated transactions from database and refreshes Transactions collection
+        /// Gets updated transactions from database and refreshes Transactions collection.
         /// </summary>
         public async Task GetRecentTransactions()
         {
@@ -31,7 +31,7 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Gets updated total balance of all accounts combined
+        /// Gets updated total balance of all accounts combined.
         /// </summary>
         public async Task GetTotalBalance()
         {
@@ -41,7 +41,7 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Gets data for running balance chart
+        /// Gets data for running balance chart.
         /// </summary>
         public async Task GetChartData()
         {

@@ -15,10 +15,10 @@ namespace MoMoney.ViewModels.Settings
         public string name; // category name
 
         [ObservableProperty]
-        public string parent; // category parentz
+        public string parent; // category parent
 
         /// <summary>
-        /// adds Category to database using input fields from view
+        /// adds Category to database using input fields from view.
         /// </summary>
         [RelayCommand]
         async Task Add()
@@ -28,7 +28,7 @@ namespace MoMoney.ViewModels.Settings
         }
 
         /// <summary>
-        /// Gets parent categories from database
+        /// Gets parent categories from database.
         /// </summary>
         public async Task GetParents()
         {

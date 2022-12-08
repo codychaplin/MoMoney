@@ -55,7 +55,7 @@ public partial class EditTransactionPage : ContentPage
     }
 
     /// <summary>
-    /// Updates Subcategories for Subcategory picker
+    /// Updates Subcategories for Subcategory picker.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -66,7 +66,7 @@ public partial class EditTransactionPage : ContentPage
     }
 
     /// <summary>
-    /// Clears all input fields
+    /// Clears all input fields.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -76,7 +76,7 @@ public partial class EditTransactionPage : ContentPage
     }
 
     /// <summary>
-    /// Resets input fields on click
+    /// Resets input fields on click.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -86,7 +86,7 @@ public partial class EditTransactionPage : ContentPage
     }
 
     /// <summary>
-    /// Resets input fields
+    /// Resets input fields.
     /// </summary>
     void Clear()
     {

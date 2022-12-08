@@ -13,7 +13,7 @@ namespace MoMoney.ViewModels.Settings
         public ObservableCollection<Category> categories = new();
 
         /// <summary>
-        /// Goes to AddCategoryPage.xaml
+        /// Goes to AddCategoryPage.xaml.
         /// </summary>
         [RelayCommand]
         async Task GoToAddCategory()
@@ -22,7 +22,7 @@ namespace MoMoney.ViewModels.Settings
         }
 
         /// <summary>
-        /// Goes to EditCategoryPage.xaml with a Category ID as a parameter
+        /// Goes to EditCategoryPage.xaml with a Category ID as a parameter.
         /// </summary>
         [RelayCommand]
         async Task GoToEditCategory(int ID)
@@ -31,7 +31,7 @@ namespace MoMoney.ViewModels.Settings
         }
 
         /// <summary>
-        /// Gets updated categories from database and refreshes Categories collection
+        /// Gets updated categories from database and refreshes Categories collection.
         /// </summary>
         public async Task Refresh()
         {

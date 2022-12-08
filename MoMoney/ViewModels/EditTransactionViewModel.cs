@@ -45,7 +45,7 @@ namespace MoMoney.ViewModels
         Transaction InitialTransaction;
 
         /// <summary>
-        /// Gets Transaction using ID and updates Account, Category, and Subcategory
+        /// Gets Transaction using ID and updates Account, Category, and Subcategory.
         /// </summary>
         public async Task GetTransaction()
         {
@@ -89,7 +89,7 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Gets accounts from database and refreshes Accounts collection
+        /// Gets accounts from database and refreshes Accounts collection.
         /// </summary>
         /// <returns></returns>
         public async Task GetAccounts()
@@ -106,7 +106,7 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Gets income category from database and refreshes Categories collection
+        /// Gets income category from database and refreshes Categories collection.
         /// </summary>
         public async Task GetIncomeCategory()
         {
@@ -119,7 +119,7 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Gets transfer category from database and refreshes Categories collection
+        /// Gets transfer category from database and refreshes Categories collection.
         /// </summary>
         public async Task GetTransferCategory()
         {
@@ -132,7 +132,7 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Gets updated expense categories from database and refreshes Categories collection
+        /// Gets updated expense categories from database and refreshes Categories collection.
         /// </summary>
         public async Task GetExpenseCategories()
         {
@@ -146,7 +146,7 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Updates Subcategories based on selected parent Category
+        /// Updates Subcategories based on selected parent Category.
         /// </summary>
         /// <param name="parentCategory"></param>
         public async Task GetSubcategories(Category parentCategory)
@@ -163,7 +163,7 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Edits Transaction in database using input fields from view
+        /// Edits Transaction in database using input fields from view.
         /// </summary>
         [RelayCommand]
         async Task Edit()
@@ -261,7 +261,7 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Removes the Transaction from the database
+        /// Removes the Transaction from the database.
         /// </summary>
         [RelayCommand]
         async Task Remove()

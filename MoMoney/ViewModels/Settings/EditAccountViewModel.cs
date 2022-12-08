@@ -14,7 +14,7 @@ namespace MoMoney.ViewModels.Settings
         public string ID { get; set; } // account ID
 
         /// <summary>
-        /// Gets Account using ID
+        /// Gets Account using ID.
         /// </summary>
         public async Task GetAccount()
         {
@@ -25,7 +25,7 @@ namespace MoMoney.ViewModels.Settings
         }
 
         /// <summary>
-        /// Edits Account in database using input fields from view
+        /// Edits Account in database using input fields from view.
         /// </summary>
         [RelayCommand]
         async Task Edit()
@@ -45,7 +45,7 @@ namespace MoMoney.ViewModels.Settings
         }
 
         /// <summary>
-        /// Removes the Account from the database
+        /// Removes the Account from the database.
         /// </summary>
         [RelayCommand]
         async Task Remove()

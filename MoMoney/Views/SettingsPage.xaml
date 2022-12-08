@@ -22,8 +22,10 @@
     <Frame BackgroundColor="{StaticResource Gray900}" Margin="10" Padding="10">
         <VerticalStackLayout>
             <Label Text="Data" FontSize="18" Margin="0,0,0,10" />
-            <Button x:Name="btnAccounts" Text="Accounts" Command="{Binding GoToAccountsCommand}" />
-            <Button x:Name="btnCategories" Text="Categories" Command="{Binding GoToCategoriesCommand}" />
+            <Button Text="Accounts" Command="{Binding GoToAccountsCommand}" />
+            <Button Text="Categories" Command="{Binding GoToCategoriesCommand}" />
+            <Button Text="Import Accounts from CSV" Command="{Binding ImportAccountsCSVCommand}" />
+            <Button Text="Import Categories from CSV" Command="{Binding ImportCategoriesCSVCommand}" />
         </VerticalStackLayout>
     </Frame>
 

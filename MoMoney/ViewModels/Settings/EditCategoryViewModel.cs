@@ -24,7 +24,7 @@ namespace MoMoney.ViewModels.Settings
         public string ID { get; set; } // category ID
 
         /// <summary>
-        /// Gets category using ID
+        /// Gets category using ID.
         /// </summary>
         public async Task GetCategory()
         {
@@ -38,7 +38,7 @@ namespace MoMoney.ViewModels.Settings
         }
 
         /// <summary>
-        /// Gets parent categories from database
+        /// Gets parent categories from database.
         /// </summary>
         public async Task GetParents()
         {
@@ -49,7 +49,7 @@ namespace MoMoney.ViewModels.Settings
         }
 
         /// <summary>
-        /// Edits Category in database using input fields from view
+        /// Edits Category in database using input fields from view.
         /// </summary>
         [RelayCommand]
         async Task Edit()
@@ -67,7 +67,7 @@ namespace MoMoney.ViewModels.Settings
         }
 
         /// <summary>
-        /// Removes the Category from the database
+        /// Removes the Category from the database.
         /// </summary>
         [RelayCommand]
         async Task Remove()

@@ -16,7 +16,7 @@ public partial class AddTransactionPage : ContentPage
     }
 
     /// <summary>
-    /// enabled/disables input fields
+    /// enabled/disables input fields.
     /// </summary>
     /// <param name="flag"></param>
     void Allowed(bool flag)
@@ -30,7 +30,7 @@ public partial class AddTransactionPage : ContentPage
     }
 
     /// <summary>
-    /// Fill Account picker with Accounts from database
+    /// Fill Account picker with Accounts from database.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -40,7 +40,7 @@ public partial class AddTransactionPage : ContentPage
     }
 
     /// <summary>
-    /// Highlights button, enables input fields, and populates corresponding Category picker
+    /// Highlights button, enables input fields, and populates corresponding Category picker.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -57,7 +57,7 @@ public partial class AddTransactionPage : ContentPage
     }
 
     /// <summary>
-    /// Highlights button, enables input fields, and populates corresponding Category picker
+    /// Highlights button, enables input fields, and populates corresponding Category picker.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -73,7 +73,7 @@ public partial class AddTransactionPage : ContentPage
     }
 
     /// <summary>
-    /// Highlights button, enables input fields, and populates corresponding Category picker
+    /// Highlights button, enables input fields, and populates corresponding Category picker.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -90,7 +90,7 @@ public partial class AddTransactionPage : ContentPage
     }
 
     /// <summary>
-    /// Changes selected button colour to dark gray and changes others to background colour
+    /// Changes selected button colour to dark gray and changes others to background colour.
     /// </summary>
     /// <param name="button"></param>
     void ChangeButtonColour(Button button)
@@ -105,7 +105,7 @@ public partial class AddTransactionPage : ContentPage
     }
 
     /// <summary>
-    /// Updates selected Category and subcategories for subcategory picker
+    /// Updates selected Category and subcategories for subcategory picker.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -124,7 +124,7 @@ public partial class AddTransactionPage : ContentPage
     }
 
     /// <summary>
-    /// Clears all input fields
+    /// Clears all input fields.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -138,7 +138,7 @@ public partial class AddTransactionPage : ContentPage
     }
 
     /// <summary>
-    /// Resets input fields on click
+    /// Resets input fields on click.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -150,7 +150,7 @@ public partial class AddTransactionPage : ContentPage
     }
 
     /// <summary>
-    /// Resets input fields
+    /// Resets input fields.
     /// </summary>
     void Clear()
     {

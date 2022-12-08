@@ -13,7 +13,7 @@ namespace MoMoney.ViewModels.Settings
         public ObservableCollection<Account> accounts = new();
 
         /// <summary>
-        /// Goes to AddAccountPage.xaml
+        /// Goes to AddAccountPage.xaml.
         /// </summary>
         [RelayCommand]
         async Task GoToAddAccount()
@@ -22,7 +22,7 @@ namespace MoMoney.ViewModels.Settings
         }
 
         /// <summary>
-        /// Goes to EditAccountPage.xaml with an Account ID as a parameter
+        /// Goes to EditAccountPage.xaml with an Account ID as a parameter.
         /// </summary>
         [RelayCommand]
         async Task GoToEditAccount(int ID)
@@ -31,7 +31,7 @@ namespace MoMoney.ViewModels.Settings
         }
 
         /// <summary>
-        /// Gets updated accounts from database and refreshes Accounts collection
+        /// Gets updated accounts from database and refreshes Accounts collection.
         /// </summary>
         public async Task Refresh()
         {

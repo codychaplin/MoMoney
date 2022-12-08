@@ -34,8 +34,8 @@
                         Title="Select a Parent"
                         x:DataType="model:Category"
                         ItemsSource="{Binding Path=Parents, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}"
-                        ItemDisplayBinding="{Binding CategoryName}"
-                        SelectedIndexChanged="pckParent_SelectedIndexChanged">
+                        SelectedItem="{Binding Path=Parent, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}"
+                        ItemDisplayBinding="{Binding CategoryName}">
                 </Picker>
             </Grid>
         </Frame>

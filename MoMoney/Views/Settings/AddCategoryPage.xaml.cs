@@ -22,7 +22,7 @@ public partial class AddCategoryPage : ContentPage
     }
 
     /// <summary>
-    /// Clears input fields in view
+    /// Clears input fields in view.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -30,16 +30,5 @@ public partial class AddCategoryPage : ContentPage
 	{
 		txtName.Text = "";
         pckParent.SelectedIndex = -1;
-    }
-
-    /// <summary>
-    /// Updates Parent in ViewModel
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void pckParent_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        var parent = ((Category)pckParent.SelectedItem).CategoryName;
-        vm.Parent = parent;
     }
 }

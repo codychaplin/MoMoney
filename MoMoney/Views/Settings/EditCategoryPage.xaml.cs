@@ -37,7 +37,7 @@ public partial class EditCategoryPage : ContentPage
     }
 
     /// <summary>
-    /// Clears input fields in view
+    /// Clears input fields in view.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -45,16 +45,5 @@ public partial class EditCategoryPage : ContentPage
 	{
 		txtName.Text = "";
         pckParent.SelectedIndex = -1;
-    }
-
-    /// <summary>
-    /// Updates Parent in ViewModel when new item is picked
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void pckParent_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        var parent = (Category)pckParent.SelectedItem;
-        vm.Parent = parent;
     }
 }

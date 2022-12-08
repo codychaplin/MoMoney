@@ -8,7 +8,12 @@ public partial class AddAccountPage : ContentPage
 		txtStartingBalance.Text = "";
 	}
 
-	private void btnClear_Clicked(object sender, EventArgs e)
+    /// <summary>
+    /// Clears input fields in view.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void btnClear_Clicked(object sender, EventArgs e)
 	{
 		txtName.Text = "";
         pckType.SelectedIndex = -1;
