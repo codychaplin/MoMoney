@@ -115,17 +115,17 @@ namespace MoMoney.ViewModels
                             string[] categoryInfo = row.Split(',');
 
                             // split line into Category parameters and create new Category
-                            string parent = categoryInfo[0];
-                            if (!string.IsNullOrEmpty(parent))
-                            {
-                                var parentCat = await CategoryService.GetCategory(parent);
-                                if (parentCat is null)
-                                    throw new InvalidCategoryException("Parent Category does not exist");
-                            }
-
                             string name = categoryInfo[1];
                             if (string.IsNullOrEmpty(name))
                                 throw new InvalidCategoryException("Category name cannot be blank");
+
+                            string parent = categoryInfo[0];
+                            if (!string.IsNullOrEmpty(parent))
+                            {
+                                var parentCat = await CategoryService.GetCategory(name, parent);
+                                if (parentCat is null)
+                                    throw new InvalidCategoryException("Parent Category does not exist");
+                            }
 
                             Category category = new()
                             {
@@ -146,7 +146,6 @@ namespace MoMoney.ViewModels
             }
             catch (Exception ex)
             {
-                // if invalid, display error
                 await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
             }
         }

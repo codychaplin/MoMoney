@@ -1,5 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SQLite;
+﻿using SQLite;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MoMoney.Models
 {

@@ -134,6 +134,18 @@ namespace MoMoney.Services
         }
 
         /// <summary>
+        /// Gets all Accounts from Accounts table as a dictionary.
+        /// </summary>
+        /// <returns>Dictionary of Account objects</returns>
+        public static async Task<Dictionary<string, int>> GetAccountsAsDict()
+        {
+            await Init();
+
+            var accounts = await MoMoneydb.db.Table<Account>().ToListAsync();
+            return accounts.ToDictionary(a => a.AccountName, a => a.AccountID);
+        }
+
+        /// <summary>
         /// Gets enabled accounts from Accounts table as a list.
         /// </summary>
         /// <returns>List of active Account objects</returns>

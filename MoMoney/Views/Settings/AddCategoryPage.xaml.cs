@@ -1,4 +1,3 @@
-using MoMoney.Models;
 using MoMoney.ViewModels.Settings;
 
 namespace MoMoney.Views.Settings;

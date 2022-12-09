@@ -47,6 +47,17 @@ namespace MoMoney.Services
         }
 
         /// <summary>
+        /// Inserts multiple Transaction objects into Transactions table.
+        /// </summary>
+        /// <param name="transactions"></param>
+        public static async Task AddTransactions(List<Transaction> transactions)
+        {
+            await Init();
+
+            await MoMoneydb.db.InsertAllAsync(transactions);
+        }
+
+        /// <summary>
         /// Given an Transaction object, updates the corresponding transaction in the Transactions table.
         /// </summary>
         /// <param name="updatedTransaction"></param>

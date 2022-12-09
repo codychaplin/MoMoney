@@ -1,5 +1,6 @@
-﻿using MoMoney.Exceptions;
-using MoMoney.Models;
+﻿using MoMoney.Models;
+using MoMoney.Exceptions;
+using System.Linq;
 
 namespace MoMoney.Services
 {
@@ -19,9 +20,14 @@ namespace MoMoney.Services
         /// </summary>
         /// <param name="categoryName"></param>
         /// <param name="parentName"></param>
+        /// <exception cref="DuplicateCategoryException"></exception>
         public static async Task AddCategory(string categoryName, string parentName)
         {
             await Init();
+
+            var res = await MoMoneydb.db.Table<Category>().CountAsync(c => c.CategoryName == categoryName && c.ParentName == parentName);
+            if (res > 0)
+                throw new DuplicateCategoryException("Category named '" + categoryName + "' already exists");
 
             var category = new Category
             {
@@ -132,8 +138,19 @@ namespace MoMoney.Services
         {
             await Init();
 
-            // CategoryID > 4 so users can't select income/transfer categories
-            return await MoMoneydb.db.Table<Category>().Where(c => c.CategoryID > 4).ToListAsync();
+            return await MoMoneydb.db.Table<Category>().Where(c => c.CategoryID >= Constants.EXPENSE_ID).ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets all Categories from Categories table as a dictionary.
+        /// </summary>
+        /// <returns>Dictionary of Category objects</returns>
+        public static async Task<Dictionary<string[], int>> GetCategoriesAsDict()
+        {
+            await Init();
+
+            var categories = await MoMoneydb.db.Table<Category>().ToListAsync();
+            return categories.ToDictionary(c => new string[] { c.CategoryName, c.ParentName }, c => c.CategoryID);
         }
 
         /// <summary>
@@ -155,8 +172,8 @@ namespace MoMoney.Services
         {
             await Init();
 
-            // CategoryID != 4 so users can't select transfer categories
-            return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "" && c.CategoryID != 4).ToListAsync();
+            return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "" &&
+                                                              c.CategoryID != Constants.TRANSFER_ID).ToListAsync();
         }
 
         /// <summary>
@@ -167,8 +184,8 @@ namespace MoMoney.Services
         {
             await Init();
 
-            // CategoryID > 4 so users can't select income/transfer categories
-            return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "" && c.CategoryID > 4).ToListAsync();
+            return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "" &&
+                                                              c.CategoryID >= Constants.EXPENSE_ID).ToListAsync();
         }
 
         /// <summary>

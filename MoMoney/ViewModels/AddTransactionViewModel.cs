@@ -5,6 +5,7 @@ using MoMoney.Models;
 using MoMoney.Views;
 using MoMoney.Services;
 using MoMoney.Exceptions;
+using Java.Nio.FileNio;
 
 namespace MoMoney.ViewModels
 {
@@ -151,6 +152,104 @@ namespace MoMoney.ViewModels
                 await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
             }
             
+        }
+
+        /// <summary>
+        /// Prompts the user to open a CSV file. Valid Transactions are then added to the database.
+        /// </summary>
+        [RelayCommand]
+        async Task ImportTransactionsCSV()
+        {
+            try
+            {
+                var options = new PickOptions { PickerTitle = "Select a .CSV file" };
+                var result = await FilePicker.Default.PickAsync(options);
+
+                if (result != null)
+                {
+                    if (result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var categories = new Dictionary<string[], int>();
+                        var accounts = new Dictionary<string, int>();
+
+                        List<Transaction> transactions = new();
+                        using var sr = new StreamReader(result.FullPath);
+                        int i = 1;
+                        while (sr.Peek() != -1)
+                        {
+                            // format line
+                            string row = sr.ReadLine();
+                            string[] transactionsInfo = row.Split(',');
+
+                            if (transactionsInfo.Length != 6)
+                                throw new FormatException($"Transaction {i} does not have the correct amount of fields");
+
+                            // split line into Transaction parameters and create new Transaction
+                            // date
+                            if (!DateTime.TryParse(transactionsInfo[0], out var date))
+                                throw new InvalidTransactionException($"Transaction {i}: Invalid date");
+
+                            // account ID
+                            if (!accounts.TryGetValue(transactionsInfo[1], out int accountID))
+                                throw new InvalidTransactionException($"Transaction {i}: Account '{transactionsInfo[1]} ' does not exist");
+
+                            // amount
+                            if (!decimal.TryParse(transactionsInfo[2], out decimal amount))
+                                throw new InvalidTransactionException($"Transaction {i}: {transactionsInfo[2]}' is not a valid number");
+
+                            // category ID
+                            if (!categories.TryGetValue( new string[] { transactionsInfo[3], "" }, out int parentID))
+                                throw new InvalidTransactionException($"Transaction {i}: {transactionsInfo[3]}' is not a valid parent category");
+
+                            // subcategory ID
+                            if (!categories.TryGetValue(new string[] { transactionsInfo[4], transactionsInfo[3] }, out int subCategoryID))
+                                throw new InvalidTransactionException($"Transaction {i}: {transactionsInfo[4]}' is not a valid subcategory");
+
+                            // payee
+                            string payee = "";
+                            if (string.IsNullOrEmpty(transactionsInfo[5]))
+                                throw new InvalidTransactionException($"Transaction {i}: Payee cannot be blank");
+                            else
+                                payee = transactionsInfo[5];
+
+                            // transfer ID
+                            int? transferID;
+                            if (subCategoryID == Constants.CREDIT_ID)
+                            {
+                                transactions[i - 2].TransferID = accountID; // -2 because i started at 1, not 0
+                                transferID = transactions[i - 2].AccountID;
+                            }
+                            else
+                                transferID = null;
+
+                            Transaction transaction = new()
+                            {
+                                Date = date,
+                                AccountID = accountID,
+                                Amount = amount,
+                                CategoryID = parentID,
+                                SubcategoryID = subCategoryID,
+                                Payee = payee,
+                                TransferID = transferID
+                            };
+
+                            transactions.Add(transaction);
+                            i++;
+                        }
+
+                        await TransactionService.AddTransactions(transactions);
+
+                        sr.Close();
+                    }
+                    else
+                        throw new FormatException("Invalid file type. Must be a CSV");
+                }
+            }
+            catch (Exception ex)
+            {
+                // if invalid, display error
+                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            }
         }
     }
 }

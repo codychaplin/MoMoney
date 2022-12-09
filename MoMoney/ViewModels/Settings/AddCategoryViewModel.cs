@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
 
@@ -23,8 +23,15 @@ namespace MoMoney.ViewModels.Settings
         [RelayCommand]
         async Task Add()
         {
-            await CategoryService.AddCategory(Name, Parent);
-            await Shell.Current.GoToAsync("..");
+            try
+            {
+                await CategoryService.AddCategory(Name, Parent);
+                await Shell.Current.GoToAsync("..");
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            }
         }
 
         /// <summary>
