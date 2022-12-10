@@ -16,8 +16,11 @@ namespace MoMoney.ViewModels
         [ObservableProperty]
         public ObservableCollection<Data> data = new();
 
-        DateTime From = new DateTime(DateTime.Today.Year, 1, 1);
-        DateTime To = DateTime.Today;
+        [ObservableProperty]
+        public DateTime from = new(DateTime.Today.Year, 1, 1);
+
+        [ObservableProperty]
+        public DateTime to = DateTime.Today;
 
         /// <summary>
         /// Gets updated transactions from database and refreshes Transactions collection.

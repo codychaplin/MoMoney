@@ -13,8 +13,6 @@ public partial class TransactionsPage : ContentPage
 	{
 		InitializeComponent();
         vm = (TransactionsViewModel)BindingContext;
-        vm.From = new DateTime(DateTime.Today.Year, 1, 1);
-        vm.To = DateTime.Now;
         TransactionsChanged += Refresh;
     }
 

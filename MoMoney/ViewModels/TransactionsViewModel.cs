@@ -14,10 +14,10 @@ namespace MoMoney.ViewModels
         public ObservableCollection<Transaction> transactions = new();
 
         [ObservableProperty]
-        public DateTime from;
+        public DateTime from = new(DateTime.Today.Year, 1, 1);
 
         [ObservableProperty]
-        public DateTime to;
+        public DateTime to = DateTime.Today;
 
         /// <summary>
         /// Depending on CRUD operation, update Transactions collection.
