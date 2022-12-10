@@ -150,7 +150,7 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Prompts the user to open a CSV file. Valid Categories are then added to the database.
+        /// Exports Transactions from database to a CSV file.
         /// </summary>
         [RelayCommand]
         [Obsolete]

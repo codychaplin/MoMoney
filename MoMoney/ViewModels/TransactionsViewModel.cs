@@ -13,6 +13,12 @@ namespace MoMoney.ViewModels
         [ObservableProperty]
         public ObservableCollection<Transaction> transactions = new();
 
+        [ObservableProperty]
+        public DateTime from;
+
+        [ObservableProperty]
+        public DateTime to;
+
         /// <summary>
         /// Depending on CRUD operation, update Transactions collection.
         /// </summary>
@@ -42,7 +48,7 @@ namespace MoMoney.ViewModels
                 case TransactionEventArgs.CRUD.Read:
                 {
                     // get transactions from db, if count has changed, refresh Transactions collection
-                    var transactions = await TransactionService.GetTransactionsFromTo(new DateTime(DateTime.Now.Year, 1, 1), DateTime.Now);
+                    var transactions = await TransactionService.GetTransactionsFromTo(From, To);
                     if (transactions.Count() != Transactions.Count)
                     {
                         Transactions.Clear();

@@ -13,14 +13,60 @@ public partial class TransactionsPage : ContentPage
 	{
 		InitializeComponent();
         vm = (TransactionsViewModel)BindingContext;
+        vm.From = new DateTime(DateTime.Today.Year, 1, 1);
+        vm.To = DateTime.Now;
         TransactionsChanged += Refresh;
     }
 
+    /// <summary>
+    /// Refreshes transactions on page. 
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="e"></param>
     private async void Refresh(object s, TransactionEventArgs e)
     {
         if (e.Type == TransactionEventArgs.CRUD.Read)
             await Task.Delay(100);
         await vm.Refresh(e);
+    }
+
+    /// <summary>
+    /// Changes visibility of date range picker
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void ImageButton_Clicked(object sender, EventArgs e)
+    {
+        frDates.IsVisible = !frDates.IsVisible;
+    }
+
+    /// <summary>
+    /// Invokes TransactionsChanged when From date changes.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void dtFrom_DateSelected(object sender, DateChangedEventArgs e)
+    {
+        InvokeTransactionsChanged();
+    }
+
+    /// <summary>
+    /// Invokes TransactionsChanged when To date changes.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void dtTo_DateSelected(object sender, DateChangedEventArgs e)
+    {
+        InvokeTransactionsChanged();
+    }
+
+    /// <summary>
+    /// Invokes TransactionsChanged
+    /// </summary>
+    void InvokeTransactionsChanged()
+    {
+        var args = new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read);
+        TransactionsChanged?.Invoke(this, args);
     }
 }
 
@@ -37,7 +83,6 @@ public class TransactionEventArgs : EventArgs
         Update,
         Delete
     }
-
 
     public TransactionEventArgs(Transaction transaction, CRUD type)
     {
