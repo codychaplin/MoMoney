@@ -142,15 +142,27 @@ namespace MoMoney.Services
         }
 
         /// <summary>
-        /// Gets all Categories from Categories table as a dictionary.
+        /// Gets all Categories from Categories table as a dictionary with Category Name as Key.
         /// </summary>
         /// <returns>Dictionary of Category objects</returns>
-        public static async Task<Dictionary<string[], int>> GetCategoriesAsDict()
+        public static async Task<Dictionary<string[], int>> GetCategoriesAsDictWithName()
         {
             await Init();
 
             var categories = await MoMoneydb.db.Table<Category>().ToListAsync();
             return categories.ToDictionary(c => new string[] { c.CategoryName, c.ParentName }, c => c.CategoryID);
+        }
+
+        /// <summary>
+        /// Gets all Categories from Categories table as a dictionary with Category ID as Key.
+        /// </summary>
+        /// <returns>Dictionary of Category objects</returns>
+        public static async Task<Dictionary<int, string>> GetCategoriesAsDictWithID()
+        {
+            await Init();
+
+            var categories = await MoMoneydb.db.Table<Category>().ToListAsync();
+            return categories.ToDictionary(c => c.CategoryID, c => c.CategoryName);
         }
 
         /// <summary>

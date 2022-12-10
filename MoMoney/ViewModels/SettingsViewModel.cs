@@ -4,7 +4,6 @@ using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
 using MoMoney.Views.Settings;
-using static Java.Util.Jar.Attributes;
 
 namespace MoMoney.ViewModels
 {
@@ -58,7 +57,7 @@ namespace MoMoney.ViewModels
                             if (string.IsNullOrEmpty(name))
                                 throw new InvalidAccountException("Account name cannot be blank");
 
-                            if (!Enum.TryParse(typeof(Constants.AccountTypes),accountInfo[1], true, out var type))
+                            if (!Enum.TryParse(typeof(Constants.AccountTypes), accountInfo[1], true, out var type))
                                 throw new InvalidAccountException("'" + accountInfo[1] + "' is not a valid account type");
 
                             if (!decimal.TryParse(accountInfo[2], out decimal startingBalance))
@@ -148,6 +147,49 @@ namespace MoMoney.ViewModels
             {
                 await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
             }
+        }
+
+        /// <summary>
+        /// Prompts the user to open a CSV file. Valid Categories are then added to the database.
+        /// </summary>
+        [RelayCommand]
+        [Obsolete]
+        async Task ExportTransactionsCSV()
+        {
+            // check if app has storage write permissions
+            var status = await Permissions.RequestAsync<Permissions.StorageWrite>();
+            if (status == PermissionStatus.Granted)
+            {
+                // create file in downloads folder
+                string path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
+                string targetFile = Path.Combine(path, "Transactions.csv");
+                using FileStream stream = File.OpenWrite(targetFile);
+                using StreamWriter streamWriter = new(stream);
+
+                // get data
+                var categories = await CategoryService.GetCategoriesAsDictWithID();
+                var accounts = await AccountService.GetAccountsAsDictWithID();
+                var transactions = await TransactionService.GetTransactions();
+                foreach (var trans in transactions)
+                {
+                    // formats transaction parameters in CSV format
+                    var date = trans.Date.ToString("yyyy-MM-dd");
+                    var account = accounts[trans.AccountID];
+                    var amount = trans.Amount;
+                    var category = categories[trans.CategoryID];
+                    var subcategory = categories[trans.SubcategoryID];
+                    var payee = trans.Payee;
+                    string line = $"{date},{account},{amount},{category},{subcategory},{payee}";
+
+                    // prints line to file
+                    await streamWriter.WriteLineAsync(line);
+                }
+
+                streamWriter.Close();
+                await Shell.Current.DisplayAlert("Success", $"File has been successfully downloaded to:\n'{targetFile}'", "OK");
+            }
+            else
+                await Shell.Current.DisplayAlert("Error", "Storage permissions are required in order to save to CSV", "OK");
         }
     }
 }

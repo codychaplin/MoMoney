@@ -134,15 +134,27 @@ namespace MoMoney.Services
         }
 
         /// <summary>
-        /// Gets all Accounts from Accounts table as a dictionary.
+        /// Gets all Accounts from Accounts table as a dictionary with Account Name as Key.
         /// </summary>
         /// <returns>Dictionary of Account objects</returns>
-        public static async Task<Dictionary<string, int>> GetAccountsAsDict()
+        public static async Task<Dictionary<string, int>> GetAccountsAsDictWithName()
         {
             await Init();
 
             var accounts = await MoMoneydb.db.Table<Account>().ToListAsync();
             return accounts.ToDictionary(a => a.AccountName, a => a.AccountID);
+        }
+
+        /// <summary>
+        /// Gets all Accounts from Accounts table as a dictionary with Account ID as Key.
+        /// </summary>
+        /// <returns>Dictionary of Account objects</returns>
+        public static async Task<Dictionary<int, string>> GetAccountsAsDictWithID()
+        {
+            await Init();
+
+            var accounts = await MoMoneydb.db.Table<Account>().ToListAsync();
+            return accounts.ToDictionary(a => a.AccountID, a => a.AccountName);
         }
 
         /// <summary>

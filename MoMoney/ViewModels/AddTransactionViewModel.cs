@@ -1,11 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MoMoney.Models;
 using MoMoney.Views;
+using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
-using Java.Nio.FileNio;
 
 namespace MoMoney.ViewModels
 {
@@ -169,9 +168,8 @@ namespace MoMoney.ViewModels
                 {
                     if (result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
                     {
-                        var categories = new Dictionary<string[], int>();
-                        var accounts = new Dictionary<string, int>();
-
+                        var categories = await CategoryService.GetCategoriesAsDictWithName();
+                        var accounts = await AccountService.GetAccountsAsDictWithName();
                         List<Transaction> transactions = new();
                         using var sr = new StreamReader(result.FullPath);
                         int i = 1;
@@ -192,7 +190,7 @@ namespace MoMoney.ViewModels
                             // account ID
                             if (!accounts.TryGetValue(transactionsInfo[1], out int accountID))
                                 throw new InvalidTransactionException($"Transaction {i}: Account '{transactionsInfo[1]} ' does not exist");
-
+                            
                             // amount
                             if (!decimal.TryParse(transactionsInfo[2], out decimal amount))
                                 throw new InvalidTransactionException($"Transaction {i}: {transactionsInfo[2]}' is not a valid number");
