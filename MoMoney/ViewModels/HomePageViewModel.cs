@@ -11,7 +11,19 @@ namespace MoMoney.ViewModels
         public ObservableCollection<Transaction> recentTransactions = new();
 
         [ObservableProperty]
-        public decimal total = 0;
+        public decimal netWorth = 0;
+
+        [ObservableProperty]
+        public decimal totalIncome = 0;
+
+        [ObservableProperty]
+        public decimal totalExpenses = 0;
+
+        [ObservableProperty]
+        public string topIncomeSubcategory;
+
+        [ObservableProperty]
+        public string topExpenseCategory;
 
         [ObservableProperty]
         public ObservableCollection<Data> data = new();
@@ -40,7 +52,7 @@ namespace MoMoney.ViewModels
         {
             var accounts = await AccountService.GetActiveAccounts();
             foreach (var acc in accounts)
-                Total += acc.CurrentBalance;
+                NetWorth += acc.CurrentBalance;
         }
 
         /// <summary>
@@ -48,8 +60,38 @@ namespace MoMoney.ViewModels
         /// </summary>
         public async Task GetChartData()
         {
-            decimal runningTotal = Total; // running total starts at current net worth
+            decimal runningTotal = NetWorth; // running total starts at current net worth
             var results = await TransactionService.GetTransactionsFromTo(From, To);
+
+            // update income/expense totals
+            TotalIncome = results.Where(t => t.CategoryID == Constants.INCOME_ID).Sum(t => t.Amount);
+            TotalExpenses = results.Where(t => t.CategoryID >= Constants.EXPENSE_ID).Sum(t => t.Amount);
+
+            // update top income subcategory
+            var subcategoryID = results.Where(t => t.CategoryID == Constants.INCOME_ID)
+                                       .GroupBy(t => t.SubcategoryID)
+                                       .Select(group => new
+                                       {
+                                           Total = group.Sum(t => t.Amount),
+                                           group.FirstOrDefault().SubcategoryID
+                                       })
+                                       .MaxBy(g => g.Total)
+                                       .SubcategoryID;
+            Category subcategory = await CategoryService.GetCategory(subcategoryID);
+            TopIncomeSubcategory = subcategory.CategoryName;
+
+            // update top expense category
+            var categoryID = results.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
+                                        .GroupBy(t => t.CategoryID)
+                                        .Select(group => new
+                                        {
+                                            Total = group.Sum(t => t.Amount),
+                                            group.FirstOrDefault().CategoryID
+                                        })
+                                        .MinBy(g => g.Total)
+                                        .CategoryID;
+            Category category = await CategoryService.GetCategory(categoryID);
+            TopExpenseCategory = category.CategoryName;
 
             // get non-transfer transactions, group by date, and select date and sum of amounts on each date
             Data = new ObservableCollection<Data>(

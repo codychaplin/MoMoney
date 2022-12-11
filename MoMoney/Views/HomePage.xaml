@@ -17,6 +17,7 @@
     <!-- converters -->
     <ContentPage.Resources>
         <local:IdToCategoryConverter x:Key="IdToCategory" />
+        <local:IdToAccountConverter x:Key="IdToAccount" />
         <local:AmountColourConverter x:Key="AmountColour" />
         <local:IconConverter x:Key="Icon" />
     </ContentPage.Resources>
@@ -110,19 +111,8 @@
                                     BackgroundColor="Transparent"
                                     HorizontalOptions="FillAndExpand"
                                     VerticalOptions="FillAndExpand"
+                                    Title=""
                                     Margin="0,0,10,10">
-
-                <!-- title -->
-                <chart:SfCartesianChart.Title>
-                    <Label x:Name="chrtBalanceTitle"
-                            Text="{Binding Total, StringFormat='{0:C2}'}"
-                            Margin="5"
-                            HorizontalOptions="Fill"
-                            HorizontalTextAlignment="Center"
-                            VerticalOptions="Center"
-                            FontSize="25"
-                            FontAttributes="Bold" />
-                </chart:SfCartesianChart.Title>
 
                 <!-- X axis -->
                 <chart:SfCartesianChart.XAxes>
@@ -171,23 +161,67 @@
             </chart:SfCartesianChart>
 
             <!-- stats -->
-            <Grid Grid.Row="2" Margin="10,0,10,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
+            <Grid Grid.Row="2" Margin="10,0,10,0" RowDefinitions="40,*">
                 <Label Text="Statistics" />
-                <Frame Grid.Row="1" />
+                <Frame Grid.Row="1" Padding="10,10,10,0">
+                    <Grid RowDefinitions="45,35,*" ColumnDefinitions="*,*" Margin="0" RowSpacing="10">
+                        <Grid.Resources>
+                            <Style TargetType="{x:Type Image}">
+                                <Setter Property="WidthRequest" Value="23" />
+                            </Style>
+                            <Style TargetType="{x:Type HorizontalStackLayout}">
+                                <Setter Property="Spacing" Value="10" />
+                                <Setter Property="HorizontalOptions" Value="Center" />
+                            </Style>
+                            <Style TargetType="{x:Type Label}">
+                                <Setter Property="VerticalOptions" Value="Center" />
+                                <Setter Property="HorizontalOptions" Value="Center" />
+                            </Style>
+                        </Grid.Resources>
+                        
+                        <!-- net worth -->
+                        <VerticalStackLayout Grid.ColumnSpan="2">
+                            <Label Text="Net Worth"
+                                   FontSize="15" />
+                            <Label Text="{Binding NetWorth, StringFormat='{0:C2}'}"
+                                   FontSize="30" />
+                        </VerticalStackLayout>
+
+                        <!-- total income -->
+                        <VerticalStackLayout Grid.Row="1">
+                            <Label Text="Top Income" FontSize="15" />
+                            <HorizontalStackLayout>
+                                <Image Source="green_arrow_up.png" />
+                                <Label Text="{Binding TotalIncome, StringFormat='{0:C2}'}" FontSize="20" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                        <!-- total expense -->
+                        <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                            <Label Text="Top Expense" FontSize="15" />
+                            <HorizontalStackLayout>
+                                <Image Source="red_arrow_down.png" />
+                                <Label Text="{Binding TotalExpenses, StringFormat='{0:C2}'}" FontSize="20"/>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+
+                        <!-- top income -->
+                        <VerticalStackLayout Grid.Row="2">
+                            <Label Text="Top Income" FontSize="15" />
+                            <Label Text="{Binding TopIncomeSubcategory}" FontSize="24" />
+                        </VerticalStackLayout>
+                        <!-- top expense -->
+                        <VerticalStackLayout Grid.Row="2" Grid.Column="1">
+                            <Label Text="Top Expense" FontSize="15" />
+                            <Label Text="{Binding TopExpenseCategory}" FontSize="24" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Frame>
             </Grid>
 
             <!-- transactions -->
-            <Grid Grid.Row="3" Margin="10,0,10,10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
+            <Grid Grid.Row="3" Margin="10,0,10,10" RowDefinitions="40,*">
                 <Label Text="Transactions" />
-                <Button x:Name="btnViewAllTransactions" Text="View All" Clicked="btnViewAllTransactions_Clicked" Routing.Route="TransactionsPage" />
+                <Button x:Name="btnViewAllTransactions" Text="View All" Clicked="btnViewAllTransactions_Clicked" />
                 
                 <Frame Grid.Row="1" Padding="0,10,0,0" >
                     <!-- list of transactions -->
@@ -210,20 +244,20 @@
                                                 </MultiBinding>
                                             </Image.Source>
                                         </Image>
-                                        <!-- category -->
+                                        <!-- subcategory -->
                                         <Label Grid.Column="1"
                                                FontSize="18"
                                                VerticalOptions="Start"
                                                HorizontalOptions="Start"
                                                Style="{StaticResource lblTile}"
-                                               Text="{Binding CategoryID, Converter={StaticResource IdToCategory}}" />
-                                        <!-- subcategory -->
+                                               Text="{Binding SubcategoryID, Converter={StaticResource IdToCategory}}" />
+                                        <!-- account -->
                                         <Label Grid.Column="1"
                                                VerticalOptions="End"
                                                HorizontalOptions="Start"
                                                Style="{StaticResource lblTile}"
                                                TextColor="{StaticResource Gray300}"
-                                               Text="{Binding SubcategoryID, Converter={StaticResource IdToCategory}}" />
+                                               Text="{Binding AccountID, Converter={StaticResource IdToAccount}}" />
                                         <!-- amount -->
                                         <Label Grid.Column="1"
                                                FontSize="18"

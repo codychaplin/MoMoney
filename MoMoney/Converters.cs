@@ -26,6 +26,28 @@ namespace MoMoney
     }
 
     /// <summary>
+    /// Gets Account name from Account ID
+    /// </summary>
+    class IdToAccountConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (int.TryParse(value.ToString(), out int ID))
+            {
+                var task = Task.Run(async () => { return await AccountService.GetAccount(ID); });
+                return task.Result.AccountName;
+            }
+
+            return null;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
     /// Changes text colour based on category
     /// </summary>
     class AmountColourConverter : IValueConverter

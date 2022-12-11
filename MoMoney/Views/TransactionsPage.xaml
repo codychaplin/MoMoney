@@ -16,6 +16,7 @@
     <!-- converters -->
     <ContentPage.Resources>
         <local:IdToCategoryConverter x:Key="IdToCategory" />
+        <local:IdToAccountConverter x:Key="IdToAccount" />
         <local:AmountColourConverter x:Key="AmountColour" />
         <local:IconConverter x:Key="Icon" />
     </ContentPage.Resources>
@@ -95,20 +96,20 @@
                                         </MultiBinding>
                                     </Image.Source>
                                 </Image>
-                                <!-- category -->
+                                <!-- subcategory -->
                                 <Label Grid.Column="1"
                                        FontSize="18"
                                        VerticalOptions="Start"
                                        HorizontalOptions="Start"
                                        Style="{StaticResource lblTile}"
-                                       Text="{Binding CategoryID, Converter={StaticResource IdToCategory}}" />
-                                <!-- subcategory -->
+                                       Text="{Binding SubcategoryID, Converter={StaticResource IdToCategory}}" />
+                                <!-- account -->
                                 <Label Grid.Column="1"
                                        VerticalOptions="End"
                                        HorizontalOptions="Start"
                                        Style="{StaticResource lblTile}"
                                        TextColor="{StaticResource Gray300}"
-                                       Text="{Binding SubcategoryID, Converter={StaticResource IdToCategory}}" />
+                                       Text="{Binding AccountID, Converter={StaticResource IdToAccount}}" />
                                 <!-- amount -->
                                 <Label Grid.Column="1"
                                        FontSize="18"
@@ -124,9 +125,6 @@
                                        Style="{StaticResource lblTile}"
                                        TextColor="{StaticResource Gray300}"
                                        Text="{Binding Date, StringFormat='{0:yyyy-MM-dd}'}" />
-                                <!--
-                                <ImageButton Source="right_arrow.png"
-                                             Style="{StaticResource ibtnTile}" />-->
                             </Grid>
                         </Frame>
 
