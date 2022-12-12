@@ -27,12 +27,7 @@
 
             <Grid>
                 <!-- title -->
-                <Label Text="Transactions"
-                       FontSize="18"
-                       FontAttributes="Bold"
-                       Margin="10"
-                       VerticalOptions="Center" 
-                       HorizontalOptions="Start" />
+                <Label Style="{StaticResource lblTitle}" Text="Transactions" HorizontalOptions="Center" />
 
                 <!-- calendar button -->
                 <ImageButton Style="{StaticResource ibtnTinted}"

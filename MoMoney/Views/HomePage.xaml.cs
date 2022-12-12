@@ -40,18 +40,16 @@ public partial class HomePage : ContentPage
     /// <param name="e"></param>
     private void ImageButton_Clicked(object sender, EventArgs e)
 	{
-        // change date picker visibility, change height of row, and change top margin to fit date picker
+        // change date picker visibility and change height of row
         if (frDates.IsVisible)
         {
             frDates.IsVisible = false;
-            grdMain.RowDefinitions[1].Height = 200;
-            chrtBalance.Margin = new Thickness(0, 0, 10, 10);
+            grdMain.RowDefinitions[0].Height = 40;
         }
         else
         {
             frDates.IsVisible = true;
-            grdMain.RowDefinitions[1].Height = 250;
-            chrtBalance.Margin = new Thickness(0, 50, 10, 10);
+            grdMain.RowDefinitions[0].Height = 90;
         }
     }
 

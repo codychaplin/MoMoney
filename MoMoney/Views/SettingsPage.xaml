@@ -21,7 +21,7 @@
     <!-- main page -->
     <Frame BackgroundColor="{StaticResource Gray900}" Margin="10" Padding="10">
         <VerticalStackLayout>
-            <Label Text="Data" FontSize="18" Margin="0,0,0,10" />
+            <Label Style="{StaticResource lblTitle}" Text="Data" Margin="0,0,0,10" />
             <Button Text="Accounts" Command="{Binding GoToAccountsCommand}" />
             <Button Text="Categories" Command="{Binding GoToCategoriesCommand}" />
             <Button Text="Import Accounts from CSV" Command="{Binding ImportAccountsCSVCommand}" />

@@ -16,6 +16,13 @@
             <Style TargetType="{x:Type Label}">
                 <Setter Property="FontFamily" Value="Metropolis" />
             </Style>
+
+            <Style x:Key="lblTitle" TargetType="{x:Type Label}">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
             
             <!-- binds colour to theme for ImageButtons and Images -->
             <Style x:Key="ibtnTinted" TargetType="{x:Type ImageButton}">
