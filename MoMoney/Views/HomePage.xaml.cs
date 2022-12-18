@@ -13,6 +13,16 @@ public partial class HomePage : ContentPage
     }
 
     /// <summary>
+    /// On click, change to StatsPage tab.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void btnViewAllStats_Clicked(object sender, EventArgs e)
+    {
+        MainPage.TabView.SelectedIndex = 3;
+    }
+
+    /// <summary>
     /// On click, change to TransactionsPage tab.
     /// </summary>
     /// <param name="sender"></param>

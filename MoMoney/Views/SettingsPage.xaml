@@ -19,15 +19,20 @@
     </ContentPage.Resources>
 
     <!-- main page -->
-    <Frame BackgroundColor="{StaticResource Gray900}" Margin="10" Padding="10">
-        <VerticalStackLayout>
-            <Label Style="{StaticResource lblTitle}" Text="Data" Margin="0,0,0,10" />
-            <Button Text="Accounts" Command="{Binding GoToAccountsCommand}" />
-            <Button Text="Categories" Command="{Binding GoToCategoriesCommand}" />
-            <Button Text="Import Accounts from CSV" Command="{Binding ImportAccountsCSVCommand}" />
-            <Button Text="Import Categories from CSV" Command="{Binding ImportCategoriesCSVCommand}" />
-            <Button Text="Export Transactions to CSV" Command="{Binding ExportTransactionsCSVCommand}" />
-        </VerticalStackLayout>
-    </Frame>
+    <VerticalStackLayout Margin="0,10,0,0">
+        <!-- title -->
+        <Label Style="{StaticResource lblTitle}" Text="Settings" HorizontalOptions="Center" />
+        
+        <Frame BackgroundColor="{StaticResource Gray900}" Margin="10" Padding="10">
+            <VerticalStackLayout>
+                <Label Style="{StaticResource lblTitle}" Text="Data" Margin="0,0,0,10" />
+                <Button Text="Accounts" Command="{Binding GoToAccountsCommand}" />
+                <Button Text="Categories" Command="{Binding GoToCategoriesCommand}" />
+                <Button Text="Import Accounts from CSV" Command="{Binding ImportAccountsCSVCommand}" />
+                <Button Text="Import Categories from CSV" Command="{Binding ImportCategoriesCSVCommand}" />
+                <Button Text="Export Transactions to CSV" Command="{Binding ExportTransactionsCSVCommand}" />
+            </VerticalStackLayout>
+        </Frame>
+    </VerticalStackLayout>
 
 </ContentPage>

@@ -19,5 +19,9 @@ public partial class MainPage : ContentPage
 			var args = new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read);
 			TransactionsPage.TransactionsChanged?.Invoke(this, args);
 		}
+		else if (tvTabBar.SelectedIndex == 3) // StatsPage
+		{
+			StatsPage.AccountsChanged?.Invoke(this, new EventArgs());
+		}
 	}
 }

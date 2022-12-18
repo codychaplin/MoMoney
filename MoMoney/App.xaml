@@ -15,6 +15,7 @@
             <!-- default font -->
             <Style TargetType="{x:Type Label}">
                 <Setter Property="FontFamily" Value="Metropolis" />
+                <Setter Property="TextColor" Value="{StaticResource Gray100}" />
             </Style>
 
             <Style x:Key="lblTitle" TargetType="{x:Type Label}">
@@ -48,13 +49,13 @@
             <!-- default button style -->
             <Style TargetType="{x:Type Frame}">
                 <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" />
             </Style>
 
             <!-- Label tile -->
             <Style x:Key="lblTile" TargetType="{x:Type Label}">
                 <Setter Property="FontSize" Value="14" />
                 <Setter Property="Padding" Value="5,0,0,0" />
-                <Setter Property="TextColor" Value="White" />
                 <Setter Property="HorizontalOptions" Value="Start" />
                 <Setter Property="VerticalTextAlignment" Value="Center" />
             </Style>

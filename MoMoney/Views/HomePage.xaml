@@ -116,7 +116,7 @@
                             </chart:DateTimeAxis.LabelStyle>
                             <!-- axis lines -->
                             <chart:DateTimeAxis.AxisLineStyle>
-                                <chart:ChartLineStyle StrokeWidth ="1" Stroke="{StaticResource Gray300}"/>
+                                <chart:ChartLineStyle StrokeWidth ="0" />
                             </chart:DateTimeAxis.AxisLineStyle>
                             <!-- tick lines -->
                             <chart:DateTimeAxis.MajorTickStyle>
@@ -127,14 +127,18 @@
 
                     <!-- Y axis -->
                     <chart:SfCartesianChart.YAxes>
-                        <chart:NumericalAxis ShowMajorGridLines="False" ShowMinorGridLines="False">
+                        <chart:NumericalAxis ShowMajorGridLines="True" ShowMinorGridLines="False">
                             <!-- label -->
                             <chart:NumericalAxis.LabelStyle>
                                 <chart:ChartAxisLabelStyle TextColor="White" LabelFormat="c0" />
                             </chart:NumericalAxis.LabelStyle>
+                            <!-- label -->
+                            <chart:NumericalAxis.MajorGridLineStyle>
+                                <chart:ChartLineStyle Stroke="#55ffffff" />
+                            </chart:NumericalAxis.MajorGridLineStyle>
                             <!-- axis lines -->
                             <chart:NumericalAxis.AxisLineStyle>
-                                <chart:ChartLineStyle StrokeWidth ="1" Stroke="{StaticResource Gray300}"/>
+                                <chart:ChartLineStyle StrokeWidth ="1" Stroke="#55ffffff"/>
                             </chart:NumericalAxis.AxisLineStyle>
                             <!-- tick lines -->
                             <chart:NumericalAxis.MajorTickStyle>
@@ -157,6 +161,8 @@
             <!-- stats -->
             <Grid Grid.Row="2" Margin="10,0,10,0" RowDefinitions="40,*">
                 <Label Style="{StaticResource lblTitle}" Text="Statistics" />
+                <Button x:Name="btnViewAllStats" Text="View All" Clicked="btnViewAllStats_Clicked" />
+                
                 <Frame Grid.Row="1" Padding="10,10,10,0">
                     <Grid RowDefinitions="45,35,*" ColumnDefinitions="*,*" Margin="0" RowSpacing="10">
                         <Grid.Resources>
