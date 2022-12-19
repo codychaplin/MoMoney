@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
+using Syncfusion.Maui.Charts;
 
 namespace MoMoney.ViewModels
 {
@@ -33,6 +34,9 @@ namespace MoMoney.ViewModels
 
         [ObservableProperty]
         public decimal networth = 0;
+
+        [ObservableProperty]
+        public ObservableCollection<SfCartesianChart> charts = new() { new SfCartesianChart() };
 
         /// <summary>
         /// Gets active accounts from database, groups them by account type,

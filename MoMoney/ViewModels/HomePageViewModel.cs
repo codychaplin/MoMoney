@@ -20,10 +20,10 @@ namespace MoMoney.ViewModels
         public decimal totalExpenses = 0;
 
         [ObservableProperty]
-        public string topIncomeSubcategory;
+        public string topIncomeSubcategory = "N/A";
 
         [ObservableProperty]
-        public string topExpenseCategory;
+        public string topExpenseCategory = "N/A";
 
         [ObservableProperty]
         public ObservableCollection<Data> data = new();
@@ -62,6 +62,8 @@ namespace MoMoney.ViewModels
         {
             decimal runningTotal = NetWorth; // running total starts at current net worth
             var results = await TransactionService.GetTransactionsFromTo(From, To);
+            if (!results.Any())
+                return;
 
             // update income/expense totals
             TotalIncome = results.Where(t => t.CategoryID == Constants.INCOME_ID).Sum(t => t.Amount);

@@ -44,17 +44,24 @@
         </Frame>
         
         <!-- starting balance -->
-        <Frame Style="{StaticResource frTile}">
-            <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="dollar_symbol.png" Style="{StaticResource icon}" />
-                <Entry x:Name="txtStartingBalance"
-                       Grid.Column="1"
-                       Keyboard="Numeric"
-                       Placeholder="Starting Balance"
-                       Text="{Binding Account.StartingBalance}" />
-            </Grid>
-        </Frame>
-        
+        <Grid ColumnDefinitions="3.5*,*">
+            <Frame Style="{StaticResource frTile}">
+                <Grid ColumnDefinitions="0.21*,*">
+                    <Image Source="dollar_symbol.png" Style="{StaticResource icon}" HorizontalOptions="Start" />
+                    <Entry x:Name="txtStartingBalance"
+                           Grid.Column="1"
+                           Keyboard="Numeric"
+                           Placeholder="Starting Balance"
+                           Text="{Binding Account.StartingBalance}" />
+                </Grid>
+            </Frame>
+            <Switch Grid.Column="1"
+                    HorizontalOptions="Start"
+                    IsToggled="{Binding Account.Enabled}"
+                    OnColor="{StaticResource Green}" />
+        </Grid>
+
+
         <!-- delete/clear/enter buttons -->
         <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnDefinitions="*,*,*" ColumnSpacing="10">
             <Button x:Name="btnDelete"

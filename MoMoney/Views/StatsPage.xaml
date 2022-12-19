@@ -5,6 +5,7 @@
              NavigationPage.HasNavigationBar="False"
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
+             xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
              Title="">
 
     <ContentPage.BindingContext>
@@ -48,19 +49,41 @@
 
     <!-- main page -->
     <ScrollView>
-        <VerticalStackLayout>
-            
-            <!-- titles -->
-            <Label Style="{StaticResource lblTitle}" Text="Statistics" HorizontalOptions="Center" Margin="10" />
+        <VerticalStackLayout Padding="10" Spacing="10">
 
-            <Frame Margin="10,0,10,10" Padding="10,5,10,5">
+            <Grid>
+                <!-- title -->
+                <Label Style="{StaticResource lblTitle}" Text="Statistics" HorizontalOptions="Center" />
+                <!-- calendar button -->
+                <ImageButton Style="{StaticResource ibtnTinted}"
+                                 Source="calendar.png"
+                                 HorizontalOptions="End"
+                                 CornerRadius="0"
+                                 HeightRequest="20"
+                                 WidthRequest="20"
+                                 Margin="0" />
+            </Grid>
+
+            <Frame HeightRequest="200" Padding="0">
+                <CarouselView ItemsSource="{Binding Charts}">
+                    <CarouselView.ItemTemplate>
+                        <DataTemplate>
+                            <chart:SfCartesianChart Margin="0">
+                                
+                            </chart:SfCartesianChart>
+                        </DataTemplate>
+                    </CarouselView.ItemTemplate>
+                </CarouselView>
+            </Frame>
+
+            <Frame Padding="10,5,10,5">
                 <Grid>
                     <Label Style="{StaticResource lblTitle}" Text="Net Worth" FontSize="22" Margin="0" />
                     <Label Style="{StaticResource lblAccountName}" FontSize="26" Margin="0" Text="{Binding Networth, StringFormat='{0:C2}'}" />
                 </Grid>
             </Frame>
 
-            <Frame Margin="10,0,10,0" Padding="0,10,0,2">
+            <Frame Padding="0,10,0,2">
                 <VerticalStackLayout>
                     <VerticalStackLayout.Resources>
                         <Style TargetType="{x:Type Frame}">
@@ -112,6 +135,12 @@
                 </VerticalStackLayout>
             </Frame>
             
+            <!--  -->
+            <Label Style="{StaticResource lblTitle}" Text="Statistics" />
+            <Frame>
+                
+            </Frame>
+
         </VerticalStackLayout>
     </ScrollView>
 

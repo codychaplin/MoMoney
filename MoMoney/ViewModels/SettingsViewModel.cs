@@ -121,9 +121,14 @@ namespace MoMoney.ViewModels
                             string parent = categoryInfo[0];
                             if (!string.IsNullOrEmpty(parent))
                             {
-                                var parentCat = await CategoryService.GetCategory(name, parent);
+                                // check if parent exists in db
+                                var parentCat = await CategoryService.GetCategory(parent, "");
                                 if (parentCat is null)
-                                    throw new InvalidCategoryException("Parent Category does not exist");
+                                {
+                                    // if doesn't exist in db, check if exists in categories list
+                                    if (!categories.Select(c => c.CategoryName).Contains(parent))
+                                        throw new InvalidCategoryException("Parent Category does not exist");
+                                }
                             }
 
                             Category category = new()
