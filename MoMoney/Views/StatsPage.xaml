@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.StatsPage"
              NavigationPage.HasNavigationBar="False"
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
-             xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
-             Title="">
+             xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts">
 
-    <ContentPage.BindingContext>
+    <ContentView.BindingContext>
         <viewmodel:StatsPageViewModel />
-    </ContentPage.BindingContext>
+    </ContentView.BindingContext>
 
-    <ContentPage.Resources>
+    <ContentView.Resources>
         <ResourceDictionary>
             <!-- account display template -->
             <DataTemplate x:Key="Account" x:DataType="models:Account">
@@ -45,7 +44,7 @@
             <Setter Property="Margin" Value="10,0,20,5" />
             <Setter Property="HorizontalOptions" Value="End" />
         </Style>
-    </ContentPage.Resources>
+    </ContentView.Resources>
 
     <!-- main page -->
     <ScrollView>
@@ -144,4 +143,4 @@
         </VerticalStackLayout>
     </ScrollView>
 
-</ContentPage>
+</ContentView>

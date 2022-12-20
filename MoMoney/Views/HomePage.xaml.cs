@@ -2,7 +2,7 @@ using MoMoney.ViewModels;
 
 namespace MoMoney.Views;
 
-public partial class HomePage : ContentPage
+public partial class HomePage : ContentView
 {
     HomePageViewModel vm;
 

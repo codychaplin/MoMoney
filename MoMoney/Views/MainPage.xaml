@@ -13,7 +13,7 @@
                            TabBarPlacement="Bottom"
                            TabBarHeight="40"
                            SelectionChanged="tvTabBar_SelectionChanged"
-                           BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                           BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Background}}"
                            IndicatorBackground="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource White}}">
 
             <!-- tab bar styles -->
@@ -43,38 +43,27 @@
 
                 <!-- home page -->
                 <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_home_black.png, Dark=tab_home_white.png}">
-                    <Grid>
-                        <views:HomePage />
-                    </Grid>
+                    <views:HomePage />
                 </tabView:SfTabItem>
 
                 <!-- transactions page -->
                 <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_transactions_black.png, Dark=tab_transactions_white.png}">
-                    <Grid>
-                        <views:TransactionsPage />
-                    </Grid>
+                    <views:TransactionsPage />
                 </tabView:SfTabItem>
 
                 <!-- add transaction page -->
                 <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_add_black.png, Dark=tab_add_white.png}">
-                    <Grid>
-                        <views:AddTransactionPage />
-                    </Grid>
+                    <views:AddTransactionPage />
                 </tabView:SfTabItem>
 
                 <!-- stats page -->
                 <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_stats_black.png, Dark=tab_stats_white.png}">
-                    <Grid>
-                        <views:StatsPage />
-                    </Grid>
+                    <views:StatsPage />
                 </tabView:SfTabItem>
 
                 <!-- settings page -->
                 <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_settings_black.png, Dark=tab_settings_white.png}">
-                    <Grid>
-                        <views:SettingsPage />
-                    </Grid>
-
+                    <views:SettingsPage />
                 </tabView:SfTabItem>
                 
             </tabView:SfTabView.Items>

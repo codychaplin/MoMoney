@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.SettingsPage"
              NavigationPage.HasNavigationBar="False"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
-             x:DataType="viewmodel:SettingsViewModel"
-             Title="">
+             x:DataType="viewmodel:SettingsViewModel">
 
-    <ContentPage.BindingContext>
+    <ContentView.BindingContext>
         <viewmodel:SettingsViewModel />
-    </ContentPage.BindingContext>
+    </ContentView.BindingContext>
 
     <!-- styles -->
-    <ContentPage.Resources>
+    <ContentView.Resources>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Margin" Value="0,0,0,10" />
         </Style>
-    </ContentPage.Resources>
+    </ContentView.Resources>
 
     <!-- main page -->
     <VerticalStackLayout Margin="0,10,0,0">
@@ -35,4 +34,4 @@
         </Frame>
     </VerticalStackLayout>
 
-</ContentPage>
+</ContentView>

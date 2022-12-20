@@ -3,7 +3,7 @@ using MoMoney.ViewModels;
 
 namespace MoMoney.Views;
 
-public partial class AddTransactionPage : ContentPage
+public partial class AddTransactionPage : ContentView
 {
     AddTransactionViewModel vm;
 

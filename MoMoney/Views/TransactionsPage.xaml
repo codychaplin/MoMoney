@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.TransactionsPage"
              NavigationPage.HasNavigationBar="False"
              xmlns:local="clr-namespace:MoMoney"
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
-             x:DataType="viewmodel:TransactionsViewModel"
-             Title="">
+             x:DataType="viewmodel:TransactionsViewModel">
 
-    <ContentPage.BindingContext>
+    <ContentView.BindingContext>
         <viewmodel:TransactionsViewModel />
-    </ContentPage.BindingContext>
+    </ContentView.BindingContext>
 
     <!-- converters -->
-    <ContentPage.Resources>
+    <ContentView.Resources>
         <local:IdToCategoryConverter x:Key="IdToCategory" />
         <local:IdToAccountConverter x:Key="IdToAccount" />
         <local:AmountColourConverter x:Key="AmountColour" />
         <local:IconConverter x:Key="Icon" />
-    </ContentPage.Resources>
+    </ContentView.Resources>
 
     <!-- main page -->
     <ScrollView>
@@ -129,4 +128,4 @@
 
         </VerticalStackLayout>
     </ScrollView>
-</ContentPage>
+</ContentView>
