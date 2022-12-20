@@ -166,7 +166,8 @@ namespace MoMoney.ViewModels
             if (status == PermissionStatus.Granted)
             {
                 // create file in downloads folder
-                string path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
+                //string path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
+                string path = "";
                 string targetFile = Path.Combine(path, "Transactions.csv");
                 using FileStream stream = File.OpenWrite(targetFile);
                 using StreamWriter streamWriter = new(stream);

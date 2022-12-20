@@ -27,60 +27,59 @@ namespace MoMoney.ViewModels
             switch (e.Type)
             {
                 case TransactionEventArgs.CRUD.Create:
-                {
-                    Transactions.Add(e.Transaction);
+                    {
+                        Transactions.Add(e.Transaction);
 
-                    // if transfer, add credit side too
-                    if (e.Transaction.CategoryID == Constants.TRANSFER_ID)
-                    {
-                        try
+                        // if transfer, add credit side too
+                        if (e.Transaction.CategoryID == Constants.TRANSFER_ID)
                         {
-                            var otherTrans = await TransactionService.GetTransaction(e.Transaction.TransactionID + 1);
-                            Transactions.Add(otherTrans);
+                            try
+                            {
+                                var otherTrans = await TransactionService.GetTransaction(e.Transaction.TransactionID + 1);
+                                Transactions.Add(otherTrans);
+                            }
+                            catch (TransactionNotFoundException)
+                            {
+                                await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
+                            }
                         }
-                        catch (TransactionNotFoundException)
-                        {
-                            await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
-                        }
+                        break;
                     }
-                    break;
-                }
                 case TransactionEventArgs.CRUD.Read:
-                {
-                    // get transactions from db, if count has changed, refresh Transactions collection
-                    var transactions = await TransactionService.GetTransactionsFromTo(From, To);
-                    if (transactions.Count() != Transactions.Count)
                     {
-                        Transactions.Clear();
-                        foreach (var trans in transactions)
-                            Transactions.Add(trans);
+                        // get transactions from db, if count has changed, refresh Transactions collection
+                        var transactions = await TransactionService.GetTransactionsFromTo(From, To);
+                        if (transactions.Count() != Transactions.Count)
+                        {
+                            Transactions.Clear();
+                            Transactions = new ObservableCollection<Transaction>(transactions);
+                        }
+                        break;
                     }
-                    break;
-                }
                 case TransactionEventArgs.CRUD.Update:
-                {
-                    // finds transaction via ID and update values
-                    Transaction transaction = e.Transaction;
-                    foreach (var trans in Transactions.Where(t => t.TransactionID == transaction.TransactionID))
                     {
-                        trans.Date = transaction.Date;
-                        trans.AccountID = transaction.AccountID;
-                        trans.Amount = transaction.Amount;
-                        trans.CategoryID = transaction.CategoryID;
-                        trans.SubcategoryID = transaction.SubcategoryID;
-                        trans.Payee = transaction.Payee;
-                        trans.TransferID = transaction.TransferID;
+                        // finds transaction via ID and update values
+                        Transaction transaction = e.Transaction;
+                        foreach (var trans in Transactions.Where(t => t.TransactionID == transaction.TransactionID))
+                        {
+                            trans.Date = transaction.Date;
+                            trans.AccountID = transaction.AccountID;
+                            trans.Amount = transaction.Amount;
+                            trans.CategoryID = transaction.CategoryID;
+                            trans.SubcategoryID = transaction.SubcategoryID;
+                            trans.Payee = transaction.Payee;
+                            trans.TransferID = transaction.TransferID;
+                        }
+                        break;
                     }
-                    break;
-                }
                 case TransactionEventArgs.CRUD.Delete:
-                {
-                    // removes transaction from collection
-                    Transaction trans = Transactions.Where(t => t.TransactionID == e.Transaction.TransactionID).FirstOrDefault();
-                    if (trans is not null)
-                        Transactions.Remove(trans);
-                    break;
-                }
+                    {
+                        // removes transaction from collection
+                        Transaction trans = Transactions.Where(t => t.TransactionID == e.Transaction.TransactionID).FirstOrDefault();
+                        if (trans is not null)
+                            Transactions.Remove(trans);
+                        break;
+                    }
                 default:
                     break;
             }

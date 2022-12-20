@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Maui;
-using MoMoney.Views;
+using CommunityToolkit.Maui.Core;
 using Syncfusion.Maui.Core.Hosting;
 
 namespace MoMoney;
@@ -13,6 +13,7 @@ public static class MauiProgram
 			.UseMauiApp<App>()
             .ConfigureSyncfusionCore()
             .UseMauiCommunityToolkit()
+			.UseMauiCommunityToolkitCore()
             .ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

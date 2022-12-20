@@ -189,30 +189,30 @@ namespace MoMoney.ViewModels
 
                             // account ID
                             if (!accounts.TryGetValue(transactionsInfo[1], out int accountID))
-                                throw new InvalidTransactionException($"Transaction {i}: Account '{transactionsInfo[1]} ' does not exist");
+                                throw new InvalidTransactionException($"Transaction {i}: Account '{transactionsInfo[1]}' does not exist");
                             
                             // amount
                             if (!decimal.TryParse(transactionsInfo[2], out decimal amount))
-                                throw new InvalidTransactionException($"Transaction {i}: {transactionsInfo[2]}' is not a valid number");
+                                throw new InvalidTransactionException($"Transaction {i}: '{transactionsInfo[2]}' is not a valid number");
 
                             // category ID
-                            if (!categories.TryGetValue( new string[] { transactionsInfo[3], "" }, out int parentID))
-                                throw new InvalidTransactionException($"Transaction {i}: {transactionsInfo[3]}' is not a valid parent category");
+                            if (!categories.TryGetValue( transactionsInfo[3] + ",", out int parentID))
+                                throw new InvalidTransactionException($"Transaction {i}: '{transactionsInfo[3]}' is not a valid parent category");
 
                             // subcategory ID
-                            if (!categories.TryGetValue(new string[] { transactionsInfo[4], transactionsInfo[3] }, out int subCategoryID))
-                                throw new InvalidTransactionException($"Transaction {i}: {transactionsInfo[4]}' is not a valid subcategory");
+                            if (!categories.TryGetValue( transactionsInfo[4] + "," + transactionsInfo[3], out int subcategoryID))
+                                throw new InvalidTransactionException($"Transaction {i}: '{transactionsInfo[4]}' is not a valid subcategory");
 
                             // payee
                             string payee = "";
-                            if (string.IsNullOrEmpty(transactionsInfo[5]))
+                            if (parentID != Constants.TRANSFER_ID && string.IsNullOrEmpty(transactionsInfo[5]))
                                 throw new InvalidTransactionException($"Transaction {i}: Payee cannot be blank");
                             else
                                 payee = transactionsInfo[5];
 
                             // transfer ID
                             int? transferID;
-                            if (subCategoryID == Constants.CREDIT_ID)
+                            if (subcategoryID == Constants.CREDIT_ID)
                             {
                                 transactions[i - 2].TransferID = accountID; // -2 because i started at 1, not 0
                                 transferID = transactions[i - 2].AccountID;
@@ -226,7 +226,7 @@ namespace MoMoney.ViewModels
                                 AccountID = accountID,
                                 Amount = amount,
                                 CategoryID = parentID,
-                                SubcategoryID = subCategoryID,
+                                SubcategoryID = subcategoryID,
                                 Payee = payee,
                                 TransferID = transferID
                             };

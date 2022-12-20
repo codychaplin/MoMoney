@@ -1,5 +1,5 @@
-﻿using MoMoney.Models;
-using SQLite;
+﻿using SQLite;
+using MoMoney.Models;
 
 namespace MoMoney
 {
@@ -16,6 +16,8 @@ namespace MoMoney
                 return;
             
             db = new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
+
+            await db.CreateTableAsync<Transaction>();
 
             var account = await db.CreateTableAsync<Account>();
             if (account == CreateTableResult.Created)
@@ -41,11 +43,11 @@ namespace MoMoney
                 int count = await db.Table<Category>().CountAsync();
                 if (count <= 0)
                 {
+                    await db.DropTableAsync<Category>();
+                    await db.CreateTableAsync<Category>();
                     await db.InsertAllAsync(GetDefaultCategories());
                 }
             }
-
-            await db.CreateTableAsync<Transaction>();
         }
 
         /// <summary>
