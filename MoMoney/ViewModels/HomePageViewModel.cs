@@ -11,7 +11,7 @@ namespace MoMoney.ViewModels
         public ObservableCollection<Transaction> recentTransactions = new();
 
         [ObservableProperty]
-        public decimal netWorth = 0;
+        public decimal networth = 0;
 
         [ObservableProperty]
         public decimal totalIncome = 0;
@@ -51,8 +51,9 @@ namespace MoMoney.ViewModels
         public async Task GetTotalBalance()
         {
             var accounts = await AccountService.GetActiveAccounts();
+            Networth = 0;
             foreach (var acc in accounts)
-                NetWorth += acc.CurrentBalance;
+                Networth += acc.CurrentBalance;
         }
 
         /// <summary>
@@ -60,7 +61,7 @@ namespace MoMoney.ViewModels
         /// </summary>
         public async Task GetChartData()
         {
-            decimal runningTotal = NetWorth; // running total starts at current net worth
+            decimal runningTotal = Networth; // running total starts at current net worth
             var results = await TransactionService.GetTransactionsFromTo(From, To);
             if (!results.Any())
                 return;

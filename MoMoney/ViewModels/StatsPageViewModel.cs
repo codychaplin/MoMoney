@@ -2,12 +2,13 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
-using Syncfusion.Maui.Charts;
 
 namespace MoMoney.ViewModels
 {
     public partial class StatsPageViewModel : ObservableObject
     {
+        IEnumerable<Account> PreviousAccounts { get; set; }
+
         [ObservableProperty]
         public ObservableCollection<Account> checkingsAccounts = new();
 
@@ -35,9 +36,6 @@ namespace MoMoney.ViewModels
         [ObservableProperty]
         public decimal networth = 0;
 
-        [ObservableProperty]
-        public ObservableCollection<SfCartesianChart> charts = new() { new SfCartesianChart() };
-
         /// <summary>
         /// Gets active accounts from database, groups them by account type,
         /// adds them to the corresponding collection, then adds balance to corresponding sum
@@ -45,8 +43,18 @@ namespace MoMoney.ViewModels
         public async Task getAccounts()
         {
             var accounts = await AccountService.GetActiveAccounts();
+
+            // checks if there are any accounts in db, then if the all the current balances are the same
             if (accounts.Any())
             {
+                if (PreviousAccounts != null &&
+                    PreviousAccounts.Select(a1 => a1.CurrentBalance)
+                                    .All(a => accounts.Select(a2 => a2.CurrentBalance)
+                                    .Contains(a)))
+                    return;
+
+                // cache accounts and clear fields
+                PreviousAccounts = accounts;
                 CheckingsAccounts.Clear();
                 SavingsAccounts.Clear();
                 CreditAccounts.Clear();
@@ -56,37 +64,36 @@ namespace MoMoney.ViewModels
                 CreditSum = 0;
                 InvestmentSum = 0;
                 Networth = 0;
-            }
-            else
-                return;
 
-            foreach (var acc in accounts)
-            {
-                var type = Enum.Parse(typeof(Constants.AccountTypes), acc.AccountType);
-                switch (type)
+                // update account type values
+                foreach (var acc in accounts)
                 {
-                    case Constants.AccountTypes.Checkings:
-                         CheckingsAccounts.Add(acc);
-                         CheckingsSum += acc.CurrentBalance;
-                         Networth += acc.CurrentBalance;
-                         break;
-                    case Constants.AccountTypes.Savings:
-                         SavingsAccounts.Add(acc);
-                         SavingsSum += acc.CurrentBalance;
-                         Networth += acc.CurrentBalance;
-                         break;
-                    case Constants.AccountTypes.Credit:
-                         CreditAccounts.Add(acc);
-                         CreditSum += acc.CurrentBalance;
-                         Networth += acc.CurrentBalance;
-                         break;
-                    case Constants.AccountTypes.Investments:
-                         InvestmentAccounts.Add(acc);
-                         InvestmentSum += acc.CurrentBalance;
-                         Networth += acc.CurrentBalance;
-                         break;
-                    default:
-                         break;
+                    var type = Enum.Parse(typeof(Constants.AccountTypes), acc.AccountType);
+                    switch (type)
+                    {
+                        case Constants.AccountTypes.Checkings:
+                            CheckingsAccounts.Add(acc);
+                            CheckingsSum += acc.CurrentBalance;
+                            Networth += acc.CurrentBalance;
+                            break;
+                        case Constants.AccountTypes.Savings:
+                            SavingsAccounts.Add(acc);
+                            SavingsSum += acc.CurrentBalance;
+                            Networth += acc.CurrentBalance;
+                            break;
+                        case Constants.AccountTypes.Credit:
+                            CreditAccounts.Add(acc);
+                            CreditSum += acc.CurrentBalance;
+                            Networth += acc.CurrentBalance;
+                            break;
+                        case Constants.AccountTypes.Investments:
+                            InvestmentAccounts.Add(acc);
+                            InvestmentSum += acc.CurrentBalance;
+                            Networth += acc.CurrentBalance;
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }

@@ -182,7 +182,7 @@
                         <VerticalStackLayout Grid.ColumnSpan="2">
                             <Label Text="Net Worth"
                                    FontSize="15" />
-                            <Label Text="{Binding NetWorth, StringFormat='{0:C2}'}"
+                            <Label Text="{Binding Networth, StringFormat='{0:C2}'}"
                                    FontSize="30"
                                    FontAttributes="Bold" />
                         </VerticalStackLayout>

@@ -12,11 +12,11 @@ namespace MoMoney
         {
             if (int.TryParse(value.ToString(), out int ID))
             {
-                var task = Task.Run(async () => { return await CategoryService.GetCategory(ID); });
-                if (task.Result is null)
+                var task = Task.Run(async () => { return await CategoryService.GetCategory(ID); }).Result;
+                if (task is null)
                     return "";
                 else
-                    return task.Result.CategoryName;
+                    return task.CategoryName;
             }
             
             return null;

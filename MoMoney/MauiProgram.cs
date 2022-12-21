@@ -21,7 +21,7 @@ public static class MauiProgram
 				fonts.AddFont("Metropolis-Regular.otf", "Metropolis");
 				fonts.AddFont("Metropolis-Bold.otf", "MetropolisBold");
 			});
-
-		return builder.Build();
+		
+        return builder.Build();
 	}
 }

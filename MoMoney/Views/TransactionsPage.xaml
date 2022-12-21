@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:MoMoney"
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
              x:DataType="viewmodel:TransactionsViewModel">
 
     <ContentView.BindingContext>
@@ -21,15 +22,14 @@
     </ContentView.Resources>
 
     <!-- main page -->
-    <ScrollView>
-        <VerticalStackLayout>
+    <VerticalStackLayout>
 
-            <Grid>
-                <!-- title -->
-                <Label Style="{StaticResource lblTitle}" Text="Transactions" HorizontalOptions="Center" />
+        <Grid>
+            <!-- title -->
+            <Label Style="{StaticResource lblTitle}" Text="Transactions" HorizontalOptions="Center" />
 
-                <!-- calendar button -->
-                <ImageButton Style="{StaticResource ibtnTinted}"
+            <!-- calendar button -->
+            <ImageButton Style="{StaticResource ibtnTinted}"
                              Source="calendar.png"
                              HorizontalOptions="End"
                              VerticalOptions="Start"
@@ -38,10 +38,10 @@
                              WidthRequest="20"
                              Margin="10" 
                              Clicked="ImageButton_Clicked" />
-            </Grid>
+        </Grid>
 
-            <!-- date range picker -->
-            <Frame x:Name="frDates"
+        <!-- date range picker -->
+        <Frame x:Name="frDates"
                    IsVisible="false"
                    Padding="0"
                    CornerRadius="5"
@@ -49,36 +49,38 @@
                    VerticalOptions="Center"
                    HorizontalOptions="Center"
                    BackgroundColor="{StaticResource Gray700}">
-                <Grid ColumnDefinitions="30,*,*">
-                    <Grid.Resources>
-                        <Style TargetType="{x:Type DatePicker}">
-                            <Setter Property="HeightRequest" Value="40" />
-                            <Setter Property="TextColor" Value="White" />
-                            <Setter Property="Format" Value="MMM dd yyyy" />
-                            <Setter Property="HorizontalOptions" Value="Center" />
-                        </Style>
-                    </Grid.Resources>
-                    <Image Source="calendar.png"
+            <Grid ColumnDefinitions="30,*,*">
+                <Grid.Resources>
+                    <Style TargetType="{x:Type DatePicker}">
+                        <Setter Property="HeightRequest" Value="40" />
+                        <Setter Property="TextColor" Value="White" />
+                        <Setter Property="Format" Value="MMM dd yyyy" />
+                        <Setter Property="HorizontalOptions" Value="Center" />
+                    </Style>
+                </Grid.Resources>
+                <Image Source="calendar.png"
                            Style="{StaticResource imgTinted}"
                            WidthRequest="20"
                            HeightRequest="20"
                            HorizontalOptions="End" />
-                    <DatePicker x:Name="dtFrom" Grid.Column="1" Date="{Binding From}" DateSelected="dtFrom_DateSelected" />
-                    <DatePicker x:Name="dtTo" Grid.Column="2" Date="{Binding To}" DateSelected="dtTo_DateSelected" />
-                </Grid>
-            </Frame>
+                <DatePicker x:Name="dtFrom" Grid.Column="1" Date="{Binding From}" DateSelected="dtFrom_DateSelected" />
+                <DatePicker x:Name="dtTo" Grid.Column="2" Date="{Binding To}" DateSelected="dtTo_DateSelected" />
+            </Grid>
+        </Frame>
+
+        <ScrollView>
             
             <!-- list of transactions -->
-            <CollectionView ItemsSource="{Binding Transactions}">
-                <CollectionView.ItemTemplate>
+            <sf:SfListView ItemsSource="{Binding Transactions}" ItemSize="64" Padding="0">
+                <sf:SfListView.ItemTemplate>
                     <DataTemplate x:DataType="models:Transaction">
 
                         <!-- template -->
-                        <Frame Style="{StaticResource frTile}">
+                        <Frame Style="{StaticResource frTile}" Margin="10,0,10,0">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding Path=GoToEditTransactionCommand, Source={RelativeSource
-                                                                        AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                                                      CommandParameter="{Binding TransactionID}" />
+                                                                            AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                                                          CommandParameter="{Binding TransactionID}" />
                             </Frame.GestureRecognizers>
                             <Grid ColumnDefinitions="30,*">
                                 <!-- icon -->
@@ -93,12 +95,14 @@
                                 <!-- subcategory -->
                                 <Label Grid.Column="1"
                                        FontSize="18"
+                                       WidthRequest="120"
                                        VerticalOptions="Start"
                                        HorizontalOptions="Start"
                                        Style="{StaticResource lblTile}"
                                        Text="{Binding SubcategoryID, Converter={StaticResource IdToCategory}}" />
                                 <!-- account -->
                                 <Label Grid.Column="1"
+                                       WidthRequest="120"
                                        VerticalOptions="End"
                                        HorizontalOptions="Start"
                                        Style="{StaticResource lblTile}"
@@ -107,15 +111,19 @@
                                 <!-- amount -->
                                 <Label Grid.Column="1"
                                        FontSize="18"
+                                       WidthRequest="100"
                                        VerticalOptions="Start"
                                        HorizontalOptions="End"
+                                       HorizontalTextAlignment="End"
                                        Style="{StaticResource lblTile}"
                                        TextColor="{Binding CategoryID, Converter={StaticResource AmountColour}}"
                                        Text="{Binding Amount, StringFormat='{0:C2}'}" />
                                 <!-- date -->
                                 <Label Grid.Column="1"
+                                       WidthRequest="80"
                                        VerticalOptions="End"
                                        HorizontalOptions="End"
+                                       HorizontalTextAlignment="End"
                                        Style="{StaticResource lblTile}"
                                        TextColor="{StaticResource Gray300}"
                                        Text="{Binding Date, StringFormat='{0:yyyy-MM-dd}'}" />
@@ -123,9 +131,9 @@
                         </Frame>
 
                     </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-
-        </VerticalStackLayout>
-    </ScrollView>
+                </sf:SfListView.ItemTemplate>
+            </sf:SfListView>
+            
+        </ScrollView>
+    </VerticalStackLayout>
 </ContentView>

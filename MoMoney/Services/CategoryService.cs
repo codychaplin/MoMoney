@@ -162,7 +162,8 @@ namespace MoMoney.Services
             await Init();
 
             var categories = await MoMoneydb.db.Table<Category>().ToListAsync();
-            return categories.ToDictionary(c => c.CategoryID, c => c.CategoryName);
+            var categoriesDict = categories.ToDictionary(c => c.CategoryID, c => c.CategoryName);
+            return categoriesDict;
         }
 
         /// <summary>
