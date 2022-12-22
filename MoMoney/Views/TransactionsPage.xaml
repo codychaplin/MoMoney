@@ -71,20 +71,20 @@
         <ScrollView>
             
             <!-- list of transactions -->
-            <sf:SfListView ItemsSource="{Binding Transactions}" ItemSize="64" Padding="0">
+            <sf:SfListView ItemsSource="{Binding Transactions}" ItemSize="70">
                 <sf:SfListView.ItemTemplate>
                     <DataTemplate x:DataType="models:Transaction">
-
+                        
                         <!-- template -->
-                        <Frame Style="{StaticResource frTile}" Margin="10,0,10,0">
+                        <Frame Style="{StaticResource frTile}" HeightRequest="60">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding Path=GoToEditTransactionCommand, Source={RelativeSource
                                                                             AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
                                                           CommandParameter="{Binding TransactionID}" />
                             </Frame.GestureRecognizers>
-                            <Grid ColumnDefinitions="30,*">
+                            <Grid ColumnDefinitions="30,*" RowDefinitions="*,*">
                                 <!-- icon -->
-                                <Image>
+                                <Image Grid.RowSpan="2">
                                     <Image.Source>
                                         <MultiBinding Converter="{StaticResource Icon}">
                                             <Binding Path="CategoryID" />
@@ -96,14 +96,15 @@
                                 <Label Grid.Column="1"
                                        FontSize="18"
                                        WidthRequest="120"
-                                       VerticalOptions="Start"
+                                       VerticalOptions="Center"
                                        HorizontalOptions="Start"
                                        Style="{StaticResource lblTile}"
                                        Text="{Binding SubcategoryID, Converter={StaticResource IdToCategory}}" />
                                 <!-- account -->
-                                <Label Grid.Column="1"
+                                <Label Grid.Row="1"
+                                       Grid.Column="1"
                                        WidthRequest="120"
-                                       VerticalOptions="End"
+                                       VerticalOptions="Center"
                                        HorizontalOptions="Start"
                                        Style="{StaticResource lblTile}"
                                        TextColor="{StaticResource Gray300}"
@@ -112,16 +113,17 @@
                                 <Label Grid.Column="1"
                                        FontSize="18"
                                        WidthRequest="100"
-                                       VerticalOptions="Start"
+                                       VerticalOptions="Center"
                                        HorizontalOptions="End"
                                        HorizontalTextAlignment="End"
                                        Style="{StaticResource lblTile}"
                                        TextColor="{Binding CategoryID, Converter={StaticResource AmountColour}}"
                                        Text="{Binding Amount, StringFormat='{0:C2}'}" />
                                 <!-- date -->
-                                <Label Grid.Column="1"
-                                       WidthRequest="80"
-                                       VerticalOptions="End"
+                                <Label Grid.Row="1"
+                                       Grid.Column="1"
+                                       WidthRequest="90"
+                                       VerticalOptions="Center"
                                        HorizontalOptions="End"
                                        HorizontalTextAlignment="End"
                                        Style="{StaticResource lblTile}"

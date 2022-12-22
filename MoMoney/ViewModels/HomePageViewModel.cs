@@ -98,9 +98,9 @@ namespace MoMoney.ViewModels
 
             // get non-transfer transactions, group by date, and select date and sum of amounts on each date
             Data = new ObservableCollection<Data>(
-                results.OrderByDescending(trans => trans.Date)
+                results.OrderBy(trans => trans.Date)
                        .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
-                       .GroupBy(trans => trans.Date.Day)
+                       .GroupBy(trans => trans.Date)
                        .Select(group => new Data
                        {
                            Date = group.FirstOrDefault().Date,

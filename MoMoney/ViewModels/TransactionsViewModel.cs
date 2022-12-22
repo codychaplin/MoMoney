@@ -52,7 +52,7 @@ namespace MoMoney.ViewModels
                         if (transactions.Count() != Transactions.Count)
                         {
                             Transactions.Clear();
-                            Transactions = new ObservableCollection<Transaction>(transactions);
+                            Transactions = new ObservableCollection<Transaction>(transactions.Reverse());
                         }
                         break;
                     }

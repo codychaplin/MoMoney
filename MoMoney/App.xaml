@@ -11,7 +11,11 @@
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-        
+
+            <Style TargetType="NavigationPage">
+                <Setter Property="BarBackgroundColor" Value="Red" />
+            </Style>
+
             <!-- default font -->
             <Style TargetType="{x:Type Label}">
                 <Setter Property="FontFamily" Value="Metropolis" />

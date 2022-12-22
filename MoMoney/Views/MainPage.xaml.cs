@@ -1,4 +1,3 @@
-using MoMoney.Services;
 using Syncfusion.Maui.TabView;
 
 namespace MoMoney.Views;
@@ -11,7 +10,7 @@ public partial class MainPage : ContentPage
 	{
 		InitializeComponent();
 		TabView = tvTabBar;
-	}
+    }
 
 	private void tvTabBar_SelectionChanged(object sender, TabSelectionChangedEventArgs e)
 	{

@@ -63,13 +63,16 @@ namespace MoMoney.ViewModels
                             if (!decimal.TryParse(accountInfo[2], out decimal startingBalance))
                                 throw new InvalidAccountException("'" + accountInfo[2] + "' is not a number");
 
+                            if (!bool.TryParse(accountInfo[3], out bool enabled))
+                                throw new InvalidAccountException("'" + accountInfo[2] + "' is not a number");
+
                             Account account = new()
                             {
                                 AccountName = name,
                                 AccountType = type.ToString(),
                                 StartingBalance = startingBalance,
                                 CurrentBalance = startingBalance,
-                                Enabled = true
+                                Enabled = enabled
                             };
 
                             accounts.Add(account);
