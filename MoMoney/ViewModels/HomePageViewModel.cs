@@ -29,7 +29,7 @@ namespace MoMoney.ViewModels
         public ObservableCollection<Data> data = new();
 
         [ObservableProperty]
-        public DateTime from = new(DateTime.Today.Year, 1, 1);
+        public DateTime from = new();
 
         [ObservableProperty]
         public DateTime to = DateTime.Today;
@@ -85,27 +85,44 @@ namespace MoMoney.ViewModels
 
             // update top expense category
             var categoryID = results.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
-                                        .GroupBy(t => t.CategoryID)
-                                        .Select(group => new
-                                        {
-                                            Total = group.Sum(t => t.Amount),
-                                            group.FirstOrDefault().CategoryID
-                                        })
-                                        .MinBy(g => g.Total)
-                                        .CategoryID;
+                                    .GroupBy(t => t.CategoryID)
+                                    .Select(group => new
+                                    {
+                                        Total = group.Sum(t => t.Amount),
+                                        group.FirstOrDefault().CategoryID
+                                    })
+                                    .MinBy(g => g.Total)
+                                    .CategoryID;
             Category category = await CategoryService.GetCategory(categoryID);
             TopExpenseCategory = category.CategoryName;
 
+            // if the date range is > 1 year, group results by Month, if < 1 year, sort by day
             // get non-transfer transactions, group by date, and select date and sum of amounts on each date
-            Data = new ObservableCollection<Data>(
-                results.OrderBy(trans => trans.Date)
-                       .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
-                       .GroupBy(trans => trans.Date)
-                       .Select(group => new Data
-                       {
-                           Date = group.FirstOrDefault().Date,
-                           Balance = runningTotal -= group.Sum(t => t.Amount)
-                       }));
+            bool isLong = (To - From).TotalDays > 365;
+            if (isLong)
+            {
+                Data = new ObservableCollection<Data>(
+                    results.OrderBy(trans => trans.Date)
+                           .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
+                           .GroupBy(trans => trans.Date.Month)
+                           .Select(group => new Data
+                           {
+                               Date = group.FirstOrDefault().Date,
+                               Balance = runningTotal -= group.Sum(t => t.Amount)
+                           }));
+            }
+            else
+            {
+                Data = new ObservableCollection<Data>(
+                    results.OrderBy(trans => trans.Date)
+                           .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
+                           .GroupBy(trans => trans.Date)
+                           .Select(group => new Data
+                           {
+                               Date = group.FirstOrDefault().Date,
+                               Balance = runningTotal -= group.Sum(t => t.Amount)
+                           }));
+            }
         }
     }
 

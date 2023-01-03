@@ -4,7 +4,6 @@
              Loaded="ContentPage_Loaded"
              x:Class="MoMoney.Views.HomePage"
              xmlns:local="clr-namespace:MoMoney"
-             NavigationPage.HasNavigationBar="False"
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
              xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts">
@@ -108,10 +107,10 @@
 
                     <!-- X axis -->
                     <chart:SfCartesianChart.XAxes>
-                        <chart:DateTimeAxis ShowMajorGridLines="False" ShowMinorGridLines="False">
+                        <chart:DateTimeAxis x:Name="XAxis" ShowMajorGridLines="False" ShowMinorGridLines="False" Interval="1" MinorTicksPerInterval="1" IntervalType="Months">
                             <!-- label -->
                             <chart:DateTimeAxis.LabelStyle>
-                                <chart:ChartAxisLabelStyle TextColor="White" LabelFormat="MMM-dd" />
+                                <chart:ChartAxisLabelStyle TextColor="White" LabelFormat="MMM" />
                             </chart:DateTimeAxis.LabelStyle>
                             <!-- axis lines -->
                             <chart:DateTimeAxis.AxisLineStyle>
@@ -129,7 +128,7 @@
                         <chart:NumericalAxis ShowMajorGridLines="True" ShowMinorGridLines="False">
                             <!-- label -->
                             <chart:NumericalAxis.LabelStyle>
-                                <chart:ChartAxisLabelStyle TextColor="White" LabelFormat="c0" />
+                                <chart:ChartAxisLabelStyle TextColor="White" LabelFormat="$0,k" />
                             </chart:NumericalAxis.LabelStyle>
                             <!-- label -->
                             <chart:NumericalAxis.MajorGridLineStyle>

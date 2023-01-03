@@ -10,6 +10,8 @@ public partial class HomePage : ContentView
 	{
 		InitializeComponent();
         vm = (HomePageViewModel)BindingContext;
+        // first two months, show 1 year, starting March show YTD
+        vm.From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
     }
 
     /// <summary>
@@ -70,7 +72,7 @@ public partial class HomePage : ContentView
     /// <param name="e"></param>
     private async void dtFrom_DateSelected(object sender, DateChangedEventArgs e)
     {
-        await Task.Delay(500);
+        await Task.Delay(100);
         await vm.GetChartData();
     }
 
@@ -81,7 +83,7 @@ public partial class HomePage : ContentView
     /// <param name="e"></param>
     private async void dtTo_DateSelected(object sender, DateChangedEventArgs e)
     {
-        await Task.Delay(500);
+        await Task.Delay(100);
         await vm.GetChartData();
     }
 }

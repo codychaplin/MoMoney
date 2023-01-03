@@ -2,9 +2,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Settings.AddAccountPage"
-             Title="Add Account"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
-             x:DataType="viewmodel:AddAccountViewModel">
+             x:DataType="viewmodel:AddAccountViewModel"
+             Title="Add Account">
 
     <ContentPage.BindingContext>
         <viewmodel:AddAccountViewModel />

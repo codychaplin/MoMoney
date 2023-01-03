@@ -6,17 +6,15 @@
              xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView"
              xmlns:behavior="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
              Title="">
-    <ContentPage.Behaviors>
-        <behavior:StatusBarBehavior StatusBarColor="{AppThemeBinding Light=White, Dark={StaticResource Background}}" />
-    </ContentPage.Behaviors>
+    
 
     <!-- tab bar -->
     <tabView:SfTabView x:Name="tvTabBar"
-                           TabBarHeight="54"
-                           TabBarPlacement="Bottom"
-                           SelectionChanged="tvTabBar_SelectionChanged"
-                           BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Background}}"
-                           IndicatorBackground="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource White}}">
+                       TabBarHeight="54"
+                       TabBarPlacement="Bottom"
+                       SelectionChanged="tvTabBar_SelectionChanged"
+                       BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Background}}"
+                       IndicatorBackground="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource White}}">
 
         <!-- tab bar styles -->
         <tabView:SfTabView.Resources>
