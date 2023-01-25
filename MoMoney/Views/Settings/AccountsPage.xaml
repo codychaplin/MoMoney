@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Settings.AccountsPage"
+             xmlns:local="clr-namespace:MoMoney"
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
              x:DataType="viewmodel:AccountsViewModel"
@@ -10,6 +11,11 @@
     <ContentPage.BindingContext>
         <viewmodel:AccountsViewModel />
     </ContentPage.BindingContext>
+
+    <!-- converters -->
+    <ContentPage.Resources>
+        <local:TileColourConverter x:Key="TileColour" />
+    </ContentPage.Resources>
 
     <!-- main page -->
     <Grid>
@@ -26,8 +32,17 @@
                                                                     AncestorType={x:Type viewmodel:AccountsViewModel}}}"
                                                   CommandParameter="{Binding AccountID}" />
                         </Frame.GestureRecognizers>
-                        <Grid>
+                        <Grid BackgroundColor="{Binding Enabled, Converter={StaticResource TileColour}}">
+
+                            <!-- Account Name -->
                             <Label Style="{StaticResource lblTile}" Text="{Binding AccountName}" />
+
+                            <!-- Current Balance -->
+                            <Label Style="{StaticResource lblTile}"
+                                   IsVisible="{Binding Enabled}"
+                                   HorizontalOptions="End"
+                                   Padding="0,0,5,0"
+                                   Text="{Binding CurrentBalance, StringFormat='{0:C2}'}" />
                         </Grid>
                     </Frame>
                     

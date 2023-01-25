@@ -29,25 +29,25 @@
 
             <!-- calendar button -->
             <ImageButton Style="{StaticResource ibtnTinted}"
-                             Source="calendar.png"
-                             HorizontalOptions="End"
-                             VerticalOptions="Start"
-                             CornerRadius="0"
-                             HeightRequest="20"
-                             WidthRequest="20"
-                             Margin="10" 
-                             Clicked="ImageButton_Clicked" />
+                         Source="calendar.png"
+                         HorizontalOptions="End"
+                         VerticalOptions="Start"
+                         CornerRadius="0"
+                         HeightRequest="20"
+                         WidthRequest="20"
+                         Margin="10" 
+                         Clicked="ImageButton_Clicked" />
         </Grid>
 
         <!-- date range picker -->
         <Frame x:Name="frDates"
-                   IsVisible="false"
-                   Padding="0"
-                   CornerRadius="5"
-                   Margin="50,0,50,10"
-                   VerticalOptions="Center"
-                   HorizontalOptions="Center"
-                   BackgroundColor="{StaticResource Gray700}">
+               IsVisible="false"
+               Padding="0"
+               CornerRadius="5"
+               Margin="50,0,50,10"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               BackgroundColor="{StaticResource Gray700}">
             <Grid ColumnDefinitions="30,*,*">
                 <Grid.Resources>
                     <Style TargetType="{x:Type DatePicker}">
@@ -58,10 +58,10 @@
                     </Style>
                 </Grid.Resources>
                 <Image Source="calendar.png"
-                           Style="{StaticResource imgTinted}"
-                           WidthRequest="20"
-                           HeightRequest="20"
-                           HorizontalOptions="End" />
+                       Style="{StaticResource imgTinted}"
+                       WidthRequest="20"
+                       HeightRequest="20"
+                       HorizontalOptions="End" />
                 <DatePicker x:Name="dtFrom" Grid.Column="1" Date="{Binding From}" DateSelected="dtFrom_DateSelected" />
                 <DatePicker x:Name="dtTo" Grid.Column="2" Date="{Binding To}" DateSelected="dtTo_DateSelected" />
             </Grid>
@@ -78,7 +78,7 @@
                         <Frame Style="{StaticResource frTile}" HeightRequest="60">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding Path=GoToEditTransactionCommand, Source={RelativeSource
-                                                                            AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                                                                        AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
                                                           CommandParameter="{Binding TransactionID}" />
                             </Frame.GestureRecognizers>
                             <Grid ColumnDefinitions="30,*" RowDefinitions="*,*">
