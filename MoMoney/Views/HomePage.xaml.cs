@@ -41,7 +41,6 @@ public partial class HomePage : ContentView
     /// <param name="e"></param>
 	private async void ContentPage_Loaded(object sender, EventArgs e)
 	{
-		await vm.GetTotalBalance();
 		await vm.GetRecentTransactions();
 	}
 

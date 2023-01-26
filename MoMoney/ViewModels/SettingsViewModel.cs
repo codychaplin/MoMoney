@@ -4,6 +4,7 @@ using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
 using MoMoney.Views.Settings;
+using Syncfusion.Maui.DataSource.Extensions;
 
 namespace MoMoney.ViewModels
 {
@@ -199,6 +200,29 @@ namespace MoMoney.ViewModels
             }
             else
                 await Shell.Current.DisplayAlert("Error", "Storage permissions are required in order to save to CSV", "OK");
+        }
+
+        /// <summary>
+        /// Prompts the user to open a CSV file. Valid Categories are then added to the database.
+        /// </summary>
+        [RelayCommand]
+        async Task CalculateAccountBalances()
+        {
+            var transactions = await TransactionService.GetTransactions();
+            var accounts = await AccountService.GetAccounts();
+
+            // group transactions by account, sum amounts, and convert to dictionary
+            var currentBalances = transactions.GroupBy(t => t.AccountID)
+                                               .Select(g => new { Account = g.First().AccountID,
+                                                                  Balance = g.Sum(t => t.Amount) })
+                                               .ToDictionary(a => a.Account, a => a.Balance);
+
+            // update current balance in db
+            foreach (var account in accounts)
+            {
+                account.CurrentBalance = account.StartingBalance + currentBalances[account.AccountID];
+                await AccountService.UpdateAccount(account);
+            }
         }
     }
 }

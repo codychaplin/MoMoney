@@ -21,7 +21,7 @@
         <!-- title -->
         <Label Style="{StaticResource lblTitle}" Text="Settings" HorizontalOptions="Center" />
         
-        <Frame BackgroundColor="{StaticResource Gray900}" Margin="10" Padding="10">
+        <Frame BackgroundColor="{StaticResource Gray900}" Margin="10" Padding="10,10,10,0">
             <VerticalStackLayout>
                 <Label Style="{StaticResource lblTitle}" Text="Data" Margin="0,0,0,10" />
                 <Button Text="Accounts" Command="{Binding GoToAccountsCommand}" />
@@ -29,6 +29,13 @@
                 <Button Text="Import Accounts from CSV" Command="{Binding ImportAccountsCSVCommand}" />
                 <Button Text="Import Categories from CSV" Command="{Binding ImportCategoriesCSVCommand}" />
                 <Button Text="Export Transactions to CSV" Command="{Binding ExportTransactionsCSVCommand}" />
+            </VerticalStackLayout>
+        </Frame>
+
+        <Frame BackgroundColor="{StaticResource Gray900}" Margin="10,5,10,10" Padding="10,10,10,0">
+            <VerticalStackLayout>
+                <Label Style="{StaticResource lblTitle}" Text="Debug" Margin="0,0,0,10" />
+                <Button Text="Calculate Account Balances" Command="{Binding CalculateAccountBalancesCommand}" />
             </VerticalStackLayout>
         </Frame>
     </VerticalStackLayout>

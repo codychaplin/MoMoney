@@ -12,6 +12,7 @@ namespace MoMoney.ViewModels
 
         [ObservableProperty]
         public decimal networth = 0;
+        bool isNetworthSet = false; // used to update networth on start
 
         [ObservableProperty]
         public decimal totalIncome = 0;
@@ -48,12 +49,13 @@ namespace MoMoney.ViewModels
         /// <summary>
         /// Gets updated total balance of all accounts combined.
         /// </summary>
-        public async Task GetTotalBalance()
+        public async Task GetNetworth()
         {
             var accounts = await AccountService.GetActiveAccounts();
             Networth = 0;
             foreach (var acc in accounts)
                 Networth += acc.CurrentBalance;
+            isNetworthSet = true;
         }
 
         /// <summary>
@@ -61,7 +63,10 @@ namespace MoMoney.ViewModels
         /// </summary>
         public async Task GetChartData()
         {
+            if (!isNetworthSet)
+                await GetNetworth();
             decimal runningTotal = Networth; // running total starts at current net worth
+
             var results = await TransactionService.GetTransactionsFromTo(From, To);
             if (!results.Any())
                 return;
@@ -102,7 +107,7 @@ namespace MoMoney.ViewModels
             if (isLong)
             {
                 Data = new ObservableCollection<Data>(
-                    results.OrderBy(trans => trans.Date)
+                    results.OrderByDescending(trans => trans.Date)
                            .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
                            .GroupBy(trans => trans.Date.Month)
                            .Select(group => new Data
@@ -114,7 +119,7 @@ namespace MoMoney.ViewModels
             else
             {
                 Data = new ObservableCollection<Data>(
-                    results.OrderBy(trans => trans.Date)
+                    results.OrderByDescending(trans => trans.Date)
                            .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
                            .GroupBy(trans => trans.Date)
                            .Select(group => new Data

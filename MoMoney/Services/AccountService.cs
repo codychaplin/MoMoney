@@ -154,8 +154,7 @@ namespace MoMoney.Services
             await Init();
 
             var accounts = await MoMoneydb.db.Table<Account>().ToListAsync();
-            var accountsDict = accounts.ToDictionary(a => a.AccountID, a => a.AccountName);
-            return accountsDict;
+            return accounts.ToDictionary(a => a.AccountID, a => a.AccountName);
         }
 
         /// <summary>
