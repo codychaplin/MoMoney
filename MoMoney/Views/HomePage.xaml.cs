@@ -35,16 +35,6 @@ public partial class HomePage : ContentView
     }
 
     /// <summary>
-    /// On load, get the user's networth, get data for chart, and get 5 most recent Transactions from the database.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-	private async void ContentPage_Loaded(object sender, EventArgs e)
-	{
-		await vm.GetRecentTransactions();
-	}
-
-    /// <summary>
     /// Changes visibility of date range picker and resizes screen to fit.
     /// </summary>
     /// <param name="sender"></param>
@@ -73,6 +63,7 @@ public partial class HomePage : ContentView
     {
         await Task.Delay(100);
         await vm.GetChartData();
+        await vm.GetRecentTransactions();
     }
 
     /// <summary>
@@ -84,5 +75,6 @@ public partial class HomePage : ContentView
     {
         await Task.Delay(100);
         await vm.GetChartData();
+        await vm.GetRecentTransactions();
     }
 }

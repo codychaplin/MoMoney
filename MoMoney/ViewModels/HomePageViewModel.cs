@@ -41,7 +41,7 @@ namespace MoMoney.ViewModels
         public async Task GetRecentTransactions()
         {
             RecentTransactions.Clear();
-            var transactions = await TransactionService.GetRecentTransactions();
+            var transactions = await TransactionService.GetRecentTransactions(to);
             foreach (var trans in transactions)
                 RecentTransactions.Add(trans);
         }
@@ -101,7 +101,7 @@ namespace MoMoney.ViewModels
             Category category = await CategoryService.GetCategory(categoryID);
             TopExpenseCategory = category.CategoryName;
 
-            // if the date range is > 1 year, group results by Month, if < 1 year, sort by day
+            // if the date range is > 1 year, group results by Month, if < 1 year, group by day
             // get non-transfer transactions, group by date, and select date and sum of amounts on each date
             bool isLong = (To - From).TotalDays > 365;
             if (isLong)

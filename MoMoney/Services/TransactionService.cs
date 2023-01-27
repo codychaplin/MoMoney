@@ -116,11 +116,15 @@ namespace MoMoney.Services
         /// Gets last 5 Transactions from Transaction table as a list.
         /// </summary>
         /// <returns>List of Transaction objects</returns>
-        public static async Task<IEnumerable<Transaction>> GetRecentTransactions()
+        public static async Task<IEnumerable<Transaction>> GetRecentTransactions(DateTime to)
         {
             await Init();
 
-            return await MoMoneydb.db.Table<Transaction>().OrderByDescending(t => t.Date).Take(5).ToListAsync();
+            return await MoMoneydb.db.Table<Transaction>()
+                                     .Where(t => t.Date <= to)
+                                     .OrderByDescending(t => t.Date)
+                                     .Take(5)
+                                     .ToListAsync();
         }
 
         /// <summary>
