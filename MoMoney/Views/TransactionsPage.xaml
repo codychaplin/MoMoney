@@ -29,13 +29,13 @@
 
             <!-- calendar button -->
             <ImageButton Style="{StaticResource ibtnTinted}"
-                         Source="calendar.png"
+                         Source="filter.png"
+                         Margin="10" 
+                         CornerRadius="0"
+                         WidthRequest="20"
+                         HeightRequest="20"
                          HorizontalOptions="End"
                          VerticalOptions="Start"
-                         CornerRadius="0"
-                         HeightRequest="20"
-                         WidthRequest="20"
-                         Margin="10" 
                          Clicked="ImageButton_Clicked" />
         </Grid>
 
@@ -70,7 +70,14 @@
         <ScrollView>
             
             <!-- list of transactions -->
-            <sf:SfListView ItemsSource="{Binding Transactions}" ItemSize="70">
+            <sf:SfListView x:Name="listView"
+                           ItemSize="70"
+                           ScrollBarVisibility="Always"
+                           LoadMoreOption="Auto"
+                           LoadMorePosition="End"
+                           ItemsSource="{Binding LoadedTransactions}"
+                           LoadMoreCommand="{Binding LoadMoreItemsCommand}"
+                           LoadMoreCommandParameter="{Binding Source={x:Reference listView}}">
                 <sf:SfListView.ItemTemplate>
                     <DataTemplate x:DataType="models:Transaction">
                         

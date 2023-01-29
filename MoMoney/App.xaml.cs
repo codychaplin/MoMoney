@@ -4,7 +4,7 @@ public partial class App : Application
 {
 	public App()
 	{
-        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(Constants.SfLicenseKey);
+        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(Secret.SfLicenseKey);
 
         InitializeComponent();
 

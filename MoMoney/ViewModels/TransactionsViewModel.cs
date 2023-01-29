@@ -11,7 +11,9 @@ namespace MoMoney.ViewModels
     public partial class TransactionsViewModel : ObservableObject
     {
         [ObservableProperty]
-        public ObservableCollection<Transaction> transactions = new();
+        public ObservableCollection<Transaction> loadedTransactions = new();
+
+        List<Transaction> Transactions = new();
 
         [ObservableProperty]
         public DateTime from = new();
@@ -52,7 +54,7 @@ namespace MoMoney.ViewModels
                         if (transactions.Count() != Transactions.Count)
                         {
                             Transactions.Clear();
-                            Transactions = new ObservableCollection<Transaction>(transactions.Reverse());
+                            Transactions = new List<Transaction>(transactions.Reverse());
                         }
                         break;
                     }
@@ -93,6 +95,33 @@ namespace MoMoney.ViewModels
         async Task GoToEditTransaction(int ID)
         {
             await Shell.Current.GoToAsync($"{nameof(EditTransactionPage)}?ID={ID}");
+        }
+
+        /// <summary>
+        /// Loads items from Transactions
+        /// </summary>
+        /// <param name="obj"></param>
+        [RelayCommand]
+        async void LoadMoreItems(object obj)
+        {
+            var listView = obj as Syncfusion.Maui.ListView.SfListView;
+            listView.IsLazyLoading = true;
+            await Task.Delay(500);
+            var index = LoadedTransactions.Count;
+            var count = index + Constants.LOAD_COUNT >= Transactions.Count ? Transactions.Count - index : Constants.LOAD_COUNT;
+            AddTransactions(index, count);
+            listView.IsLazyLoading = false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="count"></param>
+        void AddTransactions(int index, int count)
+        {
+            for (int i = index; i < index + count && i < Transactions.Count; i++)
+                LoadedTransactions.Add(Transactions[i]);
         }
     }
 }
