@@ -1,10 +1,11 @@
-﻿using MoMoney.Exceptions;
-using MoMoney.Models;
+﻿using MoMoney.Models;
+using MoMoney.Exceptions;
 
 namespace MoMoney.Services
 {
     public static class AccountService
     {
+        public static Dictionary<int, string> Accounts { get; private set; } = new();
 
         /// <summary>
         /// Calls db Init.
@@ -12,6 +13,10 @@ namespace MoMoney.Services
         public static async Task Init()
         {
             await MoMoneydb.Init();
+            if (!Accounts.Any())
+            {
+                Accounts = await GetAccountsAsDictWithID();
+            }
         }
 
         /// <summary>
@@ -31,7 +36,7 @@ namespace MoMoney.Services
             if (res > 0)
                 throw new DuplicateAccountException("Account named '" + accountName + "' already exists");
 
-            var Account = new Account
+            var account = new Account
             {
                 AccountName = accountName,
                 AccountType = accountType,
@@ -40,7 +45,9 @@ namespace MoMoney.Services
                 Enabled = enabled
             };
 
-            await MoMoneydb.db.InsertAsync(Account);
+            // adds Account to db and dictionary
+            await MoMoneydb.db.InsertAsync(account);
+            Accounts.Add(account.AccountID, account.AccountName);
         }
 
         /// <summary>
@@ -75,7 +82,10 @@ namespace MoMoney.Services
 
             accounts.RemoveAll(a => accs.Contains(names));
 
+            // adds accounts to db and dictionary
             await MoMoneydb.db.InsertAllAsync(accounts);
+            foreach (var acc in accounts)
+                Accounts.Add(acc.AccountID, acc.AccountName);
         }
 
         /// <summary>
@@ -86,7 +96,9 @@ namespace MoMoney.Services
         {
             await Init();
 
+            // update Account in db and dictionary
             await MoMoneydb.db.UpdateAsync(updatedAccount);
+            Accounts[updatedAccount.AccountID] = updatedAccount.AccountName;
         }
 
         /// <summary>
@@ -97,7 +109,9 @@ namespace MoMoney.Services
         {
             await Init();
 
+            // remove Account from db and dictionary
             await MoMoneydb.db.DeleteAsync<Account>(ID);
+            Accounts.Remove(ID);
         }
 
         /// <summary>
@@ -108,6 +122,7 @@ namespace MoMoney.Services
             await Init();
 
             await MoMoneydb.db.DeleteAllAsync<Account>();
+            Accounts.Clear();
         }
 
         /// <summary>
@@ -149,10 +164,8 @@ namespace MoMoney.Services
         /// Gets all Accounts from Accounts table as a dictionary with Account ID as Key.
         /// </summary>
         /// <returns>Dictionary of Account objects</returns>
-        public static async Task<Dictionary<int, string>> GetAccountsAsDictWithID()
+        static async Task<Dictionary<int, string>> GetAccountsAsDictWithID()
         {
-            await Init();
-
             var accounts = await MoMoneydb.db.Table<Account>().ToListAsync();
             return accounts.ToDictionary(a => a.AccountID, a => a.AccountName);
         }

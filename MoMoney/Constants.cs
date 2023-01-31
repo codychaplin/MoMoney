@@ -21,8 +21,6 @@
         public const int CREDIT_ID = 4;
         public const int EXPENSE_ID = 5;
 
-        public const int LOAD_COUNT = 10;
-
         public enum AccountTypes
         {
             Checkings,

@@ -21,7 +21,7 @@
     </ContentView.Resources>
 
     <!-- main page -->
-    <VerticalStackLayout>
+    <Grid x:Name="grid" RowDefinitions="40,0,50,*">
 
         <Grid>
             <!-- title -->
@@ -41,9 +41,10 @@
 
         <!-- date range picker -->
         <Frame x:Name="frDates"
-               IsVisible="false"
+               Grid.Row="1"
                Padding="0"
                CornerRadius="5"
+               IsVisible="false"
                Margin="50,0,50,10"
                VerticalOptions="Center"
                HorizontalOptions="Center"
@@ -67,26 +68,47 @@
             </Grid>
         </Frame>
 
-        <ScrollView>
+        <!-- search bar -->
+        <Frame Style="{StaticResource frTile}" HeightRequest="40" Grid.Row="2">
+            <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
+                <Image Style="{StaticResource imgTinted}"
+                       Source="search.png"
+                       Margin="0" />
+                <Entry x:Name="searchBar" 
+                       FontSize="16"
+                       Grid.Column="1"
+                       HeightRequest="40"
+                       WidthRequest="240"                       
+                       Placeholder="Search"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Start"
+                       Text="{Binding SearchText}"
+                       ClearButtonVisibility="WhileEditing"
+                       ReturnCommand="{Binding ReturnPressedCommand}"
+                       ReturnCommandParameter="{Binding Source={x:Reference listView}}" />
+            </Grid>
+        </Frame>
+
+        <ScrollView Grid.Row="3"
+                    HorizontalScrollBarVisibility="Never"
+                    VerticalScrollBarVisibility="Never">
             
             <!-- list of transactions -->
             <sf:SfListView x:Name="listView"
                            ItemSize="70"
-                           ScrollBarVisibility="Always"
                            LoadMoreOption="Auto"
                            LoadMorePosition="End"
-                           ItemsSource="{Binding LoadedTransactions}"
-                           LoadMoreCommand="{Binding LoadMoreItemsCommand}"
-                           LoadMoreCommandParameter="{Binding Source={x:Reference listView}}">
+                           ScrollBarVisibility="Always"
+                           ItemsSource="{Binding Transactions}">
                 <sf:SfListView.ItemTemplate>
                     <DataTemplate x:DataType="models:Transaction">
-                        
+
                         <!-- template -->
                         <Frame Style="{StaticResource frTile}" HeightRequest="60">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding Path=GoToEditTransactionCommand, Source={RelativeSource
                                                                         AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                                                          CommandParameter="{Binding TransactionID}" />
+                                                      CommandParameter="{Binding TransactionID}" />
                             </Frame.GestureRecognizers>
                             <Grid ColumnDefinitions="30,*" RowDefinitions="*,*">
                                 <!-- icon -->
@@ -141,7 +163,6 @@
                     </DataTemplate>
                 </sf:SfListView.ItemTemplate>
             </sf:SfListView>
-            
         </ScrollView>
-    </VerticalStackLayout>
+    </Grid>
 </ContentView>

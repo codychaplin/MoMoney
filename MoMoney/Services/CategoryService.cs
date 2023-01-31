@@ -1,11 +1,11 @@
 ﻿using MoMoney.Models;
 using MoMoney.Exceptions;
-using System.Linq;
 
 namespace MoMoney.Services
 {
     public static class CategoryService
     {
+        public static Dictionary<int, string> Categories { get; set; } = new();
 
         /// <summary>
         /// Calls db Init.
@@ -13,6 +13,10 @@ namespace MoMoney.Services
         public static async Task Init()
         {
             await MoMoneydb.Init();
+            if (!Categories.Any())
+            {
+                Categories = await GetCategoriesAsDictWithID();
+            }
         }
 
         /// <summary>
@@ -35,7 +39,9 @@ namespace MoMoney.Services
                 ParentName = string.IsNullOrEmpty(parentName) ? "" : parentName
             };
 
+            // adds Category to db and dictionary
             await MoMoneydb.db.InsertAsync(category);
+            Categories.Add(category.CategoryID, category.CategoryName);
         }
 
         /// <summary>
@@ -70,7 +76,10 @@ namespace MoMoney.Services
 
             categories.RemoveAll(a => cats.Contains(names));
 
+            // adds Categories to db and dictionary
             await MoMoneydb.db.InsertAllAsync(categories);
+            foreach (var cat in categories)
+                Categories.Add(cat.CategoryID, cat.CategoryName);
         }
 
         /// <summary>
@@ -81,7 +90,9 @@ namespace MoMoney.Services
         {
             await Init();
 
+            // updates Category in db and dictionary
             await MoMoneydb.db.UpdateAsync(updatedCategory);
+            Categories[updatedCategory.CategoryID] = updatedCategory.CategoryName;
         }
 
         /// <summary>
@@ -92,7 +103,9 @@ namespace MoMoney.Services
         {
             await Init();
 
+            // removes Category from db and dictionary
             await MoMoneydb.db.DeleteAsync<Category>(ID);
+            Categories.Remove(ID);
         }
 
         /// <summary>
@@ -103,6 +116,7 @@ namespace MoMoney.Services
             await Init();
 
             await MoMoneydb.db.DeleteAllAsync<Category>();
+            Categories.Clear();
         }
 
         /// <summary>
@@ -159,8 +173,6 @@ namespace MoMoney.Services
         /// <returns>Dictionary of Category objects</returns>
         public static async Task<Dictionary<int, string>> GetCategoriesAsDictWithID()
         {
-            await Init();
-
             var categories = await MoMoneydb.db.Table<Category>().ToListAsync();
             var categoriesDict = categories.ToDictionary(c => c.CategoryID, c => c.CategoryName);
             return categoriesDict;

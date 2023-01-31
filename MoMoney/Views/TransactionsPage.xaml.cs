@@ -37,6 +37,7 @@ public partial class TransactionsPage : ContentView
     /// <param name="e"></param>
     private void ImageButton_Clicked(object sender, EventArgs e)
     {
+        grid.RowDefinitions[1].Height = (frDates.IsVisible) ? 0 : 40;
         frDates.IsVisible = !frDates.IsVisible;
     }
 

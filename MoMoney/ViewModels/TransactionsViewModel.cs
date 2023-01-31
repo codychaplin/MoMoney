@@ -5,15 +5,17 @@ using MoMoney.Views;
 using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
+using Syncfusion.Maui.ListView;
 
 namespace MoMoney.ViewModels
 {
     public partial class TransactionsViewModel : ObservableObject
     {
         [ObservableProperty]
-        public ObservableCollection<Transaction> loadedTransactions = new();
+        public ObservableCollection<Transaction> transactions = new();
 
-        List<Transaction> Transactions = new();
+        [ObservableProperty]
+        string searchText = "";
 
         [ObservableProperty]
         public DateTime from = new();
@@ -54,7 +56,7 @@ namespace MoMoney.ViewModels
                         if (transactions.Count() != Transactions.Count)
                         {
                             Transactions.Clear();
-                            Transactions = new List<Transaction>(transactions.Reverse());
+                            Transactions = new ObservableCollection<Transaction>(transactions.Reverse());
                         }
                         break;
                     }
@@ -98,30 +100,40 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Loads items from Transactions
+        /// Updates Transactions Filter.
         /// </summary>
-        /// <param name="obj"></param>
         [RelayCommand]
-        async void LoadMoreItems(object obj)
+        void ReturnPressed(object obj)
         {
-            var listView = obj as Syncfusion.Maui.ListView.SfListView;
-            listView.IsLazyLoading = true;
-            await Task.Delay(500);
-            var index = LoadedTransactions.Count;
-            var count = index + Constants.LOAD_COUNT >= Transactions.Count ? Transactions.Count - index : Constants.LOAD_COUNT;
-            AddTransactions(index, count);
-            listView.IsLazyLoading = false;
+            var listView = obj as SfListView;
+            if (listView.DataSource != null)
+            {
+                listView.DataSource.Filter = FilterContacts;
+                listView.DataSource.RefreshFilter();
+            }
         }
 
         /// <summary>
-        /// 
+        /// Checks if transaction contains text from search bar.
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="count"></param>
-        void AddTransactions(int index, int count)
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        private bool FilterContacts(object obj)
         {
-            for (int i = index; i < index + count && i < Transactions.Count; i++)
-                LoadedTransactions.Add(Transactions[i]);
+            if (SearchText.Length < 1)
+                return true;
+
+            var text = SearchText.ToLower();
+            var trans = obj as Transaction;
+            if (AccountService.Accounts[trans.AccountID].ToLower().Contains(text) ||
+                trans.Amount.ToString().Contains(text) ||
+                CategoryService.Categories[trans.CategoryID].ToLower().Contains(text) ||
+                CategoryService.Categories[trans.SubcategoryID].ToLower().Contains(text))
+            {
+                return true;
+            }
+            else
+                return false;
         }
     }
 }

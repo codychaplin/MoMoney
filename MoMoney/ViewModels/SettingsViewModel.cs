@@ -177,17 +177,15 @@ namespace MoMoney.ViewModels
                 using StreamWriter streamWriter = new(stream);
 
                 // get data
-                var categories = await CategoryService.GetCategoriesAsDictWithID();
-                var accounts = await AccountService.GetAccountsAsDictWithID();
                 var transactions = await TransactionService.GetTransactions();
                 foreach (var trans in transactions)
                 {
                     // formats transaction parameters in CSV format
                     var date = trans.Date.ToString("yyyy-MM-dd");
-                    var account = accounts[trans.AccountID];
+                    var account = AccountService.Accounts[trans.AccountID];
                     var amount = trans.Amount;
-                    var category = categories[trans.CategoryID];
-                    var subcategory = categories[trans.SubcategoryID];
+                    var category = CategoryService.Categories[trans.CategoryID];
+                    var subcategory = CategoryService.Categories[trans.SubcategoryID];
                     var payee = trans.Payee;
                     string line = $"{date},{account},{amount},{category},{subcategory},{payee}";
 
