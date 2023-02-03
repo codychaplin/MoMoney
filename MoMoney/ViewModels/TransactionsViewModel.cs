@@ -15,13 +15,39 @@ namespace MoMoney.ViewModels
         public ObservableCollection<Transaction> transactions = new();
 
         [ObservableProperty]
-        string searchText = "";
+        public ObservableCollection<Account> accounts = new();
+
+        [ObservableProperty]
+        public ObservableCollection<Category> categories = new();
+
+        [ObservableProperty]
+        public ObservableCollection<Category> subcategories = new();
+
+        [ObservableProperty]
+        public Account account;
+
+        [ObservableProperty]
+        public int amountRangeStart = 0;
+
+        [ObservableProperty]
+        public int amountRangeEnd = 500;
+
+        [ObservableProperty]
+        public Category category;
+
+        [ObservableProperty]
+        public Category subcategory;
+
+        [ObservableProperty]
+        public string searchText = "";
 
         [ObservableProperty]
         public DateTime from = new();
 
         [ObservableProperty]
         public DateTime to = DateTime.Today;
+
+        public SfListView ListView { get; set; }
 
         /// <summary>
         /// Depending on CRUD operation, update Transactions collection.
@@ -32,7 +58,8 @@ namespace MoMoney.ViewModels
             {
                 case TransactionEventArgs.CRUD.Create:
                     {
-                        Transactions.Add(e.Transaction);
+                        int index = BinarySearch(e.Transaction);
+                        Transactions.Insert(index, e.Transaction);
 
                         // if transfer, add credit side too
                         if (e.Transaction.CategoryID == Constants.TRANSFER_ID)
@@ -56,7 +83,7 @@ namespace MoMoney.ViewModels
                         if (transactions.Count() != Transactions.Count)
                         {
                             Transactions.Clear();
-                            Transactions = new ObservableCollection<Transaction>(transactions.Reverse());
+                            Transactions = new ObservableCollection<Transaction>(transactions);
                         }
                         break;
                     }
@@ -90,6 +117,158 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
+        /// Gets accounts from database.
+        /// </summary>
+        /// <returns></returns>
+        public async Task GetAccounts()
+        {
+            Accounts.Clear();
+            var accounts = await AccountService.GetActiveAccounts();
+            foreach (var acc in accounts)
+                Accounts.Add(acc);
+        }
+
+        /// <summary>
+        /// Gets all parent categories from database.
+        /// </summary>
+        public async Task GetParentCategories()
+        {
+            Categories.Clear();
+            var categories = await CategoryService.GetAllParentCategories();
+            foreach (var cat in categories)
+                Categories.Add(cat);
+        }
+
+        /// <summary>
+        /// Updates Subcategories based on selected parent Category.
+        /// </summary>
+        /// <param name="parentCategory"></param>
+        public async Task GetSubcategories(Category parentCategory)
+        {
+            Subcategories.Clear();
+            if (parentCategory is not null)
+            {
+                var subcategories = await CategoryService.GetSubcategories(parentCategory);
+                foreach (var cat in subcategories)
+                    Subcategories.Add(cat);
+            }
+        }
+
+        /// <summary>
+        /// Clears selected Account
+        /// </summary>
+        [RelayCommand]
+        void ClearAccount()
+        {
+            Account = null;
+            UpdateFilter();
+        }
+
+        /// <summary>
+        /// Clears selected Category
+        /// </summary>
+        [RelayCommand]
+        void ClearCategory()
+        {
+            Category = null;
+            UpdateFilter();
+        }
+
+        /// <summary>
+        /// Clears selected Subcategory
+        /// </summary>
+        [RelayCommand]
+        void ClearSubcategory()
+        {
+            Subcategory = null;
+            UpdateFilter();
+        }
+
+        /// <summary>
+        /// Calls UpdateFilter()
+        /// </summary>
+        [RelayCommand]
+        void ReturnPressed()
+        {
+            UpdateFilter();
+        }
+
+        /// <summary>
+        /// Calls UpdateFilter()
+        /// </summary>
+        [RelayCommand]
+        void AmountDragCompleted()
+        {
+            UpdateFilter();
+        }
+
+        /// <summary>
+        /// Updates Transactions Filter.
+        /// </summary>
+        public void UpdateFilter()
+        {
+            if (ListView.DataSource != null)
+            {
+                ListView.DataSource.Filter = FilterTransactions;
+                ListView.DataSource.RefreshFilter();
+            }
+        }
+
+        /// <summary>
+        /// Checks if transaction contains text from search bar or specified Account/(sub)category.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        bool FilterTransactions(object obj)
+        {
+            // if all are blank, show Transaction
+            if (Account == null && Category == null && Subcategory == null &&
+                AmountRangeStart == 0 && AmountRangeEnd == 500 && SearchText == "")
+                return true;
+
+            var trans = obj as Transaction;
+            var amount = Math.Abs(trans.Amount);
+            var text = SearchText.ToLower();
+
+            // if fields aren't blank and match text/amount/IDs, show Transaction
+            if ((Account != null && trans.AccountID == Account.AccountID) ||
+                (amount >= AmountRangeStart && (amount <= AmountRangeEnd || AmountRangeEnd == 500)) ||
+                (Category != null && Subcategory == null && trans.CategoryID == Category.CategoryID) ||
+                (Subcategory != null && trans.SubcategoryID == Subcategory.CategoryID) ||
+                text.Length > 0 && trans.Payee.ToLower().Contains(text))
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Binary search used to find index in sorted CollectionView.
+        /// </summary>
+        /// <param name="newTransaction"></param>
+        /// <returns>Index in Transactions where newTransaction should be inserted.</returns>
+        int BinarySearch(Transaction newTransaction)
+        {
+            int left = 0;
+            int right = Transactions.Count - 1;
+
+            while (left <= right)
+            {
+                int middle = (left + right) / 2;
+                int comparison = Transactions[middle].Date.CompareTo(newTransaction.Date);
+
+                if (comparison == 0)
+                    return Transactions.Count - middle;
+                else if (comparison < 0)
+                    left = middle + 1;
+                else
+                    right = middle - 1;
+            }
+
+            // minus from Transaction.Count because list is reversed
+            return Transactions.Count - left;
+        }
+
+        /// <summary>
         /// Goes to EditTransactionPage.xaml with a Transaction ID as a parameter.
         /// </summary>
         /// <param name="ID"></param>
@@ -97,43 +276,6 @@ namespace MoMoney.ViewModels
         async Task GoToEditTransaction(int ID)
         {
             await Shell.Current.GoToAsync($"{nameof(EditTransactionPage)}?ID={ID}");
-        }
-
-        /// <summary>
-        /// Updates Transactions Filter.
-        /// </summary>
-        [RelayCommand]
-        void ReturnPressed(object obj)
-        {
-            var listView = obj as SfListView;
-            if (listView.DataSource != null)
-            {
-                listView.DataSource.Filter = FilterContacts;
-                listView.DataSource.RefreshFilter();
-            }
-        }
-
-        /// <summary>
-        /// Checks if transaction contains text from search bar.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        private bool FilterContacts(object obj)
-        {
-            if (SearchText.Length < 1)
-                return true;
-
-            var text = SearchText.ToLower();
-            var trans = obj as Transaction;
-            if (AccountService.Accounts[trans.AccountID].ToLower().Contains(text) ||
-                trans.Amount.ToString().Contains(text) ||
-                CategoryService.Categories[trans.CategoryID].ToLower().Contains(text) ||
-                CategoryService.Categories[trans.SubcategoryID].ToLower().Contains(text))
-            {
-                return true;
-            }
-            else
-                return false;
         }
     }
 }

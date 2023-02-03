@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.AddTransactionPage"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
-             xmlns:model="clr-namespace:MoMoney.Models"
+             xmlns:models="clr-namespace:MoMoney.Models"
              x:DataType="viewmodel:AddTransactionViewModel"
              Loaded="ContentPage_Loaded"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
@@ -41,7 +41,7 @@
                     <Picker x:Name="pckAccount"
                             Grid.Column="1"
                             Title="Select an Account"
-                            x:DataType="model:Account"
+                            x:DataType="models:Account"
                             ItemDisplayBinding="{Binding AccountName}"
                             SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                             ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
@@ -65,7 +65,7 @@
                     <Picker x:Name="pckCategory"
                             Grid.Column="1"
                             Title="Select a Category"
-                            x:DataType="model:Category"
+                            x:DataType="models:Category"
                             ItemDisplayBinding="{Binding CategoryName}"
                             SelectedItem="{Binding Path=Category, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                             ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
@@ -79,7 +79,7 @@
                     <Picker x:Name="pckSubcategory"
                             Grid.Column="1"
                             Title="Select a Subcategory"
-                            x:DataType="model:Category"
+                            x:DataType="models:Category"
                             ItemDisplayBinding="{Binding CategoryName}"
                             SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                             ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
@@ -102,7 +102,7 @@
                     <Picker x:Name="pckTransferTo"
                             Grid.Column="1"
                             Title="Select an Account"
-                            x:DataType="model:Account"
+                            x:DataType="models:Account"
                             ItemDisplayBinding="{Binding AccountName}"
                             SelectedItem="{Binding Path=TransferAccount, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                             ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />

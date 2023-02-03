@@ -193,6 +193,17 @@ namespace MoMoney.Services
         /// Gets all parent Categories from Categories table as a list.
         /// </summary>
         /// <returns>List of parent Category objects</returns>
+        public static async Task<IEnumerable<Category>> GetAllParentCategories()
+        {
+            await Init();
+
+            return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "").ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets all parent Categories, minus transfers, from Categories table as a list.
+        /// </summary>
+        /// <returns>List of parent Category objects</returns>
         public static async Task<IEnumerable<Category>> GetParentCategories()
         {
             await Init();
