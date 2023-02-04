@@ -39,7 +39,7 @@ namespace MoMoney.ViewModels
         public Category subcategory;
 
         [ObservableProperty]
-        public string searchText = "";
+        public string payee = "";
 
         [ObservableProperty]
         public DateTime from = new();
@@ -155,7 +155,7 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Clears selected Account
+        /// Clears selected Account.
         /// </summary>
         [RelayCommand]
         void ClearAccount()
@@ -165,7 +165,7 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Clears selected Category
+        /// Clears selected Category.
         /// </summary>
         [RelayCommand]
         void ClearCategory()
@@ -175,7 +175,7 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Clears selected Subcategory
+        /// Clears selected Subcategory and calls UpdateFilter().
         /// </summary>
         [RelayCommand]
         void ClearSubcategory()
@@ -185,7 +185,17 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Calls UpdateFilter()
+        /// Clears selected Payee and calls UpdateFilter().
+        /// </summary>
+        [RelayCommand]
+        void ClearPayee()
+        {
+            Payee = "";
+            UpdateFilter();
+        }
+
+        /// <summary>
+        /// Calls UpdateFilter().
         /// </summary>
         [RelayCommand]
         void ReturnPressed()
@@ -194,12 +204,26 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Calls UpdateFilter()
+        /// Calls UpdateFilter() and brings account frame to back.
         /// </summary>
         [RelayCommand]
-        void AmountDragCompleted()
+        void AmountDragStarted(object obj)
+        {
+            var frame = obj as Frame;
+            frame.ZIndex = 0;
+        }
+
+        /// <summary>
+        /// Calls UpdateFilter() and brings account frame to front.
+        /// </summary>
+        [RelayCommand]
+        async Task AmountDragCompleted(object obj)
         {
             UpdateFilter();
+
+            var frame = obj as Frame;
+            await Task.Delay(200);
+            frame.ZIndex = 2;
         }
 
         /// <summary>
@@ -215,7 +239,7 @@ namespace MoMoney.ViewModels
         }
 
         /// <summary>
-        /// Checks if transaction contains text from search bar or specified Account/(sub)category.
+        /// Checks if transaction matches filters.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -223,22 +247,28 @@ namespace MoMoney.ViewModels
         {
             // if all are blank, show Transaction
             if (Account == null && Category == null && Subcategory == null &&
-                AmountRangeStart == 0 && AmountRangeEnd == 500 && SearchText == "")
+                AmountRangeStart == 0 && AmountRangeEnd == 500 && Payee == "")
                 return true;
 
             var trans = obj as Transaction;
             var amount = Math.Abs(trans.Amount);
-            var text = SearchText.ToLower();
+            var payee = Payee.ToLower();
 
-            // if fields aren't blank and match text/amount/IDs, show Transaction
-            if ((Account != null && trans.AccountID == Account.AccountID) ||
-                (amount >= AmountRangeStart && (amount <= AmountRangeEnd || AmountRangeEnd == 500)) ||
-                (Category != null && Subcategory == null && trans.CategoryID == Category.CategoryID) ||
-                (Subcategory != null && trans.SubcategoryID == Subcategory.CategoryID) ||
-                text.Length > 0 && trans.Payee.ToLower().Contains(text))
-                return true;
-            else
+            // if fields aren't blank and match values, show Transaction
+            if (Account != null && trans.AccountID != Account.AccountID)
                 return false;
+            if (amount < AmountRangeStart && AmountRangeStart != 0)
+                return false;
+            if (amount > AmountRangeEnd && AmountRangeEnd != 500)
+                return false;
+            if (Category != null && trans.CategoryID != Category.CategoryID)
+                return false;
+            if (Subcategory != null && trans.SubcategoryID != Subcategory.CategoryID)
+                return false;
+            if (payee.Length > 0 && !trans.Payee.ToLower().Contains(payee))
+                return false;
+            
+            return true;
         }
 
         /// <summary>

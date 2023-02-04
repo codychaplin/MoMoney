@@ -18,6 +18,7 @@
     <!-- converters -->
     <ContentView.Resources>
         <local:NullToVisibleConverter x:Key="NullToVisible" />
+        <local:EmptyToVisibleConverter x:Key="EmptyToVisible" />
         <local:IdToCategoryConverter x:Key="IdToCategory" />
         <local:IdToAccountConverter x:Key="IdToAccount" />
         <local:AmountColourConverter x:Key="AmountColour" />
@@ -25,7 +26,7 @@
     </ContentView.Resources>
 
     <!-- main page -->
-    <Grid x:Name="grid" RowDefinitions="40,0,0,0,0,0,50,*">
+    <Grid x:Name="grid" RowDefinitions="40,0,0,0,0,0,0,*">
         <Grid.Resources>
             <Style TargetType="{x:Type Frame}" x:Key="frFilter">
                 <Setter Property="Padding" Value="5,0,0,0" />
@@ -83,9 +84,9 @@
         </Frame>
 
         <!-- account picker -->
-        <Frame x:Name="frAccounts" Grid.Row="2" Style="{StaticResource frFilter}">
+        <Frame x:Name="frAccounts" Grid.Row="2" ZIndex="2" Style="{StaticResource frFilter}">
             <Grid ColumnDefinitions="30,*,30" ColumnSpacing="10">
-                <Image Source="account.png" Style="{StaticResource imgIcon}" />
+                <Image Source="credit_card.png" Style="{StaticResource imgIcon}" />
                 <Picker x:Name="pckAccount"
                         Grid.Column="1"
                         HeightRequest="40"
@@ -103,21 +104,21 @@
         </Frame>
 
         <!-- amount slider frame -->
-        <Frame x:Name="frAmount" Grid.Row="3" ZIndex="1" Style="{StaticResource frFilter}">
+        <Frame x:Name="frAmount" Grid.Row="3" Style="{StaticResource frFilter}">
             <Grid ColumnDefinitions="30,*" ColumnSpacing="0">
                 <Image Source="dollar_symbol.png" Style="{StaticResource imgIcon}" />
             </Grid>
         </Frame>
         <!-- workaround for overlapping tooltip -->
         <Frame x:Name="rsAmountFrame"
-               ZIndex="2"
                IsVisible="False"
                Padding="20,0,0,0"
                HeightRequest="90"
-               Margin="50,200,50,0"
+               Margin="50,190,50,0"
                BackgroundColor="Transparent">
             <!-- amount slider -->
             <slider:SfRangeSlider x:Name="rsAmount"
+                                  Margin="5,10,0,0"
                                   StepSize="5"
                                   Minimum="0"
                                   Maximum="500"
@@ -125,7 +126,10 @@
                                   VerticalOptions="Center"
                                   RangeEnd="{Binding AmountRangeEnd}"
                                   RangeStart="{Binding AmountRangeStart}"
-                                  DragCompletedCommand="{Binding AmountDragCompletedCommand}">
+                                  DragStartedCommand="{Binding AmountDragStartedCommand}"
+                                  DragStartedCommandParameter="{x:Reference frAccounts}"
+                                  DragCompletedCommand="{Binding AmountDragCompletedCommand}"
+                                  DragCompletedCommandParameter="{x:Reference frAccounts}">
                 <slider:SfRangeSlider.TrackStyle>
                     <slider:SliderTrackStyle ActiveFill="{StaticResource Gray300}" ActiveSize="3" InactiveFill="{StaticResource Gray500}" />
                 </slider:SfRangeSlider.TrackStyle>
@@ -178,23 +182,27 @@
             </Grid>
         </Frame>
 
-        <!-- search bar -->
-        <Frame Style="{StaticResource frTile}" HeightRequest="40" Grid.Row="6">
-            <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
-                <Image Style="{StaticResource imgTinted}"
-                       Source="search.png"
+        <!-- payee search bar -->
+        <Frame x:Name="frPayee" Grid.Row="6" Style="{StaticResource frFilter}">
+            <Grid ColumnDefinitions="30,*,30" ColumnSpacing="10">
+                <Image Style="{StaticResource imgIcon}"
+                       Source="account.png"
                        Margin="0" />
                 <Entry x:Name="searchBar" 
-                       FontSize="16"
+                       FontSize="14"
                        Grid.Column="1"
                        HeightRequest="40"
-                       WidthRequest="240"                       
-                       Placeholder="Search"
+                       WidthRequest="165"
+                       Placeholder="Payee"
                        VerticalOptions="Center"
                        HorizontalOptions="Start"
-                       Text="{Binding SearchText}"
-                       ClearButtonVisibility="WhileEditing"
+                       Text="{Binding Payee}"
+                       ClearButtonVisibility="Never"
                        ReturnCommand="{Binding ReturnPressedCommand}" />
+                <ImageButton Grid.Column="2"
+                             Style="{StaticResource ibtnIcon}"
+                             Command="{Binding ClearPayeeCommand}"
+                             IsVisible="{Binding Payee, Converter={StaticResource EmptyToVisible}}" />
             </Grid>
         </Frame>
 

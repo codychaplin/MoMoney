@@ -70,6 +70,10 @@ public partial class TransactionsPage : ContentView
         // subcategory picker
         grid.RowDefinitions[5].Height = (frSubcategories.IsVisible) ? 0 : 40;
         frSubcategories.IsVisible = !frSubcategories.IsVisible;
+
+        // payee search bar
+        grid.RowDefinitions[6].Height = (frPayee.IsVisible) ? 0 : 40;
+        frPayee.IsVisible = !frPayee.IsVisible;
     }
 
     /// <summary>
