@@ -122,6 +122,7 @@ namespace MoMoney.Services
             await Init();
 
             await MoMoneydb.db.DeleteAllAsync<Account>();
+            await MoMoneydb.db.DropTableAsync<Account>();
             Accounts.Clear();
         }
 

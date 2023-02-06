@@ -11,8 +11,10 @@ namespace MoMoney.ViewModels
 {
     public partial class TransactionsViewModel : ObservableObject
     {
+        public List<Transaction> Transactions = new();
+
         [ObservableProperty]
-        public ObservableCollection<Transaction> transactions = new();
+        public ObservableCollection<Transaction> loadedTransactions = new();
 
         [ObservableProperty]
         public ObservableCollection<Account> accounts = new();
@@ -83,7 +85,8 @@ namespace MoMoney.ViewModels
                         if (transactions.Count() != Transactions.Count)
                         {
                             Transactions.Clear();
-                            Transactions = new ObservableCollection<Transaction>(transactions);
+                            //Transactions = new ObservableCollection<Transaction>(transactions);
+                            Transactions = new List<Transaction>(transactions.Reverse());
                         }
                         break;
                     }
@@ -296,6 +299,34 @@ namespace MoMoney.ViewModels
 
             // minus from Transaction.Count because list is reversed
             return Transactions.Count - left;
+        }
+
+        /// <summary>
+        /// Loads items from Transactions
+        /// </summary>
+        /// <param name="obj"></param>
+        [RelayCommand]
+        async void LoadMoreItems(object obj)
+        {
+            var listView = obj as SfListView;
+            listView.IsLazyLoading = true;
+            await Task.Delay(10);
+            var index = LoadedTransactions.Count;
+            int loadCount = 50;
+            var count = index + loadCount >= Transactions.Count ? Transactions.Count - index : loadCount;
+            AddTransactions(index, count);
+            listView.IsLazyLoading = false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="count"></param>
+        void AddTransactions(int index, int count)
+        {
+            for (int i = index; i < index + count && i < Transactions.Count; i++)
+                LoadedTransactions.Add(Transactions[i]);
         }
 
         /// <summary>

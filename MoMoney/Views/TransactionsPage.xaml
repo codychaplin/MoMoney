@@ -214,15 +214,9 @@
                            LoadMoreOption="Auto"
                            LoadMorePosition="End"
                            ScrollBarVisibility="Always"
-                           ItemsSource="{Binding Transactions}">
-                <!-- sorts Transactions so newest Transaction is first -->
-                <listview:SfListView.DataSource>
-                    <data:DataSource>
-                        <data:DataSource.SortDescriptors>
-                            <data:SortDescriptor PropertyName="Date" Direction="Descending" />
-                        </data:DataSource.SortDescriptors>
-                    </data:DataSource>
-                </listview:SfListView.DataSource>
+                           ItemsSource="{Binding LoadedTransactions}"
+                           LoadMoreCommand="{Binding LoadMoreItemsCommand}"
+                           LoadMoreCommandParameter="{Binding Source={x:Reference listView}}">
                 <!-- template for each Transaction -->
                 <listview:SfListView.ItemTemplate>
                     <DataTemplate x:DataType="models:Transaction">

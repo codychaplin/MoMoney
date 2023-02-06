@@ -19,19 +19,7 @@ namespace MoMoney
 
             await db.CreateTableAsync<Transaction>();
 
-            var account = await db.CreateTableAsync<Account>();
-            if (account == CreateTableResult.Created)
-            {
-                await db.InsertAsync(new Account { AccountName = "Checkings", AccountType = "Checkings", StartingBalance = 0, Enabled = true });
-            }
-            else
-            {
-                int count = await db.Table<Account>().CountAsync();
-                if (count <= 0)
-                {
-                    await db.InsertAsync(new Account { AccountName = "Checkings", AccountType = "Checkings", StartingBalance = 0, Enabled = true });
-                }
-            }
+            await db.CreateTableAsync<Account>();
 
             var category = await db.CreateTableAsync<Category>();
             if (category == CreateTableResult.Created)

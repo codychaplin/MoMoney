@@ -13,10 +13,7 @@ namespace MoMoney
             if (int.TryParse(value.ToString(), out int ID))
             {
                 var task = Task.Run(async () => { return await CategoryService.GetCategory(ID); }).Result;
-                if (task is null)
-                    return "";
-                else
-                    return task.CategoryName;
+                return (task != null) ? task.CategoryName : "";
             }
             
             return null;
@@ -37,8 +34,8 @@ namespace MoMoney
         {
             if (int.TryParse(value.ToString(), out int ID))
             {
-                var task = Task.Run(async () => { return await AccountService.GetAccount(ID); });
-                return task.Result.AccountName;
+                var task = Task.Run(async () => { return await AccountService.GetAccount(ID); }).Result;
+                return (task != null) ? task.AccountName : "";
             }
 
             return null;

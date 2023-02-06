@@ -170,14 +170,15 @@ namespace MoMoney.ViewModels
             if (status == PermissionStatus.Granted)
             {
                 // create file in downloads folder
-                //string path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
-                string path = "";
-                string targetFile = Path.Combine(path, "Transactions.csv");
+                string path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
+                string targetFile = Path.Combine(path, "transactions.csv");
                 using FileStream stream = File.OpenWrite(targetFile);
                 using StreamWriter streamWriter = new(stream);
 
                 // get data
                 var transactions = await TransactionService.GetTransactions();
+                transactions = transactions.OrderBy(t => t.Date)
+                                           .ThenBy(t => t.TransactionID);
                 foreach (var trans in transactions)
                 {
                     // formats transaction parameters in CSV format
@@ -211,9 +212,9 @@ namespace MoMoney.ViewModels
 
             // group transactions by account, sum amounts, and convert to dictionary
             var currentBalances = transactions.GroupBy(t => t.AccountID)
-                                               .Select(g => new { Account = g.First().AccountID,
+                                               .Select(g => new { g.First().AccountID,
                                                                   Balance = g.Sum(t => t.Amount) })
-                                               .ToDictionary(a => a.Account, a => a.Balance);
+                                               .ToDictionary(a => a.AccountID, a => a.Balance);
 
             // update current balance in db
             foreach (var account in accounts)
@@ -221,6 +222,42 @@ namespace MoMoney.ViewModels
                 account.CurrentBalance = account.StartingBalance + currentBalances[account.AccountID];
                 await AccountService.UpdateAccount(account);
             }
+        }
+
+        /// <summary>
+        /// Removes all Transactions from database.
+        /// </summary>
+        [RelayCommand]
+        async Task RemoveAllTransactions()
+        {
+            bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL transactions?", "Yes", "No");
+
+            if (flag)
+                await TransactionService.ResetTransactions();
+        }
+
+        /// <summary>
+        /// Removes all Accounts from database.
+        /// </summary>
+        [RelayCommand]
+        async Task RemoveAllAccounts()
+        {
+            bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Accounts?", "Yes", "No");
+
+            if (flag)
+                await AccountService.RemoveAllAccounts();
+        }
+
+        /// <summary>
+        /// Removes all Categories from database.
+        /// </summary>
+        [RelayCommand]
+        async Task RemoveAllCategories()
+        {
+            bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Categories?", "Yes", "No");
+
+            if (flag)
+                await CategoryService.RemoveAllCategories();
         }
     }
 }

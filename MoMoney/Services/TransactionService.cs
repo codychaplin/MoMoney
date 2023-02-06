@@ -84,6 +84,16 @@ namespace MoMoney.Services
         }
 
         /// <summary>
+        /// Drops Transactions table and re-initializes it.
+        /// </summary>
+        public static async Task ResetTransactions()
+        {
+            await MoMoneydb.db.DropTableAsync<Transaction>();
+
+            await Init();
+        }
+
+        /// <summary>
         /// Gets an transaction from the transactions table using an ID.
         /// </summary>
         /// <param name="ID"></param>

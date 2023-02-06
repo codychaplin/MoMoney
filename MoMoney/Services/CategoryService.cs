@@ -116,6 +116,7 @@ namespace MoMoney.Services
             await Init();
 
             await MoMoneydb.db.DeleteAllAsync<Category>();
+            await MoMoneydb.db.DropTableAsync<Category>();
             Categories.Clear();
         }
 
