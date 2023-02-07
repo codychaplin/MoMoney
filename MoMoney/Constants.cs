@@ -28,6 +28,5 @@
             Credit,
             Investments
         }
-
     }
 }

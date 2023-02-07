@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MoMoney.Views.Stats.AccountSummaryPage"
+             xmlns:models="clr-namespace:MoMoney.Models"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Stats"
+             Title="Account Summary">
+
+    <ContentPage.BindingContext>
+        <viewmodel:AccountSummaryViewModel />
+    </ContentPage.BindingContext>
+    
+    <ContentPage.Resources>
+        
+        <!-- styles -->
+        <Style x:Key="lblGroupTitle" TargetType="{x:Type Label}" BasedOn="{StaticResource lblTitle}">
+            <Setter Property="Margin" Value="10,0,0,5" />
+            <Setter Property="HorizontalOptions" Value="Start" />
+        </Style>
+        <Style x:Key="lblAccountName" TargetType="{x:Type Label}" BasedOn="{StaticResource lblTitle}">
+            <Setter Property="Margin" Value="10,0,20,5" />
+            <Setter Property="HorizontalOptions" Value="End" />
+        </Style>
+
+        <ResourceDictionary>
+            <!-- account display template -->
+            <DataTemplate x:Key="Account" x:DataType="models:Account">
+                <Grid ColumnDefinitions="*,*" Margin="0,5,0,5">
+                    <Grid.Resources>
+                        <Style TargetType="{x:Type Label}" BasedOn="{StaticResource lblTile}">
+                            <Setter Property="FontSize" Value="16" />
+                            <Setter Property="FontAttributes" Value="None" />
+                            <Setter Property="VerticalOptions" Value="Center" />
+                        </Style>
+                    </Grid.Resources>
+                    <!-- name -->
+                    <Label Grid.Column="0"
+                           HorizontalOptions="Start"
+                           Text="{Binding AccountName}" />
+                    <!-- current balance -->
+                    <Label Grid.Column="1"
+                           HorizontalOptions="End"
+                           Text="{Binding CurrentBalance, StringFormat='{0:C2}'}" />
+                </Grid>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <!-- main page -->
+    <ScrollView>
+        <VerticalStackLayout>
+            <VerticalStackLayout.Resources>
+                <Style TargetType="{x:Type Frame}">
+                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource Gray700}}" />
+                    <Setter Property="Padding" Value="5,0,10,0" />
+                    <Setter Property="Margin" Value="10,0,10,20" />
+                </Style>
+                <Style TargetType="{x:Type CollectionView}">
+                    <Setter Property="ItemTemplate" Value="{StaticResource Account}" />
+                </Style>
+            </VerticalStackLayout.Resources>
+
+            <!-- networth -->
+            <Frame Padding="10">
+                <Grid>
+                    <Label Style="{StaticResource lblTitle}" Text="Net Worth" FontSize="20" Margin="0" />
+                    <Label Style="{StaticResource lblAccountName}" FontSize="20" Margin="0" Text="{Binding Networth, StringFormat='{0:C2}'}" />
+                </Grid>
+            </Frame>
+
+            <!-- checkings -->
+            <Grid>
+                <Label Style="{StaticResource lblGroupTitle}" Text="Checkings" />
+                <Label Style="{StaticResource lblAccountName}" Text="{Binding CheckingsSum, StringFormat='{0:C2}'}" />
+            </Grid>
+            <Frame>
+                <CollectionView ItemsSource="{Binding CheckingsAccounts}" />
+            </Frame>
+
+            <!-- savings -->
+            <Grid>
+                <Label Style="{StaticResource lblGroupTitle}" Text="Savings" />
+                <Label Style="{StaticResource lblAccountName}" Text="{Binding SavingsSum, StringFormat='{0:C2}'}" />
+            </Grid>
+            <Frame>
+                <CollectionView ItemsSource="{Binding SavingsAccounts}" />
+            </Frame>
+
+            <!-- credit -->
+            <Grid>
+                <Label Style="{StaticResource lblGroupTitle}" Text="Credit" />
+                <Label Style="{StaticResource lblAccountName}" Text="{Binding CreditSum, StringFormat='{0:C2}'}" />
+            </Grid>
+            <Frame>
+                <CollectionView ItemsSource="{Binding CreditAccounts}" />
+            </Frame>
+
+            <!-- investment -->
+            <Grid>
+                <Label Style="{StaticResource lblGroupTitle}" Text="Investments" />
+                <Label Style="{StaticResource lblAccountName}" Text="{Binding InvestmentSum, StringFormat='{0:C2}'}" />
+            </Grid>
+            <Frame Margin="10,0,10,10">
+                <CollectionView ItemsSource="{Binding InvestmentAccounts}" />
+            </Frame>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

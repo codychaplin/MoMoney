@@ -5,7 +5,7 @@ using MoMoney.Services;
 
 namespace MoMoney.ViewModels
 {
-    public partial class HomePageViewModel : ObservableObject
+    public partial class HomePageViewModel : BaseViewModel
     {
         [ObservableProperty]
         public ObservableCollection<Transaction> recentTransactions = new();
@@ -29,11 +29,11 @@ namespace MoMoney.ViewModels
         [ObservableProperty]
         public ObservableCollection<Data> data = new();
 
-        [ObservableProperty]
-        public DateTime from = new();
-
-        [ObservableProperty]
-        public DateTime to = DateTime.Today;
+        public async Task Refresh()
+        {
+            await GetRecentTransactions();
+            await GetChartData();
+        }
 
         /// <summary>
         /// Gets updated transactions from database and refreshes Transactions collection.
@@ -41,7 +41,7 @@ namespace MoMoney.ViewModels
         public async Task GetRecentTransactions()
         {
             RecentTransactions.Clear();
-            var transactions = await TransactionService.GetRecentTransactions(to);
+            var transactions = await TransactionService.GetRecentTransactions(To);
             foreach (var trans in transactions)
                 RecentTransactions.Add(trans);
         }

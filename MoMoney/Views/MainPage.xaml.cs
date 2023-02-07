@@ -14,14 +14,14 @@ public partial class MainPage : ContentPage
 
 	private void tvTabBar_SelectionChanged(object sender, TabSelectionChangedEventArgs e)
 	{
-		if (tvTabBar.SelectedIndex == 1) // TransactionPage
+		if (tvTabBar.SelectedIndex == 0) // Home Page
+		{
+			HomePage.UpdatePage?.Invoke(new object(), new EventArgs());
+		}
+		else if (tvTabBar.SelectedIndex == 1) // TransactionPage
 		{
 			var args = new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read);
 			TransactionsPage.TransactionsChanged?.Invoke(this, args);
-		}
-		else if (tvTabBar.SelectedIndex == 3) // StatsPage
-		{
-			StatsPage.AccountsChanged?.Invoke(this, new EventArgs());
 		}
 	}
 }

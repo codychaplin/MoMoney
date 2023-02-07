@@ -1,5 +1,6 @@
 ﻿using MoMoney.Views;
 using MoMoney.Views.Settings;
+using MoMoney.Views.Stats;
 
 namespace MoMoney;
 
@@ -17,5 +18,6 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute(nameof(AddCategoryPage), typeof(AddCategoryPage));
 		Routing.RegisterRoute(nameof(EditCategoryPage), typeof(EditCategoryPage));
 		Routing.RegisterRoute(nameof(EditTransactionPage), typeof(EditTransactionPage));
+		Routing.RegisterRoute(nameof(AccountSummaryPage), typeof(AccountSummaryPage));
 	}
 }

@@ -215,8 +215,7 @@
                            LoadMorePosition="End"
                            ScrollBarVisibility="Always"
                            ItemsSource="{Binding LoadedTransactions}"
-                           LoadMoreCommand="{Binding LoadMoreItemsCommand}"
-                           LoadMoreCommandParameter="{Binding Source={x:Reference listView}}">
+                           LoadMoreCommand="{Binding LoadMoreItemsCommand}">
                 <!-- template for each Transaction -->
                 <listview:SfListView.ItemTemplate>
                     <DataTemplate x:DataType="models:Transaction">

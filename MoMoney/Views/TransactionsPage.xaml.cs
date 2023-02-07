@@ -14,8 +14,6 @@ public partial class TransactionsPage : ContentView
 		InitializeComponent();
         vm = (TransactionsViewModel)BindingContext;
         vm.ListView = listView;
-        // first two months, show 1 year, starting March show YTD
-        vm.From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
         TransactionsChanged += Refresh;
     }
 
@@ -37,6 +35,8 @@ public partial class TransactionsPage : ContentView
     /// <param name="e"></param>
     async void Refresh(object s, TransactionEventArgs e)
     {
+        dtFrom.Date = vm.From;
+        dtTo.Date = vm.To;
         if (e.Type == TransactionEventArgs.CRUD.Read)
             await Task.Delay(100);
         await vm.Refresh(e);

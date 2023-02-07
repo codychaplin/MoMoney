@@ -6,12 +6,28 @@ public partial class HomePage : ContentView
 {
     HomePageViewModel vm;
 
+    public static EventHandler<EventArgs> UpdatePage { get; set; }
+
     public HomePage()
 	{
 		InitializeComponent();
         vm = (HomePageViewModel)BindingContext;
         // first two months, show 1 year, starting March show YTD
         vm.From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
+        vm.To = DateTime.Today;
+        UpdatePage += Refresh;
+    }
+
+    /// <summary>
+    /// Refreshes data on page. 
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="e"></param>
+    async void Refresh(object s, EventArgs e)
+    {
+        dtFrom.Date = vm.From;
+        dtTo.Date = vm.To;
+        await vm.Refresh();
     }
 
     /// <summary>
@@ -62,8 +78,7 @@ public partial class HomePage : ContentView
     private async void dtFrom_DateSelected(object sender, DateChangedEventArgs e)
     {
         await Task.Delay(100);
-        await vm.GetChartData();
-        await vm.GetRecentTransactions();
+        UpdatePage?.Invoke(new object(), new EventArgs());
     }
 
     /// <summary>
@@ -74,7 +89,6 @@ public partial class HomePage : ContentView
     private async void dtTo_DateSelected(object sender, DateChangedEventArgs e)
     {
         await Task.Delay(100);
-        await vm.GetChartData();
-        await vm.GetRecentTransactions();
+        UpdatePage?.Invoke(new object(), new EventArgs());
     }
 }

@@ -9,7 +9,7 @@ using Syncfusion.Maui.ListView;
 
 namespace MoMoney.ViewModels
 {
-    public partial class TransactionsViewModel : ObservableObject
+    public partial class TransactionsViewModel : BaseViewModel
     {
         public List<Transaction> Transactions = new();
 
@@ -42,12 +42,6 @@ namespace MoMoney.ViewModels
 
         [ObservableProperty]
         public string payee = "";
-
-        [ObservableProperty]
-        public DateTime from = new();
-
-        [ObservableProperty]
-        public DateTime to = DateTime.Today;
 
         public SfListView ListView { get; set; }
 
@@ -84,8 +78,8 @@ namespace MoMoney.ViewModels
                         var transactions = await TransactionService.GetTransactionsFromTo(From, To);
                         if (transactions.Count() != Transactions.Count)
                         {
+                            LoadedTransactions.Clear();
                             Transactions.Clear();
-                            //Transactions = new ObservableCollection<Transaction>(transactions);
                             Transactions = new List<Transaction>(transactions.Reverse());
                         }
                         break;
@@ -111,7 +105,10 @@ namespace MoMoney.ViewModels
                         // removes transaction from collection
                         Transaction trans = Transactions.Where(t => t.TransactionID == e.Transaction.TransactionID).FirstOrDefault();
                         if (trans is not null)
+                        {
                             Transactions.Remove(trans);
+                            LoadedTransactions.Remove(trans);
+                        }
                         break;
                     }
                 default:
@@ -304,18 +301,16 @@ namespace MoMoney.ViewModels
         /// <summary>
         /// Loads items from Transactions
         /// </summary>
-        /// <param name="obj"></param>
         [RelayCommand]
-        async void LoadMoreItems(object obj)
+        async void LoadMoreItems()
         {
-            var listView = obj as SfListView;
-            listView.IsLazyLoading = true;
+            ListView.IsLazyLoading = true;
             await Task.Delay(10);
             var index = LoadedTransactions.Count;
             int loadCount = 50;
             var count = index + loadCount >= Transactions.Count ? Transactions.Count - index : loadCount;
             AddTransactions(index, count);
-            listView.IsLazyLoading = false;
+            ListView.IsLazyLoading = false;
         }
 
         /// <summary>
