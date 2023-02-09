@@ -152,6 +152,18 @@ namespace MoMoney.Services
         }
 
         /// <summary>
+        /// Gets first Transaction from Transaction table.
+        /// </summary>
+        /// <returns>List of Transaction objects</returns>
+        public static async Task<Transaction> GetFirstTransaction()
+        {
+            await Init();
+
+            return await MoMoneydb.db.Table<Transaction>().FirstOrDefaultAsync();
+
+        }
+
+        /// <summary>
         /// Validates input fields for Transactions.
         /// </summary>
         /// <param name="date"></param>

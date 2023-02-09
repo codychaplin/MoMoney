@@ -16,5 +16,14 @@ namespace MoMoney.ViewModels
         {
             await Shell.Current.GoToAsync(nameof(AccountSummaryPage));
         }
+
+        /// <summary>
+        /// Goes to MonthBreakdownPage.xaml.
+        /// </summary>
+        [RelayCommand]
+        async Task GoToMonthBreakdown()
+        {
+            await Shell.Current.GoToAsync(nameof(MonthBreakdownPage));
+        }
     }
 }

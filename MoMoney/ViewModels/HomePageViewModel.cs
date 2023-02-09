@@ -27,7 +27,7 @@ namespace MoMoney.ViewModels
         public string topExpenseCategory = "N/A";
 
         [ObservableProperty]
-        public ObservableCollection<Data> data = new();
+        public ObservableCollection<BalanceOverTimeData> data = new();
 
         public async Task Refresh()
         {
@@ -106,11 +106,11 @@ namespace MoMoney.ViewModels
             bool isLong = (To - From).TotalDays > 365;
             if (isLong)
             {
-                Data = new ObservableCollection<Data>(
+                Data = new ObservableCollection<BalanceOverTimeData>(
                     results.OrderByDescending(trans => trans.Date)
                            .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
                            .GroupBy(trans => trans.Date.Month)
-                           .Select(group => new Data
+                           .Select(group => new BalanceOverTimeData
                            {
                                Date = group.FirstOrDefault().Date,
                                Balance = runningTotal -= group.Sum(t => t.Amount)
@@ -118,11 +118,11 @@ namespace MoMoney.ViewModels
             }
             else
             {
-                Data = new ObservableCollection<Data>(
+                Data = new ObservableCollection<BalanceOverTimeData>(
                     results.OrderByDescending(trans => trans.Date)
                            .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
                            .GroupBy(trans => trans.Date)
-                           .Select(group => new Data
+                           .Select(group => new BalanceOverTimeData
                            {
                                Date = group.FirstOrDefault().Date,
                                Balance = runningTotal -= group.Sum(t => t.Amount)
@@ -131,7 +131,7 @@ namespace MoMoney.ViewModels
         }
     }
 
-    public class Data
+    public class BalanceOverTimeData
     {
         public DateTime Date { get; set; }
         public decimal Balance { get; set; }

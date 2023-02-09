@@ -19,7 +19,7 @@
         public const int TRANSFER_ID = 2;
         public const int DEBIT_ID = 3;
         public const int CREDIT_ID = 4;
-        public const int EXPENSE_ID = 5;
+        public const int EXPENSE_ID = 5; // anything >= 5 will be an expense
 
         public enum AccountTypes
         {

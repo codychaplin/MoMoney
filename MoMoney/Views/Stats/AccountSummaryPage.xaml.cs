@@ -13,7 +13,7 @@ public partial class AccountSummaryPage : ContentPage
         Loaded += Refresh;
     }
 
-    private async void Refresh(object s, EventArgs e)
+    async void Refresh(object s, EventArgs e)
     {
         await vm.GetAccounts();
     }

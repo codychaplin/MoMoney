@@ -25,7 +25,7 @@
     </ContentView.Resources>
 
     <!-- main page -->
-    <Grid Margin="10"
+    <Grid Margin="10,0,10,0"
           RowSpacing="10"
           ColumnSpacing="10"
           ColumnDefinitions="*,*"
@@ -49,9 +49,15 @@
             </Grid>
         </Frame>
 
-        <!--  -->
-        <Frame Grid.Column="1" Grid.Row="1">
-
+        <!-- monthly breakdown -->
+        <Frame Grid.Column="1" Grid.Row="1" Padding="10">
+            <Frame.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding GoToMonthBreakdownCommand}" />
+            </Frame.GestureRecognizers>
+            <Grid>
+                <Image Style="{StaticResource imgTileIcon}" Source="donut_chart.png" />
+                <Label Style="{StaticResource lblTileTitle}" Text="Breakdown"  />
+            </Grid>
         </Frame>
 
         <!--  -->

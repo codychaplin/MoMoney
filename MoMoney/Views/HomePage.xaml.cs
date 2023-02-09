@@ -78,7 +78,7 @@ public partial class HomePage : ContentView
     private async void dtFrom_DateSelected(object sender, DateChangedEventArgs e)
     {
         await Task.Delay(100);
-        UpdatePage?.Invoke(new object(), new EventArgs());
+        UpdatePage?.Invoke(this, new EventArgs());
     }
 
     /// <summary>
@@ -89,6 +89,6 @@ public partial class HomePage : ContentView
     private async void dtTo_DateSelected(object sender, DateChangedEventArgs e)
     {
         await Task.Delay(100);
-        UpdatePage?.Invoke(new object(), new EventArgs());
+        UpdatePage?.Invoke(this, new EventArgs());
     }
 }
