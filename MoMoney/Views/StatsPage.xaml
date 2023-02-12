@@ -60,9 +60,15 @@
             </Grid>
         </Frame>
 
-        <!--  -->
-        <Frame Grid.Column="0" Grid.Row="2">
-
+        <!-- stocks -->
+        <Frame Grid.Column="0" Grid.Row="2" Padding="10">
+            <Frame.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding GoToStocksCommand}" />
+            </Frame.GestureRecognizers>
+            <Grid>
+                <Image Style="{StaticResource imgTileIcon}" Source="stocks.png" />
+                <Label Style="{StaticResource lblTileTitle}" Text="Stocks"  />
+            </Grid>
         </Frame>
 
         <!--  -->

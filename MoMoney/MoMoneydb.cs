@@ -18,8 +18,8 @@ namespace MoMoney
             db = new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
 
             await db.CreateTableAsync<Transaction>();
-
             await db.CreateTableAsync<Account>();
+            await db.CreateTableAsync<Stock>();
 
             var category = await db.CreateTableAsync<Category>();
             if (category == CreateTableResult.Created)
@@ -29,7 +29,7 @@ namespace MoMoney
             else
             {
                 int count = await db.Table<Category>().CountAsync();
-                if (count <= 0)
+                if (count < 1)
                 {
                     await db.DropTableAsync<Category>();
                     await db.CreateTableAsync<Category>();

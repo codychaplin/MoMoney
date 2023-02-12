@@ -33,12 +33,12 @@ namespace MoMoney.ViewModels.Settings
         /// <summary>
         /// Gets updated accounts from database, orders them, and refreshes Accounts collection.
         /// </summary>
-        public async Task Refresh()
+        public async void Refresh(object s, EventArgs e)
         {
-            Accounts.Clear();
             var accounts = await AccountService.GetAccounts();
             accounts = accounts.OrderByDescending(a => a.Enabled)
                                .ThenBy(a => a.AccountName);
+            Accounts.Clear();
             foreach (var acc in accounts)
                 Accounts.Add(acc);
         }

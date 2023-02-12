@@ -33,10 +33,10 @@ namespace MoMoney.ViewModels.Settings
         /// <summary>
         /// Gets updated categories from database and refreshes Categories collection.
         /// </summary>
-        public async Task Refresh()
+        public async void Refresh(object s, EventArgs e)
         {
-            Categories.Clear();
             var categories = await CategoryService.GetCategories();
+            Categories.Clear();
             foreach (var cat in categories)
                 Categories.Add(cat);
         }

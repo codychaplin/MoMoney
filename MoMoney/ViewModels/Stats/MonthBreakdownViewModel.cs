@@ -1,9 +1,9 @@
 ﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Color = Microsoft.Maui.Graphics.Color;
 using MoMoney.Models;
 using MoMoney.Services;
-using Color = Microsoft.Maui.Graphics.Color;
 
 namespace MoMoney.ViewModels.Stats
 {

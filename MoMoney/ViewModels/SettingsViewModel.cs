@@ -13,7 +13,6 @@ namespace MoMoney.ViewModels
         /// <summary>
         /// Goes to AccountsPage.xaml.
         /// </summary>
-        /// <returns></returns>
         [RelayCommand]
         async Task GoToAccounts()
         {
@@ -23,11 +22,19 @@ namespace MoMoney.ViewModels
         /// <summary>
         /// Goes to CategoriesPage.xaml.
         /// </summary>
-        /// <returns></returns>
         [RelayCommand]
         async Task GoToCategories()
         {
             await Shell.Current.GoToAsync(nameof(CategoriesPage));
+        }
+
+        /// <summary>
+        /// Goes to StockSettingsPage.xaml.
+        /// </summary>
+        [RelayCommand]
+        async Task GoToStocks()
+        {
+            await Shell.Current.GoToAsync(nameof(StockSettingsPage));
         }
 
         /// <summary>

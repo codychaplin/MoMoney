@@ -26,6 +26,7 @@
                 <Label Style="{StaticResource lblTitle}" Text="Data" Margin="0,0,0,10" />
                 <Button Text="Accounts" Command="{Binding GoToAccountsCommand}" />
                 <Button Text="Categories" Command="{Binding GoToCategoriesCommand}" />
+                <Button Text="Stocks" Command="{Binding GoToStocksCommand}" />
                 <Button Text="Import Accounts from CSV" Command="{Binding ImportAccountsCSVCommand}" />
                 <Button Text="Import Categories from CSV" Command="{Binding ImportCategoriesCSVCommand}" />
                 <Button Text="Export Transactions to CSV" Command="{Binding ExportTransactionsCSVCommand}" />

@@ -12,6 +12,7 @@ public partial class AddTransactionPage : ContentView
 		InitializeComponent();
         vm = (AddTransactionViewModel)BindingContext;
         dtDate.Date = DateTime.Today;
+        txtAmount.Text = "";
         Allowed(false); // disable fields on start
     }
 
@@ -157,6 +158,7 @@ public partial class AddTransactionPage : ContentView
         dtDate.Date = DateTime.Now;
         pckAccount.SelectedIndex = -1;
         vm.Amount = 0;
+        txtAmount.Text = "";
         vm.Payee = "";
         vm.Subcategories.Clear();
         pckTransferTo.SelectedIndex = -1;

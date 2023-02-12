@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MoMoney.Views.Settings.StockSettingsPage"
+             xmlns:models="clr-namespace:MoMoney.Models"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
+             x:DataType="viewmodel:StockSettingsViewModel"
+             Title="Stocks">
+
+    <ContentPage.BindingContext>
+        <viewmodel:StockSettingsViewModel />
+    </ContentPage.BindingContext>
+
+    <!-- main page -->
+    <Grid>
+
+        <!-- list of stocks -->
+        <CollectionView ItemsSource="{Binding Stocks}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Stock">
+
+                    <!-- template -->
+                    <Frame Style="{StaticResource confrTile}">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Path=GoToEditStockCommand, Source={RelativeSource
+                                                                    AncestorType={x:Type viewmodel:StockSettingsViewModel}}}"
+                                                  CommandParameter="{Binding Symbol}" />
+                        </Frame.GestureRecognizers>
+                        <Grid BackgroundColor="{StaticResource Gray700}">
+
+                            <!-- symbol -->
+                            <Label Style="{StaticResource lblTile}" Text="{Binding Symbol}" />
+
+                            <!-- market price -->
+                            <Label Style="{StaticResource lblTile}"
+                                   HorizontalOptions="End"
+                                   Padding="0,0,5,0"
+                                   Text="{Binding MarketPrice, StringFormat='{0:C2}'}" />
+                        </Grid>
+                    </Frame>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- add account button -->
+        <ImageButton Source="add.png"
+                     Margin="20"
+                     WidthRequest="40"
+                     HeightRequest="40"
+                     VerticalOptions="End"
+                     HorizontalOptions="End"
+                     Command="{Binding GoToAddStockCommand}">
+        </ImageButton>
+    </Grid>
+</ContentPage>

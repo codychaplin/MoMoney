@@ -6,16 +6,10 @@ public partial class CategoriesPage : ContentPage
 {
 	CategoriesViewModel vm;
 
-    public CategoriesPage()
+	public CategoriesPage()
 	{
 		InitializeComponent();
 		vm = (CategoriesViewModel)BindingContext;
+		NavigatedTo += vm.Refresh;
 	}
-
-    protected override async void OnAppearing()
-	{
-		base.OnAppearing();
-
-		await vm.Refresh();
-    }
 }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MoMoney.Views.Stats.StocksPage"
+             xmlns:local="clr-namespace:MoMoney"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Stats"
+             xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
+             Unloaded="ContentPage_Unloaded"
+             Title="Stocks">
+
+    <ContentPage.BindingContext>
+        <viewmodel:StocksViewModel />
+    </ContentPage.BindingContext>
+
+    <!-- converter -->
+    <ContentPage.Resources>
+        <local:PositiveNegativeColourConverter x:Key="PosNegColour" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="100,*">
+        
+        <!-- totals -->
+        <Frame Margin="10,10,10,0" Padding="10,5,10,5" BackgroundColor="{StaticResource Gray700}">
+            <Grid ColumnDefinitions="*,*" RowDefinitions="16,*,0.5*">
+                <Label Text="Total"
+                       FontSize="16"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Start" />
+                <Label Text="{Binding MarketValue, StringFormat='{0:C2}'}"
+                       Grid.Row="1"
+                       FontSize="36"
+                       Grid.ColumnSpan="2"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Start" />
+                <Label Text="Total Gain:"
+                       FontSize="16"
+                       Grid.Row="2"
+                       Grid.Column="0"
+                       HorizontalOptions="Start"
+                       VerticalOptions="Center" />
+                <HorizontalStackLayout Grid.Row="2" Grid.ColumnSpan="2" HorizontalOptions="End">
+                    <Label Text="{Binding Total, StringFormat='{0:C2}'}"
+                           TextColor="{Binding Total, Converter={StaticResource PosNegColour}}"
+                           FontSize="18"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                    <Label Text="{Binding TotalChange, StringFormat=' ({0:P2})'}"
+                           TextColor="{Binding TotalChange, Converter={StaticResource PosNegColour}}"
+                           FontSize="18"
+                           HorizontalOptions="Center" 
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Grid>
+        </Frame>
+        
+        <!-- stock list -->
+        <Frame Grid.Row="1" Margin="10" Padding="5"> 
+            <listview:SfListView ItemsSource="{Binding Stocks}">
+                <listview:SfListView.ItemTemplate>
+                    <DataTemplate>
+                        <!-- template -->
+                        <Frame Margin="0,0,0,5"
+                               Padding="5"
+                               HeightRequest="40"
+                               BackgroundColor="{StaticResource Gray700}">
+                            <Grid RowDefinitions="*,*" ColumnDefinitions="*,*">
+                                <Label Text="{Binding Symbol}"
+                                       FontSize="16"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Start" />
+                                <Label Text="{Binding MarketPrice, StringFormat='{0:C2}'}"
+                                       Grid.Row="0"
+                                       Grid.Column="1"
+                                       HorizontalOptions="End"
+                                       VerticalOptions="Center" />
+                                <HorizontalStackLayout Grid.Row="1" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center">
+                                    <Label Text="{Binding Change, StringFormat='{0:C2} '}"
+                                           TextColor="{Binding Change, Converter={StaticResource PosNegColour}}" />
+                                    <Label Text="{Binding ChangePercent, StringFormat=' ({0:P2})'}"
+                                           TextColor="{Binding ChangePercent, Converter={StaticResource PosNegColour}}" />
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </listview:SfListView.ItemTemplate>
+            </listview:SfListView>
+        </Frame>
+    </Grid>
+</ContentPage>

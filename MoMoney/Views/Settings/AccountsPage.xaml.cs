@@ -6,16 +6,10 @@ public partial class AccountsPage : ContentPage
 {
 	AccountsViewModel vm;
 
-    public AccountsPage()
+	public AccountsPage()
 	{
 		InitializeComponent();
 		vm = (AccountsViewModel)BindingContext;
+		NavigatedTo += vm.Refresh;
 	}
-
-    protected override async void OnAppearing()
-	{
-		base.OnAppearing();
-
-		await vm.Refresh();
-    }
 }

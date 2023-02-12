@@ -133,9 +133,7 @@ namespace MoMoney.Services
         /// <returns>Account object</returns>
         public static async Task<Account> GetAccount(int id)
         {
-            var account = await MoMoneydb.db.Table<Account>().FirstOrDefaultAsync(a => a.AccountID == id);
-
-            return account;
+            return await MoMoneydb.db.Table<Account>().FirstOrDefaultAsync(a => a.AccountID == id);
         }
 
         /// <summary>
