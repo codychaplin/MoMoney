@@ -61,6 +61,7 @@ namespace MoMoney.ViewModels.Settings
             }
             else
             {
+                Category.ParentName = Parent.CategoryName;
                 await CategoryService.UpdateCategory(Category);
                 await Shell.Current.GoToAsync("..");
             }

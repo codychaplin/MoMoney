@@ -13,7 +13,6 @@ namespace MoMoney.Services
         public static async Task Init()
         {
             await MoMoneydb.Init();
-            
             Stocks = await GetStocksAsDict();
         }
 
