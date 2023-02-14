@@ -16,7 +16,7 @@ public partial class MainPage : ContentPage
 	{
 		if (tvTabBar.SelectedIndex == 0) // Home Page
 		{
-			HomePage.UpdatePage?.Invoke(new object(), new EventArgs());
+			HomePage.UpdatePage?.Invoke(this, new EventArgs());
 		}
 		else if (tvTabBar.SelectedIndex == 1) // TransactionPage
 		{

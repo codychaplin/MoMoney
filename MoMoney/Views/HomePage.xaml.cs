@@ -16,17 +16,23 @@ public partial class HomePage : ContentView
         vm.From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
         vm.To = DateTime.Today;
         UpdatePage += Refresh;
+        Loaded += Refresh;
+        dtFrom.DateSelected += Refresh;
+        dtTo.DateSelected += Refresh;
     }
 
     /// <summary>
     /// Refreshes data on page. 
     /// </summary>
-    /// <param name="s"></param>
+    /// <param name="sender"></param>
     /// <param name="e"></param>
-    async void Refresh(object s, EventArgs e)
+    async void Refresh(object sender, EventArgs e)
     {
-        dtFrom.Date = vm.From;
-        dtTo.Date = vm.To;
+        if (sender is ContentPage)
+        {
+            dtFrom.Date = vm.From;
+            dtTo.Date = vm.To;
+        }
         await vm.Refresh();
     }
 
@@ -68,27 +74,5 @@ public partial class HomePage : ContentView
             frDates.IsVisible = true;
             grdMain.RowDefinitions[0].Height = 90;
         }
-    }
-
-    /// <summary>
-    /// Update chart data when From date is changed
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private async void dtFrom_DateSelected(object sender, DateChangedEventArgs e)
-    {
-        await Task.Delay(100);
-        UpdatePage?.Invoke(this, new EventArgs());
-    }
-
-    /// <summary>
-    /// Update chart data when To date is changed
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private async void dtTo_DateSelected(object sender, DateChangedEventArgs e)
-    {
-        await Task.Delay(100);
-        UpdatePage?.Invoke(this, new EventArgs());
     }
 }

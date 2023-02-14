@@ -40,8 +40,8 @@ namespace MoMoney.ViewModels
         /// </summary>
         public async Task GetRecentTransactions()
         {
-            RecentTransactions.Clear();
             var transactions = await TransactionService.GetRecentTransactions(To);
+            RecentTransactions.Clear();
             foreach (var trans in transactions)
                 RecentTransactions.Add(trans);
         }
