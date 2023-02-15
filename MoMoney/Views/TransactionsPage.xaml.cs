@@ -31,12 +31,18 @@ public partial class TransactionsPage : ContentView
     /// <summary>
     /// Refreshes transactions on page. 
     /// </summary>
-    /// <param name="s"></param>
+    /// <param name="sender"></param>
     /// <param name="e"></param>
-    async void Refresh(object s, TransactionEventArgs e)
+    async void Refresh(object sender, TransactionEventArgs e)
     {
-        dtFrom.Date = vm.From;
-        dtTo.Date = vm.To;
+        // if triggered by tab bar (on MainPage), update dates
+        if (sender is ContentPage)
+        {
+            dtFrom.Date = vm.From;
+            dtTo.Date = vm.To;
+        }
+
+        // if read, delay to avoid lag when switching to TransactionsPage
         if (e.Type == TransactionEventArgs.CRUD.Read)
             await Task.Delay(100);
         await vm.Refresh(e);

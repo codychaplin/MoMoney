@@ -31,52 +31,58 @@ namespace MoMoney.ViewModels
 
         public async Task Refresh()
         {
-            await GetRecentTransactions();
-            await GetChartData();
-        }
+            var transactions = await TransactionService.GetTransactionsFromTo(From, To, true);
+            if (!transactions.Any())
+                return;
 
-        /// <summary>
-        /// Gets updated transactions from database and refreshes Transactions collection.
-        /// </summary>
-        public async Task GetRecentTransactions()
-        {
-            var transactions = await TransactionService.GetRecentTransactions(To);
-            RecentTransactions.Clear();
-            foreach (var trans in transactions)
-                RecentTransactions.Add(trans);
+            // networth is needed for GetChartData, hence the .ContinueWith
+            Task recentTransactions = GetRecentTransactions(transactions);
+            Task getNetworth = GetNetworth();
+            Task getStats = GetStats(transactions);
+            Task getChartData = getNetworth.ContinueWith(_ =>
+            {
+                return GetChartData(transactions);
+            }).Unwrap();
+
+            await Task.WhenAll(getNetworth, recentTransactions, getStats, getChartData);
         }
 
         /// <summary>
         /// Gets updated total balance of all accounts combined.
         /// </summary>
-        public async Task GetNetworth()
+        async Task GetNetworth()
         {
-            var accounts = await AccountService.GetActiveAccounts();
+            if (isNetworthSet)
+                return;
+
             Networth = 0;
+            var accounts = await AccountService.GetActiveAccounts();
             foreach (var acc in accounts)
                 Networth += acc.CurrentBalance;
             isNetworthSet = true;
         }
 
         /// <summary>
-        /// Gets data for running balance chart.
+        /// Gets updated transactions from database and refreshes Transactions collection.
         /// </summary>
-        public async Task GetChartData()
+        async Task GetRecentTransactions(IEnumerable<Transaction> transactions)
         {
-            if (!isNetworthSet)
-                await GetNetworth();
-            decimal runningTotal = Networth; // running total starts at current net worth
+            transactions = transactions.Take(5);
+            RecentTransactions.Clear();
+            foreach (var trans in transactions)
+                RecentTransactions.Add(trans);
 
-            var results = await TransactionService.GetTransactionsFromTo(From, To);
-            if (!results.Any())
-                return;
+            await Task.CompletedTask;
+        }
 
+        async Task GetStats(IEnumerable<Transaction> transactions)
+        {
             // update income/expense totals
-            TotalIncome = results.Where(t => t.CategoryID == Constants.INCOME_ID).Sum(t => t.Amount);
-            TotalExpenses = results.Where(t => t.CategoryID >= Constants.EXPENSE_ID).Sum(t => t.Amount);
+            TotalIncome = transactions.Where(t => t.CategoryID == Constants.INCOME_ID).Sum(t => t.Amount);
+            TotalExpenses = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID).Sum(t => t.Amount);
 
             // update top income subcategory
-            var subcategoryID = results.Where(t => t.CategoryID == Constants.INCOME_ID)
+            var subcategoryID = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
                                        .GroupBy(t => t.SubcategoryID)
                                        .Select(group => new
                                        {
@@ -89,7 +95,7 @@ namespace MoMoney.ViewModels
             TopIncomeSubcategory = subcategory.CategoryName;
 
             // update top expense category
-            var categoryID = results.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
+            var categoryID = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
                                     .GroupBy(t => t.CategoryID)
                                     .Select(group => new
                                     {
@@ -100,33 +106,42 @@ namespace MoMoney.ViewModels
                                     .CategoryID;
             Category category = await CategoryService.GetCategory(categoryID);
             TopExpenseCategory = category.CategoryName;
+        }
 
+        /// <summary>
+        /// Gets data for running balance chart.
+        /// </summary>
+        async Task GetChartData(IEnumerable<Transaction> transactions)
+        {
             // if the date range is > 1 year, group results by Month, if < 1 year, group by day
             // get non-transfer transactions, group by date, and select date and sum of amounts on each date
             bool isLong = (To - From).TotalDays > 365;
+            decimal runningTotal = Networth;
             if (isLong)
             {
                 Data = new ObservableCollection<BalanceOverTimeData>(
-                    results.OrderByDescending(trans => trans.Date)
+                    await Task.Run(() =>
+                        transactions.OrderByDescending(trans => trans.Date)
                            .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
                            .GroupBy(trans => trans.Date.Month)
                            .Select(group => new BalanceOverTimeData
                            {
                                Date = group.FirstOrDefault().Date,
                                Balance = runningTotal -= group.Sum(t => t.Amount)
-                           }));
+                           })));
             }
             else
             {
                 Data = new ObservableCollection<BalanceOverTimeData>(
-                    results.OrderByDescending(trans => trans.Date)
+                    await Task.Run(() =>
+                        transactions.OrderByDescending(trans => trans.Date)
                            .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
                            .GroupBy(trans => trans.Date)
                            .Select(group => new BalanceOverTimeData
                            {
                                Date = group.FirstOrDefault().Date,
                                Balance = runningTotal -= group.Sum(t => t.Amount)
-                           }));
+                           })));
             }
         }
     }

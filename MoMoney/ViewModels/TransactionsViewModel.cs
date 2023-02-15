@@ -75,12 +75,12 @@ namespace MoMoney.ViewModels
                 case TransactionEventArgs.CRUD.Read:
                     {
                         // get transactions from db, if count has changed, refresh Transactions collection
-                        var transactions = await TransactionService.GetTransactionsFromTo(From, To);
+                        var transactions = await TransactionService.GetTransactionsFromTo(From, To, true);
                         if (transactions.Count() != Transactions.Count)
                         {
                             LoadedTransactions.Clear();
                             Transactions.Clear();
-                            Transactions = new List<Transaction>(transactions.Reverse());
+                            Transactions = new List<Transaction>(transactions);
                         }
                         break;
                     }

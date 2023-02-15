@@ -40,7 +40,7 @@ namespace MoMoney.ViewModels.Stats
         /// Gets active accounts from database, groups them by account type,
         /// adds them to the corresponding collection, then adds balance to corresponding sum
         /// </summary>
-        public async Task GetAccounts()
+        public async void Init(object sender, EventArgs e)
         {
             var accounts = await AccountService.GetActiveAccounts();
 

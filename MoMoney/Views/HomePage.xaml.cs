@@ -12,11 +12,18 @@ public partial class HomePage : ContentView
 	{
 		InitializeComponent();
         vm = (HomePageViewModel)BindingContext;
+
         // first two months, show 1 year, starting March show YTD
         vm.From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
         vm.To = DateTime.Today;
+
+        // UpdatePage can be triggered by any page
         UpdatePage += Refresh;
+
+        // Loaded is just called on start
         Loaded += Refresh;
+
+        // DateSelected is for DatePicker changes
         dtFrom.DateSelected += Refresh;
         dtTo.DateSelected += Refresh;
     }
@@ -28,6 +35,7 @@ public partial class HomePage : ContentView
     /// <param name="e"></param>
     async void Refresh(object sender, EventArgs e)
     {
+        // if triggered by tab bar (on MainPage), update dates
         if (sender is ContentPage)
         {
             dtFrom.Date = vm.From;

@@ -7,14 +7,9 @@ public partial class AccountSummaryPage : ContentPage
     AccountSummaryViewModel vm;
 
     public AccountSummaryPage()
-	{
-		InitializeComponent();
-        vm = (AccountSummaryViewModel)BindingContext;
-        Loaded += Refresh;
-    }
-
-    async void Refresh(object s, EventArgs e)
     {
-        await vm.GetAccounts();
+        InitializeComponent();
+        vm = (AccountSummaryViewModel)BindingContext;
+        Loaded += vm.Init;
     }
 }

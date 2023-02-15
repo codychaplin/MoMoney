@@ -12,13 +12,15 @@ public partial class AppShell : Shell
 
 		// registered routes within app
 
-		// settings
+		// accounts
 		Routing.RegisterRoute(nameof(AccountsPage), typeof(AccountsPage));
 		Routing.RegisterRoute(nameof(AddAccountPage), typeof(AddAccountPage));
 		Routing.RegisterRoute(nameof(EditAccountPage), typeof(EditAccountPage));
+		// categories
 		Routing.RegisterRoute(nameof(CategoriesPage), typeof(CategoriesPage));
 		Routing.RegisterRoute(nameof(AddCategoryPage), typeof(AddCategoryPage));
 		Routing.RegisterRoute(nameof(EditCategoryPage), typeof(EditCategoryPage));
+		// stocks
 		Routing.RegisterRoute(nameof(StockSettingsPage), typeof(StockSettingsPage));
 		Routing.RegisterRoute(nameof(AddStockPage), typeof(AddStockPage));
 		Routing.RegisterRoute(nameof(EditStockPage), typeof(EditStockPage));
@@ -26,7 +28,8 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute(nameof(EditTransactionPage), typeof(EditTransactionPage));
 		// stats
 		Routing.RegisterRoute(nameof(AccountSummaryPage), typeof(AccountSummaryPage));
-		Routing.RegisterRoute(nameof(MonthBreakdownPage), typeof(MonthBreakdownPage));
+		Routing.RegisterRoute(nameof(BreakdownPage), typeof(BreakdownPage));
 		Routing.RegisterRoute(nameof(StocksPage), typeof(StocksPage));
+		Routing.RegisterRoute(nameof(InsightsPage), typeof(InsightsPage));
 	}
 }

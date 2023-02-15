@@ -2,14 +2,14 @@ using MoMoney.ViewModels.Stats;
 
 namespace MoMoney.Views.Stats;
 
-public partial class MonthBreakdownPage : ContentPage
+public partial class BreakdownPage : ContentPage
 {
-	MonthBreakdownViewModel vm;
+	BreakdownViewModel vm;
 
-	public MonthBreakdownPage()
+	public BreakdownPage()
 	{
 		InitializeComponent();
-        vm = (MonthBreakdownViewModel)BindingContext;
+        vm = (BreakdownViewModel)BindingContext;
         Loaded += vm.Init;
 		sfTabView.SelectionChanged += vm.Update;
     }

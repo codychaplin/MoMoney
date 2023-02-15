@@ -94,6 +94,9 @@
 	  <Compile Update="Views\Stats\AccountSummaryPage.xaml.cs">
 	    <DependentUpon>AccountSummaryPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\Stats\BreakdownPage.xaml.cs">
+	    <DependentUpon>BreakdownPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\Stats\StocksPage.xaml.cs">
 	    <DependentUpon>StocksPage.xaml</DependentUpon>
 	  </Compile>
@@ -148,7 +151,10 @@
 	  <MauiXaml Update="Views\Stats\AccountSummaryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Stats\MonthBreakdownPage.xaml">
+	  <MauiXaml Update="Views\Stats\BreakdownPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Stats\InsightsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Stats\StocksPage.xaml">

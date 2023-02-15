@@ -52,7 +52,7 @@
         <!-- monthly breakdown -->
         <Frame Grid.Column="1" Grid.Row="1" Padding="10">
             <Frame.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding GoToMonthBreakdownCommand}" />
+                <TapGestureRecognizer Command="{Binding GoToBreakdownCommand}" />
             </Frame.GestureRecognizers>
             <Grid>
                 <Image Style="{StaticResource imgTileIcon}" Source="donut_chart.png" />
@@ -71,30 +71,33 @@
             </Grid>
         </Frame>
 
-        <!--  -->
+        <!-- Stats -->
         <Frame Grid.Column="1" Grid.Row="2">
-
+            <Frame.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding GoToInsightsCommand}" />
+            </Frame.GestureRecognizers>
+            <Grid>
+                <Image Style="{StaticResource imgTileIcon}" Source="calculator.png" />
+                <Label Style="{StaticResource lblTileTitle}" Text="Insights"  />
+            </Grid>
         </Frame>
 
-        <!--  -->
+        <!--
         <Frame Grid.Column="0" Grid.Row="3">
 
         </Frame>
 
-        <!--  -->
         <Frame Grid.Column="1" Grid.Row="3">
 
         </Frame>
 
-        <!--  -->
         <Frame Grid.Column="0" Grid.Row="4">
 
         </Frame>
 
-        <!--  -->
         <Frame Grid.Column="1" Grid.Row="4">
 
-        </Frame>
+        </Frame> -->
     </Grid>
 
 </ContentView>

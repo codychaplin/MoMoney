@@ -21,18 +21,27 @@ namespace MoMoney.ViewModels
         /// Goes to MonthBreakdownPage.xaml.
         /// </summary>
         [RelayCommand]
-        async Task GoToMonthBreakdown()
+        async Task GoToBreakdown()
         {
-            await Shell.Current.GoToAsync(nameof(MonthBreakdownPage));
+            await Shell.Current.GoToAsync(nameof(BreakdownPage));
         }
 
         /// <summary>
-        /// Goes to MonthBreakdownPage.xaml.
+        /// Goes to StocksPage.xaml.
         /// </summary>
         [RelayCommand]
         async Task GoToStocks()
         {
             await Shell.Current.GoToAsync(nameof(StocksPage));
+        }
+
+        /// <summary>
+        /// Goes to InsightsPage.xaml.
+        /// </summary>
+        [RelayCommand]
+        async Task GoToInsights()
+        {
+            await Shell.Current.GoToAsync(nameof(InsightsPage));
         }
     }
 }

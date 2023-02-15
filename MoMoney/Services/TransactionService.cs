@@ -142,13 +142,24 @@ namespace MoMoney.Services
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
+        /// <param name="reverse"></param>
         /// <returns>List of Transaction objects between the specified dates</returns>
-        public static async Task<IEnumerable<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to)
+        public static async Task<IEnumerable<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse)
         {
             await Init();
 
-            return await MoMoneydb.db.Table<Transaction>().Where(t => t.Date >= from && t.Date <= to)
-                                                          .OrderBy(t => t.Date).ToListAsync();
+            if (reverse)
+            {
+                return await MoMoneydb.db.Table<Transaction>().Where(t => t.Date >= from && t.Date <= to)
+                                                              .OrderByDescending(t => t.Date)
+                                                              .ToListAsync();
+            }
+            else
+            {
+                return await MoMoneydb.db.Table<Transaction>().Where(t => t.Date >= from && t.Date <= to)
+                                                              .OrderBy(t => t.Date)
+                                                              .ToListAsync();
+            }
         }
 
         /// <summary>

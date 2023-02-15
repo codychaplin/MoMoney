@@ -7,7 +7,7 @@ using MoMoney.Services;
 
 namespace MoMoney.ViewModels.Stats
 {
-    public partial class MonthBreakdownViewModel : ObservableObject
+    public partial class BreakdownViewModel : ObservableObject
     {
         [ObservableProperty]
         public decimal incomeSum = 0;
@@ -105,43 +105,44 @@ namespace MoMoney.ViewModels.Stats
             // gets start/end dates then gets transactions between those dates
             DateTime from = new(SelectedMonth.Year, SelectedMonth.Month, 1);
             DateTime to = new(SelectedMonth.Year, SelectedMonth.Month, SelectedMonth.AddMonths(1).AddDays(-1).Day);
-            var transactions = await TransactionService.GetTransactionsFromTo(from, to);
+            var transactions = await TransactionService.GetTransactionsFromTo(from, to, false);
             
             // calculates sums for tab headers
             // absolute value for expenses just to make it look cleaner
             ExpenseSum = Math.Abs(transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
-                                     .Select(t => t.Amount).Sum());
+                                              .Select(t => t.Amount).Sum());
             IncomeSum = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
-                                     .Select(t => t.Amount).Sum();
+                                    .Select(t => t.Amount).Sum();
 
             // first tab = expenses, second tab = income
             if (Index == 0)
-                UpdateExpenses(ref transactions);
+                await UpdateExpenses(transactions);
             else
-                UpdateIncome(ref transactions);
+                await UpdateIncome(transactions);
         }
 
         /// <summary>
         /// Updates data for ExpenseData
         /// </summary>
         /// <param name="transactions"></param>
-        void UpdateExpenses(ref IEnumerable<Transaction> transactions)
+        async Task UpdateExpenses(IEnumerable<Transaction> transactions)
         {
             // group transactions by Category, sum amounts, get Category name from ID, assign colour from palette
             int i = 0;
             ExpenseData = new ObservableCollection<MonthData>(
-                transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
-                            .GroupBy(t => t.CategoryID)
-                            .Select(group => {
-                            var amount = Math.Abs(group.Sum(t => t.Amount));
-                                return new MonthData
-                                {
-                                    Amount = amount,
-                                    ActualAmount = amount,
-                                    Category = CategoryService.Categories[group.FirstOrDefault().CategoryID],
-                                    Color = ExpensePalette[i++]
-                                };
-                            }));
+                await Task.Run(() =>
+                    transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
+                                .GroupBy(t => t.CategoryID)
+                                .Select(group => {
+                                var amount = Math.Abs(group.Sum(t => t.Amount));
+                                    return new MonthData
+                                    {
+                                        Amount = amount,
+                                        ActualAmount = amount,
+                                        Category = CategoryService.Categories[group.FirstOrDefault().CategoryID],
+                                        Color = ExpensePalette[i++]
+                                    };
+                                })));
 
             // calculate size of slice as percentage
             decimal total = ExpenseData.Sum(d => d.Amount);
@@ -153,23 +154,24 @@ namespace MoMoney.ViewModels.Stats
         /// Updates data for IncomeData
         /// </summary>
         /// <param name="transactions"></param>
-        void UpdateIncome(ref IEnumerable<Transaction> transactions)
+        async Task UpdateIncome(IEnumerable<Transaction> transactions)
         {
             // group transactions by Subcategory, sum amounts, get Subcategory name from ID, assign colour from palette
             int i = 0;
             IncomeData = new ObservableCollection<MonthData>(
-                transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
-                            .GroupBy(t => t.SubcategoryID)
-                            .Select(group => {
-                                var amount = group.Sum(t => t.Amount);
-                                return new MonthData
-                                {
-                                    ActualAmount = amount,
-                                    Amount = (amount > 0) ? amount : 0,
-                                    Category = CategoryService.Categories[group.FirstOrDefault().SubcategoryID],
-                                    Color = IncomePalette[i++]
-                                };
-                            }));
+                await Task.Run(() =>
+                    transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
+                                .GroupBy(t => t.SubcategoryID)
+                                .Select(group => {
+                                    var amount = group.Sum(t => t.Amount);
+                                    return new MonthData
+                                    {
+                                        ActualAmount = amount,
+                                        Amount = (amount > 0) ? amount : 0,
+                                        Category = CategoryService.Categories[group.FirstOrDefault().SubcategoryID],
+                                        Color = IncomePalette[i++]
+                                    };
+                                })));
 
             // calculate size of slice as percentage
             decimal total = IncomeData.Sum(d => d.Amount);
