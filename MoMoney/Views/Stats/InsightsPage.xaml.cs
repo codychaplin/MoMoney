@@ -10,5 +10,7 @@ public partial class InsightsPage : ContentPage
 	{
 		InitializeComponent();
 		vm = (InsightsViewModel)BindingContext;
+		Loaded += vm.Init;
+		pckDate.SelectedIndexChanged += vm.Refresh;
 	}
 }

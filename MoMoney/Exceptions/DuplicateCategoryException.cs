@@ -1,12 +1,11 @@
 ﻿
-namespace MoMoney.Exceptions
-{
-    public class DuplicateCategoryException : Exception
-    {
-        public DuplicateCategoryException() { }
+namespace MoMoney.Exceptions;
 
-        public DuplicateCategoryException(string message) : base(message) { }
-        
-        public DuplicateCategoryException(string message, Exception inner) : base(message, inner) { }
-    }
+public class DuplicateCategoryException : Exception
+{
+    public DuplicateCategoryException() { }
+
+    public DuplicateCategoryException(string message) : base(message) { }
+    
+    public DuplicateCategoryException(string message, Exception inner) : base(message, inner) { }
 }

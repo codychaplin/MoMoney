@@ -155,7 +155,7 @@
                 </chart:SfCartesianChart>
             </Frame>
 
-            <!-- stats -->
+            <!-- insights -->
             <Grid Grid.Row="2" Margin="10,0,10,0" RowDefinitions="40,*">
                 <Label Style="{StaticResource lblTitle}" Text="Statistics" />
                 <Button x:Name="btnViewAllStats" Text="View All" Clicked="btnViewAllStats_Clicked" />

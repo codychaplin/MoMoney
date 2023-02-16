@@ -71,8 +71,8 @@
             </Grid>
         </Frame>
 
-        <!-- Stats -->
-        <Frame Grid.Column="1" Grid.Row="2">
+        <!-- Insights -->
+        <Frame Grid.Column="1" Grid.Row="2"  Padding="10">
             <Frame.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding GoToInsightsCommand}" />
             </Frame.GestureRecognizers>

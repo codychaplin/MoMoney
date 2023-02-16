@@ -1,12 +1,11 @@
 ﻿using SQLite;
 
-namespace MoMoney.Models
+namespace MoMoney.Models;
+
+public class Category
 {
-    public class Category
-    {
-        [PrimaryKey, AutoIncrement]
-        public int CategoryID { get; set; }
-        public string CategoryName { get; set; }
-        public string ParentName { get; set; }
-    }
+    [PrimaryKey, AutoIncrement]
+    public int CategoryID { get; set; }
+    public string CategoryName { get; set; }
+    public string ParentName { get; set; }
 }

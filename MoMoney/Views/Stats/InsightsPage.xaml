@@ -9,7 +9,53 @@
         <viewmodel:InsightsViewModel />
     </ContentPage.BindingContext>
 
-    <Grid>
+    <Grid RowDefinitions="50,*,*">
         
+        <!-- year picker -->
+        <Frame Margin="10,0,10,10" Padding="0">
+            <HorizontalStackLayout Padding="10,0,0,0">
+                <Image Source="calendar.png" Style="{StaticResource icon}" />
+                <Picker x:Name="pckDate"
+                        Margin="0"
+                        Title="Select a Year"
+                        HeightRequest="40"
+                        WidthRequest="220"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Start"
+                        ItemsSource="{Binding Years}"
+                        SelectedItem="{Binding SelectedYear}" />
+            </HorizontalStackLayout>
+        </Frame>
+        
+        <!-- Totals -->
+        <Frame Grid.Row="1" Margin="10,0,10,10">
+            <VerticalStackLayout>
+                <Label Text="Totals" FontSize="20" FontAttributes="Bold" />
+                <HorizontalStackLayout>
+                    <Label Text="Total Income: " />
+                    <Label Text="{Binding TotalIncome, StringFormat='{0:C2}'}" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout>
+                    <Label Text="Total Expenses: " />
+                    <Label Text="{Binding TotalExpenses, StringFormat='{0:C2}'}" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </Frame>
+
+        <!-- Top Categories -->
+        <Frame Grid.Row="2" Margin="10,0,10,10">
+            <VerticalStackLayout>
+                <Label Text="Top Categories" FontSize="20" FontAttributes="Bold" />
+                <HorizontalStackLayout>
+                    <Label Text="Top Income Subcategory: " />
+                    <Label Text="{Binding TopIncomeSubcategory, StringFormat='{0:C2}'}" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout>
+                    <Label Text="Top Expense Categories: " />
+                    <Label Text="{Binding TopExpenseCategory, StringFormat='{0:C2}'}" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </Frame>
+
     </Grid>
 </ContentPage>
