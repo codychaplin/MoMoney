@@ -12,9 +12,10 @@
         <viewmodel:AccountsViewModel />
     </ContentPage.BindingContext>
 
-    <!-- converters -->
     <ContentPage.Resources>
+        <!-- converters -->
         <local:TileColourConverter x:Key="TileColour" />
+        <local:ShowValueConverter x:Key="ShowValue" />
     </ContentPage.Resources>
 
     <!-- main page -->
@@ -42,7 +43,7 @@
                                    IsVisible="{Binding Enabled}"
                                    HorizontalOptions="End"
                                    Padding="0,0,5,0"
-                                   Text="{Binding CurrentBalance, StringFormat='{0:C2}'}" />
+                                   Text="{Binding CurrentBalance, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
                         </Grid>
                     </Frame>
                     

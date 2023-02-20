@@ -12,5 +12,16 @@ public partial class BreakdownPage : ContentPage
         vm = (BreakdownViewModel)BindingContext;
         Loaded += vm.Init;
 		sfTabView.SelectionChanged += vm.Update;
+
+		if (Constants.ShowValue)
+		{
+			ExpChartLbl.LabelFormat = "$0";
+			IncChartLbl.LabelFormat = "$0";
+		}
+		else
+        {
+            ExpChartLbl.LabelFormat = "$?";
+            IncChartLbl.LabelFormat = "$?";
+        }
     }
 }

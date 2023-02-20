@@ -23,6 +23,7 @@
         <local:IdToAccountConverter x:Key="IdToAccount" />
         <local:AmountColourConverter x:Key="AmountColour" />
         <local:IconConverter x:Key="Icon" />
+        <local:ShowValueConverter x:Key="ShowValue" />
     </ContentView.Resources>
 
     <!-- main page -->
@@ -262,7 +263,7 @@
                                        HorizontalTextAlignment="End"
                                        Style="{StaticResource lblTile}"
                                        TextColor="{Binding CategoryID, Converter={StaticResource AmountColour}}"
-                                       Text="{Binding Amount, StringFormat='{0:C2}'}" />
+                                       Text="{Binding Amount, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
                                 <!-- date -->
                                 <Label Grid.Row="1"
                                        Grid.Column="1"

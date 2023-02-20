@@ -12,5 +12,17 @@ public partial class InsightsPage : ContentPage
 		vm = (InsightsViewModel)BindingContext;
 		Loaded += vm.Init;
 		pckDate.SelectedIndexChanged += vm.Refresh;
+
+		if (Constants.ShowValue)
+		{
+            IncExpChartIncLbl.LabelFormat = "$0";
+            IncExpChartExpLbl.LabelFormat = "$0;$0";
+        }
+		else
+		{
+            IncExpChartIncLbl.LabelFormat = "$?";
+            IncExpChartExpLbl.LabelFormat = "$?;$?";
+            
+        }
 	}
 }

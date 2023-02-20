@@ -17,31 +17,49 @@
     </ContentView.Resources>
 
     <!-- main page -->
-    <VerticalStackLayout Margin="0,10,0,0">
-        <!-- title -->
-        <Label Style="{StaticResource lblTitle}" Text="Settings" HorizontalOptions="Center" />
+    <ScrollView>
+        <VerticalStackLayout Margin="0,10,0,0">
+            <!-- title -->
+            <Label Style="{StaticResource lblTitle}" Text="Settings" HorizontalOptions="Center" />
         
-        <Frame BackgroundColor="{StaticResource Gray900}" Margin="10" Padding="10,10,10,0">
-            <VerticalStackLayout>
-                <Label Style="{StaticResource lblTitle}" Text="Data" Margin="0,0,0,10" />
-                <Button Text="Accounts" Command="{Binding GoToAccountsCommand}" />
-                <Button Text="Categories" Command="{Binding GoToCategoriesCommand}" />
-                <Button Text="Stocks" Command="{Binding GoToStocksCommand}" />
-                <Button Text="Import Accounts from CSV" Command="{Binding ImportAccountsCSVCommand}" />
-                <Button Text="Import Categories from CSV" Command="{Binding ImportCategoriesCSVCommand}" />
-                <Button Text="Export Transactions to CSV" Command="{Binding ExportTransactionsCSVCommand}" />
-            </VerticalStackLayout>
-        </Frame>
+            <Frame BackgroundColor="{StaticResource Gray900}" Margin="10" Padding="10,10,10,0">
+                <VerticalStackLayout>
+                    <Label Style="{StaticResource lblTitle}" Text="Data" Margin="0,0,0,10" />
+                    <Button Text="Accounts" Command="{Binding GoToAccountsCommand}" />
+                    <Button Text="Categories" Command="{Binding GoToCategoriesCommand}" />
+                    <Button Text="Stocks" Command="{Binding GoToStocksCommand}" />
+                    <Button Text="Import Accounts from CSV" Command="{Binding ImportAccountsCSVCommand}" />
+                    <Button Text="Import Categories from CSV" Command="{Binding ImportCategoriesCSVCommand}" />
+                    <Button Text="Export Transactions to CSV" Command="{Binding ExportTransactionsCSVCommand}" />
+                </VerticalStackLayout>
+            </Frame>
 
-        <Frame BackgroundColor="{StaticResource Gray900}" Margin="10,5,10,10" Padding="10,10,10,0">
-            <VerticalStackLayout>
-                <Label Style="{StaticResource lblTitle}" Text="Debug" Margin="0,0,0,10" />
-                <Button Text="Calculate Account Balances" Command="{Binding CalculateAccountBalancesCommand}" />
-                <Button Text="Remove All Accounts" Command="{Binding RemoveAllAccountsCommand}" />
-                <Button Text="Remove All Categories" Command="{Binding RemoveAllCategoriesCommand}" />
-                <Button Text="Remove All Transactions" Command="{Binding RemoveAllTransactionsCommand}" />
-            </VerticalStackLayout>
-        </Frame>
-    </VerticalStackLayout>
+            <Frame BackgroundColor="{StaticResource Gray900}" Margin="10" Padding="10,10,10,0">
+                <VerticalStackLayout>
+                    <Label Style="{StaticResource lblTitle}" Text="Privacy" Margin="0,0,0,10" />
+                    <Frame BackgroundColor="{StaticResource Gray700}" Padding="10" HeightRequest="40" Margin="0,0,0,10">
+                        <Grid>
+                            <Label Text="Show Sensitive Values" VerticalOptions="Center" />
+                            <Switch x:Name="swShowValues"
+                                    IsToggled="True"
+                                    HorizontalOptions="End"
+                                    OnColor="{StaticResource Green}"
+                                    Toggled="swShowValues_Toggled" />
+                        </Grid>
+                    </Frame>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame BackgroundColor="{StaticResource Gray900}" Margin="10,5,10,10" Padding="10,10,10,0">
+                <VerticalStackLayout>
+                    <Label Style="{StaticResource lblTitle}" Text="Debug" Margin="0,0,0,10" />
+                    <Button Text="Calculate Account Balances" Command="{Binding CalculateAccountBalancesCommand}" />
+                    <Button Text="Remove All Accounts" Command="{Binding RemoveAllAccountsCommand}" />
+                    <Button Text="Remove All Categories" Command="{Binding RemoveAllCategoriesCommand}" />
+                    <Button Text="Remove All Transactions" Command="{Binding RemoveAllTransactionsCommand}" />
+                </VerticalStackLayout>
+            </Frame>
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentView>

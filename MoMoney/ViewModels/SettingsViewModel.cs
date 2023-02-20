@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Syncfusion.Maui.DataSource.Extensions;
 using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
 using MoMoney.Views.Settings;
-using Syncfusion.Maui.DataSource.Extensions;
 
 namespace MoMoney.ViewModels;
 

@@ -45,6 +45,8 @@ public partial class TransactionsViewModel : BaseViewModel
 
     public SfListView ListView { get; set; }
 
+    bool showValue = true;
+
     /// <summary>
     /// Depending on CRUD operation, update Transactions collection.
     /// </summary>
@@ -82,6 +84,15 @@ public partial class TransactionsViewModel : BaseViewModel
                         Transactions.Clear();
                         Transactions = new List<Transaction>(transactions);
                     }
+                    if (showValue != Constants.ShowValue)
+                    {
+                        // workaround to triggering converter
+                        if (LoadedTransactions.Any())
+                            foreach (var trans in LoadedTransactions)
+                                trans.Amount = (Constants.ShowValue) ? trans.Amount + 0.0001m : trans.Amount - 0.0001m;
+                    }
+
+                    showValue = Constants.ShowValue;
                     break;
                 }
             case TransactionEventArgs.CRUD.Update:

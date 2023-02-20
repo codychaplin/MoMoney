@@ -12,7 +12,6 @@ public partial class HomePageViewModel : BaseViewModel
 
     [ObservableProperty]
     public decimal networth = 0;
-    bool isNetworthSet = false; // used to update networth on start
 
     [ObservableProperty]
     public decimal totalIncome = 0;
@@ -35,16 +34,13 @@ public partial class HomePageViewModel : BaseViewModel
         if (!transactions.Any())
             return;
 
-        // networth is needed for GetChartData, hence the .ContinueWith
-        Task recentTransactions = GetRecentTransactions(transactions);
-        Task getNetworth = GetNetworth();
+        
+        GetRecentTransactions(transactions);
+        await GetNetworth();
         Task getStats = GetStats(transactions);
-        Task getChartData = getNetworth.ContinueWith(_ =>
-        {
-            return GetChartData(transactions);
-        }).Unwrap();
+        Task getChartData = GetChartData(transactions);
 
-        await Task.WhenAll(getNetworth, recentTransactions, getStats, getChartData);
+        await Task.WhenAll(getStats, getChartData);
     }
 
     /// <summary>
@@ -52,34 +48,43 @@ public partial class HomePageViewModel : BaseViewModel
     /// </summary>
     async Task GetNetworth()
     {
-        if (isNetworthSet)
+        if (Constants.ShowValue == false)
+        {
+            Networth = 0;
             return;
+        }
 
-        Networth = 0;
+        decimal total = 0;
         var accounts = await AccountService.GetActiveAccounts();
         foreach (var acc in accounts)
-            Networth += acc.CurrentBalance;
-        isNetworthSet = true;
+            total += acc.CurrentBalance;
+        Networth = total;
     }
 
     /// <summary>
     /// Gets updated transactions from database and refreshes Transactions collection.
     /// </summary>
-    async Task GetRecentTransactions(IEnumerable<Transaction> transactions)
+    void GetRecentTransactions(IEnumerable<Transaction> transactions)
     {
         transactions = transactions.Take(5);
         RecentTransactions.Clear();
         foreach (var trans in transactions)
             RecentTransactions.Add(trans);
-
-        await Task.CompletedTask;
     }
 
     async Task GetStats(IEnumerable<Transaction> transactions)
     {
         // update income/expense totals
-        TotalIncome = transactions.Where(t => t.CategoryID == Constants.INCOME_ID).Sum(t => t.Amount);
-        TotalExpenses = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID).Sum(t => t.Amount);
+        if (Constants.ShowValue)
+        {
+            TotalIncome = transactions.Where(t => t.CategoryID == Constants.INCOME_ID).Sum(t => t.Amount);
+            TotalExpenses = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID).Sum(t => t.Amount);
+        }
+        else
+        {
+            TotalIncome = 0;
+            TotalExpenses = 0;
+        }
 
         // update top income subcategory
         var subcategoryID = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)

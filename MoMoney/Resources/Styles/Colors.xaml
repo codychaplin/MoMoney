@@ -46,8 +46,10 @@
     <!-- custom colours -->
     <Color x:Key="Background">#171717</Color>
     <Color x:Key="Red">#df4759</Color>
+    <Color x:Key="LightRed">#FFBBBB</Color>
     <Color x:Key="Blue">#467fd0</Color>
     <Color x:Key="Yellow">#ffc107</Color>
     <Color x:Key="Green">#42ba96</Color>
+    <Color x:Key="LightGreen">#CBFFE3</Color>
 
 </ResourceDictionary>

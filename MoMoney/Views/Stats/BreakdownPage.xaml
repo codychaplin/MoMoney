@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Stats.BreakdownPage"
+             xmlns:local="clr-namespace:MoMoney"
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Stats"
              xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
@@ -16,6 +17,9 @@
     </ContentPage.BindingContext>
 
     <ContentPage.Resources>
+
+        <!-- converter -->
+        <local:ShowValueConverter x:Key="ShowValue" />
 
         <!-- SfListView Data Source -->
         <data:DataSource x:Key="DataSource">
@@ -44,7 +48,7 @@
                            Grid.Column="1"
                            VerticalOptions="Center"
                            HorizontalOptions="Start" />
-                    <Label Text="{Binding ActualAmount, StringFormat='{0:C2}'}"
+                    <Label Text="{Binding ActualAmount, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
                            Grid.Column="2"
                            VerticalOptions="Center"
                            HorizontalOptions="End" />
@@ -94,7 +98,7 @@
             </tabView:SfTabView.Resources>
 
             <!-- expense tab -->
-            <tabView:SfTabItem Header="{Binding ExpenseSum, StringFormat='Expenses {0:C2}'}">
+            <tabView:SfTabItem Header="{Binding ExpenseSum, Converter={StaticResource ShowValue}, StringFormat='Expenses {0:C2}'}">
                 <!-- doughnut chart -->
                 <Grid RowDefinitions="*,*">
                     <Frame Margin="0" Padding="0">
@@ -109,7 +113,7 @@
                                 <chart:PieSeries.DataLabelSettings>
                                     <chart:CircularDataLabelSettings UseSeriesPalette="True" ConnectorType="Line" LabelPlacement="Outer">
                                         <chart:CircularDataLabelSettings.LabelStyle>
-                                            <chart:ChartDataLabelStyle LabelFormat="$0" FontSize="11" TextColor="White" />
+                                            <chart:ChartDataLabelStyle x:Name="IncChartLbl" LabelFormat="$0" FontSize="11" TextColor="White" />
                                         </chart:CircularDataLabelSettings.LabelStyle>
                                     </chart:CircularDataLabelSettings>
                                 </chart:PieSeries.DataLabelSettings>
@@ -128,7 +132,7 @@
             </tabView:SfTabItem>
 
             <!-- income tab -->
-            <tabView:SfTabItem Header="{Binding IncomeSum, StringFormat='Income {0:C2}'}">
+            <tabView:SfTabItem Header="{Binding IncomeSum, Converter={StaticResource ShowValue}, StringFormat='Income {0:C2}'}">
                 <!-- doughnut chart -->
                 <Grid RowDefinitions="*,*">
                     <Frame Margin="0" Padding="0">
@@ -143,7 +147,7 @@
                                 <chart:PieSeries.DataLabelSettings>
                                     <chart:CircularDataLabelSettings UseSeriesPalette="True" ConnectorType="Line" LabelPlacement="Outer">
                                         <chart:CircularDataLabelSettings.LabelStyle>
-                                            <chart:ChartDataLabelStyle LabelFormat="$0" FontSize="11" TextColor="White" />
+                                            <chart:ChartDataLabelStyle x:Name="ExpChartLbl" LabelFormat="$0" FontSize="11" TextColor="White" />
                                         </chart:CircularDataLabelSettings.LabelStyle>
                                     </chart:CircularDataLabelSettings>
                                 </chart:PieSeries.DataLabelSettings>

@@ -41,6 +41,14 @@ public partial class HomePage : ContentView
             dtFrom.Date = vm.From;
             dtTo.Date = vm.To;
         }
+
+        // show/hide YAxis label amount
+        if (Constants.ShowValue)
+            YAxisLbl.LabelFormat = "$0,k";
+        else
+            YAxisLbl.LabelFormat = "$?";
+
+
         await vm.Refresh();
     }
 

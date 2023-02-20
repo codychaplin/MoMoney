@@ -17,6 +17,7 @@
         <local:IdToAccountConverter x:Key="IdToAccount" />
         <local:AmountColourConverter x:Key="AmountColour" />
         <local:IconConverter x:Key="Icon" />
+        <local:ShowValueConverter x:Key="ShowValue" />
     </ContentView.Resources>
 
     <!-- main page -->
@@ -127,7 +128,7 @@
                         <chart:NumericalAxis ShowMajorGridLines="True" ShowMinorGridLines="False">
                             <!-- label -->
                             <chart:NumericalAxis.LabelStyle>
-                                <chart:ChartAxisLabelStyle TextColor="White" LabelFormat="$0,k" />
+                                <chart:ChartAxisLabelStyle x:Name="YAxisLbl" TextColor="White" LabelFormat="$0,k" />
                             </chart:NumericalAxis.LabelStyle>
                             <!-- label -->
                             <chart:NumericalAxis.MajorGridLineStyle>
@@ -180,7 +181,7 @@
                         <VerticalStackLayout Grid.ColumnSpan="2">
                             <Label Text="Net Worth"
                                    FontSize="15" />
-                            <Label Text="{Binding Networth, StringFormat='{0:C2}'}"
+                            <Label Text="{Binding Networth, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
                                    FontSize="30"
                                    FontAttributes="Bold" />
                         </VerticalStackLayout>
@@ -188,12 +189,12 @@
                         <!-- total income -->
                         <VerticalStackLayout Grid.Row="1">
                             <Label Text="Total Income" FontSize="15" />
-                            <Label Text="{Binding TotalIncome, StringFormat='{0:C2}'}" FontSize="24" />
+                            <Label Text="{Binding TotalIncome, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" FontSize="24" />
                         </VerticalStackLayout>
                         <!-- total expense -->
                         <VerticalStackLayout Grid.Row="2" Grid.Column="0">
                             <Label Text="Total Expense" FontSize="15" />
-                            <Label Text="{Binding TotalExpenses, StringFormat='{0:C2}'}" FontSize="24"/>
+                            <Label Text="{Binding TotalExpenses, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" FontSize="24"/>
                         </VerticalStackLayout>
 
                         <!-- top income -->
@@ -258,7 +259,7 @@
                                                HorizontalOptions="End"
                                                Style="{StaticResource lblTile}"
                                                TextColor="{Binding CategoryID, Converter={StaticResource AmountColour}}"
-                                               Text="{Binding Amount, StringFormat='{0:C2}'}" />
+                                               Text="{Binding Amount, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
                                         <!-- date -->
                                         <Label Grid.Column="1"
                                                VerticalOptions="End"

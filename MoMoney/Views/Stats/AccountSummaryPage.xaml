@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Stats.AccountSummaryPage"
+             xmlns:local="clr-namespace:MoMoney"
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Stats"
              Title="Account Summary">
@@ -11,7 +12,10 @@
     </ContentPage.BindingContext>
     
     <ContentPage.Resources>
-        
+
+        <!-- converter -->
+        <local:ShowValueConverter x:Key="ShowValue" />
+
         <!-- styles -->
         <Style x:Key="lblGroupTitle" TargetType="{x:Type Label}" BasedOn="{StaticResource lblTitle}">
             <Setter Property="Margin" Value="10,0,0,5" />
@@ -40,7 +44,7 @@
                     <!-- current balance -->
                     <Label Grid.Column="1"
                            HorizontalOptions="End"
-                           Text="{Binding CurrentBalance, StringFormat='{0:C2}'}" />
+                           Text="{Binding CurrentBalance, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
                 </Grid>
             </DataTemplate>
         </ResourceDictionary>
@@ -64,14 +68,18 @@
             <Frame Padding="10">
                 <Grid>
                     <Label Style="{StaticResource lblTitle}" Text="Net Worth" FontSize="20" Margin="0" />
-                    <Label Style="{StaticResource lblAccountName}" FontSize="20" Margin="0" Text="{Binding Networth, StringFormat='{0:C2}'}" />
+                    <Label Style="{StaticResource lblAccountName}"
+                           Margin="0"
+                           FontSize="20"
+                           Text="{Binding Networth, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
                 </Grid>
             </Frame>
 
             <!-- checkings -->
             <Grid>
                 <Label Style="{StaticResource lblGroupTitle}" Text="Checkings" />
-                <Label Style="{StaticResource lblAccountName}" Text="{Binding CheckingsSum, StringFormat='{0:C2}'}" />
+                <Label Style="{StaticResource lblAccountName}"
+                       Text="{Binding CheckingsSum, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
             </Grid>
             <Frame>
                 <CollectionView ItemsSource="{Binding CheckingsAccounts}" />
@@ -80,7 +88,8 @@
             <!-- savings -->
             <Grid>
                 <Label Style="{StaticResource lblGroupTitle}" Text="Savings" />
-                <Label Style="{StaticResource lblAccountName}" Text="{Binding SavingsSum, StringFormat='{0:C2}'}" />
+                <Label Style="{StaticResource lblAccountName}"
+                       Text="{Binding SavingsSum, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
             </Grid>
             <Frame>
                 <CollectionView ItemsSource="{Binding SavingsAccounts}" />
@@ -89,7 +98,8 @@
             <!-- credit -->
             <Grid>
                 <Label Style="{StaticResource lblGroupTitle}" Text="Credit" />
-                <Label Style="{StaticResource lblAccountName}" Text="{Binding CreditSum, StringFormat='{0:C2}'}" />
+                <Label Style="{StaticResource lblAccountName}"
+                       Text="{Binding CreditSum, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
             </Grid>
             <Frame>
                 <CollectionView ItemsSource="{Binding CreditAccounts}" />
@@ -98,7 +108,8 @@
             <!-- investment -->
             <Grid>
                 <Label Style="{StaticResource lblGroupTitle}" Text="Investments" />
-                <Label Style="{StaticResource lblAccountName}" Text="{Binding InvestmentSum, StringFormat='{0:C2}'}" />
+                <Label Style="{StaticResource lblAccountName}"
+                       Text="{Binding InvestmentSum, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
             </Grid>
             <Frame Margin="10,0,10,10">
                 <CollectionView ItemsSource="{Binding InvestmentAccounts}" />
