@@ -146,6 +146,18 @@ public static class CategoryService
     }
 
     /// <summary>
+    /// Gets Category from the Categories table using name. Only works for parent categories.
+    /// </summary>
+    /// <param name="parentName"></param>
+    /// <returns>Category object</returns>
+    public static async Task<Category> GetParentCategory(string parentName)
+    {
+        await Init();
+
+        return await MoMoneydb.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryName == parentName && c.ParentName == "");
+    }
+
+    /// <summary>
     /// Gets all Categories from Categories table as a list.
     /// </summary>
     /// <returns>List of Category objects</returns>
@@ -177,17 +189,6 @@ public static class CategoryService
         var categories = await MoMoneydb.db.Table<Category>().ToListAsync();
         var categoriesDict = categories.ToDictionary(c => c.CategoryID, c => c.CategoryName);
         return categoriesDict;
-    }
-
-    /// <summary>
-    /// Gets parent Category from Categories table.
-    /// </summary>
-    /// <returns>Parent of specified category</returns>
-    public static async Task<Category> GetParentCategory(string parentName)
-    {
-        await Init();
-
-        return await MoMoneydb.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryName == parentName);
     }
 
     /// <summary>

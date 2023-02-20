@@ -10,31 +10,45 @@
     <ContentPage.BindingContext>
         <viewmodel:CategoriesViewModel />
     </ContentPage.BindingContext>
-    
+
+    <ContentPage.Resources>
+        <DataTemplate x:Key="HeaderTemplate" x:DataType="models:Category">
+            <Frame Style="{StaticResource confrTile}"
+                   HeightRequest="45"
+                   BackgroundColor="{StaticResource Gray500}">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryStringCommand, Source={RelativeSource
+                                                            AncestorType={x:Type viewmodel:CategoriesViewModel}}}"
+                                         CommandParameter="{Binding CategoryName}" />
+                </Frame.GestureRecognizers>
+                <Grid>
+                    <Label Style="{StaticResource lblTile}" FontSize="24" Text="{Binding CategoryName}" />
+                </Grid>
+            </Frame>
+        </DataTemplate>
+        <DataTemplate x:Key="ItemTemplate" x:DataType="models:Category">
+            <Frame Style="{StaticResource confrTile}" Padding="10,0,0,0">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource
+                                                            AncestorType={x:Type viewmodel:CategoriesViewModel}}}"
+                                         CommandParameter="{Binding CategoryID}" />
+                </Frame.GestureRecognizers>
+                <Grid>
+                    <Label Style="{StaticResource lblTile}" Text="{Binding CategoryName}" />
+                </Grid>
+            </Frame>
+        </DataTemplate>
+    </ContentPage.Resources>
+
     <!-- main page -->
     <Grid>
         
         <!-- list of categories -->
-        <CollectionView ItemsSource="{Binding Categories}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Category">
-                    
-                    <!-- template -->
-                    <Frame Style="{StaticResource confrTile}">
-                        <Frame.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource
-                                                                    AncestorType={x:Type viewmodel:CategoriesViewModel}}}"
-                                         CommandParameter="{Binding CategoryID}" />
-                        </Frame.GestureRecognizers>
-                        <Grid>
-                            <Label Style="{StaticResource lblTile}" Text="{Binding CategoryName}" />
-                        </Grid>
-                    </Frame>
-                    
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-        
+        <CollectionView ItemsSource="{Binding Categories}"
+                        ItemTemplate="{StaticResource ItemTemplate}"
+                        GroupHeaderTemplate="{StaticResource HeaderTemplate}"
+                        IsGrouped="true" />
+
         <!-- add account button -->
         <ImageButton Source="add.png"
                      Margin="20"
