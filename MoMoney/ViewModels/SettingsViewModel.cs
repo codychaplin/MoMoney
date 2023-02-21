@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using SQLite;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Syncfusion.Maui.DataSource.Extensions;
 using MoMoney.Models;
@@ -41,7 +42,7 @@ public partial class SettingsViewModel : ObservableObject
     /// Prompts the user to open a CSV file. Valid Accounts are then added to the database.
     /// </summary>
     [RelayCommand]
-    async Task ImportAccountsCSV()
+    async static Task ImportAccountsCSV()
     {
         try
         {
@@ -53,45 +54,65 @@ public partial class SettingsViewModel : ObservableObject
                 if (result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
                 {
                     List<Account> accounts = new();
+
                     using var sr = new StreamReader(result.FullPath);
-                    while (sr.Peek() != -1)
+                    try
                     {
-                        // format line
-                        string row = sr.ReadLine();
-                        string[] accountInfo = row.Split(',');
-
-                        // split line into Account parameters and create new account
-                        string name = accountInfo[0];
-                        if (string.IsNullOrEmpty(name))
-                            throw new InvalidAccountException("Account name cannot be blank");
-
-                        if (!Enum.TryParse(typeof(Constants.AccountTypes), accountInfo[1], true, out var type))
-                            throw new InvalidAccountException("'" + accountInfo[1] + "' is not a valid account type");
-
-                        if (!decimal.TryParse(accountInfo[2], out decimal startingBalance))
-                            throw new InvalidAccountException("'" + accountInfo[2] + "' is not a number");
-
-                        if (!bool.TryParse(accountInfo[3], out bool enabled))
-                            throw new InvalidAccountException("'" + accountInfo[2] + "' is not a number");
-
-                        Account account = new()
+                        while (sr.Peek() != -1)
                         {
-                            AccountName = name,
-                            AccountType = type.ToString(),
-                            StartingBalance = startingBalance,
-                            CurrentBalance = startingBalance,
-                            Enabled = enabled
-                        };
+                            // format line
+                            string row = sr.ReadLine();
+                            string[] accountInfo = row.Split(',');
 
-                        accounts.Add(account);
+                            // split line into Account parameters and create new account
+                            string name = accountInfo[0];
+                            if (string.IsNullOrEmpty(name))
+                                throw new InvalidAccountException("Account name cannot be blank");
+
+                            if (!Enum.TryParse(typeof(Constants.AccountTypes), accountInfo[1], true, out var type))
+                                throw new InvalidAccountException("'" + accountInfo[1] + "' is not a valid account type");
+
+                            if (!decimal.TryParse(accountInfo[2], out decimal startingBalance))
+                                throw new InvalidAccountException("'" + accountInfo[2] + "' is not a number");
+
+                            if (!bool.TryParse(accountInfo[3], out bool enabled))
+                                throw new InvalidAccountException("'" + accountInfo[2] + "' is not a number");
+
+                            // if valid, create new Account object and add to accounts
+                            Account account = new()
+                            {
+                                AccountName = name,
+                                AccountType = type.ToString(),
+                                StartingBalance = startingBalance,
+                                CurrentBalance = startingBalance,
+                                Enabled = enabled
+                            };
+                            accounts.Add(account);
+                        }
+
+                        await AccountService.AddAccounts(accounts);
                     }
-
-                    await AccountService.AddAccounts(accounts);
-
-                    sr.Close();
+                    catch (SQLiteException ex)
+                    {
+                        await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+                    }
+                    catch (InvalidAccountException ex)
+                    {
+                        await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
+                    }
+                    catch (DuplicateAccountException ex)
+                    {
+                        await Shell.Current.DisplayAlert("Import Aborted", ex.Message, "OK");
+                    }
+                    finally
+                    {
+                        sr.Close(); // close stream reader regardless
+                    }
                 }
                 else
+                {
                     throw new FormatException("Invalid file type. Must be a CSV");
+                }
             }
         }
         catch (Exception ex)
@@ -117,43 +138,61 @@ public partial class SettingsViewModel : ObservableObject
                 if (result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
                 {
                     List<Category> categories = new();
+
                     using var sr = new StreamReader(result.FullPath);
-                    while (sr.Peek() != -1)
+                    try
                     {
-                        // format line
-                        string row = sr.ReadLine();
-                        string[] categoryInfo = row.Split(',');
-
-                        // split line into Category parameters and create new Category
-                        string name = categoryInfo[1];
-                        if (string.IsNullOrEmpty(name))
-                            throw new InvalidCategoryException("Category name cannot be blank");
-
-                        string parent = categoryInfo[0];
-                        if (!string.IsNullOrEmpty(parent))
+                        while (sr.Peek() != -1)
                         {
-                            // check if parent exists in db
-                            var parentCat = await CategoryService.GetCategory(parent, "");
-                            if (parentCat is null)
+                            // format line
+                            string row = sr.ReadLine();
+                            string[] categoryInfo = row.Split(',');
+
+                            // split line into Category parameters and create new Category
+                            string name = categoryInfo[1];
+                            if (string.IsNullOrEmpty(name))
+                                throw new InvalidCategoryException("Category name cannot be blank");
+
+                            string parent = categoryInfo[0];
+                            if (!string.IsNullOrEmpty(parent))
                             {
-                                // if doesn't exist in db, check if exists in categories list
-                                if (!categories.Select(c => c.CategoryName).Contains(parent))
-                                    throw new InvalidCategoryException("Parent Category does not exist");
+                                // check if parent exists in db
+                                var parentCat = await CategoryService.GetParentCategory(parent);
+                                if (parentCat is null)
+                                {
+                                    // if doesn't exist in db, check if exists in categories list
+                                    if (!categories.Select(c => c.CategoryName).Contains(parent))
+                                        throw new InvalidCategoryException("Parent Category does not exist");
+                                }
                             }
+
+                            Category category = new()
+                            {
+                                CategoryName = name,
+                                ParentName = parent
+                            };
+
+                            categories.Add(category);
                         }
 
-                        Category category = new()
-                        {
-                            CategoryName = name,
-                            ParentName = parent
-                        };
-
-                        categories.Add(category);
+                        await CategoryService.AddCategories(categories);
                     }
-
-                    await CategoryService.AddCategories(categories);
-
-                    sr.Close();
+                    catch (CategoryNotFoundException ex)
+                    {
+                        await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+                    }
+                    catch (InvalidCategoryException ex)
+                    {
+                        await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
+                    }
+                    catch (DuplicateCategoryException ex)
+                    {
+                        await Shell.Current.DisplayAlert("Import Aborted", ex.Message, "OK");
+                    }
+                    finally
+                    {
+                        sr.Close(); // close stream reader regardless
+                    }
                 }
                 else
                     throw new FormatException("Invalid file type. Must be a CSV");
@@ -216,18 +255,30 @@ public partial class SettingsViewModel : ObservableObject
     {
         var transactions = await TransactionService.GetTransactions();
         var accounts = await AccountService.GetAccounts();
+        if (!accounts.Any())
+        {
+            await Shell.Current.DisplayAlert("Attention", "No Accounts in Database", "OK");
+            return;
+        }
 
         // group transactions by account, sum amounts, and convert to dictionary
         var currentBalances = transactions.GroupBy(t => t.AccountID)
-                                           .Select(g => new { g.First().AccountID,
-                                                              Balance = g.Sum(t => t.Amount) })
-                                           .ToDictionary(a => a.AccountID, a => a.Balance);
+                                          .Select(g => new { g.First().AccountID,
+                                                             Balance = g.Sum(t => t.Amount) })
+                                          .ToDictionary(a => a.AccountID, a => a.Balance);
 
-        // update current balance in db
-        foreach (var account in accounts)
+        try
         {
-            account.CurrentBalance = account.StartingBalance + currentBalances[account.AccountID];
-            await AccountService.UpdateAccount(account);
+            // update current balance in db
+            foreach (var account in accounts)
+            {
+                account.CurrentBalance = account.StartingBalance + currentBalances[account.AccountID];
+                await AccountService.UpdateAccount(account);
+            }
+        }
+        catch (SQLiteException ex)
+        {
+            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
 
@@ -240,7 +291,16 @@ public partial class SettingsViewModel : ObservableObject
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL transactions?", "Yes", "No");
 
         if (flag)
-            await TransactionService.ResetTransactions();
+        {
+            try
+            {
+                await TransactionService.ResetTransactions();
+            }
+            catch (SQLiteException ex)
+            {
+                await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            }
+        }
     }
 
     /// <summary>
@@ -252,7 +312,16 @@ public partial class SettingsViewModel : ObservableObject
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Accounts?", "Yes", "No");
 
         if (flag)
-            await AccountService.RemoveAllAccounts();
+        {
+            try
+            {
+                await AccountService.RemoveAllAccounts();
+            }
+            catch (SQLiteException ex)
+            {
+                await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            }
+        }
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
-﻿using MoMoney.Services;
+﻿using MoMoney.Exceptions;
+using MoMoney.Services;
 using System.Globalization;
 
 namespace MoMoney
@@ -12,11 +13,25 @@ namespace MoMoney
         {
             if (int.TryParse(value.ToString(), out int ID))
             {
-                var task = Task.Run(async () => { return await CategoryService.GetCategory(ID); }).Result;
-                return (task != null) ? task.CategoryName : "";
+                // try to get category from dictionary
+                if (CategoryService.Categories.TryGetValue(ID, out var category))
+                {
+                    return category.CategoryName;
+                }
+                else // get category from db
+                {
+                    try
+                    {
+                        var task = Task.Run(async () => await CategoryService.GetCategory(ID));
+                        task.Wait();
+                        var cat = task.Result;
+                        return cat;
+                    }
+                    catch (CategoryNotFoundException) { return ""; }
+                }
             }
-            
-            return null;
+
+            return "";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -34,11 +49,25 @@ namespace MoMoney
         {
             if (int.TryParse(value.ToString(), out int ID))
             {
-                var task = Task.Run(async () => { return await AccountService.GetAccount(ID); }).Result;
-                return (task != null) ? task.AccountName : "";
+                // try to get account from dictionary
+                if (AccountService.Accounts.TryGetValue(ID, out var account))
+                {
+                    return account.AccountName;
+                }
+                else // get account from db
+                {
+                    try
+                    {
+                        var task = Task.Run(async () => await AccountService.GetAccount(ID));
+                        task.Wait();
+                        var acc = task.Result;
+                        return acc;
+                    }
+                    catch (AccountNotFoundException) { return ""; }
+                }
             }
 
-            return null;
+            return "";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

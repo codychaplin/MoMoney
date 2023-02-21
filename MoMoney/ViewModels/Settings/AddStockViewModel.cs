@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using SQLite;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Services;
 
@@ -32,7 +33,7 @@ public partial class AddStockViewModel : ObservableObject
             await StockService.AddStock(Symbol, Quantity, Cost, MarketPrice, BookValue);
             await Shell.Current.GoToAsync("..");
         }
-        catch (Exception ex)
+        catch (SQLiteException ex)
         {
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }

@@ -10,6 +10,6 @@ public partial class AccountsPage : ContentPage
 	{
 		InitializeComponent();
 		vm = (AccountsViewModel)BindingContext;
-		NavigatedTo += vm.Refresh;
+		NavigatedTo += vm.Init;
 	}
 }

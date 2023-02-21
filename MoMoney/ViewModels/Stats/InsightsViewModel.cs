@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
+using MoMoney.Exceptions;
 
 namespace MoMoney.ViewModels.Stats;
 
@@ -42,8 +43,10 @@ public partial class InsightsViewModel : ObservableObject
     /// <param name="e"></param>
     public async void Init(object sender, EventArgs e)
     {
-        // gets earliest transaction in db, adds each year from then until today
         var first = await TransactionService.GetFirstTransaction();
+        if (first == null) return;
+
+        // get date of first transaction, today's date, and add each year to collection
         var start = first.Date;
         var end = DateTime.Today;
         while (end >= start)
@@ -130,37 +133,44 @@ public partial class InsightsViewModel : ObservableObject
     /// <param name="transactions"></param>
     async Task GetTopCategories(IEnumerable<Transaction> transactions)
     {
-        // get income transactions, group by subcategory,
-        // select sum of Amounts and subcategory ID, then get max value
-        var incomeResults = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
-                                        .GroupBy(t => t.SubcategoryID)
-                                        .Select(group => new
-                                        {
-                                            Total = group.Sum(t => t.Amount),
-                                            group.FirstOrDefault().SubcategoryID
-                                        })
-                                        .MaxBy(g => g.Total);
+        try
+        {
+            // get income transactions, group by subcategory,
+            // select sum of Amounts and subcategory ID, then get max value
+            var incomeResults = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
+                                            .GroupBy(t => t.SubcategoryID)
+                                            .Select(group => new
+                                            {
+                                                Total = group.Sum(t => t.Amount),
+                                                group.FirstOrDefault().SubcategoryID
+                                            })
+                                            .MaxBy(g => g.Total);
 
-        // get category name and amount
-        Category incomeCategory = await CategoryService.GetCategory(incomeResults.SubcategoryID);
-        TopIncomeSubcategoryName = incomeCategory.CategoryName;
-        TopIncomeSubcategoryAmount = incomeResults.Total;
+            // get category name and amount
+            Category incomeCategory = await CategoryService.GetCategory(incomeResults.SubcategoryID);
+            TopIncomeSubcategoryName = incomeCategory.CategoryName;
+            TopIncomeSubcategoryAmount = incomeResults.Total;
 
-        // get expense transactions, group by category,
-        // select sum of Amounts and category ID, then get min value (expenses are negative so Min is used)
-        var expenseResults = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
-                                         .GroupBy(t => t.CategoryID)
-                                         .Select(group => new
-                                         {
-                                             Total = group.Sum(t => t.Amount),
-                                             group.FirstOrDefault().CategoryID
-                                         })
-                                         .MinBy(g => g.Total);
+            // get expense transactions, group by category,
+            // select sum of Amounts and category ID, then get min value (expenses are negative so Min is used)
+            var expenseResults = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
+                                             .GroupBy(t => t.CategoryID)
+                                             .Select(group => new
+                                             {
+                                                 Total = group.Sum(t => t.Amount),
+                                                 group.FirstOrDefault().CategoryID
+                                             })
+                                             .MinBy(g => g.Total);
 
-        // get category name and amount
-        Category expenseCategory = await CategoryService.GetCategory(expenseResults.CategoryID);
-        TopExpenseCategoryName = expenseCategory.CategoryName;
-        TopExpenseCategoryAmount = Math.Abs(expenseResults.Total);
+            // get category name and amount
+            Category expenseCategory = await CategoryService.GetCategory(expenseResults.CategoryID);
+            TopExpenseCategoryName = expenseCategory.CategoryName;
+            TopExpenseCategoryAmount = Math.Abs(expenseResults.Total);
+        }
+        catch (CategoryNotFoundException ex)
+        {
+            await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>

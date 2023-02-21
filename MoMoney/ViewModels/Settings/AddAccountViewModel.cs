@@ -1,6 +1,8 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using SQLite;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Services;
+using MoMoney.Exceptions;
 
 namespace MoMoney.ViewModels.Settings;
 
@@ -21,7 +23,18 @@ public partial class AddAccountViewModel : ObservableObject
     [RelayCommand]
     async Task Add()
     {
-        await AccountService.AddAccount(Name, Type, StartingBalance, true);
-        await Shell.Current.GoToAsync("..");
+        try
+        {
+            await AccountService.AddAccount(Name, Type, StartingBalance);
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (SQLiteException ex)
+        {
+            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+        }
+        catch (DuplicateAccountException ex)
+        {
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 }

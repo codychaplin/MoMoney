@@ -88,7 +88,9 @@ public static class TransactionService
     /// </summary>
     public static async Task ResetTransactions()
     {
+        await MoMoneydb.db.DeleteAllAsync<Transaction>();
         await MoMoneydb.db.DropTableAsync<Transaction>();
+        await MoMoneydb.db.CreateTableAsync<Transaction>();
 
         await Init();
     }
@@ -104,9 +106,8 @@ public static class TransactionService
         await Init();
 
         var transaction = await MoMoneydb.db.Table<Transaction>().FirstOrDefaultAsync(t => t.TransactionID == ID);
-
         if (transaction is null)
-            throw new TransactionNotFoundException();
+            throw new TransactionNotFoundException($"Could not find Transaction with ID '{ID}'.");
         else
             return transaction;
     }
@@ -170,7 +171,7 @@ public static class TransactionService
     {
         await Init();
 
-        return await MoMoneydb.db.Table<Transaction>().FirstAsync();
+        return await MoMoneydb.db.Table<Transaction>().FirstOrDefaultAsync();
 
     }
 

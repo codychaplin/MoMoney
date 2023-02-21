@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
+using Color = Microsoft.Maui.Graphics.Color;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Color = Microsoft.Maui.Graphics.Color;
 using MoMoney.Models;
 using MoMoney.Services;
 
@@ -43,8 +43,10 @@ public partial class BreakdownViewModel : ObservableObject
     {
         InitPalettes();
 
-        // get date of first transaction, today's date, and add each month to collection
         var first = await TransactionService.GetFirstTransaction();
+        if (first == null) return;
+
+        // get date of first transaction, today's date, and add each month to collection
         DateTime start = new(first.Date.Year, first.Date.Month, 1);
         DateTime end = new(DateTime.Today.Year, DateTime.Today.Month, 1);
         while (start <= end)

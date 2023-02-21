@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MoMoney.Exceptions;
 using MoMoney.Models;
 using MoMoney.Services;
 
@@ -56,8 +57,9 @@ public partial class HomePageViewModel : BaseViewModel
 
         decimal total = 0;
         var accounts = await AccountService.GetActiveAccounts();
-        foreach (var acc in accounts)
-            total += acc.CurrentBalance;
+        if (accounts.Any())
+            foreach (var acc in accounts)
+                total += acc.CurrentBalance;
         Networth = total;
     }
 
@@ -86,31 +88,38 @@ public partial class HomePageViewModel : BaseViewModel
             TotalExpenses = 0;
         }
 
-        // update top income subcategory
-        var subcategoryID = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
-                                   .GroupBy(t => t.SubcategoryID)
-                                   .Select(group => new
-                                   {
-                                       Total = group.Sum(t => t.Amount),
-                                       group.FirstOrDefault().SubcategoryID
-                                   })
-                                   .MaxBy(g => g.Total)
-                                   .SubcategoryID;
-        Category subcategory = await CategoryService.GetCategory(subcategoryID);
-        TopIncomeSubcategory = subcategory.CategoryName;
+        try
+        {
+            // update top income subcategory
+            var subcategoryID = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
+                                       .GroupBy(t => t.SubcategoryID)
+                                       .Select(group => new
+                                       {
+                                           Total = group.Sum(t => t.Amount),
+                                           group.FirstOrDefault().SubcategoryID
+                                       })
+                                       .MaxBy(g => g.Total)
+                                       .SubcategoryID;
+            Category subcategory = await CategoryService.GetCategory(subcategoryID);
+            TopIncomeSubcategory = subcategory.CategoryName;
 
-        // update top expense category
-        var categoryID = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
-                                .GroupBy(t => t.CategoryID)
-                                .Select(group => new
-                                {
-                                    Total = group.Sum(t => t.Amount),
-                                    group.FirstOrDefault().CategoryID
-                                })
-                                .MinBy(g => g.Total)
-                                .CategoryID;
-        Category category = await CategoryService.GetCategory(categoryID);
-        TopExpenseCategory = category.CategoryName;
+            // update top expense category
+            var categoryID = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
+                                    .GroupBy(t => t.CategoryID)
+                                    .Select(group => new
+                                    {
+                                        Total = group.Sum(t => t.Amount),
+                                        group.FirstOrDefault().CategoryID
+                                    })
+                                    .MinBy(g => g.Total)
+                                    .CategoryID;
+            Category category = await CategoryService.GetCategory(categoryID);
+            TopExpenseCategory = category.CategoryName;
+        }
+        catch (CategoryNotFoundException ex)
+        {
+            await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>

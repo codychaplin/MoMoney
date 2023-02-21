@@ -1,7 +1,9 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using SQLite;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
+using MoMoney.Exceptions;
 
 namespace MoMoney.ViewModels.Settings;
 
@@ -18,7 +20,14 @@ public partial class EditStockViewModel : ObservableObject
     /// </summary>
     public async Task GetStock()
     {
-        Stock = await StockService.GetStock(Symbol);
+        try
+        {
+            Stock = await StockService.GetStock(Symbol);
+        }
+        catch (StockNotFoundException ex)
+        {
+            await Shell.Current.DisplayAlert("Stock Not Found Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -32,9 +41,9 @@ public partial class EditStockViewModel : ObservableObject
             await StockService.UpdateStock(Stock);
             await Shell.Current.GoToAsync("..");
         }
-        catch (Exception ex)
+        catch (SQLiteException ex)
         {
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
 
@@ -48,8 +57,15 @@ public partial class EditStockViewModel : ObservableObject
 
         if (flag)
         {
-            await StockService.RemoveStock(Stock.Symbol);
-            await Shell.Current.GoToAsync("..");
+            try
+            {
+                await StockService.RemoveStock(Stock.Symbol);
+                await Shell.Current.GoToAsync("..");
+            }
+            catch (SQLiteException ex)
+            {
+                await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            }
         }
     }
 }

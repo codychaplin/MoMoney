@@ -33,9 +33,12 @@ public partial class AccountsViewModel : ObservableObject
     /// <summary>
     /// Gets updated accounts from database, orders them, and refreshes Accounts collection.
     /// </summary>
-    public async void Refresh(object s, EventArgs e)
+    public async void Init(object s, EventArgs e)
     {
         var accounts = await AccountService.GetAccounts();
+        if (!accounts.Any())
+            return;
+
         accounts = accounts.OrderByDescending(a => a.Enabled)
                            .ThenBy(a => a.AccountName);
         Accounts.Clear();

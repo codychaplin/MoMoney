@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MoMoney.Services;
 using MoMoney.Models;
+using MoMoney.Services;
+using MoMoney.Exceptions;
 
 namespace MoMoney.ViewModels.Settings;
 
@@ -30,11 +31,18 @@ public partial class EditCategoryViewModel : ObservableObject
     {
         if (int.TryParse(ID, out int id))
         {
-            Category = await CategoryService.GetCategory(id);
-            Parent = await CategoryService.GetParentCategory(Category.ParentName);
+            try
+            {
+                Category = await CategoryService.GetCategory(id);
+                Parent = await CategoryService.GetParentCategory(Category.ParentName);
+            }
+            catch (CategoryNotFoundException ex)
+            {
+                await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+            }
         }
         else
-            await Shell.Current.DisplayAlert("Error", "Could not find category", "OK");
+            await Shell.Current.DisplayAlert("Category Not Found Error", $"{ID} is not a valid ID", "OK");
     }
 
     /// <summary>

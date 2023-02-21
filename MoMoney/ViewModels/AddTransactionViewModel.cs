@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using SQLite;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Views;
@@ -46,8 +47,8 @@ public partial class AddTransactionViewModel : ObservableObject
     /// <returns></returns>
     public async Task GetAccounts()
     {
-        Accounts.Clear();
         var accounts = await AccountService.GetActiveAccounts();
+        Accounts.Clear();
         foreach (var acc in accounts)
             Accounts.Add(acc);
     }
@@ -57,11 +58,17 @@ public partial class AddTransactionViewModel : ObservableObject
     /// </summary>
     public async Task GetIncomeCategory()
     {
-        Categories.Clear();
-        var income = await CategoryService.GetCategory(Constants.INCOME_ID);
-        Categories.Add(income);
-
-        Subcategories.Clear();
+        try
+        {
+            var income = await CategoryService.GetCategory(Constants.INCOME_ID);
+            Categories.Clear();
+            Categories.Add(income);
+            Subcategories.Clear();
+        }
+        catch (CategoryNotFoundException ex)
+        {
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -69,11 +76,17 @@ public partial class AddTransactionViewModel : ObservableObject
     /// </summary>
     public async Task GetTransferCategory()
     {
-        Categories.Clear();
-        var transfer = await CategoryService.GetCategory(Constants.TRANSFER_ID);
-        Categories.Add(transfer);
-
-        Subcategories.Clear();
+        try
+        {
+            var transfer = await CategoryService.GetCategory(Constants.TRANSFER_ID);
+            Categories.Clear();
+            Categories.Add(transfer);
+            Subcategories.Clear();
+        }
+        catch (CategoryNotFoundException ex)
+        {
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -81,11 +94,10 @@ public partial class AddTransactionViewModel : ObservableObject
     /// </summary>
     public async Task GetExpenseCategories()
     {
-        Categories.Clear();
         var categories = await CategoryService.GetExpenseCategories();
+        Categories.Clear();
         foreach (var cat in categories)
             Categories.Add(cat);
-        
         Subcategories.Clear();
     }
 
@@ -95,10 +107,10 @@ public partial class AddTransactionViewModel : ObservableObject
     /// <param name="parentCategory"></param>
     public async Task GetSubcategories(Category parentCategory)
     {
-        Subcategories.Clear();
         if (parentCategory is not null)
         {
             var subcategories = await CategoryService.GetSubcategories(parentCategory);
+            Subcategories.Clear();
             foreach (var cat in subcategories)
                 Subcategories.Add(cat);
         }
@@ -148,9 +160,16 @@ public partial class AddTransactionViewModel : ObservableObject
         catch (InvalidTransactionException ex)
         {
             // if invalid, display error
+            await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
+        }
+        catch (SQLiteException ex)
+        {
+            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
-        
     }
 
     /// <summary>
@@ -168,76 +187,97 @@ public partial class AddTransactionViewModel : ObservableObject
             {
                 if (result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
                 {
-                    var categories = await CategoryService.GetCategoriesAsDictWithName();
-                    var accounts = await AccountService.GetAccountsAsDictWithName();
                     List<Transaction> transactions = new();
+
                     using var sr = new StreamReader(result.FullPath);
-                    int i = 1;
-                    while (sr.Peek() != -1)
+                    try
                     {
-                        // format line
-                        string row = sr.ReadLine();
-                        string[] transactionsInfo = row.Split(',');
-
-                        if (transactionsInfo.Length != 6)
-                            throw new FormatException($"Transaction {i} does not have the correct amount of fields");
-
-                        // split line into Transaction parameters and create new Transaction
-                        // date
-                        if (!DateTime.TryParse(transactionsInfo[0], out var date))
-                            throw new InvalidTransactionException($"Transaction {i}: Invalid date");
-
-                        // account ID
-                        if (!accounts.TryGetValue(transactionsInfo[1], out int accountID))
-                            throw new InvalidTransactionException($"Transaction {i}: Account '{transactionsInfo[1]}' does not exist");
-                        
-                        // amount
-                        if (!decimal.TryParse(transactionsInfo[2], out decimal amount))
-                            throw new InvalidTransactionException($"Transaction {i}: '{transactionsInfo[2]}' is not a valid number");
-
-                        // category ID
-                        if (!categories.TryGetValue( transactionsInfo[3] + ",", out int parentID))
-                            throw new InvalidTransactionException($"Transaction {i}: '{transactionsInfo[3]}' is not a valid parent category");
-
-                        // subcategory ID
-                        if (!categories.TryGetValue( transactionsInfo[4] + "," + transactionsInfo[3], out int subcategoryID))
-                            throw new InvalidTransactionException($"Transaction {i}: '{transactionsInfo[4]}' is not a valid subcategory");
-
-                        // payee
-                        string payee = "";
-                        if (parentID != Constants.TRANSFER_ID && string.IsNullOrEmpty(transactionsInfo[5]))
-                            throw new InvalidTransactionException($"Transaction {i}: Payee cannot be blank");
-                        else
-                            payee = transactionsInfo[5];
-
-                        // transfer ID
-                        int? transferID;
-                        if (subcategoryID == Constants.CREDIT_ID)
+                        int i = 1;
+                        while (sr.Peek() != -1)
                         {
-                            transactions[i - 2].TransferID = accountID; // -2 because i started at 1, not 0
-                            transferID = transactions[i - 2].AccountID;
+                            // format line
+                            string row = sr.ReadLine();
+                            string[] transactionsInfo = row.Split(',');
+
+                            if (transactionsInfo.Length != 6)
+                                throw new FormatException($"Transaction {i} does not have the correct amount of fields");
+
+                            // split line into Transaction parameters and create new Transaction
+
+                            // date
+                            if (!DateTime.TryParse(transactionsInfo[0], out var date))
+                                throw new InvalidTransactionException($"Transaction {i}: Invalid date");
+
+                            // account ID
+                            var account = await AccountService.GetAccount(transactionsInfo[1]);
+                            if (account == null)
+                                throw new InvalidTransactionException($"Transaction {i}: Account '{transactionsInfo[1]}' does not exist");
+
+                            // amount
+                            if (!decimal.TryParse(transactionsInfo[2], out decimal amount))
+                                throw new InvalidTransactionException($"Transaction {i}: '{transactionsInfo[2]}' is not a valid number");
+
+                            // category ID
+                            var parentCategory = await CategoryService.GetParentCategory(transactionsInfo[3]);
+                            if (category == null)
+                                throw new InvalidTransactionException($"Transaction {i}: '{transactionsInfo[3]}' is not a valid parent category");
+
+                            // subcategory ID
+                            var subcategory = await CategoryService.GetCategory(transactionsInfo[4], parentCategory.CategoryName);
+                            if (subcategory == null)
+                                throw new InvalidTransactionException($"Transaction {i}: '{transactionsInfo[4]}' is not a valid subcategory");
+
+                            // payee
+                            string payee = "";
+                            if (parentCategory.CategoryID != Constants.TRANSFER_ID && string.IsNullOrEmpty(transactionsInfo[5]))
+                                throw new InvalidTransactionException($"Transaction {i}: Payee cannot be blank");
+                            else
+                                payee = transactionsInfo[5];
+
+                            // transfer ID
+                            int? transferID;
+                            if (subcategory.CategoryID == Constants.CREDIT_ID)
+                            {
+                                transactions[i - 2].TransferID = account.AccountID; // -2 because i started at 1, not 0
+                                transferID = transactions[i - 2].AccountID;
+                            }
+                            else
+                                transferID = null;
+
+                            Transaction transaction = new()
+                            {
+                                Date = date,
+                                AccountID = account.AccountID,
+                                Amount = amount,
+                                CategoryID = parentCategory.CategoryID,
+                                SubcategoryID = subcategory.CategoryID,
+                                Payee = payee,
+                                TransferID = transferID
+                            };
+
+                            transactions.Add(transaction);
+                            i++;
                         }
-                        else
-                            transferID = null;
 
-                        Transaction transaction = new()
-                        {
-                            Date = date,
-                            AccountID = accountID,
-                            Amount = amount,
-                            CategoryID = parentID,
-                            SubcategoryID = subcategoryID,
-                            Payee = payee,
-                            TransferID = transferID
-                        };
-
-                        transactions.Add(transaction);
-                        i++;
+                        await TransactionService.AddTransactions(transactions);
                     }
-
-                    await TransactionService.AddTransactions(transactions);
-
-                    sr.Close();
+                    catch (SQLiteException ex)
+                    {
+                        await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+                    }
+                    catch (CategoryNotFoundException ex)
+                    {
+                        await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+                    }
+                    catch (AccountNotFoundException ex)
+                    {
+                        await Shell.Current.DisplayAlert("Account Not Found Error", ex.Message, "OK");
+                    }
+                    finally
+                    {
+                        sr.Close();
+                    }
+                    
                 }
                 else
                     throw new FormatException("Invalid file type. Must be a CSV");

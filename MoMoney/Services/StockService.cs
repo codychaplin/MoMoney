@@ -13,7 +13,9 @@ public static class StockService
     public static async Task Init()
     {
         await MoMoneydb.Init();
-        Stocks = await GetStocksAsDict();
+
+        if (!Stocks.Any())
+            Stocks = await GetStocksAsDict();
     }
 
     /// <summary>
@@ -65,21 +67,6 @@ public static class StockService
     }
 
     /// <summary>
-    /// Given an symbol and new market price, updates the corresponding stock in the Stocks table.
-    /// </summary>
-    /// <param name="symbol"></param>
-    /// <param name="marketPrice"></param>
-    public static async Task UpdateStockPrice(string symbol, decimal marketPrice)
-    {
-        await Init();
-
-        // update Stock in db and dictionary
-        var stock = Stocks[symbol];
-        stock.MarketPrice = marketPrice;
-        await MoMoneydb.db.UpdateAsync(stock);
-    }
-
-    /// <summary>
     /// Removes Stock from Stocks table.
     /// </summary>
     /// <param name="symbol"></param>
@@ -101,7 +88,17 @@ public static class StockService
     {
         await Init();
 
-        return await MoMoneydb.db.Table<Stock>().FirstOrDefaultAsync(s => s.Symbol == symbol);
+        //eturn await MoMoneydb.db.Table<Stock>().FirstOrDefaultAsync(s => s.Symbol == symbol);
+        if (Stocks.TryGetValue(symbol, out var stock))
+            return stock;
+        else
+        {
+            var stk = await MoMoneydb.db.Table<Stock>().FirstOrDefaultAsync(s => s.Symbol == symbol);
+            if (stk is null)
+                throw new StockNotFoundException($"Could not find Stock with symbol '{symbol}'.");
+            else
+                return stk;
+        }
     }
 
     /// <summary>
@@ -121,7 +118,6 @@ public static class StockService
     /// <returns>List of Stock objects</returns>
     static async Task<Dictionary<string, Stock>> GetStocksAsDict()
     {
-        Stocks.Clear();
         var stocks = await MoMoneydb.db.Table<Stock>().ToListAsync();
         return stocks.ToDictionary(s => s.Symbol, s => s);
     }

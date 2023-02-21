@@ -1,7 +1,9 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using SQLite;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
+using MoMoney.Exceptions;
 
 namespace MoMoney.ViewModels.Settings;
 
@@ -19,9 +21,18 @@ public partial class EditAccountViewModel : ObservableObject
     public async Task GetAccount()
     {
         if (int.TryParse(ID, out int id))
-            Account = await AccountService.GetAccount(id);
+        {
+            try
+            {
+                Account = await AccountService.GetAccount(id);
+            }
+            catch (AccountNotFoundException ex)
+            {
+                await Shell.Current.DisplayAlert("Account Not Found Error", ex.Message, "OK");
+            }
+        }
         else
-            await Shell.Current.DisplayAlert("Error", "Could not find account", "OK");
+            await Shell.Current.DisplayAlert("Account Not Found Error", $"{ID} is not a valid ID", "OK");
     }
 
     /// <summary>
@@ -32,15 +43,22 @@ public partial class EditAccountViewModel : ObservableObject
     {
         if (Account is null ||
             string.IsNullOrEmpty(Account.AccountName) ||
-            Account.AccountType is null)
+            string.IsNullOrEmpty(Account.AccountType))
         {
             // if invalid, display error
-            await Shell.Current.DisplayAlert("Error", "Information not valid", "OK");
+            await Shell.Current.DisplayAlert("Validation Error", "Information not valid", "OK");
         }
         else
         {
-            await AccountService.UpdateAccount(Account);
-            await Shell.Current.GoToAsync("..");
+            try
+            {
+                await AccountService.UpdateAccount(Account);
+                await Shell.Current.GoToAsync("..");
+            }
+            catch (SQLiteException ex)
+            {
+                await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            }
         }
     }
 
@@ -54,8 +72,15 @@ public partial class EditAccountViewModel : ObservableObject
 
         if (flag)
         {
-            await AccountService.RemoveAccount(Account.AccountID);
-            await Shell.Current.GoToAsync("..");
+            try
+            {
+                await AccountService.RemoveAccount(Account.AccountID);
+                await Shell.Current.GoToAsync("..");
+            }
+            catch (SQLiteException ex)
+            {
+                await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            }
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Syncfusion.Maui.ListView;
 using MoMoney.Views;
 using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
-using Syncfusion.Maui.ListView;
 
 namespace MoMoney.ViewModels;
 
@@ -133,8 +133,8 @@ public partial class TransactionsViewModel : BaseViewModel
     /// <returns></returns>
     public async Task GetAccounts()
     {
-        Accounts.Clear();
         var accounts = await AccountService.GetActiveAccounts();
+        Accounts.Clear();
         foreach (var acc in accounts)
             Accounts.Add(acc);
     }
@@ -144,8 +144,8 @@ public partial class TransactionsViewModel : BaseViewModel
     /// </summary>
     public async Task GetParentCategories()
     {
-        Categories.Clear();
         var categories = await CategoryService.GetAllParentCategories();
+        Categories.Clear();
         foreach (var cat in categories)
             Categories.Add(cat);
     }
@@ -156,10 +156,10 @@ public partial class TransactionsViewModel : BaseViewModel
     /// <param name="parentCategory"></param>
     public async Task GetSubcategories(Category parentCategory)
     {
-        Subcategories.Clear();
         if (parentCategory is not null)
         {
             var subcategories = await CategoryService.GetSubcategories(parentCategory);
+            Subcategories.Clear();
             foreach (var cat in subcategories)
                 Subcategories.Add(cat);
         }

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
+using MoMoney.Exceptions;
 using MoMoney.Views.Settings;
 
 namespace MoMoney.ViewModels.Settings;
@@ -36,8 +37,15 @@ public partial class CategoriesViewModel : ObservableObject
     [RelayCommand]
     async Task GoToEditCategoryString(string name)
     {
-        var cat = await CategoryService.GetParentCategory(name);
-        await Shell.Current.GoToAsync($"{nameof(EditCategoryPage)}?ID={cat.CategoryID}");
+        try
+        {
+            var cat = await CategoryService.GetParentCategory(name);
+            await Shell.Current.GoToAsync($"{nameof(EditCategoryPage)}?ID={cat.CategoryID}");
+        }
+        catch (CategoryNotFoundException ex)
+        {
+            await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>

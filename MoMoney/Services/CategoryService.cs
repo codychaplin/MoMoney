@@ -5,18 +5,17 @@ namespace MoMoney.Services;
 
 public static class CategoryService
 {
-    public static Dictionary<int, string> Categories { get; set; } = new();
+    public static Dictionary<int, Category> Categories { get; set; } = new();
 
     /// <summary>
     /// Calls db Init.
     /// </summary>
-    public static async Task Init()
+    static async Task Init()
     {
         await MoMoneydb.Init();
+
         if (!Categories.Any())
-        {
-            Categories = await GetCategoriesAsDictWithID();
-        }
+            Categories = await GetCategoriesAsDict();
     }
 
     /// <summary>
@@ -31,7 +30,7 @@ public static class CategoryService
 
         var res = await MoMoneydb.db.Table<Category>().CountAsync(c => c.CategoryName == categoryName && c.ParentName == parentName);
         if (res > 0)
-            throw new DuplicateCategoryException("Category named '" + categoryName + "' already exists");
+            throw new DuplicateCategoryException("Category '" + categoryName + "' already exists");
 
         var category = new Category
         {
@@ -41,45 +40,31 @@ public static class CategoryService
 
         // adds Category to db and dictionary
         await MoMoneydb.db.InsertAsync(category);
-        Categories.Add(category.CategoryID, category.CategoryName);
+        Categories.Add(category.CategoryID, category);
     }
 
     /// <summary>
     /// Inserts multiple Category objects into Categories table.
     /// </summary>
     /// <param name="categories"></param>
+    /// <exception cref="DuplicateCategoryException"></exception>
     public static async Task AddCategories(List<Category> categories)
     {
         await Init();
 
-        var dbCategories = await MoMoneydb.db.Table<Category>().ToListAsync(); // gets accounts from db
+        // gets accounts from db
+        var dbCategories = await MoMoneydb.db.Table<Category>().ToListAsync();
+
         // gets names of all categories where name matches any names of categories in parameter categories
-        var cats = dbCategories.Select(a => a.CategoryName)
-                             .Where(a1 => categories.Any(a2 => a1.Contains(a2.CategoryName))).ToList();
-
-        // displays duplicate accounts on screen, if any
-        string names = "";
-        if (cats.Count() > 0)
-        {
-            names = cats[0];
-            if (cats.Count() > 1)
-            {
-                for (int i = 1; i < cats.Count(); i++)
-                    names += ", " + cats[i];
-                names += " are duplicates, ";
-            }
-            else
-                names += " is a duplicate, ";
-
-            await Shell.Current.DisplayAlert("Attention", names + "all other categories were added", "OK");
-        }
-
-        categories.RemoveAll(a => cats.Contains(names));
+        bool containsDuplicates = categories.Any(a =>
+             dbCategories.Any(dba => dba.CategoryName == a.CategoryName && dba.ParentName == a.ParentName));
+        if (containsDuplicates)
+            throw new DuplicateCategoryException("Imported categories contained duplicates. Please try again");
 
         // adds Categories to db and dictionary
         await MoMoneydb.db.InsertAllAsync(categories);
         foreach (var cat in categories)
-            Categories.Add(cat.CategoryID, cat.CategoryName);
+            Categories.Add(cat.CategoryID, cat);
     }
 
     /// <summary>
@@ -92,7 +77,7 @@ public static class CategoryService
 
         // updates Category in db and dictionary
         await MoMoneydb.db.UpdateAsync(updatedCategory);
-        Categories[updatedCategory.CategoryID] = updatedCategory.CategoryName;
+        Categories[updatedCategory.CategoryID] = updatedCategory;
     }
 
     /// <summary>
@@ -117,19 +102,30 @@ public static class CategoryService
 
         await MoMoneydb.db.DeleteAllAsync<Category>();
         await MoMoneydb.db.DropTableAsync<Category>();
+        await MoMoneydb.db.CreateTableAsync<Category>();
         Categories.Clear();
     }
 
     /// <summary>
     /// Gets an category from the Categories table using an ID.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="ID"></param>
     /// <returns>Category object</returns>
-    public static async Task<Category>GetCategory(int id)
+    /// <exception cref="CategoryNotFoundException"></exception>
+    public static async Task<Category>GetCategory(int ID)
     {
         await Init();
 
-        return await MoMoneydb.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryID == id);
+        if (Categories.TryGetValue(ID, out var category))
+            return category;
+        else
+        {
+            var cat = await MoMoneydb.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryID == ID);
+            if (cat is null)
+                throw new CategoryNotFoundException($"Could not find Category with ID '{ID}'.");
+            else
+                return cat;
+        }
     }
 
     /// <summary>
@@ -138,11 +134,16 @@ public static class CategoryService
     /// <param name="name"></param>
     /// <param name="parent"></param>
     /// <returns>Category object</returns>
+    /// <exception cref="CategoryNotFoundException"></exception>
     public static async Task<Category> GetCategory(string name, string parent)
     {
         await Init();
 
-        return await MoMoneydb.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryName == name && c.ParentName == parent);
+        var cat = await MoMoneydb.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryName == name && c.ParentName == parent);
+        if (cat is null)
+            throw new CategoryNotFoundException($"Could not find Category with name '{name}'.");
+        else
+            return cat;
     }
 
     /// <summary>
@@ -150,11 +151,26 @@ public static class CategoryService
     /// </summary>
     /// <param name="parentName"></param>
     /// <returns>Category object</returns>
+    /// <exception cref="CategoryNotFoundException"></exception>
     public static async Task<Category> GetParentCategory(string parentName)
     {
         await Init();
 
-        return await MoMoneydb.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryName == parentName && c.ParentName == "");
+        var cat = await MoMoneydb.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryName == parentName && c.ParentName == "");
+        if (cat is null)
+            throw new CategoryNotFoundException($"Could not find Category with name '{parentName}'.");
+        else
+            return cat;
+    }
+
+    /// <summary>
+    /// Gets all Categories from Categories table as a dictionary with Category ID as Key.
+    /// </summary>
+    /// <returns>Dictionary of Category objects</returns>
+    static async Task<Dictionary<int, Category>> GetCategoriesAsDict()
+    {
+        var categories = await MoMoneydb.db.Table<Category>().ToListAsync();
+        return categories.ToDictionary(c => c.CategoryID, c => c);
     }
 
     /// <summary>
@@ -165,30 +181,13 @@ public static class CategoryService
     {
         await Init();
 
-        return await MoMoneydb.db.Table<Category>().Where(c => c.CategoryID >= Constants.EXPENSE_ID).ToListAsync();
-    }
-
-    /// <summary>
-    /// Gets all Categories from Categories table as a dictionary with concatenated Category/Subcategory names as Key.
-    /// </summary>
-    /// <returns>Dictionary of Category objects</returns>
-    public static async Task<Dictionary<string, int>> GetCategoriesAsDictWithName()
-    {
-        await Init();
-
-        var categories = await MoMoneydb.db.Table<Category>().ToListAsync();
-        return categories.ToDictionary(c => c.CategoryName + "," + c.ParentName, c => c.CategoryID);
-    }
-
-    /// <summary>
-    /// Gets all Categories from Categories table as a dictionary with Category ID as Key.
-    /// </summary>
-    /// <returns>Dictionary of Category objects</returns>
-    public static async Task<Dictionary<int, string>> GetCategoriesAsDictWithID()
-    {
-        var categories = await MoMoneydb.db.Table<Category>().ToListAsync();
-        var categoriesDict = categories.ToDictionary(c => c.CategoryID, c => c.CategoryName);
-        return categoriesDict;
+        var cats = Categories.Where(c => c.Value.CategoryID >= Constants.EXPENSE_ID).Select(pair => pair.Value);
+        if (cats.Any())
+            return cats;
+        else
+            return await MoMoneydb.db.Table<Category>()
+                                     .Where(c => c.CategoryID >= Constants.EXPENSE_ID)
+                                     .ToListAsync();
     }
 
     /// <summary>
@@ -199,7 +198,11 @@ public static class CategoryService
     {
         await Init();
 
-        return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "").ToListAsync();
+        var cats = Categories.Where(c => c.Value.ParentName == "").Select(pair => pair.Value);
+        if (cats.Any())
+            return cats;
+        else
+            return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "").ToListAsync();
     }
 
     /// <summary>
@@ -210,8 +213,14 @@ public static class CategoryService
     {
         await Init();
 
-        return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "" &&
-                                                          c.CategoryID != Constants.TRANSFER_ID).ToListAsync();
+        var cats = Categories.Where(c => c.Value.ParentName == "" && c.Value.CategoryID != Constants.TRANSFER_ID)
+                             .Select(pair => pair.Value);
+        if (cats.Any())
+            return cats;
+        else
+            return await MoMoneydb.db.Table<Category>()
+                                     .Where(c => c.ParentName == "" && c.CategoryID != Constants.TRANSFER_ID)
+                                     .ToListAsync();
     }
 
     /// <summary>
@@ -222,18 +231,31 @@ public static class CategoryService
     {
         await Init();
 
-        return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == "" &&
-                                                          c.CategoryID >= Constants.EXPENSE_ID).ToListAsync();
+        var cats = Categories.Where(c => c.Value.ParentName == "" && c.Value.CategoryID >= Constants.EXPENSE_ID)
+                             .Select(pair => pair.Value);
+        if (cats.Any())
+            return cats;
+        else
+            return await MoMoneydb.db.Table<Category>()
+                                     .Where(c => c.ParentName == "" && c.CategoryID >= Constants.EXPENSE_ID)
+                                     .ToListAsync();
     }
 
     /// <summary>
-    /// Gets all parent Categories from Categories table as a list.
+    /// Gets all Subcategories of a Category from Categories table as a list.
     /// </summary>
-    /// <returns>List of parent Category objects</returns>
+    /// <returns>List of Category objects</returns>
     public static async Task<IEnumerable<Category>> GetSubcategories(Category parentCategory)
     {
         await Init();
 
-        return await MoMoneydb.db.Table<Category>().Where(c => c.ParentName == parentCategory.CategoryName).ToListAsync();
+        var cats = Categories.Where(c => c.Value.ParentName == parentCategory.CategoryName)
+                             .Select(pair => pair.Value);
+        if (cats.Any())
+            return cats;
+        else
+            return await MoMoneydb.db.Table<Category>()
+                                     .Where(c => c.ParentName == parentCategory.CategoryName)
+                                     .ToListAsync();
     }
 }

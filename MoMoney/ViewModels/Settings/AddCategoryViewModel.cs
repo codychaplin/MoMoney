@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
+using MoMoney.Exceptions;
 
 namespace MoMoney.ViewModels.Settings;
 
@@ -28,7 +29,7 @@ public partial class AddCategoryViewModel : ObservableObject
             await CategoryService.AddCategory(Name, Parent);
             await Shell.Current.GoToAsync("..");
         }
-        catch (Exception ex)
+        catch (DuplicateCategoryException ex)
         {
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
