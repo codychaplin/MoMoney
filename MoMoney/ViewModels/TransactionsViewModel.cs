@@ -56,8 +56,8 @@ public partial class TransactionsViewModel : BaseViewModel
         {
             case TransactionEventArgs.CRUD.Create:
                 {
-                    int index = BinarySearch(e.Transaction);
-                    Transactions.Insert(index, e.Transaction);
+                    Transactions.Insert(0, e.Transaction);
+                    LoadedTransactions.Insert(0, e.Transaction);
 
                     // if transfer, add credit side too
                     if (e.Transaction.CategoryID == Constants.TRANSFER_ID)
@@ -100,6 +100,16 @@ public partial class TransactionsViewModel : BaseViewModel
                     // finds transaction via ID and update values
                     Transaction transaction = e.Transaction;
                     foreach (var trans in Transactions.Where(t => t.TransactionID == transaction.TransactionID))
+                    {
+                        trans.Date = transaction.Date;
+                        trans.AccountID = transaction.AccountID;
+                        trans.Amount = transaction.Amount;
+                        trans.CategoryID = transaction.CategoryID;
+                        trans.SubcategoryID = transaction.SubcategoryID;
+                        trans.Payee = transaction.Payee;
+                        trans.TransferID = transaction.TransferID;
+                    }
+                    foreach (var trans in LoadedTransactions.Where(t => t.TransactionID == transaction.TransactionID))
                     {
                         trans.Date = transaction.Date;
                         trans.AccountID = transaction.AccountID;
@@ -280,33 +290,6 @@ public partial class TransactionsViewModel : BaseViewModel
             return false;
         
         return true;
-    }
-
-    /// <summary>
-    /// Binary search used to find index in sorted CollectionView.
-    /// </summary>
-    /// <param name="newTransaction"></param>
-    /// <returns>Index in Transactions where newTransaction should be inserted.</returns>
-    int BinarySearch(Transaction newTransaction)
-    {
-        int left = 0;
-        int right = Transactions.Count - 1;
-
-        while (left <= right)
-        {
-            int middle = (left + right) / 2;
-            int comparison = Transactions[middle].Date.CompareTo(newTransaction.Date);
-
-            if (comparison == 0)
-                return Transactions.Count - middle;
-            else if (comparison < 0)
-                left = middle + 1;
-            else
-                right = middle - 1;
-        }
-
-        // minus from Transaction.Count because list is reversed
-        return Transactions.Count - left;
     }
 
     /// <summary>

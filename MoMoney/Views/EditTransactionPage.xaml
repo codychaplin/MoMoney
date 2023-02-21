@@ -26,110 +26,112 @@
         </ContentPage.Resources>
 
     <!-- main page -->
-    <VerticalStackLayout>
+    <ScrollView>
+        <VerticalStackLayout>
 
-        <!-- Date -->
-        <Frame Style="{StaticResource frTile}">
-            <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="calendar.png" Style="{StaticResource icon}" />
-                <DatePicker x:Name="dtDate"
+            <!-- Date -->
+            <Frame Style="{StaticResource frTile}">
+                <Grid ColumnDefinitions="0.15*,*">
+                    <Image Source="calendar.png" Style="{StaticResource icon}" />
+                    <DatePicker x:Name="dtDate"
+                                Grid.Column="1"
+                                VerticalOptions="Center"
+                                Date="{Binding Transaction.Date}" />
+                </Grid>
+            </Frame>
+            <!-- Account -->
+            <Frame Style="{StaticResource frTile}">
+                <Grid ColumnDefinitions="0.15*,*">
+                    <Image Source="credit_card.png" Style="{StaticResource icon}" />
+                    <Picker x:Name="pckAccount"
                             Grid.Column="1"
-                            VerticalOptions="Center"
-                            Date="{Binding Transaction.Date}" />
-            </Grid>
-        </Frame>
-        <!-- Account -->
-        <Frame Style="{StaticResource frTile}">
-            <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="credit_card.png" Style="{StaticResource icon}" />
-                <Picker x:Name="pckAccount"
+                            Title="Select an Account"
+                            x:DataType="models:Account"
+                            ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
+                            SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
+                            ItemDisplayBinding="{Binding AccountName}" />
+                </Grid>
+            </Frame>
+            <!-- Amount -->
+            <Frame Style="{StaticResource frTile}">
+                <Grid ColumnDefinitions="0.15*,*">
+                    <Image Source="dollar_symbol.png" Style="{StaticResource icon}" />
+                    <Entry x:Name="txtAmount"
+                           Grid.Column="1"
+                           Keyboard="Numeric"
+                           Placeholder="$0.00"
+                           Text="{Binding Transaction.Amount}" />
+                </Grid>
+            </Frame>
+            <!-- Category -->
+            <Frame Style="{StaticResource frTile}">
+                <Grid ColumnDefinitions="0.15*,*">
+                    <Image Source="category.png" Style="{StaticResource icon}" />
+                    <Picker x:Name="pckCategory"
+                            Grid.Column="1"
+                            Title="Select a Category"
+                            x:DataType="models:Category"
+                            ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
+                            SelectedItem="{Binding Path=Category, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
+                            ItemDisplayBinding="{Binding CategoryName}"
+                            SelectedIndexChanged="pckCategory_SelectedIndexChanged" />
+                </Grid>
+            </Frame>
+            <!-- Subcategory -->
+            <Frame Style="{StaticResource frTile}">
+                <Grid ColumnDefinitions="0.15*,*">
+                    <Image Source="subcategory.png" Style="{StaticResource icon}" />
+                    <Picker x:Name="pckSubcategory"
+                            Grid.Column="1"
+                            Title="Select a Subcategory"
+                            x:DataType="models:Category"
+                            ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
+                            SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
+                            ItemDisplayBinding="{Binding CategoryName}" />
+                </Grid>
+            </Frame>
+            <!-- Payee -->
+            <Frame x:Name="frPayee" Style="{StaticResource frTile}" IsVisible="True">
+                <Grid ColumnDefinitions="0.15*,*">
+                    <Image Source="account.png" Style="{StaticResource icon}" />
+                    <Entry x:Name="txtPayee"
+                           Grid.Column="1"
+                           Placeholder="Payee"
+                           Text="{Binding Transaction.Payee}" />
+                </Grid>
+            </Frame>
+            <!-- Transfer Payee Account -->
+            <Frame x:Name="frPayeeAccount" Style="{StaticResource frTile}" IsVisible="False">
+                <Grid ColumnDefinitions="0.15*,*">
+                    <Image Source="account.png" Style="{StaticResource icon}" />
+                    <Picker x:Name="pckPayeeAccount"
+                            Grid.Column="1"
+                            Title="Select a Payee"
+                            x:DataType="models:Account"
+                            ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
+                            SelectedItem="{Binding Path=PayeeAccount, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
+                            ItemDisplayBinding="{Binding AccountName}" />
+                </Grid>
+            </Frame>
+            <!-- delete/clear/enter buttons -->
+            <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                <Button x:Name="btnDelete"
+                        Grid.Column="0"
+                        Text="Delete"
+                        BackgroundColor="{StaticResource Red}"
+                        Command="{Binding RemoveCommand}" />
+                <Button x:Name="btnClear"
                         Grid.Column="1"
-                        Title="Select an Account"
-                        x:DataType="models:Account"
-                        ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                        SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                        ItemDisplayBinding="{Binding AccountName}" />
+                        Text="Clear"
+                        BackgroundColor="{StaticResource Blue}"
+                        Clicked="btnClear_Clicked" />
+                <Button x:Name="btnEnter"
+                        Grid.Column="2"
+                        Text="Update"
+                        BackgroundColor="{StaticResource Green}"
+                        Command="{Binding EditCommand}" />
             </Grid>
-        </Frame>
-        <!-- Amount -->
-        <Frame Style="{StaticResource frTile}">
-            <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="dollar_symbol.png" Style="{StaticResource icon}" />
-                <Entry x:Name="txtAmount"
-                       Grid.Column="1"
-                       Keyboard="Numeric"
-                       Placeholder="$0.00"
-                       Text="{Binding Transaction.Amount}" />
-            </Grid>
-        </Frame>
-        <!-- Category -->
-        <Frame Style="{StaticResource frTile}">
-            <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="category.png" Style="{StaticResource icon}" />
-                <Picker x:Name="pckCategory"
-                        Grid.Column="1"
-                        Title="Select a Category"
-                        x:DataType="models:Category"
-                        ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                        SelectedItem="{Binding Path=Category, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                        ItemDisplayBinding="{Binding CategoryName}"
-                        SelectedIndexChanged="pckCategory_SelectedIndexChanged" />
-            </Grid>
-        </Frame>
-        <!-- Subcategory -->
-        <Frame Style="{StaticResource frTile}">
-            <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="subcategory.png" Style="{StaticResource icon}" />
-                <Picker x:Name="pckSubcategory"
-                        Grid.Column="1"
-                        Title="Select a Subcategory"
-                        x:DataType="models:Category"
-                        ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                        SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                        ItemDisplayBinding="{Binding CategoryName}" />
-            </Grid>
-        </Frame>
-        <!-- Payee -->
-        <Frame x:Name="frPayee" Style="{StaticResource frTile}" IsVisible="True">
-            <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="account.png" Style="{StaticResource icon}" />
-                <Entry x:Name="txtPayee"
-                       Grid.Column="1"
-                       Placeholder="Payee"
-                       Text="{Binding Transaction.Payee}" />
-            </Grid>
-        </Frame>
-        <!-- Transfer Payee Account -->
-        <Frame x:Name="frPayeeAccount" Style="{StaticResource frTile}" IsVisible="False">
-            <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="account.png" Style="{StaticResource icon}" />
-                <Picker x:Name="pckPayeeAccount"
-                        Grid.Column="1"
-                        Title="Select a Payee"
-                        x:DataType="models:Account"
-                        ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                        SelectedItem="{Binding Path=PayeeAccount, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                        ItemDisplayBinding="{Binding AccountName}" />
-            </Grid>
-        </Frame>
-        <!-- delete/clear/enter buttons -->
-        <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnDefinitions="*,*,*" ColumnSpacing="10">
-            <Button x:Name="btnDelete"
-                    Grid.Column="0"
-                    Text="Delete"
-                    BackgroundColor="{StaticResource Red}"
-                    Command="{Binding RemoveCommand}" />
-            <Button x:Name="btnClear"
-                    Grid.Column="1"
-                    Text="Clear"
-                    BackgroundColor="{StaticResource Blue}"
-                    Clicked="btnClear_Clicked" />
-            <Button x:Name="btnEnter"
-                    Grid.Column="2"
-                    Text="Update"
-                    BackgroundColor="{StaticResource Green}"
-                    Command="{Binding EditCommand}" />
-        </Grid>
 
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

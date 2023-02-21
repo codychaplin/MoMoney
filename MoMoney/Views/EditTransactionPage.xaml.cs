@@ -19,7 +19,9 @@ public partial class EditTransactionPage : ContentPage
         // initialize ViewModel
         await vm.GetTransaction();
         await vm.GetAccounts();
-        switch (vm.InitialCategory.CategoryID) // get corresponding categories
+
+        // get corresponding categories
+        switch (vm.InitialCategory.CategoryID)
         {
             case Constants.INCOME_ID:
                 await vm.GetIncomeCategory();
@@ -27,7 +29,7 @@ public partial class EditTransactionPage : ContentPage
             case Constants.TRANSFER_ID:
                 await vm.GetTransferCategory();
                 break;
-            default: // expense categories
+            default:
                 await vm.GetExpenseCategories();
                 break;
         }
