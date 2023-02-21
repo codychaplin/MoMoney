@@ -221,30 +221,43 @@ public partial class SettingsViewModel : ObservableObject
             using FileStream stream = File.OpenWrite(targetFile);
             using StreamWriter streamWriter = new(stream);
 
-            // get data
-            var transactions = await TransactionService.GetTransactions();
-            transactions = transactions.OrderBy(t => t.Date)
-                                       .ThenBy(t => t.TransactionID);
-            foreach (var trans in transactions)
+            try
             {
-                // formats transaction parameters in CSV format
-                var date = trans.Date.ToString("yyyy-MM-dd");
-                var account = AccountService.Accounts[trans.AccountID];
-                var amount = trans.Amount;
-                var category = CategoryService.Categories[trans.CategoryID];
-                var subcategory = CategoryService.Categories[trans.SubcategoryID];
-                var payee = trans.Payee;
-                string line = $"{date},{account},{amount},{category},{subcategory},{payee}";
+                // get data
+                var transactions = await TransactionService.GetTransactions();
+                transactions = transactions.OrderBy(t => t.Date)
+                                           .ThenBy(t => t.TransactionID);
 
-                // prints line to file
-                await streamWriter.WriteLineAsync(line);
+                foreach (var trans in transactions)
+                {
+                    // formats transaction parameters in CSV format
+                    var date = trans.Date.ToString("yyyy-MM-dd");
+                    var account = AccountService.Accounts[trans.AccountID].AccountName;
+                    var amount = trans.Amount;
+                    var category = CategoryService.Categories[trans.CategoryID].CategoryName;
+                    var subcategory = CategoryService.Categories[trans.SubcategoryID].CategoryName;
+                    var payee = trans.Payee;
+                    string line = $"{date},{account},{amount},{category},{subcategory},{payee}";
+
+                    // prints line to file
+                    await streamWriter.WriteLineAsync(line);
+                }
+
+                await Shell.Current.DisplayAlert("Success", $"File has been successfully downloaded to:\n'{targetFile}'", "OK");
             }
-
-            streamWriter.Close();
-            await Shell.Current.DisplayAlert("Success", $"File has been successfully downloaded to:\n'{targetFile}'", "OK");
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                // close stream regardless
+                streamWriter.Close();
+                stream.Close();
+            }
         }
         else
-            await Shell.Current.DisplayAlert("Error", "Storage permissions are required in order to save to CSV", "OK");
+            await Shell.Current.DisplayAlert("Permission Error", "Storage permissions are required in order to save to CSV", "OK");
     }
 
     /// <summary>
