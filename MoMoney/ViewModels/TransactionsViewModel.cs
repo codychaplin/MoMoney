@@ -65,7 +65,8 @@ public partial class TransactionsViewModel : BaseViewModel
                         try
                         {
                             var otherTrans = await TransactionService.GetTransaction(e.Transaction.TransactionID + 1);
-                            Transactions.Add(otherTrans);
+                            Transactions.Insert(0, otherTrans);
+                            LoadedTransactions.Insert(0, otherTrans);
                         }
                         catch (TransactionNotFoundException)
                         {
