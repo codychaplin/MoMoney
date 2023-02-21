@@ -149,16 +149,16 @@ public static class CategoryService
     /// <summary>
     /// Gets Category from the Categories table using name. Only works for parent categories.
     /// </summary>
-    /// <param name="parentName"></param>
+    /// <param name="name"></param>
     /// <returns>Category object</returns>
     /// <exception cref="CategoryNotFoundException"></exception>
-    public static async Task<Category> GetParentCategory(string parentName)
+    public static async Task<Category> GetParentCategory(string name)
     {
         await Init();
 
-        var cat = await MoMoneydb.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryName == parentName && c.ParentName == "");
+        var cat = await MoMoneydb.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryName == name && c.ParentName == "");
         if (cat is null)
-            throw new CategoryNotFoundException($"Could not find Category with name '{parentName}'.");
+            throw new CategoryNotFoundException($"Could not find Category with name '{name}'.");
         else
             return cat;
     }

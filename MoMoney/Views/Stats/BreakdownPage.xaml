@@ -10,7 +10,7 @@
              xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
              xmlns:data="clr-namespace:Syncfusion.Maui.DataSource;assembly=Syncfusion.Maui.DataSource"
              NavigationPage.HasNavigationBar="False"
-             Title="">
+             Title="Breakdown">
 
     <ContentPage.BindingContext>
         <viewmodel:BreakdownViewModel />

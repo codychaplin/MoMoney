@@ -12,7 +12,7 @@
     </ContentPage.BindingContext>
 
     <ContentPage.Resources>
-        <DataTemplate x:Key="HeaderTemplate" x:DataType="models:Category">
+        <DataTemplate x:Key="HeaderTemplate" x:DataType="viewmodel:CategoryGroup">
             <Frame Style="{StaticResource confrTile}"
                    HeightRequest="45"
                    BackgroundColor="{StaticResource Gray500}">

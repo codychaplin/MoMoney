@@ -34,7 +34,8 @@ public partial class EditCategoryViewModel : ObservableObject
             try
             {
                 Category = await CategoryService.GetCategory(id);
-                Parent = await CategoryService.GetParentCategory(Category.ParentName);
+                if (!string.IsNullOrEmpty(Category.ParentName))
+                    Parent = await CategoryService.GetParentCategory(Category.ParentName);
             }
             catch (CategoryNotFoundException ex)
             {

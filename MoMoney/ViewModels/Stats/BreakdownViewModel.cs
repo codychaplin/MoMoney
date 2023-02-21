@@ -44,7 +44,7 @@ public partial class BreakdownViewModel : ObservableObject
         InitPalettes();
 
         var first = await TransactionService.GetFirstTransaction();
-        if (first == null) return;
+        if (first is null) return;
 
         // get date of first transaction, today's date, and add each month to collection
         DateTime start = new(first.Date.Year, first.Date.Month, 1);
@@ -141,7 +141,7 @@ public partial class BreakdownViewModel : ObservableObject
                                 {
                                     Amount = amount,
                                     ActualAmount = amount,
-                                    Category = CategoryService.Categories[group.FirstOrDefault().CategoryID],
+                                    Category = CategoryService.Categories[group.FirstOrDefault().CategoryID].CategoryName,
                                     Color = ExpensePalette[i++]
                                 };
                             })));
@@ -170,7 +170,7 @@ public partial class BreakdownViewModel : ObservableObject
                                 {
                                     ActualAmount = amount,
                                     Amount = (amount > 0) ? amount : 0,
-                                    Category = CategoryService.Categories[group.FirstOrDefault().SubcategoryID],
+                                    Category = CategoryService.Categories[group.FirstOrDefault().SubcategoryID].CategoryName,
                                     Color = IncomePalette[i++]
                                 };
                             })));

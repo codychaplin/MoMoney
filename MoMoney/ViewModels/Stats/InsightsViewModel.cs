@@ -44,7 +44,7 @@ public partial class InsightsViewModel : ObservableObject
     public async void Init(object sender, EventArgs e)
     {
         var first = await TransactionService.GetFirstTransaction();
-        if (first == null) return;
+        if (first is null) return;
 
         // get date of first transaction, today's date, and add each year to collection
         var start = first.Date;
