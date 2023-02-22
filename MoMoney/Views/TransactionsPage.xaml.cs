@@ -14,6 +14,7 @@ public partial class TransactionsPage : ContentView
 		InitializeComponent();
         vm = (TransactionsViewModel)BindingContext;
         vm.ListView = listView;
+        frAccounts.ZIndex = 2;
         TransactionsChanged += Refresh;
     }
 

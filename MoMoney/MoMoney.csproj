@@ -27,22 +27,21 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
-		<AndroidSigningKeyStore>key.keystore</AndroidSigningKeyStore>
+		<AndroidSigningKeyStore>momoney.keystore</AndroidSigningKeyStore>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-android31.0|AnyCPU'">
-	  <AndroidKeyStore>True</AndroidKeyStore>
-	  <AndroidSigningStorePass>momoney</AndroidSigningStorePass>
-	  <AndroidSigningKeyAlias>MoMoneyAlias</AndroidSigningKeyAlias>
-	  <AndroidSigningKeyPass>momoneyalias</AndroidSigningKeyPass>
+	<PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Configuration)' == 'Release'">
+		<AndroidKeyStore>True</AndroidKeyStore>
+		<AndroidSigningKeyStore>momoney.keystore</AndroidSigningKeyStore>
+		<AndroidSigningKeyAlias>key</AndroidSigningKeyAlias>
+		<AndroidSigningKeyPass>momoney</AndroidSigningKeyPass>
+		<AndroidSigningStorePass>momoney</AndroidSigningStorePass>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android31.0|AnyCPU'">
-	  <AndroidKeyStore>True</AndroidKeyStore>
-	  <AndroidSigningStorePass>momoney</AndroidSigningStorePass>
-	  <AndroidSigningKeyAlias>MoMoneyAlias</AndroidSigningKeyAlias>
-	  <AndroidSigningKeyPass>momoneyalias</AndroidSigningKeyPass>
+	  <AndroidPackageFormat>apk</AndroidPackageFormat>
 	</PropertyGroup>
+
 
 
 	<ItemGroup>

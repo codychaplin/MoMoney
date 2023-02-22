@@ -85,7 +85,7 @@
         </Frame>
 
         <!-- account picker -->
-        <Frame x:Name="frAccounts" Grid.Row="2" ZIndex="2" Style="{StaticResource frFilter}">
+        <Frame x:Name="frAccounts" Grid.Row="2" Style="{StaticResource frFilter}">
             <Grid ColumnDefinitions="30,*,30" ColumnSpacing="10">
                 <Image Source="credit_card.png" Style="{StaticResource imgIcon}" />
                 <Picker x:Name="pckAccount"
