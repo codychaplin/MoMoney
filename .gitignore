@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /MoMoney/Constants.cs
 /MoMoney/Secret.cs
 /MoMoney/key.keystore
+/MoMoney/momoney.keystore
