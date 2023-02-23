@@ -6,14 +6,6 @@ namespace MoMoney.Services;
 public static class TransactionService
 {
     /// <summary>
-    /// Calls db Init.
-    /// </summary>
-    public static async Task Init()
-    {
-        await MoMoneydb.Init();
-    }
-
-    /// <summary>
     /// Creates new Transaction object and inserts into Transaction table.
     /// </summary>
     /// <param name="date"></param>
@@ -27,8 +19,6 @@ public static class TransactionService
     public static async Task<Transaction> AddTransaction(DateTime date, int accountID, decimal amount, int categoryID,
         int subcategoryID, string payee, int? transferID)
     {
-        await Init();
-
         ValidateTransaction(date, accountID, amount, categoryID, subcategoryID, payee, transferID);
 
         var transaction = new Transaction
@@ -52,8 +42,6 @@ public static class TransactionService
     /// <param name="transactions"></param>
     public static async Task AddTransactions(List<Transaction> transactions)
     {
-        await Init();
-
         await MoMoneydb.db.InsertAllAsync(transactions);
     }
 
@@ -63,8 +51,6 @@ public static class TransactionService
     /// <param name="updatedTransaction"></param>
     public static async Task UpdateTransaction(Transaction updatedTransaction)
     {
-        await Init();
-
         ValidateTransaction(updatedTransaction.Date, updatedTransaction.AccountID, updatedTransaction.Amount,
                             updatedTransaction.CategoryID, updatedTransaction.SubcategoryID, updatedTransaction.Payee,
                             updatedTransaction.TransferID);
@@ -78,8 +64,6 @@ public static class TransactionService
     /// <param name="ID"></param>
     public static async Task RemoveTransaction(int ID)
     {
-        await Init();
-
         await MoMoneydb.db.DeleteAsync<Transaction>(ID);
     }
 
@@ -91,8 +75,6 @@ public static class TransactionService
         await MoMoneydb.db.DeleteAllAsync<Transaction>();
         await MoMoneydb.db.DropTableAsync<Transaction>();
         await MoMoneydb.db.CreateTableAsync<Transaction>();
-
-        await Init();
     }
 
     /// <summary>
@@ -103,8 +85,6 @@ public static class TransactionService
     /// <exception cref="TransactionNotFoundException"></exception>
     public static async Task<Transaction> GetTransaction(int ID)
     {
-        await Init();
-
         var transaction = await MoMoneydb.db.Table<Transaction>().FirstOrDefaultAsync(t => t.TransactionID == ID);
         if (transaction is null)
             throw new TransactionNotFoundException($"Could not find Transaction with ID '{ID}'.");
@@ -118,8 +98,6 @@ public static class TransactionService
     /// <returns>List of Transaction objects</returns>
     public static async Task<IEnumerable<Transaction>> GetTransactions()
     {
-        await Init();
-
         return await MoMoneydb.db.Table<Transaction>().OrderBy(t => t.Date).ToListAsync();
     }
 
@@ -129,8 +107,6 @@ public static class TransactionService
     /// <returns>List of Transaction objects</returns>
     public static async Task<IEnumerable<Transaction>> GetRecentTransactions(DateTime to)
     {
-        await Init();
-
         return await MoMoneydb.db.Table<Transaction>()
                                  .Where(t => t.Date <= to)
                                  .OrderByDescending(t => t.Date)
@@ -147,8 +123,6 @@ public static class TransactionService
     /// <returns>List of Transaction objects between the specified dates</returns>
     public static async Task<IEnumerable<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse)
     {
-        await Init();
-
         if (reverse)
         {
             return await MoMoneydb.db.Table<Transaction>().Where(t => t.Date >= from && t.Date <= to)
@@ -169,10 +143,7 @@ public static class TransactionService
     /// <returns>Transaction object</returns>
     public static async Task<Transaction> GetFirstTransaction()
     {
-        await Init();
-
         return await MoMoneydb.db.Table<Transaction>().FirstOrDefaultAsync();
-
     }
 
     /// <summary>

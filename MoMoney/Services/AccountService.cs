@@ -10,10 +10,8 @@ public static class AccountService
     /// <summary>
     /// Calls db Init.
     /// </summary>
-    static async Task Init()
+    public static async Task Init()
     {
-        await MoMoneydb.Init();
-
         if (!Accounts.Any())
             Accounts = await GetAccountsAsDict();
     }
@@ -27,8 +25,6 @@ public static class AccountService
     /// <exception cref="DuplicateAccountException"></exception>
     public static async Task AddAccount(string accountName, string accountType, decimal startingBalance)
     {
-        await Init();
-
         var res = await MoMoneydb.db.Table<Account>().CountAsync(a => a.AccountName == accountName);
         if (res > 0)
             throw new DuplicateAccountException("Account named '" + accountName + "' already exists");
@@ -55,8 +51,6 @@ public static class AccountService
     /// <exception cref="DuplicateAccountException"></exception>
     public static async Task AddAccounts(List<Account> accounts)
     {
-        await Init();
-
         // gets accounts from db
         var dbAccounts = await MoMoneydb.db.Table<Account>().ToListAsync();
 
@@ -77,8 +71,6 @@ public static class AccountService
     /// <param name="updatedAccount"></param>
     public static async Task UpdateAccount(Account updatedAccount)
     {
-        await Init();
-
         // update Account in db and dictionary
         await MoMoneydb.db.UpdateAsync(updatedAccount);
         Accounts[updatedAccount.AccountID] = updatedAccount;
@@ -90,8 +82,6 @@ public static class AccountService
     /// <param name="ID"></param>
     public static async Task RemoveAccount(int ID)
     {
-        await Init();
-
         // removes Account from db and dictionary
         await MoMoneydb.db.DeleteAsync<Account>(ID);
         Accounts.Remove(ID);
@@ -102,8 +92,6 @@ public static class AccountService
     /// </summary>
     public static async Task RemoveAllAccounts()
     {
-        await Init();
-
         await MoMoneydb.db.DeleteAllAsync<Account>();
         await MoMoneydb.db.DropTableAsync<Account>();
         await MoMoneydb.db.CreateTableAsync<Account>();
@@ -118,8 +106,6 @@ public static class AccountService
     /// <exception cref="AccountNotFoundException"></exception>
     public static async Task<Account> GetAccount(int ID)
     {
-        await Init();
-
         if (Accounts.TryGetValue(ID, out var account))
             return account;
         else
@@ -140,7 +126,9 @@ public static class AccountService
     /// <exception cref="AccountNotFoundException"></exception>
     public static async Task<Account> GetAccount(string name)
     {
-        await Init();
+        var accs = Accounts.Values.Where(a => a.AccountName.Equals(name, StringComparison.OrdinalIgnoreCase));
+        if (accs.Any())
+            return accs.First();
 
         var acc = await MoMoneydb.db.Table<Account>().FirstOrDefaultAsync(a => a.AccountName == name);
         if (acc is null)
@@ -155,8 +143,6 @@ public static class AccountService
     /// <returns>List of Account objects</returns>
     public static async Task<IEnumerable<Account>> GetAccounts()
     {
-        await Init();
-
         return await MoMoneydb.db.Table<Account>().ToListAsync();
     }
 
@@ -171,13 +157,21 @@ public static class AccountService
     }
 
     /// <summary>
+    /// Gets all Accounts from Accounts table as a dictionary with AccountName as Key.
+    /// </summary>
+    /// <returns>Dictionary of Account objects</returns>
+    public static async Task<Dictionary<string, int>> GetAccountsAsNameDict()
+    {
+        var accounts = await MoMoneydb.db.Table<Account>().ToListAsync();
+        return accounts.ToDictionary(a => a.AccountName, a => a.AccountID);
+    }
+
+    /// <summary>
     /// Gets enabled accounts from Accounts table as a list.
     /// </summary>
     /// <returns>List of active Account objects</returns>
     public static async Task<IEnumerable<Account>> GetActiveAccounts()
     {
-        await Init();
-
         return await MoMoneydb.db.Table<Account>().Where(a => a.Enabled).ToListAsync();
     }
 

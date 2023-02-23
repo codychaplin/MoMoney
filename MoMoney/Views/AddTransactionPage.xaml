@@ -125,17 +125,7 @@
                 </Grid>
 
             </VerticalStackLayout>
-
-            <!-- upload Transactions button -->
-        <ImageButton Source="upload.png"
-                     Margin="12"
-                     CornerRadius="5"
-                     WidthRequest="40"
-                     HeightRequest="40"
-                     VerticalOptions="End"
-                     HorizontalOptions="End"
-                     Command="{Binding ImportTransactionsCSVCommand}"/>
-    </Grid>
+        </Grid>
     </ScrollView>
 
 </ContentView>

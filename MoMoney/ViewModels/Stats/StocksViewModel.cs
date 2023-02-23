@@ -27,10 +27,11 @@ public partial class StocksViewModel : ObservableObject
     /// <param name="e"></param>
     public async void Init(object s, EventArgs e)
     {
-        await StockService.Init();
-
         // populate collection with cached values first
         var stocks = StockService.Stocks.Values;
+        if (!stocks.Any())
+            return;
+
         decimal totalBook = 0;
         decimal totalMarket = 0;
         foreach (var stock in stocks)

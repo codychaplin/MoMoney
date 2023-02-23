@@ -126,7 +126,7 @@ public partial class SettingsViewModel : ObservableObject
     /// Prompts the user to open a CSV file. Valid Categories are then added to the database.
     /// </summary>
     [RelayCommand]
-    async Task ImportCategoriesCSV()
+    async static Task ImportCategoriesCSV()
     {
         try
         {
@@ -156,9 +156,12 @@ public partial class SettingsViewModel : ObservableObject
                             string parent = categoryInfo[0];
                             if (!string.IsNullOrEmpty(parent))
                             {
-                                // check if parent exists in db
-                                var parentCat = await CategoryService.GetParentCategory(parent);
-                                if (parentCat is null)
+                                try
+                                {
+                                    // check if parent exists in db
+                                    var parentCat = await CategoryService.GetParentCategory(parent);
+                                }
+                                catch (CategoryNotFoundException)
                                 {
                                     // if doesn't exist in db, check if exists in categories list
                                     if (!categories.Select(c => c.CategoryName).Contains(parent))
@@ -176,10 +179,6 @@ public partial class SettingsViewModel : ObservableObject
                         }
 
                         await CategoryService.AddCategories(categories);
-                    }
-                    catch (CategoryNotFoundException ex)
-                    {
-                        await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
                     }
                     catch (InvalidCategoryException ex)
                     {
@@ -200,6 +199,214 @@ public partial class SettingsViewModel : ObservableObject
         }
         catch (Exception ex)
         {
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+    }
+
+    /// <summary>
+    /// Prompts the user to open a CSV file. Valid Transactions are then added to the database.
+    /// </summary>
+    [RelayCommand]
+    async Task ImportTransactionsCSV()
+    {
+        try
+        {
+            var options = new PickOptions { PickerTitle = "Select a .CSV file" };
+            var result = await FilePicker.Default.PickAsync(options);
+
+            if (result != null)
+            {
+                if (result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
+                {
+                    List<Transaction> transactions = new();
+                    var accountsDict = await AccountService.GetAccountsAsNameDict();
+                    var categoriesDict = await CategoryService.GetCategoriesAsNameDict();
+
+                    using var sr = new StreamReader(result.FullPath);
+                    int i = 1;
+                    try
+                    {
+                        var file = await sr.ReadToEndAsync();
+                        var rows = file.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+
+                        foreach (var row in rows)
+                        {
+                            // format line
+                            string[] transactionsInfo = row.Split(',');
+
+                            if (transactionsInfo.Length != 6)
+                                throw new FormatException($"Transaction {i} does not have the correct amount of fields");
+
+                            // split line into Transaction parameters and create new Transaction
+
+                            // date
+                            if (!DateTime.TryParse(transactionsInfo[0], out var date))
+                                throw new InvalidTransactionException($"Transaction {i}: Invalid date");
+
+                            // account
+                            if (!accountsDict.TryGetValue(transactionsInfo[1], out var accountID))
+                                throw new InvalidAccountException($"Transaction {i}: '{transactionsInfo[1]}' is not a valid Account");
+
+                            // amount
+                            if (!decimal.TryParse(transactionsInfo[2], out decimal amount))
+                                throw new InvalidTransactionException($"Transaction {i}: '{transactionsInfo[2]}' is not a valid number");
+
+                            // category
+                            if (!categoriesDict.TryGetValue($"{transactionsInfo[3]},", out var categoryID))
+                                throw new InvalidCategoryException($"Transaction {i}: '{transactionsInfo[3]}' is not a valid Category");
+
+                            // subcategory
+                            if (!categoriesDict.TryGetValue($"{transactionsInfo[4]},{transactionsInfo[3]}", out var subcategoryID))
+                                throw new InvalidCategoryException($"Transaction {i}: '{transactionsInfo[4]}' is not a valid Category");
+
+                            // payee
+                            string payee = "";
+                            if (categoryID != Constants.TRANSFER_ID && string.IsNullOrEmpty(transactionsInfo[5]))
+                                throw new InvalidTransactionException($"Transaction {i}: Payee cannot be blank");
+                            else
+                                payee = transactionsInfo[5];
+
+                            // transfer ID
+                            int? transferID;
+                            if (subcategoryID == Constants.CREDIT_ID)
+                            {
+                                transactions[i - 2].TransferID = accountID; // -2 because i started at 1, not 0
+                                transferID = transactions[i - 2].AccountID;
+                            }
+                            else
+                                transferID = null;
+
+                            Transaction transaction = new()
+                            {
+                                Date = date,
+                                AccountID = accountID,
+                                Amount = amount,
+                                CategoryID = categoryID,
+                                SubcategoryID = subcategoryID,
+                                Payee = payee,
+                                TransferID = transferID
+                            };
+
+                            transactions.Add(transaction);
+                            i++;
+                        }
+
+                        await TransactionService.AddTransactions(transactions);
+
+                        // update account balances after transactions are successfully added
+                        await CalculateAccountBalances();
+                    }
+                    catch (CategoryNotFoundException ex)
+                    {
+                        await Shell.Current.DisplayAlert("Category Not Found Error", $"Transaction {i}: {ex.Message}", "OK");
+                    }
+                    catch (AccountNotFoundException ex)
+                    {
+                        await Shell.Current.DisplayAlert("Account Not Found Error", $"Transaction {i}: {ex.Message}", "OK");
+                    }
+                    catch (Exception ex)
+                    {
+                        await Shell.Current.DisplayAlert("Error", $"Transaction {i}: {ex.Message}", "OK");
+                    }
+                    finally
+                    {
+                        sr.Close();
+                    }
+                }
+                else
+                    throw new FormatException("Invalid file type. Must be a CSV");
+            }
+        }
+        catch (Exception ex)
+        {
+            // if invalid, display error
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+    }
+
+    /// <summary>
+    /// Prompts the user to open a CSV file. Valid Accounts are then added to the database.
+    /// </summary>
+    [RelayCommand]
+    async static Task ImportStocksCSV()
+    {
+        try
+        {
+            var options = new PickOptions { PickerTitle = "Select a .CSV file" };
+            var result = await FilePicker.Default.PickAsync(options);
+
+            if (result != null)
+            {
+                if (result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
+                {
+                    List<Stock> stocks = new();
+
+                    using var sr = new StreamReader(result.FullPath);
+                    try
+                    {
+                        while (sr.Peek() != -1)
+                        {
+                            // format line
+                            string row = sr.ReadLine();
+                            string[] stockInfo = row.Split(',');
+
+                            // split line into Account parameters and create new account
+                            string symbol = stockInfo[0];
+                            if (string.IsNullOrEmpty(symbol))
+                                throw new InvalidStockException("Stock Symbol cannot be blank");
+
+                            if (!int.TryParse(stockInfo[1], out int quantity))
+                                throw new InvalidStockException("'" + stockInfo[1] + "' is not a number");
+
+                            if (!decimal.TryParse(stockInfo[2], out decimal cost))
+                                throw new InvalidStockException("'" + stockInfo[2] + "' is not a number");
+
+                            if (!decimal.TryParse(stockInfo[3], out decimal marketPrice))
+                                throw new InvalidStockException("'" + stockInfo[3] + "' is not a number");
+
+                            if (!decimal.TryParse(stockInfo[4], out decimal bookValue))
+                                throw new InvalidStockException("'" + stockInfo[4] + "' is not a number");
+
+                            // if valid, create new Account object and add to accounts
+                            Stock stock = new()
+                            {
+                                Symbol = symbol,
+                                Quantity = quantity,
+                                Cost = cost,
+                                MarketPrice = marketPrice,
+                                BookValue = bookValue
+                            };
+                            stocks.Add(stock);
+                        }
+
+                        await StockService.AddStocks(stocks);
+                    }
+                    catch (SQLiteException ex)
+                    {
+                        await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+                    }
+                    catch (InvalidStockException ex)
+                    {
+                        await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
+                    }
+                    catch (DuplicateStockException ex)
+                    {
+                        await Shell.Current.DisplayAlert("Import Aborted", ex.Message, "OK");
+                    }
+                    finally
+                    {
+                        sr.Close(); // close stream reader regardless
+                    }
+                }
+                else
+                {
+                    throw new FormatException("Invalid file type. Must be a CSV");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // if invalid, display error
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -266,22 +473,26 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     async Task CalculateAccountBalances()
     {
-        var transactions = await TransactionService.GetTransactions();
-        var accounts = await AccountService.GetAccounts();
-        if (!accounts.Any())
-        {
-            await Shell.Current.DisplayAlert("Attention", "No Accounts in Database", "OK");
-            return;
-        }
-
-        // group transactions by account, sum amounts, and convert to dictionary
-        var currentBalances = transactions.GroupBy(t => t.AccountID)
-                                          .Select(g => new { g.First().AccountID,
-                                                             Balance = g.Sum(t => t.Amount) })
-                                          .ToDictionary(a => a.AccountID, a => a.Balance);
-
         try
         {
+            var transactions = await TransactionService.GetTransactions();
+            var accounts = await AccountService.GetAccounts();
+            if (!transactions.Any())
+            {
+                return;
+            }
+            if (!accounts.Any())
+            {
+                await Shell.Current.DisplayAlert("Attention", "No Accounts in Database", "OK");
+                return;
+            }
+
+            // group transactions by account, sum amounts, and convert to dictionary
+            var currentBalances = transactions.GroupBy(t => t.AccountID)
+                                              .Select(g => new { g.First().AccountID,
+                                                                 Balance = g.Sum(t => t.Amount) })
+                                              .ToDictionary(a => a.AccountID, a => a.Balance);
+        
             // update current balance in db
             foreach (var account in accounts)
             {

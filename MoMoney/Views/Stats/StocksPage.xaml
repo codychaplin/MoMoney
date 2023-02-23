@@ -5,7 +5,6 @@
              xmlns:local="clr-namespace:MoMoney"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Stats"
              xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
-             Unloaded="ContentPage_Unloaded"
              Title="Stocks">
 
     <ContentPage.BindingContext>

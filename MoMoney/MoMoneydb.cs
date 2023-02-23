@@ -6,15 +6,12 @@ namespace MoMoney
     public static class MoMoneydb
     {
         public static SQLiteAsyncConnection db { get; private set; }
-        static readonly SemaphoreSlim semaphore = new(1);
 
         /// <summary>
         /// Creates new database connection, creates tables if not exists and adds default data to tables.
         /// </summary>
         public static async Task Init()
         {
-            await semaphore.WaitAsync();
-
             try
             {
                 if (db is not null)
@@ -42,9 +39,9 @@ namespace MoMoney
                     }
                 }
             }
-            finally
+            catch(Exception ex)
             {
-                semaphore.Release();
+                await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
             }
         }
 
