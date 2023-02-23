@@ -68,9 +68,9 @@
             </Style>
             <!-- condensed frame tile -->
             <Style x:Key="confrTile" TargetType="{x:Type Frame}">
-                <Setter Property="Padding" Value="0" />
+                <Setter Property="Padding" Value="5,0,5,0" />
                 <Setter Property="Margin" Value="10,0,10,5" />
-                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="HeightRequest" Value="45" />
                 <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
             </Style>
             <!-- ImageButton tile -->

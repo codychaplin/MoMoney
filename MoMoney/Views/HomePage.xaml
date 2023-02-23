@@ -22,7 +22,7 @@
 
     <!-- main page -->
     <ScrollView>
-        <Grid x:Name="grdMain" RowDefinitions="40,200,200,*">
+        <Grid x:Name="grdMain" RowDefinitions="50,200,200,*">
 
             <!-- grid styles -->
             <Grid.Resources>
@@ -55,8 +55,8 @@
                                  Source="calendar.png"
                                  HorizontalOptions="End"
                                  CornerRadius="0"
-                                 HeightRequest="20"
-                                 WidthRequest="20"
+                                 HeightRequest="30"
+                                 WidthRequest="30"
                                  Margin="10"
                                  Clicked="ImageButton_Clicked"/>
                 </Grid>

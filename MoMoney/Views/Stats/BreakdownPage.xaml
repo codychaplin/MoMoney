@@ -30,15 +30,15 @@
 
         <!-- SfListView Item Template -->
         <DataTemplate x:Key="ListView">
-            <Frame HeightRequest="30"
-                   Margin="10,2,10,0"
+            <Frame HeightRequest="40"
+                   Margin="5,5,5,0"
                    Padding="10,0,10,0"
                    BackgroundColor="{StaticResource Gray700}">
                 <Grid ColumnDefinitions="35,100,*" ColumnSpacing="10">
                     <Frame Background="{Binding Color}"
                            Margin="0"
                            Padding="0"
-                           HeightRequest="20">
+                           HeightRequest="30">
                         <Label Text="{Binding Percentage, StringFormat='{0:P0}'}"
                                TextColor="White"
                                VerticalOptions="Center"
@@ -123,7 +123,7 @@
 
                     <!-- collection -->
                     <Frame Grid.Row="1" Margin="0,10,0,10" Padding="2">
-                        <listview:SfListView ItemSpacing="-7"
+                        <listview:SfListView ItemSpacing="-2"
                                              ItemsSource="{Binding ExpenseData}"
                                              ItemTemplate="{StaticResource ListView}"
                                              DataSource="{StaticResource DataSource}" />
@@ -157,7 +157,7 @@
 
                     <!-- collection -->
                     <Frame Grid.Row="1" Margin="0,10,0,10" Padding="2">
-                        <listview:SfListView ItemSpacing="-7"
+                        <listview:SfListView ItemSpacing="-2"
                                              ItemsSource="{Binding IncomeData}"
                                              ItemTemplate="{StaticResource ListView}"
                                              DataSource="{StaticResource DataSource}" />

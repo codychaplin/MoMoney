@@ -45,16 +45,22 @@
             <Button x:Name="btnDelete"
                     Grid.Column="0"
                     Text="Delete"
+                    FontSize="18"
+                    HeightRequest="45"
                     BackgroundColor="{StaticResource Red}"
                     Command="{Binding RemoveCommand}" />
             <Button x:Name="btnClear"
                     Grid.Column="1"
                     Text="Clear"
+                    FontSize="18"
+                    HeightRequest="45"
                     BackgroundColor="{StaticResource Blue}"
                     Clicked="btnClear_Clicked" />
             <Button x:Name="btnEnter"
                     Grid.Column="2"
                     Text="Update"
+                    FontSize="18"
+                    HeightRequest="45"
                     BackgroundColor="{StaticResource Green}"
                     Command="{Binding EditCommand}" />
         </Grid>

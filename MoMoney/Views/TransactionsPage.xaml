@@ -27,7 +27,7 @@
     </ContentView.Resources>
 
     <!-- main page -->
-    <Grid x:Name="grid" RowDefinitions="40,0,0,0,0,0,0,*">
+    <Grid x:Name="grid" RowDefinitions="50,0,0,0,0,0,0,*">
         <Grid.Resources>
             <Style TargetType="{x:Type Frame}" x:Key="frFilter">
                 <Setter Property="Padding" Value="5,0,0,0" />
@@ -60,8 +60,8 @@
                          Source="filter.png"
                          Margin="10" 
                          CornerRadius="0"
-                         WidthRequest="20"
-                         HeightRequest="20"
+                         WidthRequest="30"
+                         HeightRequest="30"
                          HorizontalOptions="End"
                          VerticalOptions="Start"
                          Clicked="ImageButton_Clicked" />
@@ -240,7 +240,7 @@
                                 <!-- subcategory -->
                                 <Label Grid.Column="1"
                                        FontSize="18"
-                                       WidthRequest="120"
+                                       WidthRequest="140"
                                        VerticalOptions="Center"
                                        HorizontalOptions="Start"
                                        Style="{StaticResource lblTile}"

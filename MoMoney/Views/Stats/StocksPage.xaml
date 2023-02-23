@@ -57,17 +57,18 @@
         
         <!-- stock list -->
         <Frame Grid.Row="1" Margin="10" Padding="5"> 
-            <listview:SfListView ItemsSource="{Binding Stocks}">
+            <listview:SfListView ItemsSource="{Binding Stocks}" ItemSpacing="0,0,0,5">
                 <listview:SfListView.ItemTemplate>
                     <DataTemplate x:DataType="viewmodel:DetailedStock">
                         <!-- template -->
-                        <Frame Margin="0,0,0,5"
-                               Padding="5"
-                               HeightRequest="40"
+                        <Frame Padding="5"
+                               HeightRequest="45"
                                BackgroundColor="{StaticResource Gray700}">
                             <Grid RowDefinitions="*,*" ColumnDefinitions="*,*">
                                 <Label Text="{Binding Symbol}"
+                                       Grid.RowSpan="2"
                                        FontSize="16"
+                                       Padding="5"
                                        VerticalOptions="Center"
                                        HorizontalOptions="Start" />
                                 <Label Text="{Binding MarketPrice, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"

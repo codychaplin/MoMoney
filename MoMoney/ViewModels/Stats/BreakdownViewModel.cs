@@ -44,7 +44,11 @@ public partial class BreakdownViewModel : ObservableObject
         InitPalettes();
 
         var first = await TransactionService.GetFirstTransaction();
-        if (first is null) return;
+        if (first is null)
+        {
+            Months.Add(DateTime.Today);
+            return;
+        }
 
         // get date of first transaction, today's date, and add each month to collection
         DateTime start = new(first.Date.Year, first.Date.Month, 1);
@@ -53,7 +57,7 @@ public partial class BreakdownViewModel : ObservableObject
         {
             Months.Add(start);
             start = start.AddMonths(1);
-        }
+        } 
 
         // set index, set SelectedMonth, subscribe Update to EventHandler, then invoke EventHandler
         monthIndex = Months.Count - 1;
@@ -64,6 +68,7 @@ public partial class BreakdownViewModel : ObservableObject
 
     void InitPalettes()
     {
+        // expense colour palette
         ExpensePalette.Add(Color.FromArgb("9d0208"));
         ExpensePalette.Add(Color.FromArgb("e85d04"));
         ExpensePalette.Add(Color.FromArgb("faa307"));
@@ -74,6 +79,7 @@ public partial class BreakdownViewModel : ObservableObject
         ExpensePalette.Add(Color.FromArgb("2c699a"));
         ExpensePalette.Add(Color.FromArgb("54478c"));
 
+        // income colour palette
         IncomePalette.Add(Color.FromArgb("155d27"));
         IncomePalette.Add(Color.FromArgb("1a7431"));
         IncomePalette.Add(Color.FromArgb("208b3a"));
@@ -108,6 +114,8 @@ public partial class BreakdownViewModel : ObservableObject
         DateTime from = new(SelectedMonth.Year, SelectedMonth.Month, 1);
         DateTime to = new(SelectedMonth.Year, SelectedMonth.Month, SelectedMonth.AddMonths(1).AddDays(-1).Day);
         var transactions = await TransactionService.GetTransactionsFromTo(from, to, false);
+        if (!transactions.Any())
+            return;
         
         // calculates sums for tab headers
         // absolute value for expenses just to make it look cleaner

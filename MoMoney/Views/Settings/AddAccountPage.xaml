@@ -56,11 +56,15 @@
             <Button x:Name="btnClear"
                     Grid.Column="0"
                     Text="Clear"
+                    FontSize="18"
+                    HeightRequest="45"
                     BackgroundColor="{StaticResource Blue}"
                     Clicked="btnClear_Clicked" />
             <Button x:Name="btnEnter"
                     Grid.Column="1"
                     Text="Accept"
+                    FontSize="18"
+                    HeightRequest="45"
                     BackgroundColor="{StaticResource Green}"
                     Command="{Binding AddCommand}" />
         </Grid>
