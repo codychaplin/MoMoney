@@ -82,6 +82,21 @@ public static class StockService
     }
 
     /// <summary>
+    /// Given a new and old Stock object, removes old and inserts new into the Stocks table.
+    /// </summary>
+    /// <param name="updatedStock"></param>
+    public static async Task UpdateStock(Stock updatedStock, Stock oldStock)
+    {
+        ValidateStock(updatedStock.Symbol, updatedStock.Quantity, updatedStock.Cost, updatedStock.MarketPrice, updatedStock.BookValue);
+
+        // update Stock in db and dictionary
+        await MoMoneydb.db.DeleteAsync(oldStock);
+        await MoMoneydb.db.InsertAsync(updatedStock);
+        Stocks.Remove(oldStock.Symbol);
+        Stocks[updatedStock.Symbol] = updatedStock;
+    }
+
+    /// <summary>
     /// Removes Stock from Stocks table.
     /// </summary>
     /// <param name="symbol"></param>
@@ -118,7 +133,10 @@ public static class StockService
     /// <returns>List of Stock objects</returns>
     public static async Task<List<Stock>> GetStocks()
     {
-        return await MoMoneydb.db.Table<Stock>().ToListAsync();
+        if (Stocks.Any())
+            return Stocks.Values.ToList();
+        else
+            return await MoMoneydb.db.Table<Stock>().ToListAsync();
     }
 
     /// <summary>

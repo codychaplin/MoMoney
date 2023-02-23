@@ -1,13 +1,16 @@
-﻿using SQLite;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SQLite;
 
 namespace MoMoney.Models;
 
-public class Stock
+public partial class Stock : ObservableObject
 {
     [PrimaryKey]
     public string Symbol { get; set; }
     public int Quantity { get; set; }
     public decimal Cost { get; set; }
-    public decimal MarketPrice { get; set; }
+
+    [ObservableProperty]
+    public decimal marketPrice;
     public decimal BookValue { get; set; }
 }

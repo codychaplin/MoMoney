@@ -5,14 +5,15 @@
              xmlns:local="clr-namespace:MoMoney"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Stats"
              xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
+             xmlns:data="clr-namespace:Syncfusion.Maui.DataSource;assembly=Syncfusion.Maui.DataSource"
              Title="Stocks">
 
     <ContentPage.BindingContext>
         <viewmodel:StocksViewModel />
     </ContentPage.BindingContext>
 
-    <!-- converter -->
     <ContentPage.Resources>
+        <!-- converters -->
         <local:ShowValueConverter x:Key="ShowValue" />
         <local:ShowValuePercentConverter x:Key="ShowValuePercent" />
         <local:PositiveNegativeColourConverter x:Key="PosNegColour" />
@@ -58,7 +59,7 @@
         <Frame Grid.Row="1" Margin="10" Padding="5"> 
             <listview:SfListView ItemsSource="{Binding Stocks}">
                 <listview:SfListView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="viewmodel:DetailedStock">
                         <!-- template -->
                         <Frame Margin="0,0,0,5"
                                Padding="5"

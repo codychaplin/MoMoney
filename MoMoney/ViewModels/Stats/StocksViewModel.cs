@@ -1,8 +1,9 @@
-﻿using System.Text.Json;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using HtmlAgilityPack;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
+using MoMoney.Exceptions;
 
 namespace MoMoney.ViewModels.Stats;
 
@@ -20,6 +21,8 @@ public partial class StocksViewModel : ObservableObject
     [ObservableProperty]
     public decimal marketValue = 0;
 
+    public CancellationTokenSource cts = new();
+
     /// <summary>
     /// Initializes data for StocksPage
     /// </summary>
@@ -28,7 +31,7 @@ public partial class StocksViewModel : ObservableObject
     public async void Init(object s, EventArgs e)
     {
         // populate collection with cached values first
-        var stocks = StockService.Stocks.Values;
+        var stocks = StockService.Stocks.Values.OrderByDescending(s => s.MarketPrice);
         if (!stocks.Any())
             return;
 
@@ -44,73 +47,83 @@ public partial class StocksViewModel : ObservableObject
         MarketValue = totalMarket;
         Total = totalMarket - totalBook;
         TotalChange = (totalMarket / totalBook) - 1;
-
-        // get updated prices from API
-        await GetUpdatedStockPrices();
+        
+        await Task.Delay(500); // allows smooth transition to page
+        await GetUpdatedStockPrices(cts.Token); // get updated prices via webscraping
     }
 
     /// <summary>
     /// Uses an API to fetch a list of stocks' prices.
     /// </summary>
-    public async Task GetUpdatedStockPrices()
+    public async Task GetUpdatedStockPrices(CancellationToken token)
     {
-        int count = 0;
-        foreach (var stock in Stocks)
+        try
         {
-            using (var client = new HttpClient())
+            HttpClient client = new();
+            foreach (var stock in Stocks)
             {
-                string APIKey = (++count <= 5) ? Secret.AlphavantageAPIKey1 : Secret.AlphavantageAPIKey2;
-                string url = $"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={stock.Symbol}&apikey={APIKey}";
-                HttpResponseMessage response = await client.GetAsync(url);
+                // get url from stock symbol, get response, and then contents
+                string url = $"https://www.google.com/finance/quote/{stock.Symbol}";
+                HttpResponseMessage response = await client.GetAsync(url, token);
+                response.EnsureSuccessStatusCode();
+                string htmlContent = await response.Content.ReadAsStringAsync(token);
 
-                if (response.IsSuccessStatusCode)
+                // parse content to html, find element using xpath
+                HtmlDocument document = new();
+                document.LoadHtml(htmlContent);
+                HtmlNode priceElement = document.DocumentNode.SelectSingleNode("//div[@class='YMlKec fxKbKc']");
+                string price = priceElement.InnerHtml[1..];
+
+                // validate price
+                if (string.IsNullOrEmpty(price))
+                    throw new InvalidStockException("Updated price not found.");
+                if (decimal.TryParse(price, out decimal marketPrice))
                 {
-                    // parse response and get 'price' property
-                    string json = await response.Content.ReadAsStringAsync();
-                    JsonDocument doc = JsonDocument.Parse(json);
-                    JsonElement root = doc.RootElement;
-                    string stringPrice = "-1";
-                    decimal price = -1;
-                    try
-                    {
-                        JsonElement quote = root.GetProperty("Global Quote");
-                        stringPrice = quote.GetProperty("05. price").GetString();
-                    }
-                    catch (KeyNotFoundException)
-                    {
-                        // triggers if reached API call limit
-                    }
-                    finally
-                    {
-                        // if price is valid, update stock info
-                        if (decimal.TryParse(stringPrice, out price))
-                        {
-                            // use old market price if unchanged
-                            if (price == -1)
-                                price = stock.MarketPrice;
+                    stock.MarketPrice = marketPrice;
 
-                            // update price in collection
-                            Stocks.Where(s => s.Symbol == stock.Symbol).First().MarketPrice = price;
-
-                            // if market price has changed, update in db
-                            var oldStock = StockService.Stocks[stock.Symbol];
-                            if (stock.MarketPrice != oldStock.MarketPrice)
-                            {
-                                // need to use oldStock due to casting issues
-                                oldStock.MarketPrice = stock.MarketPrice;
-                                await StockService.UpdateStock(oldStock);
-                            }
-                        }
+                    // if market price has changed, update in db
+                    var oldStock = StockService.Stocks[stock.Symbol];
+                    if (stock.MarketPrice != oldStock.MarketPrice)
+                    {
+                        // need to use oldStock due to casting issues
+                        oldStock.MarketPrice = stock.MarketPrice;
+                        await StockService.UpdateStock(oldStock);
                     }
                 }
+                else
+                    throw new InvalidStockException($"{price} is not a valid number");
             }
+        }
+        catch (HttpRequestException ex)
+        {
+            await Shell.Current.DisplayAlert("HTTP Error", ex.Message, "OK");
+        }
+        catch (InvalidStockException ex)
+        {
+            await Shell.Current.DisplayAlert("Parse Error", ex.Message, "OK");
+        }
+        catch (InvalidOperationException)
+        {
+            // triggers if page is closed while HttpResponseMessage is processing
+        }
+        catch (TaskCanceledException)
+        {
+            // triggers when page is closed
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            cts?.Cancel(); // cancel task regardless
         }
     }
 }
 
 public class DetailedStock : Stock
 {
-    public decimal MarketValue => Symbol.EndsWith(".TO") ? MarketPrice * Quantity : MarketPrice * Quantity * 1.3m;
+    public decimal MarketValue => Symbol.EndsWith(":TSE") ? MarketPrice * Quantity : MarketPrice * Quantity * 1.3m;
     public decimal Change => MarketValue - BookValue;
     public decimal ChangePercent => (MarketValue / BookValue) - 1;
 

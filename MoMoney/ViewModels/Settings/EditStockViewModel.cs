@@ -12,6 +12,7 @@ public partial class EditStockViewModel : ObservableObject
 {
     [ObservableProperty]
     public Stock stock = new();
+    Stock oldStock;
 
     public string Symbol { get; set; } // Stock Symbol
 
@@ -23,6 +24,14 @@ public partial class EditStockViewModel : ObservableObject
         try
         {
             Stock = await StockService.GetStock(Symbol);
+            oldStock = new Stock
+            {
+                Symbol = Stock.Symbol,
+                Quantity = Stock.Quantity,
+                Cost = Stock.Cost,
+                MarketPrice = Stock.MarketPrice,
+                BookValue = Stock.BookValue
+            };
         }
         catch (StockNotFoundException ex)
         {
@@ -38,7 +47,12 @@ public partial class EditStockViewModel : ObservableObject
     {
         try
         {
-            await StockService.UpdateStock(Stock);
+            // if symbol (primary key) changed, 
+            if (oldStock.Symbol != Stock.Symbol)
+                await StockService.UpdateStock(Stock, oldStock);
+            else
+                await StockService.UpdateStock(Stock);
+
             await Shell.Current.GoToAsync("..");
         }
         catch (SQLiteException ex)

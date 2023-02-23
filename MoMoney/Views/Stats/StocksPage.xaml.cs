@@ -12,4 +12,10 @@ public partial class StocksPage : ContentPage
 		vm = (StocksViewModel)BindingContext;
 		Loaded += vm.Init;
 	}
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        vm.cts?.Cancel();
+    }
 }
