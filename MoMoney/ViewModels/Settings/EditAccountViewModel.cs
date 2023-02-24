@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
+using MoMoney.Views;
 
 namespace MoMoney.ViewModels.Settings;
 
@@ -25,6 +26,7 @@ public partial class EditAccountViewModel : ObservableObject
             try
             {
                 Account = await AccountService.GetAccount(id);
+                AddTransactionPage.UpdatePage?.Invoke(this, new EventArgs()); // update accounts on AddTransactionPage
             }
             catch (AccountNotFoundException ex)
             {

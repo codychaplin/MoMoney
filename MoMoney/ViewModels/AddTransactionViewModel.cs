@@ -45,7 +45,7 @@ public partial class AddTransactionViewModel : ObservableObject
     /// Gets accounts from database and refreshes Accounts collection.
     /// </summary>
     /// <returns></returns>
-    public async Task GetAccounts()
+    public async void GetAccounts(object sender, EventArgs e)
     {
         var accounts = await AccountService.GetActiveAccounts();
         Accounts.Clear();

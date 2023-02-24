@@ -7,41 +7,40 @@ public partial class AddTransactionPage : ContentView
 {
     AddTransactionViewModel vm;
 
-	public AddTransactionPage()
+    public static EventHandler<EventArgs> UpdatePage { get; set; }
+
+    public AddTransactionPage()
 	{
 		InitializeComponent();
         vm = (AddTransactionViewModel)BindingContext;
+
+        // initialize fields
         dtDate.Date = DateTime.Today;
         txtAmount.Text = "";
-        Allowed(false); // disable fields on start
+        Allowed(false, false, false); // disable fields on start
+        
+        Loaded += vm.GetAccounts;
+        UpdatePage += vm.GetAccounts;
     }
 
     /// <summary>
     /// enabled/disables input fields.
     /// </summary>
     /// <param name="flag"></param>
-    void Allowed(bool flag)
+    /// <param name="category"></param>
+    /// <param name="subcategory"></param>
+    void Allowed(bool flag, bool category, bool subcategory)
     {
         dtDate.IsEnabled = flag;
         pckAccount.IsEnabled = flag;
         txtAmount.IsEnabled = flag;
-        pckCategory.IsEnabled = flag;
-        pckSubcategory.IsEnabled = flag;
+        pckCategory.IsEnabled = category;
+        pckSubcategory.IsEnabled = subcategory;
         txtPayee.IsEnabled = flag;
     }
 
     /// <summary>
-    /// Fill Account picker with Accounts from database.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private async void ContentPage_Loaded(object sender, EventArgs e)
-    {
-        await vm.GetAccounts();
-    }
-
-    /// <summary>
-    /// Highlights button, enables input fields, and populates corresponding Category picker.
+    /// Highlights button, enables Income input fields, and populates corresponding Category picker.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -49,7 +48,7 @@ public partial class AddTransactionPage : ContentView
     {
         ChangeButtonColour(sender as Button);
 
-        Allowed(true);
+        Allowed(true, false, true);
         frPayee.IsVisible = true;
         frTransferTo.IsVisible = false;
 
@@ -58,7 +57,7 @@ public partial class AddTransactionPage : ContentView
     }
 
     /// <summary>
-    /// Highlights button, enables input fields, and populates corresponding Category picker.
+    /// Highlights button, enables Expense input fields, and populates corresponding Category picker.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -66,7 +65,7 @@ public partial class AddTransactionPage : ContentView
     {
         ChangeButtonColour(sender as Button);
 
-        Allowed(true);
+        Allowed(true, true, true);
         frPayee.IsVisible = true;
         frTransferTo.IsVisible = false;
 
@@ -74,7 +73,7 @@ public partial class AddTransactionPage : ContentView
     }
 
     /// <summary>
-    /// Highlights button, enables input fields, and populates corresponding Category picker.
+    /// Highlights button, enables Transfer input fields, and populates corresponding Category picker.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -82,7 +81,8 @@ public partial class AddTransactionPage : ContentView
     {
         ChangeButtonColour(sender as Button);
 
-        Allowed(true);
+        Allowed(true, false, false);
+
         frPayee.IsVisible = false;
         frTransferTo.IsVisible = true;
 
@@ -96,7 +96,7 @@ public partial class AddTransactionPage : ContentView
     /// <param name="button"></param>
     void ChangeButtonColour(Button button)
     {
-        foreach (Button btn in grdTransactionTypeButtons.Children)
+        foreach (Button btn in grdTransactionTypeButtons.Children.Cast<Button>())
         {
             if (btn == button)
                 btn.BackgroundColor = Color.FromArgb("212121");
@@ -131,7 +131,7 @@ public partial class AddTransactionPage : ContentView
     /// <param name="e"></param>
     private void btnClear_Clicked(object sender, EventArgs e)
     {
-        Clear();
+        Clear(false);
         vm.Categories.Clear();
         pckCategory.IsEnabled = false;
         pckSubcategory.IsEnabled = false;
@@ -145,23 +145,24 @@ public partial class AddTransactionPage : ContentView
     /// <param name="e"></param>
     private void btnEnter_Clicked(object sender, EventArgs e)
     {
-        Clear();
-        pckCategory.SelectedIndex = -1;
-        pckSubcategory.SelectedIndex = -1;
+        Clear(true);
     }
 
     /// <summary>
     /// Resets input fields.
     /// </summary>
-    void Clear()
+    void Clear(bool partial)
     {
-        dtDate.Date = DateTime.Now;
-        pckAccount.SelectedIndex = -1;
         vm.Amount = 0;
         txtAmount.Text = "";
         vm.Payee = "";
-        vm.Subcategories.Clear();
         pckTransferTo.SelectedIndex = -1;
+
+        if (partial) return;
+
+        dtDate.Date = DateTime.Now;
+        pckAccount.SelectedIndex = -1;
+        vm.Subcategories.Clear();
         frPayee.IsVisible = true;
         frTransferTo.IsVisible = false;
     }

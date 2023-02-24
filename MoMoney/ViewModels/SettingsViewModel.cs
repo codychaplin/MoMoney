@@ -6,6 +6,7 @@ using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
 using MoMoney.Views.Settings;
+using MoMoney.Views;
 
 namespace MoMoney.ViewModels;
 
@@ -91,6 +92,7 @@ public partial class SettingsViewModel : ObservableObject
                         }
 
                         await AccountService.AddAccounts(accounts);
+                        AddTransactionPage.UpdatePage?.Invoke(null, new EventArgs()); // update accounts on AddTransactionPage
                     }
                     catch (SQLiteException ex)
                     {

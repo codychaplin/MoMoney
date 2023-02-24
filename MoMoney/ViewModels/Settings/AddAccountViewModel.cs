@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Services;
 using MoMoney.Exceptions;
+using MoMoney.Views;
 
 namespace MoMoney.ViewModels.Settings;
 
@@ -26,6 +27,7 @@ public partial class AddAccountViewModel : ObservableObject
         try
         {
             await AccountService.AddAccount(Name, Type, StartingBalance);
+            AddTransactionPage.UpdatePage?.Invoke(this, new EventArgs()); // update accounts on AddTransactionPage
             await Shell.Current.GoToAsync("..");
         }
         catch (SQLiteException ex)
