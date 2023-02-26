@@ -15,7 +15,7 @@ Works on Android 10.0 and later.
 
 ## How to Use
 * Accounts and categories are needed before transactions are added
-* Must have a Syncfusion license key declared in `Constants.cs` called `SfLicenseKey`
+* Must have a Syncfusion license key declared in `Secret.cs` called `SfLicenseKey`
 * Stock prices are based on $CAD. Market values for stocks from US markets are multiplied
       by 1.3. This can be changed at the bottom of `StocksViewModel.cs`
 * See below for import formats
