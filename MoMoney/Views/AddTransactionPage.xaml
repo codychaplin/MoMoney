@@ -5,7 +5,6 @@
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
              xmlns:models="clr-namespace:MoMoney.Models"
              x:DataType="viewmodel:AddTransactionViewModel"
-             Loaded="ContentPage_Loaded"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
     <ContentView.BindingContext>
@@ -114,14 +113,12 @@
                     <Button x:Name="btnClear"
                             Grid.Column="0"
                             Text="Clear"
-                            FontSize="18"
                             HeightRequest="45"
                             BackgroundColor="{StaticResource Blue}"
                             Clicked="btnClear_Clicked" />
                     <Button x:Name="btnEnter"
                             Grid.Column="1"
                             Text="Accept"
-                            FontSize="18"
                             HeightRequest="45"
                             BackgroundColor="{StaticResource Green}"
                             Clicked="btnEnter_Clicked"

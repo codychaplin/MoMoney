@@ -22,7 +22,7 @@
 
     <!-- main page -->
     <ScrollView>
-        <Grid x:Name="grdMain" RowDefinitions="50,200,200,*">
+        <Grid x:Name="grdMain" RowDefinitions="40,220,200,*">
 
             <!-- grid styles -->
             <Grid.Resources>
@@ -68,7 +68,6 @@
                        IsVisible="False"
                        HeightRequest="40"
                        Margin="50,0,50,0"
-                       VerticalOptions="Start"
                        HorizontalOptions="Center"
                        BackgroundColor="{StaticResource Gray700}">
                     <Grid ColumnDefinitions="30,*,*">
@@ -95,7 +94,7 @@
             <Frame Grid.Row="1"
                    Margin="10"
                    CornerRadius="5"
-                   Padding="0,5,5,5"
+                   Padding="0,0,5,5"
                    HeightRequest="200">
                 <Frame.Background>
                     <LinearGradientBrush EndPoint="0,1">

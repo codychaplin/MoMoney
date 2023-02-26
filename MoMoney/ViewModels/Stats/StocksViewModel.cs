@@ -16,10 +16,13 @@ public partial class StocksViewModel : ObservableObject
     public decimal total = 0;
 
     [ObservableProperty]
-    public decimal totalChange = 0;
+    public decimal totalPercent = 0;
 
     [ObservableProperty]
     public decimal marketValue = 0;
+
+    decimal totalBook = 0;
+    decimal totalMarket = 0;
 
     public CancellationTokenSource cts = new();
 
@@ -35,8 +38,6 @@ public partial class StocksViewModel : ObservableObject
         if (!stocks.Any())
             return;
 
-        decimal totalBook = 0;
-        decimal totalMarket = 0;
         foreach (var stock in stocks)
         {
             DetailedStock dStock = new(stock);
@@ -46,7 +47,7 @@ public partial class StocksViewModel : ObservableObject
         }
         MarketValue = totalMarket;
         Total = totalMarket - totalBook;
-        TotalChange = (totalMarket / totalBook) - 1;
+        TotalPercent = (totalMarket / totalBook) - 1;
         
         await Task.Delay(500); // allows smooth transition to page
         await GetUpdatedStockPrices(cts.Token); // get updated prices via webscraping
@@ -60,10 +61,10 @@ public partial class StocksViewModel : ObservableObject
         try
         {
             HttpClient client = new();
-            foreach (var stock in Stocks)
+            for (int i = 0; i < Stocks.Count; i++)
             {
                 // get url from stock symbol, get response, and then contents
-                string url = $"https://www.google.com/finance/quote/{stock.Symbol}";
+                string url = $"https://www.google.com/finance/quote/{Stocks[i].Symbol}";
                 HttpResponseMessage response = await client.GetAsync(url, token);
                 response.EnsureSuccessStatusCode();
                 string htmlContent = await response.Content.ReadAsStringAsync(token);
@@ -79,15 +80,24 @@ public partial class StocksViewModel : ObservableObject
                     throw new InvalidStockException("Updated price not found.");
                 if (decimal.TryParse(price, out decimal marketPrice))
                 {
-                    stock.MarketPrice = marketPrice;
-
-                    // if market price has changed, update in db
-                    var oldStock = StockService.Stocks[stock.Symbol];
-                    if (stock.MarketPrice != oldStock.MarketPrice)
+                    var difference = marketPrice - Stocks[i].MarketPrice;
+                    // if price has changed, update values
+                    if (difference != 0)
                     {
-                        // need to use oldStock due to casting issues
-                        oldStock.MarketPrice = stock.MarketPrice;
+                        var stock = new DetailedStock(Stocks[i]) { MarketPrice = marketPrice };
+                        var marketValue = Stocks[i].MarketValue;
+                        Stocks[i] = stock;
+
+                        // update in db (need to use oldStock due to casting issues)
+                        var oldStock = StockService.Stocks[Stocks[i].Symbol];
+                        oldStock.MarketPrice = Stocks[i].MarketPrice;
                         await StockService.UpdateStock(oldStock);
+
+                        // update totals
+                        totalMarket += stock.MarketValue - marketValue;
+                        MarketValue = totalMarket;
+                        Total = totalMarket - totalBook;
+                        TotalPercent = (totalMarket / totalBook) - 1;
                     }
                 }
                 else

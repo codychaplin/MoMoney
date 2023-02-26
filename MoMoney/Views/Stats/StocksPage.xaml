@@ -46,8 +46,8 @@
                            FontSize="18"
                            HorizontalOptions="Center"
                            VerticalOptions="Center" />
-                    <Label Text="{Binding TotalChange, Converter={StaticResource ShowValuePercent}, StringFormat=' ({0:P2})'}"
-                           TextColor="{Binding TotalChange, Converter={StaticResource PosNegColour}}"
+                    <Label Text="{Binding TotalPercent, Converter={StaticResource ShowValuePercent}, StringFormat=' ({0:P2})'}"
+                           TextColor="{Binding TotalPercent, Converter={StaticResource PosNegColour}}"
                            FontSize="18"
                            HorizontalOptions="Center" 
                            VerticalOptions="Center" />
