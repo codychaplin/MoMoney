@@ -40,6 +40,11 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android31.0|AnyCPU'">
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
+	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-android31.0|AnyCPU'">
+	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 
