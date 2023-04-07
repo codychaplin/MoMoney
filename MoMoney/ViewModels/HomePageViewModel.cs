@@ -76,20 +76,20 @@ public partial class HomePageViewModel : BaseViewModel
 
     async Task GetStats(IEnumerable<Transaction> transactions)
     {
-        // update income/expense totals
-        if (Constants.ShowValue)
-        {
-            TotalIncome = transactions.Where(t => t.CategoryID == Constants.INCOME_ID).Sum(t => t.Amount);
-            TotalExpenses = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID).Sum(t => t.Amount);
-        }
-        else
-        {
-            TotalIncome = 0;
-            TotalExpenses = 0;
-        }
-
         try
         {
+            // update income/expense totals
+            if (Constants.ShowValue)
+            {
+                TotalIncome = transactions.Where(t => t.CategoryID == Constants.INCOME_ID).Sum(t => t.Amount);
+                TotalExpenses = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID).Sum(t => t.Amount);
+            }
+            else
+            {
+                TotalIncome = 0;
+                TotalExpenses = 0;
+            }
+
             // update top income subcategory
             var subcategoryID = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
                                        .GroupBy(t => t.SubcategoryID)
@@ -100,6 +100,7 @@ public partial class HomePageViewModel : BaseViewModel
                                        })
                                        .MaxBy(g => g.Total)
                                        .SubcategoryID;
+
             Category subcategory = await CategoryService.GetCategory(subcategoryID);
             TopIncomeSubcategory = subcategory.CategoryName;
 
@@ -119,6 +120,10 @@ public partial class HomePageViewModel : BaseViewModel
         catch (CategoryNotFoundException ex)
         {
             await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 

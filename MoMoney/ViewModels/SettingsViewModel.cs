@@ -494,9 +494,12 @@ public partial class SettingsViewModel : ObservableObject
                                               .Select(g => new { g.First().AccountID,
                                                                  Balance = g.Sum(t => t.Amount) })
                                               .ToDictionary(a => a.AccountID, a => a.Balance);
-        
+
+            // get accounts that only exist in currentBalances
+            var matchingAccounts = accounts.Where(a => currentBalances.ContainsKey(a.AccountID));
+
             // update current balance in db
-            foreach (var account in accounts)
+            foreach (var account in matchingAccounts)
             {
                 account.CurrentBalance = account.StartingBalance + currentBalances[account.AccountID];
                 await AccountService.UpdateAccount(account);
@@ -505,6 +508,10 @@ public partial class SettingsViewModel : ObservableObject
         catch (SQLiteException ex)
         {
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 

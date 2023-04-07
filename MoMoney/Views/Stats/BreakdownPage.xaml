@@ -34,7 +34,7 @@
                    Margin="5,5,5,0"
                    Padding="10,0,10,0"
                    BackgroundColor="{StaticResource Gray700}">
-                <Grid ColumnDefinitions="35,100,*" ColumnSpacing="10">
+                <Grid ColumnDefinitions="40,100,*" ColumnSpacing="10">
                     <Frame Background="{Binding Color}"
                            Margin="0"
                            Padding="0"

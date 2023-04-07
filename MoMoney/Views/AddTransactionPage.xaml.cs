@@ -115,7 +115,7 @@ public partial class AddTransactionPage : ContentView
         var parentCategory = (Category)pckCategory.SelectedItem;
         if (parentCategory != null)
         {
-            pckSubcategory.IsEnabled = true;
+            pckSubcategory.IsEnabled = !frTransferTo.IsVisible; // stays disabled if transfer
             await vm.GetSubcategories(parentCategory);
 
             // if transfer, autoselect "Debit" as subcategory
