@@ -24,6 +24,9 @@ public partial class EditTransactionViewModel : ObservableObject
     public ObservableCollection<Category> subcategories = new();
 
     [ObservableProperty]
+    public ObservableCollection<string> payees = new();
+
+    [ObservableProperty]
     public Account account;
 
     [ObservableProperty]
@@ -180,6 +183,13 @@ public partial class EditTransactionViewModel : ObservableObject
         }
 
         Subcategory = InitialSubcategory;
+    }
+
+    public async Task GetPayees()
+    {
+        var payees = await TransactionService.GetPayeesFromTransactions();
+        Payees = new ObservableCollection<string>(payees);
+
     }
 
     /// <summary>

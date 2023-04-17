@@ -20,6 +20,7 @@ public partial class AddTransactionPage : ContentView
         Allowed(false, false, false); // disable fields on start
         
         Loaded += vm.GetAccounts;
+        Loaded += vm.GetPayees;
         UpdatePage += vm.GetAccounts;
     }
 
@@ -36,7 +37,7 @@ public partial class AddTransactionPage : ContentView
         txtAmount.IsEnabled = flag;
         pckCategory.IsEnabled = category;
         pckSubcategory.IsEnabled = subcategory;
-        txtPayee.IsEnabled = flag;
+        entPayee.IsEnabled = flag;
     }
 
     /// <summary>

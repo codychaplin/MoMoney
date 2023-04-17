@@ -192,9 +192,3 @@ public partial class InsightsViewModel : ObservableObject
         }
     }
 }
-
-public class IncomeExpenseData
-{
-    public string Month { get; set; }
-    public decimal Amount { get; set; }
-}

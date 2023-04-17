@@ -1,4 +1,5 @@
 using MoMoney.Models;
+using MoMoney.Services;
 using MoMoney.ViewModels;
 
 namespace MoMoney.Views;
@@ -15,7 +16,14 @@ public partial class TransactionsPage : ContentView
         vm = (TransactionsViewModel)BindingContext;
         vm.ListView = listView;
         frAccounts.ZIndex = 2;
+
         TransactionsChanged += Refresh;
+        dtFrom.DateSelected += InvokeTransactionsChanged;
+        dtTo.DateSelected += InvokeTransactionsChanged;
+        pckAccount.SelectedIndexChanged += vm.UpdateFilter;
+        pckCategory.SelectedIndexChanged += vm.CategoryChanged;
+        pckSubcategory.SelectedIndexChanged += vm.UpdateFilter;
+        
     }
 
     /// <summary>
@@ -56,101 +64,30 @@ public partial class TransactionsPage : ContentView
     /// <param name="e"></param>
     void ImageButton_Clicked(object sender, EventArgs e)
     {
-        // date picker
-        grid.RowDefinitions[1].Height = (frDates.IsVisible) ? 0 : 40;
-        frDates.IsVisible = !frDates.IsVisible;
-
-        // account picker
-        grid.RowDefinitions[2].Height = (frAccounts.IsVisible) ? 0 : 40;
-        frAccounts.IsVisible = !frAccounts.IsVisible;
-
-        // amount slider
-        grid.RowDefinitions[3].Height = (frAmount.IsVisible) ? 0 : 40;
-        frAmount.IsVisible = !frAmount.IsVisible;
+        grid.RowDefinitions[1].Height = (grdFilters.IsVisible) ? 0 : 240;
+        grdFilters.IsVisible = !grdFilters.IsVisible;
         rsAmountFrame.IsVisible = !rsAmountFrame.IsVisible;
         rsAmount.IsVisible = !rsAmount.IsVisible;
-
-        // category picker
-        grid.RowDefinitions[4].Height = (frCategories.IsVisible) ? 0 : 40;
-        frCategories.IsVisible = !frCategories.IsVisible;
-
-        // subcategory picker
-        grid.RowDefinitions[5].Height = (frSubcategories.IsVisible) ? 0 : 40;
-        frSubcategories.IsVisible = !frSubcategories.IsVisible;
-
-        // payee search bar
-        grid.RowDefinitions[6].Height = (frPayee.IsVisible) ? 0 : 40;
-        frPayee.IsVisible = !frPayee.IsVisible;
-    }
-
-    /// <summary>
-    /// Invokes TransactionsChanged when From date changes.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    void dtFrom_DateSelected(object sender, DateChangedEventArgs e)
-    {
-        InvokeTransactionsChanged();
-    }
-
-    /// <summary>
-    /// Invokes TransactionsChanged when To date changes.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    void dtTo_DateSelected(object sender, DateChangedEventArgs e)
-    {
-        InvokeTransactionsChanged();
     }
 
     /// <summary>
     /// Invokes TransactionsChanged
     /// </summary>
-    void InvokeTransactionsChanged()
+    void InvokeTransactionsChanged(object sender, EventArgs e)
     {
         var args = new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read);
         TransactionsChanged?.Invoke(this, args);
     }
 
-    async void pckCategory_SelectedIndexChanged(object sender, EventArgs e)
+    /// <summary>
+    /// Updates Payee then calls UpdateFilter().
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    void entPayee_SelectionChanged(object sender, Syncfusion.Maui.Inputs.SelectionChangedEventArgs e)
     {
-        var parentCategory = (Category)pckCategory.SelectedItem;
-        if (parentCategory != null)
-        {
-            await vm.GetSubcategories(parentCategory);
-            vm.UpdateFilter();
-        }
+        // doesn't work if entPayee is bound to vm.Payee, has to be done manually like this
+        vm.Payee = entPayee.SelectedValue?.ToString() ?? "";
+        vm.UpdateFilter(sender, e);
     }
-
-    private void pckAccount_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        vm.UpdateFilter();
-    }
-
-    private void pckSubcategory_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        vm.UpdateFilter();
-    }
-}
-
-public class TransactionEventArgs : EventArgs
-{
-    public Transaction Transaction { get; set; }
-
-    public CRUD Type { get; }
-
-    public enum CRUD
-    {
-        Create,
-        Read,
-        Update,
-        Delete
-    }
-
-    public TransactionEventArgs(Transaction transaction, CRUD type)
-    {
-        Transaction = transaction;
-        Type = type;
-    }
-
 }

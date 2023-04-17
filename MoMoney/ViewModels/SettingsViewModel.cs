@@ -266,7 +266,7 @@ public partial class SettingsViewModel : ObservableObject
                             if (categoryID != Constants.TRANSFER_ID && string.IsNullOrEmpty(transactionsInfo[5]))
                                 throw new InvalidTransactionException($"Transaction {i}: Payee cannot be blank");
                             else
-                                payee = transactionsInfo[5];
+                                payee = transactionsInfo[5].Trim();
 
                             // transfer ID
                             int? transferID;

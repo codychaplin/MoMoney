@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Stats.StocksPage"
              xmlns:local="clr-namespace:MoMoney"
+             xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Stats"
              xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
              xmlns:data="clr-namespace:Syncfusion.Maui.DataSource;assembly=Syncfusion.Maui.DataSource"
@@ -59,7 +60,7 @@
         <Frame Grid.Row="1" Margin="10" Padding="5"> 
             <listview:SfListView ItemsSource="{Binding Stocks}" ItemSpacing="0,0,0,5">
                 <listview:SfListView.ItemTemplate>
-                    <DataTemplate x:DataType="viewmodel:DetailedStock">
+                    <DataTemplate x:DataType="models:DetailedStock">
                         <!-- template -->
                         <Frame Padding="5"
                                HeightRequest="45"

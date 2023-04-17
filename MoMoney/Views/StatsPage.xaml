@@ -71,7 +71,7 @@
             </Grid>
         </Frame>
 
-        <!-- Insights -->
+        <!-- insights -->
         <Frame Grid.Column="1" Grid.Row="2"  Padding="10">
             <Frame.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding GoToInsightsCommand}" />
@@ -83,8 +83,8 @@
         </Frame>
 
         <!--
-        <Frame Grid.Column="0" Grid.Row="3">
-
+        <Frame Grid.Column="0" Grid.Row="3" Padding="10">
+        
         </Frame>
 
         <Frame Grid.Column="1" Grid.Row="3">

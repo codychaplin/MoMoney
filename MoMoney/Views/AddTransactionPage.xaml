@@ -2,10 +2,11 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.AddTransactionPage"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
-             xmlns:models="clr-namespace:MoMoney.Models"
              x:DataType="viewmodel:AddTransactionViewModel"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+             xmlns:models="clr-namespace:MoMoney.Models"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs">
 
     <ContentView.BindingContext>
         <viewmodel:AddTransactionViewModel />
@@ -89,10 +90,22 @@
                 <Frame x:Name="frPayee" Style="{StaticResource frTile}" IsVisible="True">
                     <Grid ColumnDefinitions="0.15*,*">
                         <Image Source="account.png" Style="{StaticResource icon}" />
-                        <Entry x:Name="txtPayee"
+                        <input:SfAutocomplete x:Name="entPayee"
+                                              Grid.Column="1"
+                                              TextColor="#888"
+                                              BackgroundColor="Transparent"
+                                              Stroke="{StaticResource Gray400}"
+                                              ClearButtonIconColor="{StaticResource Gray400}"
+                                              IsClearButtonVisible="True"
+                                              MaxDropDownHeight = "200"
+                                              Placeholder="Payee"
+                                              TextSearchMode="Contains"
+                                              ItemsSource="{Binding Payees}"
+                                              SelectedItem="{Binding Payee}" />
+                        <!--<Entry x:Name="txtPayee"
                                Grid.Column="1"
                                Placeholder="Payee"
-                               Text="{Binding Payee}" />
+                               Text="{Binding Payee}" />-->
                     </Grid>
                 </Frame>
                 <!-- Transfer Payee Account -->

@@ -19,6 +19,7 @@ public partial class EditTransactionPage : ContentPage
         // initialize ViewModel
         await vm.GetTransaction();
         await vm.GetAccounts();
+        await vm.GetPayees();
 
         // get corresponding categories
         switch (vm.InitialCategory.CategoryID)
@@ -92,18 +93,20 @@ public partial class EditTransactionPage : ContentPage
     /// </summary>
     void Clear()
     {
-        if (vm.Category.CategoryID == Constants.TRANSFER_ID)
+        if (vm.Category != null && vm.Category.CategoryID == Constants.TRANSFER_ID)
         {
             pckCategory.IsEnabled = false;
             pckSubcategory.IsEnabled = false;
+            return;
         }
-        else
-        {
-            pckCategory.IsEnabled = true;
-            pckSubcategory.IsEnabled = true;
-            pckCategory.SelectedIndex = -1;
-            pckSubcategory.SelectedIndex = -1;
-        }
+
+        pckCategory.IsEnabled = true;
+        pckSubcategory.IsEnabled = true;
+        pckCategory.SelectedIndex = -1;
+        pckSubcategory.SelectedIndex = -1;
+
+        // reset payee in order to clear text in Payee SfAutocomplete
+        vm.Transaction.Payee = "";
         vm.Transaction = new();
         dtDate.Date = DateTime.Now;
         pckAccount.SelectedIndex = -1;

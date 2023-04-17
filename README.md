@@ -31,4 +31,4 @@ Works on Android 10.0 and later.
 ## Technologies Used
 * .NET 6
 * SQLite-net-pcl 1.8.116
-* Syncfusion.Maui 20.4.51
+* Syncfusion.Maui 21.1.39

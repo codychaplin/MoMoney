@@ -11,8 +11,6 @@ namespace MoMoney.ViewModels;
 
 public partial class TransactionsViewModel : BaseViewModel
 {
-    public List<Transaction> Transactions = new();
-
     [ObservableProperty]
     public ObservableCollection<Transaction> loadedTransactions = new();
 
@@ -24,6 +22,9 @@ public partial class TransactionsViewModel : BaseViewModel
 
     [ObservableProperty]
     public ObservableCollection<Category> subcategories = new();
+
+    [ObservableProperty]
+    public ObservableCollection<string> payees = new();
 
     [ObservableProperty]
     public Account account;
@@ -42,6 +43,8 @@ public partial class TransactionsViewModel : BaseViewModel
 
     [ObservableProperty]
     public string payee = "";
+
+    List<Transaction> Transactions = new();
 
     public SfListView ListView { get; set; }
 
@@ -73,6 +76,11 @@ public partial class TransactionsViewModel : BaseViewModel
                             await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
                         }
                     }
+                    else
+                    {
+                        // if not transfer, add payee (transfers don't have a payee)
+                        Payees.Add(e.Transaction.Payee);
+                    }
                     break;
                 }
             case TransactionEventArgs.CRUD.Read:
@@ -84,6 +92,9 @@ public partial class TransactionsViewModel : BaseViewModel
                         LoadedTransactions.Clear();
                         Transactions.Clear();
                         Transactions = new List<Transaction>(transactions);
+
+                        Payees.Clear();
+                        Payees = new ObservableCollection<string>(transactions.Select(t => t.Payee).Distinct());
                     }
                     if (showValue != Constants.ShowValue)
                     {
@@ -102,6 +113,13 @@ public partial class TransactionsViewModel : BaseViewModel
                     Transaction transaction = e.Transaction;
                     foreach (var trans in Transactions.Where(t => t.TransactionID == transaction.TransactionID))
                     {
+                        // if payee has changed, update in Payees
+                        if (trans.Payee != transaction.Payee)
+                        {
+                            Payees.Remove(trans.Payee);
+                            Payees.Add(transaction.Payee);
+                        }
+
                         trans.Date = transaction.Date;
                         trans.AccountID = transaction.AccountID;
                         trans.Amount = transaction.Amount;
@@ -124,12 +142,13 @@ public partial class TransactionsViewModel : BaseViewModel
                 }
             case TransactionEventArgs.CRUD.Delete:
                 {
-                    // removes transaction from collection
+                    // removes transaction (and payee) from collection
                     Transaction trans = Transactions.Where(t => t.TransactionID == e.Transaction.TransactionID).FirstOrDefault();
                     if (trans is not null)
                     {
                         Transactions.Remove(trans);
                         LoadedTransactions.Remove(trans);
+                        Payees.Remove(trans.Payee);
                     }
                     break;
                 }
@@ -161,6 +180,15 @@ public partial class TransactionsViewModel : BaseViewModel
             Categories.Add(cat);
     }
 
+    public async void CategoryChanged(object sender, EventArgs e)
+    {
+        if (Category != null)
+        {
+            await GetSubcategories(Category);
+            UpdateFilter(sender, e);
+        }
+    }
+
     /// <summary>
     /// Updates Subcategories based on selected parent Category.
     /// </summary>
@@ -183,7 +211,7 @@ public partial class TransactionsViewModel : BaseViewModel
     void ClearAccount()
     {
         Account = null;
-        UpdateFilter();
+        UpdateFilter(this, new EventArgs());
     }
 
     /// <summary>
@@ -193,7 +221,8 @@ public partial class TransactionsViewModel : BaseViewModel
     void ClearCategory()
     {
         Category = null;
-        UpdateFilter();
+        Subcategory = null;
+        UpdateFilter(this, new EventArgs());
     }
 
     /// <summary>
@@ -203,26 +232,7 @@ public partial class TransactionsViewModel : BaseViewModel
     void ClearSubcategory()
     {
         Subcategory = null;
-        UpdateFilter();
-    }
-
-    /// <summary>
-    /// Clears selected Payee and calls UpdateFilter().
-    /// </summary>
-    [RelayCommand]
-    void ClearPayee()
-    {
-        Payee = "";
-        UpdateFilter();
-    }
-
-    /// <summary>
-    /// Calls UpdateFilter().
-    /// </summary>
-    [RelayCommand]
-    void ReturnPressed()
-    {
-        UpdateFilter();
+        UpdateFilter(this, new EventArgs());
     }
 
     /// <summary>
@@ -241,7 +251,7 @@ public partial class TransactionsViewModel : BaseViewModel
     [RelayCommand]
     async Task AmountDragCompleted(object obj)
     {
-        UpdateFilter();
+        UpdateFilter(this, new EventArgs());
 
         var frame = obj as Frame;
         await Task.Delay(200);
@@ -251,7 +261,7 @@ public partial class TransactionsViewModel : BaseViewModel
     /// <summary>
     /// Updates Transactions Filter.
     /// </summary>
-    public void UpdateFilter()
+    public void UpdateFilter(object sender, EventArgs e)
     {
         if (ListView.DataSource != null)
         {

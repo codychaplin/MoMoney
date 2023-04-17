@@ -2,9 +2,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.EditTransactionPage"
+             x:DataType="viewmodel:EditTransactionViewModel"
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
-             x:DataType="viewmodel:EditTransactionViewModel"
+             xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              Title="Edit Transaction">
 
     <ContentPage.BindingContext>
@@ -94,10 +95,18 @@
             <Frame x:Name="frPayee" Style="{StaticResource frTile}" IsVisible="True">
                 <Grid ColumnDefinitions="0.15*,*">
                     <Image Source="account.png" Style="{StaticResource icon}" />
-                    <Entry x:Name="txtPayee"
-                           Grid.Column="1"
-                           Placeholder="Payee"
-                           Text="{Binding Transaction.Payee}" />
+                    <input:SfAutocomplete x:Name="entPayee"
+                                          Grid.Column="1"
+                                          TextColor="#888"
+                                          BackgroundColor="Transparent"
+                                          Stroke="{StaticResource Gray400}"
+                                          ClearButtonIconColor="{StaticResource Gray400}"
+                                          IsClearButtonVisible="True"
+                                          MaxDropDownHeight = "200"
+                                          Placeholder="Payee"
+                                          TextSearchMode="Contains"
+                                          ItemsSource="{Binding Payees}"
+                                          SelectedItem="{Binding Transaction.Payee}" />
                 </Grid>
             </Frame>
             <!-- Transfer Payee Account -->

@@ -28,7 +28,7 @@ public static class TransactionService
             Amount = amount,
             CategoryID = categoryID,
             SubcategoryID = subcategoryID,
-            Payee = payee,
+            Payee = payee.Trim(),
             TransferID = transferID
         };
 
@@ -52,7 +52,7 @@ public static class TransactionService
     public static async Task UpdateTransaction(Transaction updatedTransaction)
     {
         ValidateTransaction(updatedTransaction.Date, updatedTransaction.AccountID, updatedTransaction.Amount,
-                            updatedTransaction.CategoryID, updatedTransaction.SubcategoryID, updatedTransaction.Payee,
+                            updatedTransaction.CategoryID, updatedTransaction.SubcategoryID, updatedTransaction.Payee.Trim(),
                             updatedTransaction.TransferID);
 
         await MoMoneydb.db.UpdateAsync(updatedTransaction);
@@ -99,6 +99,11 @@ public static class TransactionService
     public static async Task<IEnumerable<Transaction>> GetTransactions()
     {
         return await MoMoneydb.db.Table<Transaction>().OrderBy(t => t.Date).ToListAsync();
+    }
+
+    public static async Task<IEnumerable<string>> GetPayeesFromTransactions()
+    {
+        return await MoMoneydb.db.QueryScalarsAsync<string>("SELECT DISTINCT Payee FROM \"Transaction\"");
     }
 
     /// <summary>

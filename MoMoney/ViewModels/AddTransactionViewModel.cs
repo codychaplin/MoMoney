@@ -21,6 +21,9 @@ public partial class AddTransactionViewModel : ObservableObject
     public ObservableCollection<Category> subcategories = new();
 
     [ObservableProperty]
+    public ObservableCollection<string> payees = new();
+
+    [ObservableProperty]
     public DateTime date;
 
     [ObservableProperty]
@@ -116,6 +119,13 @@ public partial class AddTransactionViewModel : ObservableObject
         }
     }
 
+    public async void GetPayees(object sender, EventArgs e)
+    {
+        var payees = await TransactionService.GetPayeesFromTransactions();
+        Payees = new ObservableCollection<string>(payees);
+
+    }
+
     /// <summary>
     /// adds Category to database using input fields from view.
     /// </summary>
@@ -159,7 +169,6 @@ public partial class AddTransactionViewModel : ObservableObject
         }
         catch (InvalidTransactionException ex)
         {
-            // if invalid, display error
             await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
         }
         catch (SQLiteException ex)
