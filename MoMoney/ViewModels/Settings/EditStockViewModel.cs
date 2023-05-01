@@ -12,7 +12,8 @@ public partial class EditStockViewModel : ObservableObject
 {
     [ObservableProperty]
     public Stock stock = new();
-    Stock oldStock;
+
+    Stock initalStock;
 
     public string Symbol { get; set; } // Stock Symbol
 
@@ -24,7 +25,7 @@ public partial class EditStockViewModel : ObservableObject
         try
         {
             Stock = await StockService.GetStock(Symbol);
-            oldStock = new Stock
+            initalStock = new Stock
             {
                 Symbol = Stock.Symbol,
                 Quantity = Stock.Quantity,
@@ -48,8 +49,8 @@ public partial class EditStockViewModel : ObservableObject
         try
         {
             // if symbol (primary key) changed, 
-            if (oldStock.Symbol != Stock.Symbol)
-                await StockService.UpdateStock(Stock, oldStock);
+            if (initalStock.Symbol != Stock.Symbol)
+                await StockService.UpdateStock(Stock, initalStock);
             else
                 await StockService.UpdateStock(Stock);
 

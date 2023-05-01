@@ -25,6 +25,7 @@
                         <Button x:Name="btnTransfer" Grid.Column="2" Text="Transfer" Clicked="btnTransfer_Clicked" />
                     </Grid>
                 </Frame>
+                
                 <!-- Date -->
                 <Frame Style="{StaticResource frTile}">
                     <Grid ColumnDefinitions="0.15*,*">
@@ -35,6 +36,7 @@
                                     Date="{Binding Date}" />
                     </Grid>
                 </Frame>
+                
                 <!-- Account -->
                 <Frame Style="{StaticResource frTile}">
                     <Grid ColumnDefinitions="0.15*,*">
@@ -48,6 +50,7 @@
                                 ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
                     </Grid>
                 </Frame>
+                
                 <!-- Amount -->
                 <Frame Style="{StaticResource frTile}">
                     <Grid ColumnDefinitions="0.15*,*">
@@ -59,6 +62,7 @@
                                Text="{Binding Amount}" />
                     </Grid>
                 </Frame>
+                
                 <!-- Category -->
                 <Frame Style="{StaticResource frTile}">
                     <Grid ColumnDefinitions="0.15*,*">
@@ -73,6 +77,7 @@
                                 SelectedIndexChanged="pckCategory_SelectedIndexChanged" />
                     </Grid>
                 </Frame>
+                
                 <!-- Subcategory -->
                 <Frame Style="{StaticResource frTile}">
                     <Grid ColumnDefinitions="0.15*,*">
@@ -86,6 +91,7 @@
                                 ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
                     </Grid>
                 </Frame>
+                
                 <!-- Payee -->
                 <Frame x:Name="frPayee" Style="{StaticResource frTile}" IsVisible="True">
                     <Grid ColumnDefinitions="0.15*,*">
@@ -100,14 +106,10 @@
                                               MaxDropDownHeight = "200"
                                               Placeholder="Payee"
                                               TextSearchMode="Contains"
-                                              ItemsSource="{Binding Payees}"
-                                              SelectedItem="{Binding Payee}" />
-                        <!--<Entry x:Name="txtPayee"
-                               Grid.Column="1"
-                               Placeholder="Payee"
-                               Text="{Binding Payee}" />-->
+                                              ItemsSource="{Binding Payees}" />
                     </Grid>
                 </Frame>
+                
                 <!-- Transfer Payee Account -->
                 <Frame x:Name="frTransferTo" Style="{StaticResource frTile}" IsVisible="False">
                     <Grid ColumnDefinitions="0.15*,*">
@@ -121,6 +123,7 @@
                                 ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
                     </Grid>
                 </Frame>
+                
                 <!-- clear/enter buttons -->
                 <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnDefinitions="*,*" ColumnSpacing="10">
                     <Button x:Name="btnClear"
@@ -135,7 +138,8 @@
                             HeightRequest="45"
                             BackgroundColor="{StaticResource Green}"
                             Clicked="btnEnter_Clicked"
-                            Command="{Binding AddCommand}" />
+                            Command="{Binding AddCommand}"
+                            CommandParameter="{Binding Source={x:Reference entPayee}, Path=Text}"/>
                 </Grid>
 
             </VerticalStackLayout>

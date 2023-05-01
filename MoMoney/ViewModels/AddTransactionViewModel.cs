@@ -39,9 +39,6 @@ public partial class AddTransactionViewModel : ObservableObject
     public Category subcategory = new();
 
     [ObservableProperty]
-    public string payee;
-
-    [ObservableProperty]
     public Account transferAccount = new();
 
     /// <summary>
@@ -129,16 +126,21 @@ public partial class AddTransactionViewModel : ObservableObject
     /// <summary>
     /// adds Category to database using input fields from view.
     /// </summary>
+    /// <param name="payee"></param>
     [RelayCommand]
-    async Task Add()
+    async Task Add(string payee)
     {
         try
         {
             Transaction transaction = new();
 
+            // add payee to Payees if not already in list
+            if (!Payees.Contains(payee))
+                Payees.Add(payee);
+
             if (Category.CategoryID == Constants.INCOME_ID) // income = regular
             {
-                transaction = await TransactionService.AddTransaction(Date, Account.AccountID, Amount,Category.CategoryID, Subcategory.CategoryID, Payee, null);
+                transaction = await TransactionService.AddTransaction(Date, Account.AccountID, Amount,Category.CategoryID, Subcategory.CategoryID, payee, null);
             }
             else if (Category.CategoryID == Constants.TRANSFER_ID) // transfer = 2 transactions
             {
@@ -155,7 +157,7 @@ public partial class AddTransactionViewModel : ObservableObject
             }
             else if (Category.CategoryID >= Constants.EXPENSE_ID) // expense = negative amount
             {
-                transaction = await TransactionService.AddTransaction(Date, Account.AccountID, -Amount, Category.CategoryID, Subcategory.CategoryID, Payee, null);
+                transaction = await TransactionService.AddTransaction(Date, Account.AccountID, -Amount, Category.CategoryID, Subcategory.CategoryID, payee, null);
             }
 
             if (transaction is null)

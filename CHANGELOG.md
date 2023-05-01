@@ -1,4 +1,18 @@
-# MoMoney v1.2
+# MoMoney v1.0.3
+
+### Fixes
+
+* Fixed error not allowing users to enter a payee that doesn't already exist when adding/editing a transaction.
+* Account, Category, and Payee Edit pages now retrieve an object copy instead of a reference.
+
+### Changes
+
+* Now targets up to Android 13 (API 33)
+* Added copy constructor to main models and updated Service Get requests to use them
+* Made TransactionViewModel.Refresh() more readable
+* Updated USD to CAD exchange rate to 1.35 (will make it dynamic in the future)
+
+# MoMoney v1.0.2
 
 ### Changes
 
@@ -8,7 +22,7 @@
 * Moved small misc classes to Models folder.
 * Updated Syncfusion controls to v21.1.39.
 
-# MoMoney v1.1
+# MoMoney v1.0.1
 
 ### Fixes
 
@@ -16,7 +30,7 @@
 * Fixed percentage clipping on BreakdownPage.
 * Subcategory picker now stays disabled if Transfer is selected.
 
-# MoMoney v1.0
+# MoMoney v1.0.0
 
 Initial release
 

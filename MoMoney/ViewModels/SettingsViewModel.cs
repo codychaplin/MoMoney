@@ -568,4 +568,16 @@ public partial class SettingsViewModel : ObservableObject
         if (flag)
             await CategoryService.RemoveAllCategories();
     }
+
+    /// <summary>
+    /// Removes all Categories from database.
+    /// </summary>
+    [RelayCommand]
+    async Task RemoveAllStocks()
+    {
+        bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Stocks?", "Yes", "No");
+
+        if (flag)
+            await StockService.RemoveStocks();
+    }
 }

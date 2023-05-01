@@ -134,6 +134,7 @@ public partial class AddTransactionPage : ContentView
     {
         Clear(false);
         vm.Categories.Clear();
+        entPayee.SelectedItem = "";
         pckCategory.IsEnabled = false;
         pckSubcategory.IsEnabled = false;
         ChangeButtonColour(new Button());
@@ -156,7 +157,7 @@ public partial class AddTransactionPage : ContentView
     {
         vm.Amount = 0;
         txtAmount.Text = "";
-        vm.Payee = "";
+        entPayee.SelectedItem = null;
         pckTransferTo.SelectedIndex = -1;
 
         if (partial) return;

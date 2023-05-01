@@ -107,7 +107,9 @@ public static class AccountService
     public static async Task<Account> GetAccount(int ID)
     {
         if (Accounts.TryGetValue(ID, out var account))
-            return account;
+        {
+            return new Account(account);
+        }
         else
         {
             var acc = await MoMoneydb.db.Table<Account>().FirstOrDefaultAsync(a => a.AccountID == ID);

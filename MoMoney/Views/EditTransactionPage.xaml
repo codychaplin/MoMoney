@@ -141,7 +141,8 @@
                         Text="Update"
                         HeightRequest="45"
                         BackgroundColor="{StaticResource Green}"
-                        Command="{Binding EditCommand}" />
+                        Command="{Binding EditCommand}"
+                        CommandParameter="{Binding Source={x:Reference entPayee}, Path=Text}" />
             </Grid>
 
         </VerticalStackLayout>

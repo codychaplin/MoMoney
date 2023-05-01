@@ -89,7 +89,7 @@ public static class TransactionService
         if (transaction is null)
             throw new TransactionNotFoundException($"Could not find Transaction with ID '{ID}'.");
         else
-            return transaction;
+            return new Transaction(transaction);
     }
 
     /// <summary>

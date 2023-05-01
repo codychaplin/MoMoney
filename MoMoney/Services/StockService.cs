@@ -1,5 +1,6 @@
 ﻿using MoMoney.Models;
 using MoMoney.Exceptions;
+using Android.Webkit;
 
 namespace MoMoney.Services;
 
@@ -108,15 +109,27 @@ public static class StockService
     }
 
     /// <summary>
+    /// Removes ALL Stocks from Stocks table.
+    /// </summary>
+    public static async Task RemoveStocks()
+    {
+        await MoMoneydb.db.DeleteAllAsync<Stock>();
+        await MoMoneydb.db.DropTableAsync<Stock>();
+        await MoMoneydb.db.CreateTableAsync<Stock>();
+        Stocks.Clear();
+    }
+
+    /// <summary>
     /// Gets a stock from the Stocks table using a symbol.
     /// </summary>
     /// <param name="symbol"></param>
     /// <returns>Stock object</returns>
     public static async Task<Stock> GetStock(string symbol)
     {
-        //eturn await MoMoneydb.db.Table<Stock>().FirstOrDefaultAsync(s => s.Symbol == symbol);
         if (Stocks.TryGetValue(symbol, out var stock))
-            return stock;
+        {
+            return new Stock(stock);
+        }
         else
         {
             var stk = await MoMoneydb.db.Table<Stock>().FirstOrDefaultAsync(s => s.Symbol == symbol);

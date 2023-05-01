@@ -3,7 +3,7 @@ namespace MoMoney.Models;
 
 public class DetailedStock : Stock
 {
-    public decimal MarketValue => Symbol.EndsWith(":TSE") ? MarketPrice * Quantity : MarketPrice * Quantity * 1.3m;
+    public decimal MarketValue => Symbol.EndsWith(":TSE") ? MarketPrice * Quantity : MarketPrice * Quantity * 1.35m;
     public decimal Change => MarketValue - BookValue;
     public decimal ChangePercent => (MarketValue / BookValue) - 1;
 

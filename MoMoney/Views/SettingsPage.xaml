@@ -70,6 +70,7 @@
                     <Button Text="Calculate Account Balances" Command="{Binding CalculateAccountBalancesCommand}" />
                     <Button Text="Remove All Accounts" Command="{Binding RemoveAllAccountsCommand}" />
                     <Button Text="Remove All Categories" Command="{Binding RemoveAllCategoriesCommand}" />
+                    <Button Text="Remove All Stocks" Command="{Binding RemoveAllStocksCommand}" />
                     <Button Text="Remove All Transactions" Command="{Binding RemoveAllTransactionsCommand}" />
                 </VerticalStackLayout>
             </Frame>

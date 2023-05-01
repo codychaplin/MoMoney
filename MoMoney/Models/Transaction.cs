@@ -32,6 +32,32 @@ public partial class Transaction : ObservableObject
     [ObservableProperty]
     public int? transferID;
 
+    public Transaction() { }
+
+    public Transaction(int transactionID, DateTime date, int accountID, decimal amount, int categoryID, int subcategoryID, string payee, int? transferID)
+    {
+        TransactionID = transactionID;
+        Date = date;
+        AccountID = accountID;
+        Amount = amount;
+        CategoryID = categoryID;
+        SubcategoryID = subcategoryID;
+        Payee = payee;
+        TransferID = transferID;
+    }
+
+    public Transaction(Transaction transaction)
+    {
+        TransactionID = transaction.TransactionID;
+        Date = transaction.Date;
+        AccountID = transaction.AccountID;
+        Amount = transaction.Amount;
+        CategoryID = transaction.CategoryID;
+        SubcategoryID = transaction.SubcategoryID;
+        Payee = transaction.Payee;
+        TransferID = transaction.TransferID;
+    }
+
     public static bool operator ==(Transaction trans1, Transaction trans2)
     {
         return Compare(ref trans1, ref trans2);

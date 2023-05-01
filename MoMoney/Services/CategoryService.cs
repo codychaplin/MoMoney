@@ -103,7 +103,9 @@ public static class CategoryService
     public static async Task<Category>GetCategory(int ID)
     {
         if (Categories.TryGetValue(ID, out var category))
-            return category;
+        {
+            return new Category(category);
+        }
         else
         {
             var cat = await MoMoneydb.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryID == ID);
