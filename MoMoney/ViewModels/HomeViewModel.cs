@@ -1,13 +1,17 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MoMoney.Exceptions;
 using MoMoney.Models;
 using MoMoney.Services;
+using MoMoney.Exceptions;
 
 namespace MoMoney.ViewModels;
 
-public partial class HomePageViewModel : BaseViewModel
+public partial class HomeViewModel : ObservableObject
 {
+    readonly IAccountService accountService;
+    readonly ICategoryService categoryService;
+    readonly ITransactionService transactionService;
+
     [ObservableProperty]
     public ObservableCollection<Transaction> recentTransactions = new();
 
@@ -27,11 +31,29 @@ public partial class HomePageViewModel : BaseViewModel
     public string topExpenseCategory = "N/A";
 
     [ObservableProperty]
+    public static DateTime from = new();
+
+    [ObservableProperty]
+    public static DateTime to = new();
+
+    [ObservableProperty]
     public ObservableCollection<BalanceOverTimeData> data = new();
+
+    public HomeViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService)
+    {
+        transactionService = _transactionService;
+        accountService = _accountService;
+        categoryService = _categoryService;
+
+        // first two months, show 1 year, starting March show YTD
+        //From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
+        From = new(DateTime.Today.Year - 1, 1, 1);
+        To = DateTime.Today;
+    }
 
     public async Task Refresh()
     {
-        var transactions = await TransactionService.GetTransactionsFromTo(From, To, true);
+        var transactions = await transactionService.GetTransactionsFromTo(From, To, true);
         if (!transactions.Any())
             return;
 
@@ -56,7 +78,7 @@ public partial class HomePageViewModel : BaseViewModel
         }
 
         decimal total = 0;
-        var accounts = await AccountService.GetActiveAccounts();
+        var accounts = await accountService.GetActiveAccounts();
         if (accounts.Any())
             foreach (var acc in accounts)
                 total += acc.CurrentBalance;
@@ -92,29 +114,29 @@ public partial class HomePageViewModel : BaseViewModel
 
             // update top income subcategory
             var subcategoryID = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
-                                       .GroupBy(t => t.SubcategoryID)
-                                       .Select(group => new
-                                       {
-                                           Total = group.Sum(t => t.Amount),
-                                           group.FirstOrDefault().SubcategoryID
-                                       })
-                                       .MaxBy(g => g.Total)
-                                       .SubcategoryID;
+                                            .GroupBy(t => t.SubcategoryID)
+                                            .Select(group => new
+                                            {
+                                                Total = group.Sum(t => t.Amount),
+                                                group.FirstOrDefault().SubcategoryID
+                                            })
+                                            .MaxBy(g => g.Total)
+                                            .SubcategoryID;
 
-            Category subcategory = await CategoryService.GetCategory(subcategoryID);
+            Category subcategory = await categoryService.GetCategory(subcategoryID);
             TopIncomeSubcategory = subcategory.CategoryName;
 
             // update top expense category
             var categoryID = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
-                                    .GroupBy(t => t.CategoryID)
-                                    .Select(group => new
-                                    {
-                                        Total = group.Sum(t => t.Amount),
-                                        group.FirstOrDefault().CategoryID
-                                    })
-                                    .MinBy(g => g.Total)
-                                    .CategoryID;
-            Category category = await CategoryService.GetCategory(categoryID);
+                                         .GroupBy(t => t.CategoryID)
+                                         .Select(group => new
+                                         {
+                                             Total = group.Sum(t => t.Amount),
+                                             group.FirstOrDefault().CategoryID
+                                         })
+                                         .MinBy(g => g.Total)
+                                         .CategoryID;
+            Category category = await categoryService.GetCategory(categoryID);
             TopExpenseCategory = category.CategoryName;
         }
         catch (CategoryNotFoundException ex)

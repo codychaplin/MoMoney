@@ -4,14 +4,12 @@ namespace MoMoney.Views.Stats;
 
 public partial class InsightsPage : ContentPage
 {
-	InsightsViewModel vm;
-
-	public InsightsPage()
+	public InsightsPage(InsightsViewModel _vm)
 	{
 		InitializeComponent();
-		vm = (InsightsViewModel)BindingContext;
-		Loaded += vm.Init;
-		pckDate.SelectedIndexChanged += vm.Refresh;
+		BindingContext = _vm;
+		Loaded += _vm.Init;
+		pckDate.SelectedIndexChanged += _vm.Refresh;
 
 		if (Constants.ShowValue)
 		{

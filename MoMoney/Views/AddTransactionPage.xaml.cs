@@ -9,10 +9,11 @@ public partial class AddTransactionPage : ContentView
 
     public static EventHandler<EventArgs> UpdatePage { get; set; }
 
-    public AddTransactionPage()
+    public AddTransactionPage(AddTransactionViewModel _vm)
 	{
 		InitializeComponent();
-        vm = (AddTransactionViewModel)BindingContext;
+        vm = _vm;
+        BindingContext = vm;
 
         // initialize fields
         dtDate.Date = DateTime.Today;

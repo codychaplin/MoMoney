@@ -10,6 +10,8 @@ namespace MoMoney.ViewModels.Settings;
 [QueryProperty(nameof(ID), nameof(ID))]
 public partial class EditCategoryViewModel : ObservableObject
 {
+    readonly ICategoryService categoryService;
+
     [ObservableProperty]
     public ObservableCollection<Category> parents = new(); // list of categories
 
@@ -24,6 +26,11 @@ public partial class EditCategoryViewModel : ObservableObject
 
     public string ID { get; set; } // category ID
 
+    public EditCategoryViewModel(ICategoryService _categoryService)
+    {
+        categoryService = _categoryService;
+    }
+
     /// <summary>
     /// Gets category using ID.
     /// </summary>
@@ -33,17 +40,19 @@ public partial class EditCategoryViewModel : ObservableObject
         {
             try
             {
-                Category = await CategoryService.GetCategory(id);
+                Category = await categoryService.GetCategory(id);
                 if (!string.IsNullOrEmpty(Category.ParentName))
-                    Parent = await CategoryService.GetParentCategory(Category.ParentName);
+                    Parent = await categoryService.GetParentCategory(Category.ParentName);
             }
             catch (CategoryNotFoundException ex)
             {
                 await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
             }
+
+            return;
         }
-        else
-            await Shell.Current.DisplayAlert("Category Not Found Error", $"{ID} is not a valid ID", "OK");
+
+        await Shell.Current.DisplayAlert("Category Not Found Error", $"{ID} is not a valid ID", "OK");
     }
 
     /// <summary>
@@ -51,8 +60,8 @@ public partial class EditCategoryViewModel : ObservableObject
     /// </summary>
     public async Task GetParents()
     {
+        var categories = await categoryService.GetParentCategories();
         Parents.Clear();
-        var categories = await CategoryService.GetParentCategories();
         foreach (var cat in categories)
             Parents.Add(cat);
     }
@@ -67,13 +76,12 @@ public partial class EditCategoryViewModel : ObservableObject
         {
             // if invalid, display error
             await Shell.Current.DisplayAlert("Error", "Information not valid", "OK");
+            return;
         }
-        else
-        {
-            Category.ParentName = Parent.CategoryName;
-            await CategoryService.UpdateCategory(Category);
-            await Shell.Current.GoToAsync("..");
-        }
+
+        Category.ParentName = Parent.CategoryName;
+        await categoryService.UpdateCategory(Category);
+        await Shell.Current.GoToAsync("..");
     }
 
     /// <summary>
@@ -84,10 +92,10 @@ public partial class EditCategoryViewModel : ObservableObject
     {
         bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Category.CategoryName}\"?", "Yes", "No");
 
-        if (flag)
-        {
-            await CategoryService.RemoveCategory(Category.CategoryID);
-            await Shell.Current.GoToAsync("..");
-        }
+        if (!flag)
+            return;
+
+        await categoryService.RemoveCategory(Category.CategoryID);
+        await Shell.Current.GoToAsync("..");
     }
 }

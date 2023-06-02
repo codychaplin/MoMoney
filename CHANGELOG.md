@@ -1,3 +1,15 @@
+# MoMoney v1.0.4
+
+### Changes
+
+* Upgraded to .NET 7
+* Updated various nuget packages
+* Moved converters into seperate classes
+* Moved AccountType Enum to Account.cs
+* Converted static services classes to interfaces
+* Implemented dependencies for services and viewmodels
+
+
 # MoMoney v1.0.3
 
 ### Fixes
@@ -12,6 +24,7 @@
 * Made TransactionViewModel.Refresh() more readable
 * Updated USD to CAD exchange rate to 1.35 (will make it dynamic in the future)
 
+
 # MoMoney v1.0.2
 
 ### Changes
@@ -22,6 +35,7 @@
 * Moved small misc classes to Models folder.
 * Updated Syncfusion controls to v21.1.39.
 
+
 # MoMoney v1.0.1
 
 ### Fixes
@@ -29,6 +43,7 @@
 * Updating account balances that did not exist in list of Transactions.
 * Fixed percentage clipping on BreakdownPage.
 * Subcategory picker now stays disabled if Transfer is selected.
+
 
 # MoMoney v1.0.0
 

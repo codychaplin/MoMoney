@@ -6,10 +6,11 @@ public partial class EditAccountPage : ContentPage
 {
     EditAccountViewModel vm;
 
-    public EditAccountPage()
+    public EditAccountPage(EditAccountViewModel _vm)
 	{
 		InitializeComponent();
-        vm = (EditAccountViewModel)BindingContext;
+        vm = _vm;
+        BindingContext = vm;
     }
 
     protected override async void OnAppearing()

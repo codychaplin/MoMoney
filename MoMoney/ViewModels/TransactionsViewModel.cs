@@ -9,8 +9,12 @@ using MoMoney.Exceptions;
 
 namespace MoMoney.ViewModels;
 
-public partial class TransactionsViewModel : BaseViewModel
+public partial class TransactionsViewModel : ObservableObject
 {
+    readonly IAccountService accountService;
+    readonly ICategoryService categoryService;
+    readonly ITransactionService transactionService;
+
     [ObservableProperty]
     public ObservableCollection<Transaction> loadedTransactions = new();
 
@@ -44,11 +48,29 @@ public partial class TransactionsViewModel : BaseViewModel
     [ObservableProperty]
     public string payee = "";
 
+    [ObservableProperty]
+    public static DateTime from = new();
+
+    [ObservableProperty]
+    public static DateTime to = new();
+
     List<Transaction> Transactions = new();
 
     public SfListView ListView { get; set; }
 
     bool showValue = true;
+
+    public TransactionsViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService)
+    {
+        transactionService = _transactionService;
+        accountService = _accountService;
+        categoryService = _categoryService;
+
+        // first two months, show 1 year, starting March show YTD
+        //From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
+        From = new(DateTime.Today.Year - 1, 1, 1);
+        To = DateTime.Today;
+    }
 
     /// <summary>
     /// Depending on CRUD operation, update Transactions collection.
@@ -89,7 +111,7 @@ public partial class TransactionsViewModel : BaseViewModel
         {
             try
             {
-                var otherTrans = await TransactionService.GetTransaction(e.Transaction.TransactionID + 1);
+                var otherTrans = await transactionService.GetTransaction(e.Transaction.TransactionID + 1);
                 Transactions.Insert(0, otherTrans);
                 LoadedTransactions.Insert(0, otherTrans);
             }
@@ -111,7 +133,7 @@ public partial class TransactionsViewModel : BaseViewModel
     /// <returns></returns>
     async Task Read()
     {
-        var transactions = await TransactionService.GetTransactionsFromTo(From, To, true);
+        var transactions = await transactionService.GetTransactionsFromTo(From, To, true);
         if (transactions.Count() != Transactions.Count)
         {
             LoadedTransactions.Clear();
@@ -188,7 +210,7 @@ public partial class TransactionsViewModel : BaseViewModel
     /// <returns></returns>
     public async Task GetAccounts()
     {
-        var accounts = await AccountService.GetActiveAccounts();
+        var accounts = await accountService.GetActiveAccounts();
         Accounts.Clear();
         foreach (var acc in accounts)
             Accounts.Add(acc);
@@ -199,7 +221,7 @@ public partial class TransactionsViewModel : BaseViewModel
     /// </summary>
     public async Task GetParentCategories()
     {
-        var categories = await CategoryService.GetAllParentCategories();
+        var categories = await categoryService.GetAllParentCategories();
         Categories.Clear();
         foreach (var cat in categories)
             Categories.Add(cat);
@@ -222,7 +244,7 @@ public partial class TransactionsViewModel : BaseViewModel
     {
         if (parentCategory is not null)
         {
-            var subcategories = await CategoryService.GetSubcategories(parentCategory);
+            var subcategories = await categoryService.GetSubcategories(parentCategory);
             Subcategories.Clear();
             foreach (var cat in subcategories)
                 Subcategories.Add(cat);

@@ -9,8 +9,15 @@ namespace MoMoney.ViewModels.Settings;
 
 public partial class AccountsViewModel : ObservableObject
 {
+    readonly IAccountService accountService;
+
     [ObservableProperty]
     public ObservableCollection<Account> accounts = new();
+
+    public AccountsViewModel(IAccountService _accountService)
+    {
+        accountService = _accountService;
+    }
 
     /// <summary>
     /// Goes to AddAccountPage.xaml.
@@ -35,7 +42,7 @@ public partial class AccountsViewModel : ObservableObject
     /// </summary>
     public async void Init(object s, EventArgs e)
     {
-        var accounts = await AccountService.GetAccounts();
+        var accounts = await accountService.GetAccounts();
         if (!accounts.Any())
             return;
 

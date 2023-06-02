@@ -6,17 +6,16 @@ public partial class AddCategoryPage : ContentPage
 {
     AddCategoryViewModel vm;
 
-	public AddCategoryPage()
+	public AddCategoryPage(AddCategoryViewModel _vm)
 	{
 		InitializeComponent();
-
-        vm = (AddCategoryViewModel)BindingContext;
+        vm = _vm;
+        BindingContext = vm;
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-
         await vm.GetParents();
     }
 

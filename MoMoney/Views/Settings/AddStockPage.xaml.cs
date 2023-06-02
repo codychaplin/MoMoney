@@ -1,10 +1,13 @@
+using MoMoney.ViewModels.Settings;
+
 namespace MoMoney.Views.Settings;
 
 public partial class AddStockPage : ContentPage
 {
-    public AddStockPage()
+    public AddStockPage(AddStockViewModel _vm)
 	{
 		InitializeComponent();
+        BindingContext = _vm;
         Clear();
     }
 

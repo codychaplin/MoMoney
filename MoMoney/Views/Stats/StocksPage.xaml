@@ -2,22 +2,19 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Stats.StocksPage"
-             xmlns:local="clr-namespace:MoMoney"
+             x:DataType="viewmodel:StocksViewModel"
              xmlns:models="clr-namespace:MoMoney.Models"
+             xmlns:converters="clr-namespace:MoMoney.Converters"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Stats"
              xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
              xmlns:data="clr-namespace:Syncfusion.Maui.DataSource;assembly=Syncfusion.Maui.DataSource"
              Title="Stocks">
 
-    <ContentPage.BindingContext>
-        <viewmodel:StocksViewModel />
-    </ContentPage.BindingContext>
-
     <ContentPage.Resources>
         <!-- converters -->
-        <local:ShowValueConverter x:Key="ShowValue" />
-        <local:ShowValuePercentConverter x:Key="ShowValuePercent" />
-        <local:PositiveNegativeColourConverter x:Key="PosNegColour" />
+        <converters:ShowValueConverter x:Key="ShowValue" />
+        <converters:ShowValuePercentConverter x:Key="ShowValuePercent" />
+        <converters:PositiveNegativeColourConverter x:Key="PosNegColour" />
     </ContentPage.Resources>
 
     <Grid RowDefinitions="100,*">

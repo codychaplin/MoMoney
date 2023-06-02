@@ -9,6 +9,9 @@ namespace MoMoney.ViewModels.Stats;
 
 public partial class BreakdownViewModel : ObservableObject
 {
+    readonly ICategoryService categoryService;
+    readonly ITransactionService transactionService;
+
     [ObservableProperty]
     public decimal incomeSum = 0;
     [ObservableProperty]
@@ -32,9 +35,13 @@ public partial class BreakdownViewModel : ObservableObject
     public int index = 0;
     int monthIndex = 0;
 
-    
-
     EventHandler<EventArgs> OnUpdate { get; set; }
+
+    public BreakdownViewModel(ITransactionService _transactionService, ICategoryService _categoryService)
+    {
+        transactionService = _transactionService;
+        categoryService = _categoryService;
+    }
 
     /// <summary>
     /// 
@@ -43,7 +50,7 @@ public partial class BreakdownViewModel : ObservableObject
     {
         InitPalettes();
 
-        var first = await TransactionService.GetFirstTransaction();
+        var first = await transactionService.GetFirstTransaction();
         if (first is null)
         {
             Months.Add(DateTime.Today);
@@ -113,7 +120,7 @@ public partial class BreakdownViewModel : ObservableObject
         // gets start/end dates then gets transactions between those dates
         DateTime from = new(SelectedMonth.Year, SelectedMonth.Month, 1);
         DateTime to = new(SelectedMonth.Year, SelectedMonth.Month, SelectedMonth.AddMonths(1).AddDays(-1).Day);
-        var transactions = await TransactionService.GetTransactionsFromTo(from, to, false);
+        var transactions = await transactionService.GetTransactionsFromTo(from, to, false);
         if (!transactions.Any())
             return;
         
@@ -149,7 +156,7 @@ public partial class BreakdownViewModel : ObservableObject
                                 {
                                     Amount = amount,
                                     ActualAmount = amount,
-                                    Category = CategoryService.Categories[group.FirstOrDefault().CategoryID].CategoryName,
+                                    Category = categoryService.Categories[group.FirstOrDefault().CategoryID].CategoryName,
                                     Color = ExpensePalette[i++]
                                 };
                             })));
@@ -178,7 +185,7 @@ public partial class BreakdownViewModel : ObservableObject
                                 {
                                     ActualAmount = amount,
                                     Amount = (amount > 0) ? amount : 0,
-                                    Category = CategoryService.Categories[group.FirstOrDefault().SubcategoryID].CategoryName,
+                                    Category = categoryService.Categories[group.FirstOrDefault().SubcategoryID].CategoryName,
                                     Color = IncomePalette[i++]
                                 };
                             })));

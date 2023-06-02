@@ -2,17 +2,13 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Settings.CategoriesPage"
+             x:DataType="viewmodel:CategoriesViewModel"
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
-             x:DataType="viewmodel:CategoriesViewModel"
              Title="Categories">
 
-    <ContentPage.BindingContext>
-        <viewmodel:CategoriesViewModel />
-    </ContentPage.BindingContext>
-
     <ContentPage.Resources>
-        <DataTemplate x:Key="HeaderTemplate" x:DataType="viewmodel:CategoryGroup">
+        <DataTemplate x:Key="HeaderTemplate" x:DataType="models:CategoryGroup">
             <Frame Style="{StaticResource confrTile}"
                    HeightRequest="45"
                    BackgroundColor="{StaticResource Gray500}">

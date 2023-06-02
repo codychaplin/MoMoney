@@ -42,29 +42,24 @@
         <tabView:SfTabView.Items>
 
             <!-- home page -->
-            <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_home_black.png, Dark=tab_home_white.png}">
-                <views:HomePage />
-            </tabView:SfTabItem>
+            <tabView:SfTabItem x:Name="HomePageTab"
+                               ImageSource="{AppThemeBinding Light=tab_home_black.png, Dark=tab_home_white.png}" />
 
             <!-- transactions page -->
-            <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_transactions_black.png, Dark=tab_transactions_white.png}">
-                <views:TransactionsPage />
-            </tabView:SfTabItem>
+            <tabView:SfTabItem x:Name="TransactionsPageTab"
+                               ImageSource="{AppThemeBinding Light=tab_transactions_black.png, Dark=tab_transactions_white.png}" />
 
             <!-- add transaction page -->
-            <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_add_black.png, Dark=tab_add_white.png}">
-                <views:AddTransactionPage />
-            </tabView:SfTabItem>
+            <tabView:SfTabItem x:Name="AddTransactionPageTab"
+                               ImageSource="{AppThemeBinding Light=tab_add_black.png, Dark=tab_add_white.png}" /> 
 
             <!-- stats page -->
-            <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_stats_black.png, Dark=tab_stats_white.png}">
-                <views:StatsPage />
-            </tabView:SfTabItem>
+            <tabView:SfTabItem x:Name="StatsPageTab"
+                               ImageSource="{AppThemeBinding Light=tab_stats_black.png, Dark=tab_stats_white.png}" />
 
             <!-- settings page -->
-            <tabView:SfTabItem ImageSource="{AppThemeBinding Light=tab_settings_black.png, Dark=tab_settings_white.png}">
-                <views:SettingsPage />
-            </tabView:SfTabItem>
+            <tabView:SfTabItem x:Name="SettingsPageTab"
+                               ImageSource="{AppThemeBinding Light=tab_settings_black.png, Dark=tab_settings_white.png}" />
 
         </tabView:SfTabView.Items>
 

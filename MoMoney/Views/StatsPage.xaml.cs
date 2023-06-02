@@ -4,11 +4,9 @@ namespace MoMoney.Views;
 
 public partial class StatsPage : ContentView
 {
-    StatsPageViewModel vm;
-
-    public StatsPage()
+    public StatsPage( StatsViewModel _vm)
 	{
 		InitializeComponent();
-        vm = (StatsPageViewModel)BindingContext;
+        BindingContext = _vm;
     }
 }

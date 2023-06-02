@@ -2,12 +2,8 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.SettingsPage"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
-             x:DataType="viewmodel:SettingsViewModel">
-
-    <ContentView.BindingContext>
-        <viewmodel:SettingsViewModel />
-    </ContentView.BindingContext>
+             x:DataType="viewmodel:SettingsViewModel"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels">
 
     <!-- styles -->
     <ContentView.Resources>

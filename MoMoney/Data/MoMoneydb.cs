@@ -1,16 +1,16 @@
 ﻿using SQLite;
 using MoMoney.Models;
 
-namespace MoMoney;
+namespace MoMoney.Data;
 
-public static class MoMoneydb
+public class MoMoneydb
 {
-    public static SQLiteAsyncConnection db { get; private set; }
+    public SQLiteAsyncConnection db { get; private set; }
 
     /// <summary>
     /// Creates new database connection, creates tables if not exists and adds default data to tables.
     /// </summary>
-    public static async Task Init()
+    public async Task Init()
     {
         try
         {
@@ -39,7 +39,7 @@ public static class MoMoneydb
                 }
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
@@ -49,7 +49,7 @@ public static class MoMoneydb
     /// Gets default categories.
     /// </summary>
     /// <returns>List of default categories</returns>
-    static List<Category> GetDefaultCategories()
+    List<Category> GetDefaultCategories()
     {
         return new List<Category>
             {

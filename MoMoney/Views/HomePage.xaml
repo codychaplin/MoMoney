@@ -2,22 +2,19 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.HomePage"
-             xmlns:local="clr-namespace:MoMoney"
+             x:DataType="viewmodel:HomeViewModel"
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
+             xmlns:converters="clr-namespace:MoMoney.Converters"
              xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts">
-
-    <ContentView.BindingContext>
-        <viewmodel:HomePageViewModel />
-    </ContentView.BindingContext>
 
     <!-- converters -->
     <ContentView.Resources>
-        <local:IdToCategoryConverter x:Key="IdToCategory" />
-        <local:IdToAccountConverter x:Key="IdToAccount" />
-        <local:AmountColourConverter x:Key="AmountColour" />
-        <local:IconConverter x:Key="Icon" />
-        <local:ShowValueConverter x:Key="ShowValue" />
+        <converters:IdToCategoryConverter x:Key="IdToCategory" />
+        <converters:IdToAccountConverter x:Key="IdToAccount" />
+        <converters:AmountColourConverter x:Key="AmountColour" />
+        <converters:IconConverter x:Key="Icon" />
+        <converters:ShowValueConverter x:Key="ShowValue" />
     </ContentView.Resources>
 
     <!-- main page -->

@@ -4,14 +4,12 @@ namespace MoMoney.Views.Stats;
 
 public partial class BreakdownPage : ContentPage
 {
-	BreakdownViewModel vm;
-
-	public BreakdownPage()
+	public BreakdownPage(BreakdownViewModel _vm)
 	{
 		InitializeComponent();
-        vm = (BreakdownViewModel)BindingContext;
-        Loaded += vm.Init;
-		sfTabView.SelectionChanged += vm.Update;
+        BindingContext = _vm;
+        Loaded += _vm.Init;
+		sfTabView.SelectionChanged += _vm.Update;
 
 		if (Constants.ShowValue)
 		{

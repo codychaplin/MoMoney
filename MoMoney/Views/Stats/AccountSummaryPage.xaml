@@ -2,19 +2,16 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Stats.AccountSummaryPage"
-             xmlns:local="clr-namespace:MoMoney"
+             x:DataType="viewmodel:AccountSummaryViewModel"
              xmlns:models="clr-namespace:MoMoney.Models"
+             xmlns:converters="clr-namespace:MoMoney.Converters"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Stats"
              Title="Account Summary">
 
-    <ContentPage.BindingContext>
-        <viewmodel:AccountSummaryViewModel />
-    </ContentPage.BindingContext>
-    
     <ContentPage.Resources>
 
         <!-- converter -->
-        <local:ShowValueConverter x:Key="ShowValue" />
+        <converters:ShowValueConverter x:Key="ShowValue" />
 
         <!-- styles -->
         <Style x:Key="lblGroupTitle" TargetType="{x:Type Label}" BasedOn="{StaticResource lblTitle}">

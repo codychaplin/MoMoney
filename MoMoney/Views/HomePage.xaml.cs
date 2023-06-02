@@ -4,18 +4,15 @@ namespace MoMoney.Views;
 
 public partial class HomePage : ContentView
 {
-    HomePageViewModel vm;
+    HomeViewModel vm;
 
     public static EventHandler<EventArgs> UpdatePage { get; set; }
 
-    public HomePage()
+    public HomePage(HomeViewModel _vm)
 	{
 		InitializeComponent();
-        vm = (HomePageViewModel)BindingContext;
-
-        // first two months, show 1 year, starting March show YTD
-        vm.From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
-        vm.To = DateTime.Today;
+        vm = _vm;
+        BindingContext = vm;
 
         // UpdatePage can be triggered by any page
         UpdatePage += Refresh;

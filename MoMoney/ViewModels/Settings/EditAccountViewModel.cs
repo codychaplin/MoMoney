@@ -5,16 +5,24 @@ using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
 using MoMoney.Views;
+using Kotlin.Contracts;
 
 namespace MoMoney.ViewModels.Settings;
 
 [QueryProperty(nameof(ID), nameof(ID))]
 public partial class EditAccountViewModel : ObservableObject
 {
+    readonly IAccountService accountService;
+
     [ObservableProperty]
     public Account account = new();
 
     public string ID { get; set; } // account ID
+
+    public EditAccountViewModel(IAccountService _accountService)
+    {
+        accountService = _accountService;
+    }
 
     /// <summary>
     /// Gets Account using ID.
@@ -25,16 +33,18 @@ public partial class EditAccountViewModel : ObservableObject
         {
             try
             {
-                Account = await AccountService.GetAccount(id);
+                Account = await accountService.GetAccount(id);
                 AddTransactionPage.UpdatePage?.Invoke(this, new EventArgs()); // update accounts on AddTransactionPage
             }
             catch (AccountNotFoundException ex)
             {
                 await Shell.Current.DisplayAlert("Account Not Found Error", ex.Message, "OK");
             }
+
+            return;
         }
-        else
-            await Shell.Current.DisplayAlert("Account Not Found Error", $"{ID} is not a valid ID", "OK");
+        
+        await Shell.Current.DisplayAlert("Account Not Found Error", $"{ID} is not a valid ID", "OK");
     }
 
     /// <summary>
@@ -49,18 +59,17 @@ public partial class EditAccountViewModel : ObservableObject
         {
             // if invalid, display error
             await Shell.Current.DisplayAlert("Validation Error", "Information not valid", "OK");
+            return;
         }
-        else
+
+        try
         {
-            try
-            {
-                await AccountService.UpdateAccount(Account);
-                await Shell.Current.GoToAsync("..");
-            }
-            catch (SQLiteException ex)
-            {
-                await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
-            }
+            await accountService.UpdateAccount(Account);
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (SQLiteException ex)
+        {
+            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
 
@@ -72,17 +81,17 @@ public partial class EditAccountViewModel : ObservableObject
     {
         bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Account.AccountName}\"?", "Yes", "No");
 
-        if (flag)
+        if (!flag)
+            return;
+
+        try
         {
-            try
-            {
-                await AccountService.RemoveAccount(Account.AccountID);
-                await Shell.Current.GoToAsync("..");
-            }
-            catch (SQLiteException ex)
-            {
-                await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
-            }
+            await accountService.RemoveAccount(Account.AccountID);
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (SQLiteException ex)
+        {
+            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
 }

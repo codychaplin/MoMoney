@@ -7,11 +7,11 @@ public partial class EditCategoryPage : ContentPage
 {
     EditCategoryViewModel vm;
 
-    public EditCategoryPage()
+    public EditCategoryPage(EditCategoryViewModel _vm)
 	{
 		InitializeComponent();
-
-        vm = (EditCategoryViewModel)BindingContext;
+        vm = _vm;
+        BindingContext = vm;
     }
 
     protected override async void OnAppearing()

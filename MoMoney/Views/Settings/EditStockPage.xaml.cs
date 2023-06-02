@@ -6,16 +6,16 @@ public partial class EditStockPage : ContentPage
 {
 	EditStockViewModel vm;
 
-	public EditStockPage()
+	public EditStockPage(EditStockViewModel _vm)
 	{
 		InitializeComponent();
-		vm = (EditStockViewModel)BindingContext;
+		vm = _vm;
+		BindingContext = vm;
 	}
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-
         await vm.GetStock();
     }
 

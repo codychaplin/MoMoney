@@ -8,6 +8,9 @@ namespace MoMoney.ViewModels.Stats;
 
 public partial class InsightsViewModel : ObservableObject
 {
+    readonly ICategoryService categoryService;
+    readonly ITransactionService transactionService;
+
     [ObservableProperty]
     public int selectedYear;
 
@@ -36,6 +39,12 @@ public partial class InsightsViewModel : ObservableObject
     [ObservableProperty]
     public decimal topExpenseCategoryAmount = 0;
 
+    public InsightsViewModel(ITransactionService _transactionService, ICategoryService _categoryService)
+    {
+        transactionService = _transactionService;
+        categoryService = _categoryService;
+    }
+
     /// <summary>
     /// Initializes year range
     /// </summary>
@@ -43,8 +52,9 @@ public partial class InsightsViewModel : ObservableObject
     /// <param name="e"></param>
     public async void Init(object sender, EventArgs e)
     {
-        var first = await TransactionService.GetFirstTransaction();
-        if (first is null) return;
+        var first = await transactionService.GetFirstTransaction();
+        if (first is null)
+            return;
 
         // get date of first transaction, today's date, and add each year to collection
         var start = first.Date;
@@ -63,7 +73,7 @@ public partial class InsightsViewModel : ObservableObject
         // gets transactions from selected year
         var from = new DateTime(SelectedYear, 1, 1);
         var to = new DateTime(SelectedYear, 12, 31);
-        var transactions = await TransactionService.GetTransactionsFromTo(from, to, false);
+        var transactions = await transactionService.GetTransactionsFromTo(from, to, false);
         if (!transactions.Any())
             return;
 
@@ -112,19 +122,24 @@ public partial class InsightsViewModel : ObservableObject
 
         // if year isn't complete add default data
         if (IncomeData.Count < 12)
+        {
             for (int i = IncomeData.Count; i < 12; i++)
                 IncomeData.Add(new IncomeExpenseData
                 {
                     Month = Constants.MONTHS[i],
                     Amount = 0
                 });
+        }
+
         if (IncomeData.Count < 12)
+        {
             for (int i = IncomeData.Count; i < 12; i++)
                 IncomeData.Add(new IncomeExpenseData
                 {
                     Month = Constants.MONTHS[i],
                     Amount = 0
                 });
+        }
     }
 
     /// <summary>
@@ -147,7 +162,7 @@ public partial class InsightsViewModel : ObservableObject
                                             .MaxBy(g => g.Total);
 
             // get category name and amount
-            Category incomeCategory = await CategoryService.GetCategory(incomeResults.SubcategoryID);
+            Category incomeCategory = await categoryService.GetCategory(incomeResults.SubcategoryID);
             TopIncomeSubcategoryName = incomeCategory.CategoryName;
             TopIncomeSubcategoryAmount = incomeResults.Total;
 
@@ -163,7 +178,7 @@ public partial class InsightsViewModel : ObservableObject
                                              .MinBy(g => g.Total);
 
             // get category name and amount
-            Category expenseCategory = await CategoryService.GetCategory(expenseResults.CategoryID);
+            Category expenseCategory = await categoryService.GetCategory(expenseResults.CategoryID);
             TopExpenseCategoryName = expenseCategory.CategoryName;
             TopExpenseCategoryAmount = Math.Abs(expenseResults.Total);
         }
@@ -184,11 +199,10 @@ public partial class InsightsViewModel : ObservableObject
         {
             TotalIncome = transactions.Where(t => t.CategoryID == Constants.INCOME_ID).Sum(t => t.Amount);
             TotalExpense = Math.Abs(transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID).Sum(t => t.Amount));
+            return;
         }
-        else
-        {
-            TotalIncome = 0;
-            TotalExpense = 0;
-        }
+
+        TotalIncome = 0;
+        TotalExpense = 0;
     }
 }

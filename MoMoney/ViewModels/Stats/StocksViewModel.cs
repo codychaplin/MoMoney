@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
-using HtmlAgilityPack;
 using CommunityToolkit.Mvvm.ComponentModel;
+using HtmlAgilityPack;
 using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
@@ -9,6 +9,8 @@ namespace MoMoney.ViewModels.Stats;
 
 public partial class StocksViewModel : ObservableObject
 {
+    readonly IStockService stockService;
+
     [ObservableProperty]
     public ObservableCollection<DetailedStock> stocks = new();
 
@@ -26,6 +28,11 @@ public partial class StocksViewModel : ObservableObject
 
     public CancellationTokenSource cts = new();
 
+    public StocksViewModel(IStockService _stockService)
+    {
+        stockService = _stockService;
+    }
+
     /// <summary>
     /// Initializes data for StocksPage
     /// </summary>
@@ -34,7 +41,7 @@ public partial class StocksViewModel : ObservableObject
     public async void Init(object s, EventArgs e)
     {
         // populate collection with cached values first
-        var stocks = StockService.Stocks.Values.OrderByDescending(s => s.MarketPrice);
+        var stocks = stockService.Stocks.Values.OrderByDescending(s => s.MarketPrice);
         if (!stocks.Any())
             return;
 
@@ -89,9 +96,9 @@ public partial class StocksViewModel : ObservableObject
                         Stocks[i] = stock;
 
                         // update in db (need to use oldStock due to casting issues)
-                        var oldStock = StockService.Stocks[Stocks[i].Symbol];
+                        var oldStock = stockService.Stocks[Stocks[i].Symbol];
                         oldStock.MarketPrice = Stocks[i].MarketPrice;
-                        await StockService.UpdateStock(oldStock);
+                        await stockService.UpdateStock(oldStock);
 
                         // update totals
                         totalMarket += stock.MarketValue - marketValue;

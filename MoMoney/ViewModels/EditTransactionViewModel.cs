@@ -9,10 +9,14 @@ using MoMoney.Exceptions;
 
 namespace MoMoney.ViewModels;
 
-[QueryProperty(nameof(ID), nameof(ID))]
+[QueryProperty(nameof(ID), "ID")]
 public partial class EditTransactionViewModel : ObservableObject
 {
-    public string ID { get; set; } // Transaction ID
+    readonly IAccountService accountService;
+    readonly ICategoryService categoryService;
+    readonly ITransactionService transactionService;
+
+    public string ID { get; set; }
 
     [ObservableProperty]
     public ObservableCollection<Account> accounts = new();
@@ -48,6 +52,13 @@ public partial class EditTransactionViewModel : ObservableObject
 
     Transaction InitialTransaction;
 
+    public EditTransactionViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService)
+    {
+        transactionService = _transactionService;
+        accountService = _accountService;
+        categoryService = _categoryService;
+    }
+
     /// <summary>
     /// Gets Transaction using ID and updates Account, Category, and Subcategory.
     /// </summary>
@@ -57,12 +68,12 @@ public partial class EditTransactionViewModel : ObservableObject
         {
             try
             {
-                Transaction = await TransactionService.GetTransaction(id);
+                Transaction = await transactionService.GetTransaction(id);
 
                 InitialTransaction = new Transaction(Transaction);
-                InitialAccount = await AccountService.GetAccount(InitialTransaction.AccountID);
-                InitialCategory = await CategoryService.GetCategory(InitialTransaction.CategoryID);
-                InitialSubcategory = await CategoryService.GetCategory(InitialTransaction.SubcategoryID);
+                InitialAccount = await accountService.GetAccount(InitialTransaction.AccountID);
+                InitialCategory = await categoryService.GetCategory(InitialTransaction.CategoryID);
+                InitialSubcategory = await categoryService.GetCategory(InitialTransaction.SubcategoryID);
 
                 if (InitialCategory.CategoryID >= Constants.EXPENSE_ID) // if expense, make amount appear positive for user
                     Transaction.Amount *= -1;
@@ -71,7 +82,7 @@ public partial class EditTransactionViewModel : ObservableObject
                     // if debit, make amount appear positive for user
                     if (InitialSubcategory.CategoryID == Constants.DEBIT_ID)
                         Transaction.Amount *= -1;
-                    InitialPayeeAccount = await AccountService.GetAccount((int)Transaction.TransferID);
+                    InitialPayeeAccount = await accountService.GetAccount((int)Transaction.TransferID);
                 }
             }
             catch (TransactionNotFoundException ex)
@@ -98,7 +109,7 @@ public partial class EditTransactionViewModel : ObservableObject
     public async Task GetAccounts()
     {
         // TODO: if using disabled account, retrieve from db as well
-        var accounts = await AccountService.GetActiveAccounts();
+        var accounts = await accountService.GetActiveAccounts();
         Accounts.Clear();
         foreach (var acc in accounts)
             Accounts.Add(acc);
@@ -115,7 +126,7 @@ public partial class EditTransactionViewModel : ObservableObject
     {
         try
         {
-            var income = await CategoryService.GetCategory(Constants.INCOME_ID);
+            var income = await categoryService.GetCategory(Constants.INCOME_ID);
             Categories.Clear();
             Categories.Add(income);
             Subcategories.Clear();
@@ -134,7 +145,7 @@ public partial class EditTransactionViewModel : ObservableObject
     {
         try
         {
-            var transfer = await CategoryService.GetCategory(Constants.TRANSFER_ID);
+            var transfer = await categoryService.GetCategory(Constants.TRANSFER_ID);
             Categories.Clear();
             Categories.Add(transfer);
             Subcategories.Clear();
@@ -151,7 +162,7 @@ public partial class EditTransactionViewModel : ObservableObject
     /// </summary>
     public async Task GetExpenseCategories()
     {
-        var categories = await CategoryService.GetExpenseCategories();
+        var categories = await categoryService.GetExpenseCategories();
         Categories.Clear();
         foreach (var cat in categories)
             Categories.Add(cat);
@@ -167,7 +178,7 @@ public partial class EditTransactionViewModel : ObservableObject
     {
         if (parentCategory is not null)
         {
-            var subcategories = await CategoryService.GetSubcategories(parentCategory);
+            var subcategories = await categoryService.GetSubcategories(parentCategory);
             Subcategories.Clear();
             foreach (var cat in subcategories)
                 Subcategories.Add(cat);
@@ -178,7 +189,7 @@ public partial class EditTransactionViewModel : ObservableObject
 
     public async Task GetPayees()
     {
-        var payees = await TransactionService.GetPayeesFromTransactions();
+        var payees = await transactionService.GetPayeesFromTransactions();
         Payees = new ObservableCollection<string>(payees);
 
     }
@@ -225,17 +236,17 @@ public partial class EditTransactionViewModel : ObservableObject
                 return;
             }
 
-            await TransactionService.UpdateTransaction(Transaction);
+            await transactionService.UpdateTransaction(Transaction);
 
             // if account unchanged, update account balance
             if (InitialAccount.AccountID == Transaction.AccountID)
             {
-                await AccountService.UpdateBalance(Transaction.AccountID, Transaction.Amount - InitialTransaction.Amount);
+                await accountService.UpdateBalance(Transaction.AccountID, Transaction.Amount - InitialTransaction.Amount);
             }
             else // if account changed, updated original and new account balance
             {
-                await AccountService.UpdateBalance(InitialAccount.AccountID, -InitialTransaction.Amount);
-                await AccountService.UpdateBalance(Transaction.AccountID, Transaction.Amount);
+                await accountService.UpdateBalance(InitialAccount.AccountID, -InitialTransaction.Amount);
+                await accountService.UpdateBalance(Transaction.AccountID, Transaction.Amount);
             }
 
             // update TransactionsPage Transactions
@@ -249,23 +260,23 @@ public partial class EditTransactionViewModel : ObservableObject
                 int transID = Transaction.TransactionID;
                 int otherTransID = (Transaction.SubcategoryID == Constants.DEBIT_ID) ? transID + 1 : transID - 1;
 
-                Transaction otherTrans = await TransactionService.GetTransaction(otherTransID);
+                Transaction otherTrans = await transactionService.GetTransaction(otherTransID);
 
                 // update
                 otherTrans.AccountID = (int)Transaction.TransferID;
                 otherTrans.TransferID = Transaction.AccountID;
                 otherTrans.Amount = Transaction.Amount * -1;
-                await TransactionService.UpdateTransaction(otherTrans);
+                await transactionService.UpdateTransaction(otherTrans);
 
                 // if payee unchanged, update payee account balance
                 if (InitialTransaction.TransferID == Transaction.TransferID)
                 {
-                    await AccountService.UpdateBalance(otherTrans.AccountID, InitialTransaction.Amount - Transaction.Amount);
+                    await accountService.UpdateBalance(otherTrans.AccountID, InitialTransaction.Amount - Transaction.Amount);
                 }
                 else // if changed, update both
                 {
-                    await AccountService.UpdateBalance((int)InitialTransaction.TransferID, InitialTransaction.Amount);
-                    await AccountService.UpdateBalance(otherTrans.AccountID, -Transaction.Amount);
+                    await accountService.UpdateBalance((int)InitialTransaction.TransferID, InitialTransaction.Amount);
+                    await accountService.UpdateBalance(otherTrans.AccountID, -Transaction.Amount);
                 }
 
                 // update TransactionsPage Transactions
@@ -302,9 +313,9 @@ public partial class EditTransactionViewModel : ObservableObject
             try
             {
                 // remove Transaction and update corresponding Account balance
-                await TransactionService.RemoveTransaction(Transaction.TransactionID);
+                await transactionService.RemoveTransaction(Transaction.TransactionID);
                 decimal amount = (Transaction.CategoryID == Constants.INCOME_ID) ? -Transaction.Amount : Transaction.Amount;
-                await AccountService.UpdateBalance(Transaction.AccountID, amount);
+                await accountService.UpdateBalance(Transaction.AccountID, amount);
 
                 // update TransactionsPage Transactions
                 var args = new TransactionEventArgs(Transaction, TransactionEventArgs.CRUD.Delete);
@@ -315,11 +326,11 @@ public partial class EditTransactionViewModel : ObservableObject
                     // get other Transaction
                     int transID = Transaction.TransactionID;
                     int otherTransID = (Transaction.SubcategoryID == Constants.DEBIT_ID) ? transID + 1 : transID - 1;
-                    Transaction otherTrans = await TransactionService.GetTransaction(otherTransID);
+                    Transaction otherTrans = await transactionService.GetTransaction(otherTransID);
 
                     // remove Transaction and update corresponding Account balance
-                    await TransactionService.RemoveTransaction(otherTransID);
-                    await AccountService.UpdateBalance(otherTrans.AccountID, -amount);
+                    await transactionService.RemoveTransaction(otherTransID);
+                    await accountService.UpdateBalance(otherTrans.AccountID, -amount);
 
                     // update TransactionsPage Transactions
                     args.Transaction = otherTrans;

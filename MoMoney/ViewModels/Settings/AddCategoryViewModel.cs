@@ -9,6 +9,8 @@ namespace MoMoney.ViewModels.Settings;
 
 public partial class AddCategoryViewModel : ObservableObject
 {
+    readonly ICategoryService categoryService;
+
     [ObservableProperty]
     public ObservableCollection<Category> parents = new(); // list of categories
 
@@ -18,6 +20,11 @@ public partial class AddCategoryViewModel : ObservableObject
     [ObservableProperty]
     public string parent; // category parent
 
+    public AddCategoryViewModel(ICategoryService _categoryService)
+    {
+        categoryService = _categoryService;
+    }
+
     /// <summary>
     /// adds Category to database using input fields from view.
     /// </summary>
@@ -26,7 +33,7 @@ public partial class AddCategoryViewModel : ObservableObject
     {
         try
         {
-            await CategoryService.AddCategory(Name, Parent);
+            await categoryService.AddCategory(Name, Parent);
             await Shell.Current.GoToAsync("..");
         }
         catch (DuplicateCategoryException ex)
@@ -40,8 +47,8 @@ public partial class AddCategoryViewModel : ObservableObject
     /// </summary>
     public async Task GetParents()
     {
+        var categories = await categoryService.GetParentCategories();
         Parents.Clear();
-        var categories = await CategoryService.GetParentCategories();
         foreach (var cat in categories)
             Parents.Add(cat);
     }

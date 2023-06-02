@@ -2,16 +2,30 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Syncfusion.Maui.DataSource.Extensions;
+using MoMoney.Views;
 using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
 using MoMoney.Views.Settings;
-using MoMoney.Views;
 
 namespace MoMoney.ViewModels;
 
 public partial class SettingsViewModel : ObservableObject
 {
+    readonly IStockService stockService;
+    readonly IAccountService accountService;
+    readonly ICategoryService categoryService;
+    readonly ITransactionService transactionService;
+
+    public SettingsViewModel(ITransactionService _transactionService, IAccountService _accountService,
+        ICategoryService _categoryService, IStockService _stockService)
+    {
+        transactionService = _transactionService;
+        accountService = _accountService;
+        categoryService = _categoryService;
+        stockService = _stockService;
+    }
+
     /// <summary>
     /// Goes to AccountsPage.xaml.
     /// </summary>
@@ -43,7 +57,7 @@ public partial class SettingsViewModel : ObservableObject
     /// Prompts the user to open a CSV file. Valid Accounts are then added to the database.
     /// </summary>
     [RelayCommand]
-    async static Task ImportAccountsCSV()
+    async Task ImportAccountsCSV()
     {
         try
         {
@@ -70,7 +84,7 @@ public partial class SettingsViewModel : ObservableObject
                             if (string.IsNullOrEmpty(name))
                                 throw new InvalidAccountException("Account name cannot be blank");
 
-                            if (!Enum.TryParse(typeof(Constants.AccountTypes), accountInfo[1], true, out var type))
+                            if (!Enum.TryParse(typeof(AccountType), accountInfo[1], true, out var type))
                                 throw new InvalidAccountException("'" + accountInfo[1] + "' is not a valid account type");
 
                             if (!decimal.TryParse(accountInfo[2], out decimal startingBalance))
@@ -91,7 +105,7 @@ public partial class SettingsViewModel : ObservableObject
                             accounts.Add(account);
                         }
 
-                        await AccountService.AddAccounts(accounts);
+                        await accountService.AddAccounts(accounts);
                         AddTransactionPage.UpdatePage?.Invoke(null, new EventArgs()); // update accounts on AddTransactionPage
                     }
                     catch (SQLiteException ex)
@@ -128,7 +142,7 @@ public partial class SettingsViewModel : ObservableObject
     /// Prompts the user to open a CSV file. Valid Categories are then added to the database.
     /// </summary>
     [RelayCommand]
-    async static Task ImportCategoriesCSV()
+    async Task ImportCategoriesCSV()
     {
         try
         {
@@ -161,7 +175,7 @@ public partial class SettingsViewModel : ObservableObject
                                 try
                                 {
                                     // check if parent exists in db
-                                    var parentCat = await CategoryService.GetParentCategory(parent);
+                                    var parentCat = await categoryService.GetParentCategory(parent);
                                 }
                                 catch (CategoryNotFoundException)
                                 {
@@ -180,7 +194,7 @@ public partial class SettingsViewModel : ObservableObject
                             categories.Add(category);
                         }
 
-                        await CategoryService.AddCategories(categories);
+                        await categoryService.AddCategories(categories);
                     }
                     catch (InvalidCategoryException ex)
                     {
@@ -221,8 +235,8 @@ public partial class SettingsViewModel : ObservableObject
                 if (result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
                 {
                     List<Transaction> transactions = new();
-                    var accountsDict = await AccountService.GetAccountsAsNameDict();
-                    var categoriesDict = await CategoryService.GetCategoriesAsNameDict();
+                    var accountsDict = await accountService.GetAccountsAsNameDict();
+                    var categoriesDict = await categoryService.GetCategoriesAsNameDict();
 
                     using var sr = new StreamReader(result.FullPath);
                     int i = 1;
@@ -293,7 +307,7 @@ public partial class SettingsViewModel : ObservableObject
                             i++;
                         }
 
-                        await TransactionService.AddTransactions(transactions);
+                        await transactionService.AddTransactions(transactions);
 
                         // update account balances after transactions are successfully added
                         await CalculateAccountBalances();
@@ -330,7 +344,7 @@ public partial class SettingsViewModel : ObservableObject
     /// Prompts the user to open a CSV file. Valid Accounts are then added to the database.
     /// </summary>
     [RelayCommand]
-    async static Task ImportStocksCSV()
+    async Task ImportStocksCSV()
     {
         try
         {
@@ -381,7 +395,7 @@ public partial class SettingsViewModel : ObservableObject
                             stocks.Add(stock);
                         }
 
-                        await StockService.AddStocks(stocks);
+                        await stockService.AddStocks(stocks);
                     }
                     catch (SQLiteException ex)
                     {
@@ -433,7 +447,7 @@ public partial class SettingsViewModel : ObservableObject
             try
             {
                 // get data
-                var transactions = await TransactionService.GetTransactions();
+                var transactions = await transactionService.GetTransactions();
                 transactions = transactions.OrderBy(t => t.Date)
                                            .ThenBy(t => t.TransactionID);
 
@@ -441,10 +455,10 @@ public partial class SettingsViewModel : ObservableObject
                 {
                     // formats transaction parameters in CSV format
                     var date = trans.Date.ToString("yyyy-MM-dd");
-                    var account = AccountService.Accounts[trans.AccountID].AccountName;
+                    var account = accountService.Accounts[trans.AccountID].AccountName;
                     var amount = trans.Amount;
-                    var category = CategoryService.Categories[trans.CategoryID].CategoryName;
-                    var subcategory = CategoryService.Categories[trans.SubcategoryID].CategoryName;
+                    var category = categoryService.Categories[trans.CategoryID].CategoryName;
+                    var subcategory = categoryService.Categories[trans.SubcategoryID].CategoryName;
                     var payee = trans.Payee;
                     string line = $"{date},{account},{amount},{category},{subcategory},{payee}";
 
@@ -477,8 +491,8 @@ public partial class SettingsViewModel : ObservableObject
     {
         try
         {
-            var transactions = await TransactionService.GetTransactions();
-            var accounts = await AccountService.GetAccounts();
+            var transactions = await transactionService.GetTransactions();
+            var accounts = await accountService.GetAccounts();
             if (!transactions.Any())
             {
                 return;
@@ -502,7 +516,7 @@ public partial class SettingsViewModel : ObservableObject
             foreach (var account in matchingAccounts)
             {
                 account.CurrentBalance = account.StartingBalance + currentBalances[account.AccountID];
-                await AccountService.UpdateAccount(account);
+                await accountService.UpdateAccount(account);
             }
         }
         catch (SQLiteException ex)
@@ -527,7 +541,7 @@ public partial class SettingsViewModel : ObservableObject
         {
             try
             {
-                await TransactionService.ResetTransactions();
+                await transactionService.ResetTransactions();
             }
             catch (SQLiteException ex)
             {
@@ -548,7 +562,7 @@ public partial class SettingsViewModel : ObservableObject
         {
             try
             {
-                await AccountService.RemoveAllAccounts();
+                await accountService.RemoveAllAccounts();
             }
             catch (SQLiteException ex)
             {
@@ -566,7 +580,7 @@ public partial class SettingsViewModel : ObservableObject
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Categories?", "Yes", "No");
 
         if (flag)
-            await CategoryService.RemoveAllCategories();
+            await categoryService.RemoveAllCategories();
     }
 
     /// <summary>
@@ -578,6 +592,6 @@ public partial class SettingsViewModel : ObservableObject
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Stocks?", "Yes", "No");
 
         if (flag)
-            await StockService.RemoveStocks();
+            await stockService.RemoveStocks();
     }
 }

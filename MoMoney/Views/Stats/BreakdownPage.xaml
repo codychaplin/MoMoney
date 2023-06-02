@@ -2,8 +2,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Stats.BreakdownPage"
-             xmlns:local="clr-namespace:MoMoney"
+             x:DataType="viewmodel:BreakdownViewModel"
              xmlns:models="clr-namespace:MoMoney.Models"
+             xmlns:converters="clr-namespace:MoMoney.Converters"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Stats"
              xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
              xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView"
@@ -12,14 +13,10 @@
              NavigationPage.HasNavigationBar="False"
              Title="Breakdown">
 
-    <ContentPage.BindingContext>
-        <viewmodel:BreakdownViewModel />
-    </ContentPage.BindingContext>
-
     <ContentPage.Resources>
 
         <!-- converter -->
-        <local:ShowValueConverter x:Key="ShowValue" />
+        <converters:ShowValueConverter x:Key="ShowValue" />
 
         <!-- SfListView Data Source -->
         <data:DataSource x:Key="DataSource">

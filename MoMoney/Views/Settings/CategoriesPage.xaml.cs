@@ -4,12 +4,10 @@ namespace MoMoney.Views.Settings;
 
 public partial class CategoriesPage : ContentPage
 {
-	CategoriesViewModel vm;
-
-	public CategoriesPage()
+	public CategoriesPage(CategoriesViewModel _vm)
 	{
 		InitializeComponent();
-		vm = (CategoriesViewModel)BindingContext;
-		NavigatedTo += vm.Refresh;
+		BindingContext = _vm;
+		NavigatedTo += _vm.Refresh;
 	}
 }

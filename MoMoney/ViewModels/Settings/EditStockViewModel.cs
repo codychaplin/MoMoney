@@ -10,12 +10,19 @@ namespace MoMoney.ViewModels.Settings;
 [QueryProperty(nameof(Symbol), nameof(Symbol))]
 public partial class EditStockViewModel : ObservableObject
 {
+    readonly IStockService stockService;
+
     [ObservableProperty]
     public Stock stock = new();
 
     Stock initalStock;
 
     public string Symbol { get; set; } // Stock Symbol
+
+    public EditStockViewModel(IStockService _stockService)
+    {
+        stockService = _stockService;
+    }
 
     /// <summary>
     /// Gets Stock using Symbol.
@@ -24,7 +31,7 @@ public partial class EditStockViewModel : ObservableObject
     {
         try
         {
-            Stock = await StockService.GetStock(Symbol);
+            Stock = await stockService.GetStock(Symbol);
             initalStock = new Stock
             {
                 Symbol = Stock.Symbol,
@@ -50,9 +57,9 @@ public partial class EditStockViewModel : ObservableObject
         {
             // if symbol (primary key) changed, 
             if (initalStock.Symbol != Stock.Symbol)
-                await StockService.UpdateStock(Stock, initalStock);
+                await stockService.UpdateStock(Stock, initalStock);
             else
-                await StockService.UpdateStock(Stock);
+                await stockService.UpdateStock(Stock);
 
             await Shell.Current.GoToAsync("..");
         }
@@ -70,17 +77,17 @@ public partial class EditStockViewModel : ObservableObject
     {
         bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Stock.Symbol}\"?", "Yes", "No");
 
-        if (flag)
+        if (!flag)
+            return;
+
+        try
         {
-            try
-            {
-                await StockService.RemoveStock(Stock.Symbol);
-                await Shell.Current.GoToAsync("..");
-            }
-            catch (SQLiteException ex)
-            {
-                await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
-            }
+            await stockService.RemoveStock(Stock.Symbol);
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (SQLiteException ex)
+        {
+            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
 }

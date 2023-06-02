@@ -4,12 +4,10 @@ namespace MoMoney.Views.Settings;
 
 public partial class AccountsPage : ContentPage
 {
-	AccountsViewModel vm;
-
-	public AccountsPage()
+	public AccountsPage(AccountsViewModel vm)
 	{
 		InitializeComponent();
-		vm = (AccountsViewModel)BindingContext;
+		BindingContext = vm;
 		NavigatedTo += vm.Init;
 	}
 }

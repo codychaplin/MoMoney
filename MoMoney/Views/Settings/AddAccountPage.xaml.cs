@@ -1,10 +1,13 @@
+using MoMoney.ViewModels.Settings;
+
 namespace MoMoney.Views.Settings;
 
 public partial class AddAccountPage : ContentPage
 {
-	public AddAccountPage()
+	public AddAccountPage(AddAccountViewModel vm)
 	{
 		InitializeComponent();
+        BindingContext = vm;
 		txtStartingBalance.Text = "";
 	}
 

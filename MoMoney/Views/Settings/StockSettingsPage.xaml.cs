@@ -4,12 +4,10 @@ namespace MoMoney.Views.Settings;
 
 public partial class StockSettingsPage : ContentPage
 {
-    StockSettingsViewModel vm;
-
-    public StockSettingsPage()
+    public StockSettingsPage(StockSettingsViewModel _vm)
 	{
 		InitializeComponent();
-        vm = (StockSettingsViewModel)BindingContext;
-        NavigatedTo += vm.Refresh;
+        BindingContext = _vm;
+        NavigatedTo += _vm.Refresh;
     }
 }

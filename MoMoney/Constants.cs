@@ -24,14 +24,5 @@ namespace MoMoney
 
         // if false, sensitive values are hidden
         public static bool ShowValue = true;
-
-        // account type 
-        public enum AccountTypes
-        {
-            Checkings,
-            Savings,
-            Credit,
-            Investments
-        }
     }
 }

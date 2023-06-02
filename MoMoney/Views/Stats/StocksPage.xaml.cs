@@ -6,10 +6,11 @@ public partial class StocksPage : ContentPage
 {
 	StocksViewModel vm;
 
-	public StocksPage()
+	public StocksPage(StocksViewModel _vm)
 	{
 		InitializeComponent();
-		vm = (StocksViewModel)BindingContext;
+		vm = _vm;
+		BindingContext = vm;
 		Loaded += vm.Init;
 	}
 

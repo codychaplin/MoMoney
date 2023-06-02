@@ -2,20 +2,16 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Settings.AccountsPage"
-             xmlns:local="clr-namespace:MoMoney"
-             xmlns:models="clr-namespace:MoMoney.Models"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
              x:DataType="viewmodel:AccountsViewModel"
+             xmlns:models="clr-namespace:MoMoney.Models"
+             xmlns:converters="clr-namespace:MoMoney.Converters"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
              Title="Accounts">
-
-    <ContentPage.BindingContext>
-        <viewmodel:AccountsViewModel />
-    </ContentPage.BindingContext>
 
     <ContentPage.Resources>
         <!-- converters -->
-        <local:TileColourConverter x:Key="TileColour" />
-        <local:ShowValueConverter x:Key="ShowValue" />
+        <converters:TileColourConverter x:Key="TileColour" />
+        <converters:ShowValueConverter x:Key="ShowValue" />
     </ContentPage.Resources>
 
     <!-- main page -->

@@ -8,11 +8,7 @@
              xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              Title="Edit Transaction">
 
-    <ContentPage.BindingContext>
-        <viewmodel:EditTransactionViewModel />
-    </ContentPage.BindingContext>
-
-        <ContentPage.Resources>
+    <ContentPage.Resources>
             <!-- change font colour when picker is disabled/enabled -->
             <Style TargetType="Picker">
                 <Style.Triggers>

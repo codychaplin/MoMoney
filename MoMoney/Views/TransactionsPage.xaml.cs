@@ -1,5 +1,3 @@
-using MoMoney.Models;
-using MoMoney.Services;
 using MoMoney.ViewModels;
 
 namespace MoMoney.Views;
@@ -10,10 +8,12 @@ public partial class TransactionsPage : ContentView
 
     public static EventHandler<TransactionEventArgs> TransactionsChanged { get; set; }
 
-    public TransactionsPage()
+    public TransactionsPage(TransactionsViewModel _vm)
 	{
 		InitializeComponent();
-        vm = (TransactionsViewModel)BindingContext;
+        vm = _vm;
+        BindingContext = vm;
+
         vm.ListView = listView;
         frAccounts.ZIndex = 2;
 
@@ -23,7 +23,6 @@ public partial class TransactionsPage : ContentView
         pckAccount.SelectedIndexChanged += vm.UpdateFilter;
         pckCategory.SelectedIndexChanged += vm.CategoryChanged;
         pckSubcategory.SelectedIndexChanged += vm.UpdateFilter;
-        
     }
 
     /// <summary>
@@ -33,8 +32,8 @@ public partial class TransactionsPage : ContentView
     /// <param name="e"></param>
     async void ContentView_Loaded(object sender, EventArgs e)
     {
-        await vm.GetAccounts();
-        await vm.GetParentCategories();
+        //await vm.GetAccounts();
+        //await vm.GetParentCategories();
     }
 
     /// <summary>

@@ -9,8 +9,15 @@ namespace MoMoney.ViewModels.Settings;
 
 public partial class StockSettingsViewModel : ObservableObject
 {
+    readonly IStockService stockService;
+
     [ObservableProperty]
     public ObservableCollection<Stock> stocks = new();
+
+    public StockSettingsViewModel(IStockService _stockService)
+    {
+        stockService = _stockService;
+    }
 
     /// <summary>
     /// Goes to AddStockPage.xaml.
@@ -35,7 +42,7 @@ public partial class StockSettingsViewModel : ObservableObject
     /// </summary>
     public async void Refresh(object s, EventArgs e)
     {
-        var stocks = await StockService.GetStocks();
+        var stocks = await stockService.GetStocks();
         Stocks.Clear();
         foreach (var stock in stocks)
             Stocks.Add(stock);

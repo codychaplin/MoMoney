@@ -11,6 +11,10 @@ namespace MoMoney.ViewModels;
 
 public partial class AddTransactionViewModel : ObservableObject
 {
+    readonly IAccountService accountService;
+    readonly ICategoryService categoryService;
+    readonly ITransactionService transactionService;
+
     [ObservableProperty]
     public ObservableCollection<Account> accounts = new();
 
@@ -41,13 +45,20 @@ public partial class AddTransactionViewModel : ObservableObject
     [ObservableProperty]
     public Account transferAccount = new();
 
+    public AddTransactionViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService)
+    {
+        transactionService = _transactionService;
+        accountService = _accountService;
+        categoryService = _categoryService;
+    }
+
     /// <summary>
     /// Gets accounts from database and refreshes Accounts collection.
     /// </summary>
     /// <returns></returns>
     public async void GetAccounts(object sender, EventArgs e)
     {
-        var accounts = await AccountService.GetActiveAccounts();
+        var accounts = await accountService.GetActiveAccounts();
         Accounts.Clear();
         foreach (var acc in accounts)
             Accounts.Add(acc);
@@ -60,7 +71,7 @@ public partial class AddTransactionViewModel : ObservableObject
     {
         try
         {
-            var income = await CategoryService.GetCategory(Constants.INCOME_ID);
+            var income = await categoryService.GetCategory(Constants.INCOME_ID);
             Categories.Clear();
             Categories.Add(income);
             Subcategories.Clear();
@@ -78,7 +89,7 @@ public partial class AddTransactionViewModel : ObservableObject
     {
         try
         {
-            var transfer = await CategoryService.GetCategory(Constants.TRANSFER_ID);
+            var transfer = await categoryService.GetCategory(Constants.TRANSFER_ID);
             Categories.Clear();
             Categories.Add(transfer);
             Subcategories.Clear();
@@ -94,7 +105,7 @@ public partial class AddTransactionViewModel : ObservableObject
     /// </summary>
     public async Task GetExpenseCategories()
     {
-        var categories = await CategoryService.GetExpenseCategories();
+        var categories = await categoryService.GetExpenseCategories();
         Categories.Clear();
         foreach (var cat in categories)
             Categories.Add(cat);
@@ -109,7 +120,7 @@ public partial class AddTransactionViewModel : ObservableObject
     {
         if (parentCategory is not null)
         {
-            var subcategories = await CategoryService.GetSubcategories(parentCategory);
+            var subcategories = await categoryService.GetSubcategories(parentCategory);
             Subcategories.Clear();
             foreach (var cat in subcategories)
                 Subcategories.Add(cat);
@@ -118,7 +129,7 @@ public partial class AddTransactionViewModel : ObservableObject
 
     public async void GetPayees(object sender, EventArgs e)
     {
-        var payees = await TransactionService.GetPayeesFromTransactions();
+        var payees = await transactionService.GetPayeesFromTransactions();
         Payees = new ObservableCollection<string>(payees);
 
     }
@@ -140,7 +151,7 @@ public partial class AddTransactionViewModel : ObservableObject
 
             if (Category.CategoryID == Constants.INCOME_ID) // income = regular
             {
-                transaction = await TransactionService.AddTransaction(Date, Account.AccountID, Amount,Category.CategoryID, Subcategory.CategoryID, payee, null);
+                transaction = await transactionService.AddTransaction(Date, Account.AccountID, Amount,Category.CategoryID, Subcategory.CategoryID, payee, null);
             }
             else if (Category.CategoryID == Constants.TRANSFER_ID) // transfer = 2 transactions
             {
@@ -150,20 +161,20 @@ public partial class AddTransactionViewModel : ObservableObject
                 var _amount = Amount;
                 var _categoryID = Category.CategoryID;
                 var _transferID = TransferAccount.AccountID;
-                transaction = await TransactionService.AddTransaction(_date, _accountID, -_amount, _categoryID, Constants.DEBIT_ID, "", _transferID);
-                await TransactionService.AddTransaction(_date, _transferID, _amount, _categoryID, Constants.CREDIT_ID, "", _accountID);
+                transaction = await transactionService.AddTransaction(_date, _accountID, -_amount, _categoryID, Constants.DEBIT_ID, "", _transferID);
+                await transactionService.AddTransaction(_date, _transferID, _amount, _categoryID, Constants.CREDIT_ID, "", _accountID);
 
-                await AccountService.UpdateBalance(_transferID, _amount); // update corresponding Account balance
+                await accountService.UpdateBalance(_transferID, _amount); // update corresponding Account balance
             }
             else if (Category.CategoryID >= Constants.EXPENSE_ID) // expense = negative amount
             {
-                transaction = await TransactionService.AddTransaction(Date, Account.AccountID, -Amount, Category.CategoryID, Subcategory.CategoryID, payee, null);
+                transaction = await transactionService.AddTransaction(Date, Account.AccountID, -Amount, Category.CategoryID, Subcategory.CategoryID, payee, null);
             }
 
             if (transaction is null)
                 throw new InvalidTransactionException("Could not get new Transaction from database");
 
-            await AccountService.UpdateBalance(transaction.AccountID, transaction.Amount); // update corresponding Account balance
+            await accountService.UpdateBalance(transaction.AccountID, transaction.Amount); // update corresponding Account balance
 
             // update TransactionsPage Transactions
             var args = new TransactionEventArgs(transaction, TransactionEventArgs.CRUD.Create);

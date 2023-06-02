@@ -10,8 +10,15 @@ namespace MoMoney.ViewModels.Settings;
 
 public partial class CategoriesViewModel : ObservableObject
 {
+    readonly ICategoryService categoryService;
+
     [ObservableProperty]
     public ObservableCollection<CategoryGroup> categories = new();
+
+    public CategoriesViewModel(ICategoryService _categoryService)
+    {
+        categoryService = _categoryService;
+    }
 
     /// <summary>
     /// Goes to AddCategoryPage.xaml.
@@ -39,7 +46,7 @@ public partial class CategoriesViewModel : ObservableObject
     {
         try
         {
-            var cat = await CategoryService.GetParentCategory(name);
+            var cat = await categoryService.GetParentCategory(name);
             await Shell.Current.GoToAsync($"{nameof(EditCategoryPage)}?ID={cat.CategoryID}");
         }
         catch (CategoryNotFoundException ex)
@@ -53,21 +60,11 @@ public partial class CategoriesViewModel : ObservableObject
     /// </summary>
     public async void Refresh(object s, EventArgs e)
     {
-        var categories = await CategoryService.GetCategories();
+        var categories = await categoryService.GetCategories();
         Categories.Clear();
         // groups categories by parent except where ParentName == ""
         foreach (var cat in categories.GroupBy(c => c.ParentName))
             if (!string.IsNullOrEmpty(cat.Key))
                 Categories.Add(new CategoryGroup(cat));
-    }
-}
-
-public class CategoryGroup : List<Category>
-{
-    public string CategoryName { get; private set; }
-
-    public CategoryGroup(IGrouping<string, Category> cat) : base(cat.ToList())
-    {
-        CategoryName = cat.Key;
     }
 }

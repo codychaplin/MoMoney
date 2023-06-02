@@ -2,14 +2,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Settings.AddCategoryPage"
+             x:DataType="viewmodel:AddCategoryViewModel"
              xmlns:model="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
-             x:DataType="viewmodel:AddCategoryViewModel"
              Title="Add Category">
-
-    <ContentPage.BindingContext>
-        <viewmodel:AddCategoryViewModel />
-    </ContentPage.BindingContext>
 
     <!-- main page -->
     <VerticalStackLayout>

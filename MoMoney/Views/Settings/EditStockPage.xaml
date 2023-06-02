@@ -2,13 +2,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Settings.EditStockPage"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
              x:DataType="viewmodel:EditStockViewModel"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
              Title="Edit Stock">
-    
-    <ContentPage.BindingContext>
-        <viewmodel:EditStockViewModel />
-    </ContentPage.BindingContext>
 
     <!-- main page -->
     <ScrollView>

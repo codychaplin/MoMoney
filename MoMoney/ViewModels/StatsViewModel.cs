@@ -4,10 +4,8 @@ using MoMoney.Views.Stats;
 
 namespace MoMoney.ViewModels;
 
-public partial class StatsPageViewModel : ObservableObject
+public partial class StatsViewModel : ObservableObject
 {
-
-
     /// <summary>
     /// Goes to AccountSummaryPage.xaml.
     /// </summary>

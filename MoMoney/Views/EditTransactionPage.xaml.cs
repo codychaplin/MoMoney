@@ -6,10 +6,11 @@ public partial class EditTransactionPage : ContentPage
 {
     EditTransactionViewModel vm;
 
-	public EditTransactionPage()
+	public EditTransactionPage(EditTransactionViewModel _vm)
 	{
 		InitializeComponent();
-        vm = (EditTransactionViewModel)BindingContext;
+        vm = _vm;
+        BindingContext = vm;
     }
 
     protected override async void OnAppearing()

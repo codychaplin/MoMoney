@@ -8,10 +8,6 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs">
 
-    <ContentView.BindingContext>
-        <viewmodel:AddTransactionViewModel />
-    </ContentView.BindingContext>
-
     <!-- main page -->
     <ScrollView>
         <Grid>

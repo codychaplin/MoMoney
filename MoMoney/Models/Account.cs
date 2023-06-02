@@ -1,7 +1,6 @@
 ﻿using SQLite;
 
 namespace MoMoney.Models;
-
 public class Account
 {
     [PrimaryKey, AutoIncrement]
@@ -33,4 +32,13 @@ public class Account
         CurrentBalance = account.CurrentBalance;
         Enabled = account.Enabled;
     }
+}
+
+// account type 
+public enum AccountType
+{
+    Checkings,
+    Savings,
+    Credit,
+    Investments
 }

@@ -7,6 +7,8 @@ namespace MoMoney.ViewModels.Settings;
 
 public partial class AddStockViewModel : ObservableObject
 {
+    readonly IStockService stockService;
+
     [ObservableProperty]
     public string symbol; // stock symbol
 
@@ -22,6 +24,11 @@ public partial class AddStockViewModel : ObservableObject
     [ObservableProperty]
     public decimal bookValue; // total price paid
 
+    public AddStockViewModel(IStockService _stockService)
+    {
+        stockService = _stockService;
+    }
+
     /// <summary>
     /// adds Account to database using input fields from view.
     /// </summary>
@@ -30,7 +37,7 @@ public partial class AddStockViewModel : ObservableObject
     {
         try
         {
-            await StockService.AddStock(Symbol, Quantity, Cost, MarketPrice, BookValue);
+            await stockService.AddStock(Symbol, Quantity, Cost, MarketPrice, BookValue);
             await Shell.Current.GoToAsync("..");
         }
         catch (SQLiteException ex)

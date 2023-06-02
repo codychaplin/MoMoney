@@ -1,36 +1,34 @@
 ﻿using MoMoney.Models;
 using MoMoney.Exceptions;
-using Android.Webkit;
+using MoMoney.Data;
 
 namespace MoMoney.Services;
 
-public static class StockService
+/// <inheritdoc />
+public class StockService : IStockService
 {
-    public static Dictionary<string, Stock> Stocks { get; private set; } = new();
+    readonly MoMoneydb momoney;
 
-    /// <summary>
-    /// Calls db Init.
-    /// </summary>
-    public static async Task Init()
+    public Dictionary<string, Stock> Stocks { get; private set; } = new();
+
+    public StockService(MoMoneydb _momoney)
     {
+        momoney = _momoney;
+    }
+
+    public async Task Init()
+    {
+        await momoney.Init();
         if (!Stocks.Any())
             Stocks = await GetStocksAsDict();
     }
 
-    /// <summary>
-    /// Creates new Stock object and inserts into Stocks table.
-    /// </summary>
-    /// <param name="symbol"></param>
-    /// <param name="quantity"></param>
-    /// <param name="cost"></param>
-    /// <param name="marketprice"></param>
-    /// <param name="bookvalue"></param>
-    /// <exception cref="DuplicateStockException"></exception>
-    public static async Task AddStock(string symbol, int quantity, decimal cost, decimal marketprice, decimal bookvalue)
+    public async Task AddStock(string symbol, int quantity, decimal cost, decimal marketprice, decimal bookvalue)
     {
+        await Init();
         ValidateStock(symbol, quantity, cost, marketprice, bookvalue);
 
-        var res = await MoMoneydb.db.Table<Stock>().CountAsync(s => s.Symbol == symbol);
+        var res = await momoney.db.Table<Stock>().CountAsync(s => s.Symbol == symbol);
         if (res > 0)
             throw new DuplicateStockException("Stock symbol'" + symbol + "' already exists");
 
@@ -43,122 +41,90 @@ public static class StockService
             BookValue = bookvalue
         };
 
-        // adds Account to db and dictionary
-        await MoMoneydb.db.InsertAsync(stock);
+        await momoney.db.InsertAsync(stock);
         Stocks.Add(stock.Symbol, stock);
     }
 
-    /// <summary>
-    /// Inserts multiple Stock objects into Stocks table.
-    /// </summary>
-    /// <param name="stocks"></param>
-    /// <exception cref="DuplicateStockException"></exception>
-    public static async Task AddStocks(List<Stock> stocks)
+    public async Task AddStocks(List<Stock> stocks)
     {
-        // gets accounts from db
-        var dbStocks = await MoMoneydb.db.Table<Stock>().ToListAsync();
+        await Init();
+        var dbStocks = await momoney.db.Table<Stock>().ToListAsync();
 
-        // checks if names of any new accounts matches any names from dbAccounts and throw exception if true
+        // checks if names of any new stocks matches any names from db and throw exception if true
         bool containsDuplicates = stocks.Any(s => dbStocks.Select(dbs => dbs.Symbol).Contains(s.Symbol));
         if (containsDuplicates)
             throw new DuplicateStockException("Imported stocks contained duplicates. Please try again");
 
-        // adds accounts to db and dictionary
-        await MoMoneydb.db.InsertAllAsync(stocks);
+        // adds stocks to db and dictionary
+        await momoney.db.InsertAllAsync(stocks);
         foreach (var stk in stocks)
             Stocks.Add(stk.Symbol, stk);
     }
 
-    /// <summary>
-    /// Given an Stock object, updates the corresponding stock in the Stocks table.
-    /// </summary>
-    /// <param name="updatedStock"></param>
-    public static async Task UpdateStock(Stock updatedStock)
+    public async Task UpdateStock(Stock updatedStock)
     {
+        await Init();
         ValidateStock(updatedStock.Symbol, updatedStock.Quantity, updatedStock.Cost, updatedStock.MarketPrice, updatedStock.BookValue);
-
-        // update Stock in db and dictionary
-        await MoMoneydb.db.UpdateAsync(updatedStock);
+        await momoney.db.UpdateAsync(updatedStock);
         Stocks[updatedStock.Symbol] = updatedStock;
     }
 
-    /// <summary>
-    /// Given a new and old Stock object, removes old and inserts new into the Stocks table.
-    /// </summary>
-    /// <param name="updatedStock"></param>
-    public static async Task UpdateStock(Stock updatedStock, Stock oldStock)
+    public async Task UpdateStock(Stock updatedStock, Stock oldStock)
     {
+        await Init();
         ValidateStock(updatedStock.Symbol, updatedStock.Quantity, updatedStock.Cost, updatedStock.MarketPrice, updatedStock.BookValue);
-
-        // update Stock in db and dictionary
-        await MoMoneydb.db.DeleteAsync(oldStock);
-        await MoMoneydb.db.InsertAsync(updatedStock);
+        await momoney.db.DeleteAsync(oldStock);
+        await momoney.db.InsertAsync(updatedStock);
         Stocks.Remove(oldStock.Symbol);
         Stocks[updatedStock.Symbol] = updatedStock;
     }
 
-    /// <summary>
-    /// Removes Stock from Stocks table.
-    /// </summary>
-    /// <param name="symbol"></param>
-    public static async Task RemoveStock(string symbol)
+    public async Task RemoveStock(string symbol)
     {
-        // remove Stock from db and dictionary
-        await MoMoneydb.db.DeleteAsync<Stock>(symbol);
+        await Init();
+        await momoney.db.DeleteAsync<Stock>(symbol);
         Stocks.Remove(symbol);
     }
 
-    /// <summary>
-    /// Removes ALL Stocks from Stocks table.
-    /// </summary>
-    public static async Task RemoveStocks()
+    public async Task RemoveStocks()
     {
-        await MoMoneydb.db.DeleteAllAsync<Stock>();
-        await MoMoneydb.db.DropTableAsync<Stock>();
-        await MoMoneydb.db.CreateTableAsync<Stock>();
+        await Init();
+        await momoney.db.DeleteAllAsync<Stock>();
+        await momoney.db.DropTableAsync<Stock>();
+        await momoney.db.CreateTableAsync<Stock>();
         Stocks.Clear();
     }
 
-    /// <summary>
-    /// Gets a stock from the Stocks table using a symbol.
-    /// </summary>
-    /// <param name="symbol"></param>
-    /// <returns>Stock object</returns>
-    public static async Task<Stock> GetStock(string symbol)
+    public async Task<Stock> GetStock(string symbol)
     {
+        await Init();
         if (Stocks.TryGetValue(symbol, out var stock))
-        {
             return new Stock(stock);
-        }
+
+        var stk = await momoney.db.Table<Stock>().FirstOrDefaultAsync(s => s.Symbol == symbol);
+        if (stk is null)
+            throw new StockNotFoundException($"Could not find Stock with symbol '{symbol}'.");
         else
-        {
-            var stk = await MoMoneydb.db.Table<Stock>().FirstOrDefaultAsync(s => s.Symbol == symbol);
-            if (stk is null)
-                throw new StockNotFoundException($"Could not find Stock with symbol '{symbol}'.");
-            else
-                return stk;
-        }
+            return stk;
     }
 
-    /// <summary>
-    /// Gets all Stocks from Stocks table as a list.
-    /// </summary>
-    /// <returns>List of Stock objects</returns>
-    public static async Task<List<Stock>> GetStocks()
+    public async Task<List<Stock>> GetStocks()
     {
+        await Init();
         if (Stocks.Any())
             return Stocks.Values.ToList();
-        else
-            return await MoMoneydb.db.Table<Stock>().ToListAsync();
+
+        return await momoney.db.Table<Stock>().ToListAsync();
     }
 
     /// <summary>
     /// Gets all Stocks from Stocks table as a list.
     /// </summary>
     /// <returns>List of Stock objects</returns>
-    static async Task<Dictionary<string, Stock>> GetStocksAsDict()
+    async Task<Dictionary<string, Stock>> GetStocksAsDict()
     {
-        var stocks = await MoMoneydb.db.Table<Stock>().ToListAsync();
+        await momoney.Init();
+        var stocks = await momoney.db.Table<Stock>().ToListAsync();
         return stocks.ToDictionary(s => s.Symbol, s => s);
     }
 

@@ -1,14 +1,16 @@
 ﻿using SQLite;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MoMoney.Views;
 using MoMoney.Services;
 using MoMoney.Exceptions;
-using MoMoney.Views;
 
 namespace MoMoney.ViewModels.Settings;
 
 public partial class AddAccountViewModel : ObservableObject
 {
+    readonly IAccountService accountService;
+
     [ObservableProperty]
     public string name; // account name
 
@@ -18,6 +20,11 @@ public partial class AddAccountViewModel : ObservableObject
     [ObservableProperty]
     public decimal startingBalance; // starting balance
 
+    public AddAccountViewModel(IAccountService _accountService)
+    {
+        accountService = _accountService;
+    }
+
     /// <summary>
     /// adds Account to database using input fields from view.
     /// </summary>
@@ -26,7 +33,7 @@ public partial class AddAccountViewModel : ObservableObject
     {
         try
         {
-            await AccountService.AddAccount(Name, Type, StartingBalance);
+            await accountService.AddAccount(Name, Type, StartingBalance);
             AddTransactionPage.UpdatePage?.Invoke(this, new EventArgs()); // update accounts on AddTransactionPage
             await Shell.Current.GoToAsync("..");
         }

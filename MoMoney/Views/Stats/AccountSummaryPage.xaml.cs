@@ -4,12 +4,10 @@ namespace MoMoney.Views.Stats;
 
 public partial class AccountSummaryPage : ContentPage
 {
-    AccountSummaryViewModel vm;
-
-    public AccountSummaryPage()
+    public AccountSummaryPage(AccountSummaryViewModel _vm)
     {
         InitializeComponent();
-        vm = (AccountSummaryViewModel)BindingContext;
-        Loaded += vm.Init;
+        BindingContext = _vm;
+        Loaded += _vm.Init;
     }
 }

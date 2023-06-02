@@ -7,6 +7,8 @@ namespace MoMoney.ViewModels.Stats;
 
 public partial class AccountSummaryViewModel : ObservableObject
 {
+    readonly IAccountService accountService;
+
     [ObservableProperty]
     public ObservableCollection<Account> checkingsAccounts = new();
 
@@ -34,13 +36,18 @@ public partial class AccountSummaryViewModel : ObservableObject
     [ObservableProperty]
     public decimal networth = 0;
 
+    public AccountSummaryViewModel(IAccountService _accountService)
+    {
+        accountService = _accountService;
+    }
+
     /// <summary>
     /// Gets active accounts from database, groups them by account type,
     /// adds them to the corresponding collection, then adds balance to corresponding sum
     /// </summary>
     public async void Init(object sender, EventArgs e)
     {
-        var accounts = await AccountService.GetActiveAccounts();
+        var accounts = await accountService.GetActiveAccounts();
 
         // checks if there are any accounts in db, then if the all the current balances are the same
         if (accounts.Any())
@@ -48,28 +55,28 @@ public partial class AccountSummaryViewModel : ObservableObject
             // update account type values
             foreach (var acc in accounts)
             {
-                var type = Enum.Parse(typeof(Constants.AccountTypes), acc.AccountType);
+                var type = Enum.Parse(typeof(AccountType), acc.AccountType);
                 switch (type)
                 {
-                    case Constants.AccountTypes.Checkings:
+                    case AccountType.Checkings:
                         CheckingsAccounts.Add(acc);
                         if (Constants.ShowValue == false) break; // if ShowValue is false, skip calculations
                         CheckingsSum += acc.CurrentBalance;
                         Networth += acc.CurrentBalance;
                         break;
-                    case Constants.AccountTypes.Savings:
+                    case AccountType.Savings:
                         SavingsAccounts.Add(acc);
                         if (Constants.ShowValue == false) break;
                         SavingsSum += acc.CurrentBalance;
                         Networth += acc.CurrentBalance;
                         break;
-                    case Constants.AccountTypes.Credit:
+                    case AccountType.Credit:
                         CreditAccounts.Add(acc);
                         if (Constants.ShowValue == false) break;
                         CreditSum += acc.CurrentBalance;
                         Networth += acc.CurrentBalance;
                         break;
-                    case Constants.AccountTypes.Investments:
+                    case AccountType.Investments:
                         InvestmentAccounts.Add(acc);
                         if (Constants.ShowValue == false) break;
                         InvestmentSum += acc.CurrentBalance;

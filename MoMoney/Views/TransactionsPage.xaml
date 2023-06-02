@@ -2,29 +2,25 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.TransactionsPage"
-             xmlns:local="clr-namespace:MoMoney"
-             xmlns:models="clr-namespace:MoMoney.Models"
              x:DataType="viewmodel:TransactionsViewModel"
+             xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
-             xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
-             xmlns:slider="clr-namespace:Syncfusion.Maui.Sliders;assembly=Syncfusion.Maui.Sliders"
+             xmlns:converters="clr-namespace:MoMoney.Converters"
              xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:slider="clr-namespace:Syncfusion.Maui.Sliders;assembly=Syncfusion.Maui.Sliders"
              xmlns:data="clr-namespace:Syncfusion.Maui.DataSource;assembly=Syncfusion.Maui.DataSource"
+             xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
              Loaded="ContentView_Loaded">
-
-    <ContentView.BindingContext>
-        <viewmodel:TransactionsViewModel />
-    </ContentView.BindingContext>
 
     <!-- converters -->
     <ContentView.Resources>
-        <local:NullToVisibleConverter x:Key="NullToVisible" />
-        <local:EmptyToVisibleConverter x:Key="EmptyToVisible" />
-        <local:IdToCategoryConverter x:Key="IdToCategory" />
-        <local:IdToAccountConverter x:Key="IdToAccount" />
-        <local:AmountColourConverter x:Key="AmountColour" />
-        <local:IconConverter x:Key="Icon" />
-        <local:ShowValueConverter x:Key="ShowValue" />
+        <converters:NullToVisibleConverter x:Key="NullToVisible" />
+        <converters:EmptyToVisibleConverter x:Key="EmptyToVisible" />
+        <converters:IdToCategoryConverter x:Key="IdToCategory" />
+        <converters:IdToAccountConverter x:Key="IdToAccount" />
+        <converters:AmountColourConverter x:Key="AmountColour" />
+        <converters:IconConverter x:Key="Icon" />
+        <converters:ShowValueConverter x:Key="ShowValue" />
     </ContentView.Resources>
 
     <!-- main page -->
