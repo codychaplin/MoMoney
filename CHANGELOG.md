@@ -8,6 +8,8 @@
 * Moved AccountType Enum to Account.cs
 * Converted static services classes to interfaces
 * Implemented dependencies for services and viewmodels
+* Converted all pngs to svgs
+* Overhauled UI
 
 
 # MoMoney v1.0.3

@@ -12,7 +12,7 @@
         <converters:ShowValueConverter x:Key="ShowValue" />
     </ContentPage.Resources>
 
-    <ScrollView>
+    <ScrollView Padding="0,10,0,0">
         <VerticalStackLayout Spacing="10">
             <VerticalStackLayout.Resources>
                 <Style TargetType="{x:Type Frame}">
@@ -22,13 +22,12 @@
             </VerticalStackLayout.Resources>
         
             <!-- year picker -->
-            <Frame HorizontalOptions="Center" WidthRequest="120" Padding="0">
+            <Frame HorizontalOptions="Center" Padding="5,5,10,5">
                 <HorizontalStackLayout>
-                    <Image Source="calendar.png" Style="{StaticResource icon}" Margin="5" />
+                    <Image Source="calendar.svg" Style="{StaticResource icon}" Margin="5" />
                     <Picker x:Name="pckDate"
                             Title="Select a Year"
                             HeightRequest="40"
-                            WidthRequest="80"
                             VerticalOptions="Center"
                             HorizontalTextAlignment="Center"
                             ItemsSource="{Binding Years}"
@@ -96,7 +95,7 @@
                                         <chart:ChartDataLabelStyle x:Name="IncExpChartIncLbl"
                                                                    LabelFormat="$0"
                                                                    FontSize="10"
-                                                                   TextColor="{StaticResource LightGreen}"
+                                                                   TextColor="#80e8c9"
                                                                    Background="#00ffffff"
                                                                    LabelPadding="0" />
                                     </chart:CartesianDataLabelSettings.LabelStyle>
@@ -134,7 +133,7 @@
             <VerticalStackLayout Spacing="10">
                 <Frame Padding="5,5,10,5">
                     <Grid ColumnDefinitions="40,*,*">
-                        <Image Source="income.png"
+                        <Image Source="income.svg"
                                HeightRequest="40"
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />
@@ -152,7 +151,7 @@
                 </Frame>
                 <Frame Padding="5,5,10,5">
                     <Grid ColumnDefinitions="40,*,*">
-                        <Image Source="expense.png"
+                        <Image Source="expense.svg"
                                HeightRequest="40"
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />
@@ -175,7 +174,7 @@
             <VerticalStackLayout Spacing="10">
                 <Frame Padding="5,5,10,5">
                     <Grid ColumnDefinitions="40,*,*">
-                        <Image Source="income.png"
+                        <Image Source="income.svg"
                                HeightRequest="40"
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />
@@ -193,7 +192,7 @@
                 </Frame>
                 <Frame Padding="5,5,10,5">
                     <Grid ColumnDefinitions="40,*,*">
-                        <Image Source="expense.png"
+                        <Image Source="expense.svg"
                                HeightRequest="40"
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />

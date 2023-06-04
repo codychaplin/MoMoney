@@ -12,12 +12,6 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- default font -->
-            <Style TargetType="{x:Type Label}">
-                <Setter Property="FontFamily" Value="Metropolis" />
-                <Setter Property="TextColor" Value="{StaticResource Gray100}" />
-            </Style>
-
             <Style x:Key="lblTitle" TargetType="{x:Type Label}">
                 <Setter Property="FontSize" Value="18" />
                 <Setter Property="FontAttributes" Value="Bold" />
@@ -36,20 +30,6 @@
                 <Style.Behaviors>
                     <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                 </Style.Behaviors>
-            </Style>
-
-            <!-- default button style -->
-            <Style TargetType="{x:Type Button}">
-                <Setter Property="CornerRadius" Value="5" />
-                <Setter Property="HeightRequest" Value="35" />
-                <Setter Property="TextColor" Value="White" />
-                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray700}}" />
-            </Style>
-
-            <!-- default button style -->
-            <Style TargetType="{x:Type Frame}">
-                <Setter Property="CornerRadius" Value="5" />
-                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" />
             </Style>
 
             <!-- Label tile -->

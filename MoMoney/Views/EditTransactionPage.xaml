@@ -8,28 +8,14 @@
              xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              Title="Edit Transaction">
 
-    <ContentPage.Resources>
-            <!-- change font colour when picker is disabled/enabled -->
-            <Style TargetType="Picker">
-                <Style.Triggers>
-                <Trigger TargetType="Picker" Property="IsEnabled"  Value="True">
-                    <Setter Property="TextColor" Value="White" />
-                </Trigger>
-                <Trigger TargetType="Picker" Property="IsEnabled" Value="False">
-                    <Setter Property="TextColor" Value="{StaticResource Gray400}" />
-                </Trigger>
-                </Style.Triggers>
-            </Style>
-        </ContentPage.Resources>
-
     <!-- main page -->
-    <ScrollView>
+    <ScrollView Padding="0,10,0,0">
         <VerticalStackLayout>
 
             <!-- Date -->
             <Frame Style="{StaticResource frTile}">
                 <Grid ColumnDefinitions="0.15*,*">
-                    <Image Source="calendar.png" Style="{StaticResource icon}" />
+                    <Image Source="calendar.svg" Style="{StaticResource icon}" />
                     <DatePicker x:Name="dtDate"
                                 Grid.Column="1"
                                 VerticalOptions="Center"
@@ -39,7 +25,7 @@
             <!-- Account -->
             <Frame Style="{StaticResource frTile}">
                 <Grid ColumnDefinitions="0.15*,*">
-                    <Image Source="credit_card.png" Style="{StaticResource icon}" />
+                    <Image Source="accounts.svg" Style="{StaticResource icon}" />
                     <Picker x:Name="pckAccount"
                             Grid.Column="1"
                             Title="Select an Account"
@@ -52,7 +38,7 @@
             <!-- Amount -->
             <Frame Style="{StaticResource frTile}">
                 <Grid ColumnDefinitions="0.15*,*">
-                    <Image Source="dollar_symbol.png" Style="{StaticResource icon}" />
+                    <Image Source="dollar_symbol.svg" Style="{StaticResource icon}" />
                     <Entry x:Name="txtAmount"
                            Grid.Column="1"
                            Keyboard="Numeric"
@@ -63,7 +49,7 @@
             <!-- Category -->
             <Frame Style="{StaticResource frTile}">
                 <Grid ColumnDefinitions="0.15*,*">
-                    <Image Source="category.png" Style="{StaticResource icon}" />
+                    <Image Source="category.svg" Style="{StaticResource icon}" />
                     <Picker x:Name="pckCategory"
                             Grid.Column="1"
                             Title="Select a Category"
@@ -77,7 +63,7 @@
             <!-- Subcategory -->
             <Frame Style="{StaticResource frTile}">
                 <Grid ColumnDefinitions="0.15*,*">
-                    <Image Source="subcategory.png" Style="{StaticResource icon}" />
+                    <Image Source="subcategory.svg" Style="{StaticResource icon}" />
                     <Picker x:Name="pckSubcategory"
                             Grid.Column="1"
                             Title="Select a Subcategory"
@@ -90,7 +76,7 @@
             <!-- Payee -->
             <Frame x:Name="frPayee" Style="{StaticResource frTile}" IsVisible="True">
                 <Grid ColumnDefinitions="0.15*,*">
-                    <Image Source="account.png" Style="{StaticResource icon}" />
+                    <Image Source="account.svg" Style="{StaticResource icon}" />
                     <input:SfAutocomplete x:Name="entPayee"
                                           Grid.Column="1"
                                           TextColor="#888"
@@ -108,7 +94,7 @@
             <!-- Transfer Payee Account -->
             <Frame x:Name="frPayeeAccount" Style="{StaticResource frTile}" IsVisible="False">
                 <Grid ColumnDefinitions="0.15*,*">
-                    <Image Source="account.png" Style="{StaticResource icon}" />
+                    <Image Source="account.svg" Style="{StaticResource icon}" />
                     <Picker x:Name="pckPayeeAccount"
                             Grid.Column="1"
                             Title="Select a Payee"

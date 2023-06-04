@@ -48,7 +48,7 @@
     </ContentPage.Resources>
     
     <!-- main page -->
-    <ScrollView>
+    <ScrollView Padding="0,10,0,0">
         <VerticalStackLayout>
             <VerticalStackLayout.Resources>
                 <Style TargetType="{x:Type Frame}">

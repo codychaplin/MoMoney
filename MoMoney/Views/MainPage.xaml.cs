@@ -18,16 +18,35 @@ public partial class MainPage : ContentPage
         StatsPageTab.Content = new StatsPage(statsViewModel);
         SettingsPageTab.Content = new SettingsPage(settingsViewModel);
 
-		TabView = tvTabBar;
+		TabView = TabBar;
+		TabBar.SelectedIndex = 0;
     }
 
-	private void tvTabBar_SelectionChanged(object sender, TabSelectionChangedEventArgs e)
+	private void TabBar_SelectionChanged(object sender, TabSelectionChangedEventArgs e)
 	{
-		if (tvTabBar.SelectedIndex == 0) // Home Page
+        var previousItem = e.OldIndex >= 0 ? TabBar.Items[(int)e.OldIndex] : null;
+        var currentItem = e.NewIndex >= 0 ? TabBar.Items[(int)e.NewIndex] : null;
+        string colour = (AppInfo.Current.RequestedTheme == AppTheme.Dark) ? "white" : "black";
+
+        if (previousItem != null)
+		{
+			var imageSource = (FileImageSource)previousItem.ImageSource;
+			string name = imageSource.File.Replace("green", colour);
+			previousItem.ImageSource = name;
+		}
+
+        if (currentItem != null)
+        {
+            var imageSource = (FileImageSource)currentItem.ImageSource;
+            string name = imageSource.File.Replace(colour, "green");
+            currentItem.ImageSource = name;
+        }
+
+        if (TabBar.SelectedIndex == 0) // Home Page
 		{
 			HomePage.UpdatePage?.Invoke(this, new EventArgs());
 		}
-		else if (tvTabBar.SelectedIndex == 1) // TransactionPage
+		else if (TabBar.SelectedIndex == 1) // TransactionPage
 		{
 			var args = new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read);
 			TransactionsPage.TransactionsChanged?.Invoke(this, args);

@@ -7,12 +7,12 @@
              Title="Add Account">
 
     <!-- main page -->
-    <VerticalStackLayout>
+    <VerticalStackLayout Padding="0,10,0,0">
 
         <!-- account name -->
         <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="account.png" Style="{StaticResource icon}" />
+                <Image Source="account.svg" Style="{StaticResource icon}" />
                 <Entry x:Name="txtName"
                        Grid.Column="1"
                        Placeholder="Account Name"
@@ -22,7 +22,7 @@
         <!-- account type with predefined values -->
         <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="piggy_bank.png" Style="{StaticResource icon}" />
+                <Image Source="piggy_bank.svg" Style="{StaticResource icon}" />
                 <Picker x:Name="pckType"
                         Grid.Column="1"
                         Title="Select a type"
@@ -39,7 +39,7 @@
         <!-- starting balance -->
         <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="dollar_symbol.png" Style="{StaticResource icon}" />
+                <Image Source="dollar_symbol.svg" Style="{StaticResource icon}" />
                 <Entry x:Name="txtStartingBalance"
                        Grid.Column="1"
                        Keyboard="Numeric"

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MoMoney.Components.AlignedButton"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Name="this">
+    <Grid BindingContext="{x:Reference this}" BackgroundColor="{StaticResource Gray700}">
+        <Button HorizontalOptions="Fill"
+                CornerRadius="0"
+                HeightRequest="45"
+                Command="{Binding Command}" />
+        <Label Text="{Binding Text}"
+               Padding="10,0"
+               FontFamily="Roboto"
+               VerticalOptions="Center"
+               HorizontalOptions="Start" />
+        <Image Source="right_arrow.svg"
+               Margin="10,0"
+               IsVisible="{Binding ShowArrow, FallbackValue=false}"
+               HorizontalOptions="End">
+            <Image.Behaviors>
+                <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+            </Image.Behaviors>
+        </Image>
+    </Grid>
+</ContentView>

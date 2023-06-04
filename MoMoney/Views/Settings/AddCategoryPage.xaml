@@ -8,12 +8,12 @@
              Title="Add Category">
 
     <!-- main page -->
-    <VerticalStackLayout>
+    <VerticalStackLayout Padding="0,10,0,0">
 
         <!-- category name -->
         <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="subcategory.png" Style="{StaticResource icon}" />
+                <Image Source="subcategory.svg" Style="{StaticResource icon}" />
                 <Entry x:Name="txtName"
                        Grid.Column="1"
                        Placeholder="Category Name"
@@ -24,7 +24,7 @@
         <!-- parent category -->
         <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="category.png" Style="{StaticResource icon}" />
+                <Image Source="category.svg" Style="{StaticResource icon}" />
                 <Picker x:Name="pckParent"
                         Grid.Column="1"
                         Title="Select a Parent"

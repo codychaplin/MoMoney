@@ -16,38 +16,39 @@
 
     <!-- main page -->
     <Grid>
-        
-        <!-- list of accounts -->
-        <CollectionView ItemsSource="{Binding Accounts}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Account">
-                    
-                    <!-- template -->
-                    <Frame Style="{StaticResource confrTile}" BackgroundColor="{Binding Enabled, Converter={StaticResource TileColour}}">
-                        <Frame.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Path=GoToEditAccountCommand, Source={RelativeSource
+        <ScrollView Padding="0,10,0,0">
+            
+            <!-- list of accounts -->
+            <CollectionView ItemsSource="{Binding Accounts}">
+                <!-- template -->
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Account">
+                        <Frame Style="{StaticResource confrTile}" BackgroundColor="{Binding Enabled, Converter={StaticResource TileColour}}">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Path=GoToEditAccountCommand, Source={RelativeSource
                                                                     AncestorType={x:Type viewmodel:AccountsViewModel}}}"
-                                                  CommandParameter="{Binding AccountID}" />
-                        </Frame.GestureRecognizers>
-                        <Grid>
-                            <!-- Account Name -->
-                            <Label Style="{StaticResource lblTile}" Text="{Binding AccountName}" />
+                                                      CommandParameter="{Binding AccountID}" />
+                            </Frame.GestureRecognizers>
+                            <Grid>
+                                <!-- Account Name -->
+                                <Label Style="{StaticResource lblTile}" Text="{Binding AccountName}" />
 
-                            <!-- Current Balance -->
-                            <Label Style="{StaticResource lblTile}"
+                                <!-- Current Balance -->
+                                <Label Style="{StaticResource lblTile}"
                                    IsVisible="{Binding Enabled}"
                                    HorizontalOptions="End"
                                    Padding="0,0,5,0"
                                    Text="{Binding CurrentBalance, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
-                        </Grid>
-                    </Frame>
-                    
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-        
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            
+        </ScrollView>
+
         <!-- add account button -->
-        <ImageButton Source="add.png"
+        <ImageButton Source="add.svg"
                      Margin="20"
                      WidthRequest="40"
                      HeightRequest="40"
@@ -55,5 +56,6 @@
                      HorizontalOptions="End"
                      Command="{Binding GoToAddAccountCommand}">
         </ImageButton>
+        
     </Grid>
 </ContentPage>

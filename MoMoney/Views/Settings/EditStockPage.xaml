@@ -7,13 +7,13 @@
              Title="Edit Stock">
 
     <!-- main page -->
-    <ScrollView>
+    <ScrollView Padding="0,10,0,0">
         <VerticalStackLayout>
 
             <!-- symbol -->
             <Frame Style="{StaticResource frTile}">
                 <Grid ColumnDefinitions="0.15*,*">
-                    <Image Source="price_tag.png" Style="{StaticResource icon}" />
+                    <Image Source="label.svg" Style="{StaticResource icon}" />
                     <Entry x:Name="txtSymbol"
                            Grid.Column="1"
                            Placeholder="RBC.TO"
@@ -23,7 +23,7 @@
             <!-- quantity -->
             <Frame Style="{StaticResource frTile}">
                 <Grid ColumnDefinitions="0.15*,*">
-                    <Image Source="quantity.png" Style="{StaticResource icon}" />
+                    <Image Source="number.svg" Style="{StaticResource icon}" />
                     <Entry x:Name="txtQuantity"
                            Grid.Column="1"
                            Placeholder="Quantity"
@@ -34,7 +34,7 @@
             <!-- cost -->
             <Frame Style="{StaticResource frTile}">
                 <Grid ColumnDefinitions="0.15*,*">
-                    <Image Source="shopping_cart.png" Style="{StaticResource icon}" />
+                    <Image Source="shopping_cart.svg" Style="{StaticResource icon}" />
                     <Entry x:Name="txtCost"
                            Grid.Column="1"
                            Keyboard="Numeric"
@@ -45,7 +45,7 @@
             <!-- market price -->
             <Frame Style="{StaticResource frTile}">
                 <Grid ColumnDefinitions="0.15*,*">
-                    <Image Source="price_tags.png" Style="{StaticResource icon}" />
+                    <Image Source="market.svg" Style="{StaticResource icon}" />
                     <Entry x:Name="txtMarketPrice"
                            Grid.Column="1"
                            Keyboard="Numeric"
@@ -56,7 +56,7 @@
             <!-- book value -->
             <Frame Style="{StaticResource frTile}">
                 <Grid ColumnDefinitions="0.15*,*">
-                    <Image Source="book.png" Style="{StaticResource icon}" />
+                    <Image Source="book.svg" Style="{StaticResource icon}" />
                     <Entry x:Name="txtBookValue"
                            Grid.Column="1"
                            Keyboard="Numeric"

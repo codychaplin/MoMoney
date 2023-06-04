@@ -6,6 +6,7 @@
              xmlns:models="clr-namespace:MoMoney.Models"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
              xmlns:converters="clr-namespace:MoMoney.Converters"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts">
 
     <!-- converters -->
@@ -19,13 +20,10 @@
 
     <!-- main page -->
     <ScrollView>
-        <Grid x:Name="grdMain" RowDefinitions="40,220,200,*">
+        <VerticalStackLayout>
 
-            <!-- grid styles -->
-            <Grid.Resources>
-                <Style TargetType="{x:Type Frame}">
-                    <Setter Property="BackgroundColor" Value="{StaticResource Gray900}" />
-                </Style>
+            <!-- styles -->
+            <VerticalStackLayout.Resources>
 
                 <Style TargetType="{x:Type Button}">
                     <Setter Property="FontSize" Value="12" />
@@ -40,63 +38,58 @@
                         </Trigger>
                     </Style.Triggers>
                 </Style>
-            </Grid.Resources>
+            </VerticalStackLayout.Resources>
 
-            <VerticalStackLayout>
-                <Grid>
-                    <!-- title -->
-                    <Label Style="{StaticResource lblTitle}" Text="Dashboard" HorizontalOptions="Center" />
-
-                    <!-- calendar button -->
-                    <ImageButton Style="{StaticResource ibtnTinted}"
-                                 Source="calendar.png"
-                                 HorizontalOptions="End"
-                                 CornerRadius="0"
-                                 HeightRequest="30"
-                                 WidthRequest="30"
-                                 Margin="10"
-                                 Clicked="ImageButton_Clicked"/>
-                </Grid>
+            <!-- title -->
+            <toolkit:Expander x:Name="ExpTitle">
+                <toolkit:Expander.Header>
+                    <Grid HeightRequest="55" Padding="10,0" BackgroundColor="{StaticResource Green}">
+                        <Label Style="{StaticResource lblTitle}"
+                               Text="Dashboard"
+                               HorizontalOptions="Start"
+                               VerticalOptions="Center" />
+                        <ImageButton Style="{StaticResource ibtnTinted}"
+                                     Source="calendar.svg"
+                                     HorizontalOptions="End"
+                                     CornerRadius="0"
+                                     HeightRequest="30"
+                                     WidthRequest="30"
+                                     Clicked="ImageButton_Clicked"/>
+                    </Grid>
+                </toolkit:Expander.Header>
 
                 <!-- date range picker -->
                 <Frame x:Name="frDates"
-                       Padding="0"
-                       CornerRadius="5"
-                       IsVisible="False"
-                       HeightRequest="40"
-                       Margin="50,0,50,0"
+                       Padding="10,0"
+                       HeightRequest="50"
+                       Margin="0,10,0,0"
                        HorizontalOptions="Center"
                        BackgroundColor="{StaticResource Gray700}">
-                    <Grid ColumnDefinitions="30,*,*">
-                        <Grid.Resources>
+                    <HorizontalStackLayout Spacing="5">
+                        <HorizontalStackLayout.Resources>
                             <Style TargetType="{x:Type DatePicker}">
-                                <Setter Property="HeightRequest" Value="40" />
-                                <Setter Property="TextColor" Value="White" />
+                                <Setter Property="HeightRequest" Value="45" />
                                 <Setter Property="Format" Value="MMM dd yyyy" />
-                                <Setter Property="HorizontalOptions" Value="Center" />
                             </Style>
-                        </Grid.Resources>
-                        <Image Source="calendar.png"
-                               Style="{StaticResource imgTinted}"
-                               WidthRequest="20"
-                               HeightRequest="20"
-                               HorizontalOptions="End" />
-                        <DatePicker x:Name="dtFrom" Grid.Column="1" Date="{Binding From}" />
-                        <DatePicker x:Name="dtTo" Grid.Column="2" Date="{Binding To}" />
-                    </Grid>
+                        </HorizontalStackLayout.Resources>
+                        <DatePicker x:Name="dtFrom" Date="{Binding From}" />
+                        <Label Text="to" FontSize="16" VerticalOptions="Center" FontAttributes="Bold" />
+                        <DatePicker x:Name="dtTo" Date="{Binding To}" />
+                        <Image Source="calendar.svg" Style="{StaticResource imgTinted}" />
+                    </HorizontalStackLayout>
                 </Frame>
-            </VerticalStackLayout>
+            </toolkit:Expander>
 
-            <!-- balance over time chart -->
-            <Frame Grid.Row="1"
-                   Margin="10"
-                   CornerRadius="5"
+        <!-- balance over time chart -->
+            <Frame Margin="10"
                    Padding="0,0,5,5"
                    HeightRequest="200">
                 <Frame.Background>
                     <LinearGradientBrush EndPoint="0,1">
-                        <GradientStop Color="#37DB97" Offset="0.1" />
-                        <GradientStop Color="#238C60" Offset="1.0" />
+                        <GradientStop Color="#42ba96" Offset="0.1" />
+                        <GradientStop Color="#42ba96" Offset="0.4" />
+                        <GradientStop Color="#359477" Offset="0.8" />
+                        <GradientStop Color="#359477" Offset="1.0" />
                     </LinearGradientBrush>
                 </Frame.Background>
                 <chart:SfCartesianChart x:Name="chrtBalance" Title="" Margin="0">
@@ -153,7 +146,7 @@
             </Frame>
 
             <!-- insights -->
-            <Grid Grid.Row="2" Margin="10,0,10,0" RowDefinitions="40,*">
+            <Grid Margin="10,0,10,0" RowDefinitions="40,*">
                 <Label Style="{StaticResource lblTitle}" Text="Statistics" />
                 <Button x:Name="btnViewAllStats" Text="View All" Clicked="btnViewAllStats_Clicked" />
                 
@@ -209,10 +202,10 @@
             </Grid>
 
             <!-- transactions -->
-            <Grid Grid.Row="3" Margin="10,0,10,10" RowDefinitions="40,*">
+            <Grid Margin="10,0,10,10" RowDefinitions="40,*">
                 <Label Style="{StaticResource lblTitle}" Text="Transactions" />
                 <Button x:Name="btnViewAllTransactions" Text="View All" Clicked="btnViewAllTransactions_Clicked" />
-                
+
                 <Frame Grid.Row="1" Padding="0,10,0,0" >
                     <!-- list of transactions -->
                     <CollectionView ItemsSource="{Binding RecentTransactions}">
@@ -226,7 +219,7 @@
                                     </Frame.GestureRecognizers>
                                     <Grid ColumnDefinitions="30,*">
                                         <!-- icon -->
-                                        <Image>
+                                        <Image Scale="0.75">
                                             <Image.Source>
                                                 <MultiBinding Converter="{StaticResource Icon}">
                                                     <Binding Path="CategoryID" />
@@ -271,8 +264,7 @@
                     </CollectionView>
                 </Frame>
             </Grid>
-            
-        </Grid>
+        </VerticalStackLayout>
     </ScrollView>
 
 </ContentView>

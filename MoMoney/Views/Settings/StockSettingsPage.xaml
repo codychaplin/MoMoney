@@ -8,7 +8,7 @@
              Title="Stocks">
 
     <!-- main page -->
-    <Grid>
+    <Grid Padding="0,10,0,0">
 
         <!-- list of stocks -->
         <CollectionView ItemsSource="{Binding Stocks}">
@@ -40,7 +40,7 @@
         </CollectionView>
 
         <!-- add account button -->
-        <ImageButton Source="add.png"
+        <ImageButton Source="add.svg"
                      Margin="20"
                      WidthRequest="40"
                      HeightRequest="40"

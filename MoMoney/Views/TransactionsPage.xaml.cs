@@ -32,8 +32,8 @@ public partial class TransactionsPage : ContentView
     /// <param name="e"></param>
     async void ContentView_Loaded(object sender, EventArgs e)
     {
-        //await vm.GetAccounts();
-        //await vm.GetParentCategories();
+        await vm.GetAccounts();
+        await vm.GetParentCategories();
     }
 
     /// <summary>

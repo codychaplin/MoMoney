@@ -70,22 +70,12 @@ public partial class HomePage : ContentView
     }
 
     /// <summary>
-    /// Changes visibility of date range picker and resizes screen to fit.
+    /// Expands/unexpands date range picker
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void ImageButton_Clicked(object sender, EventArgs e)
 	{
-        // change date picker visibility and change height of row
-        if (frDates.IsVisible)
-        {
-            frDates.IsVisible = false;
-            grdMain.RowDefinitions[0].Height = 40;
-        }
-        else
-        {
-            frDates.IsVisible = true;
-            grdMain.RowDefinitions[0].Height = 90;
-        }
+        ExpTitle.IsExpanded = !ExpTitle.IsExpanded;
     }
 }

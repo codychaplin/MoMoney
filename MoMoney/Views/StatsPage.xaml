@@ -22,64 +22,65 @@
     </ContentView.Resources>
 
     <!-- main page -->
-    <Grid Margin="10,0,10,0"
-          RowSpacing="10"
-          ColumnSpacing="10"
-          ColumnDefinitions="*,*"
-          RowDefinitions="40,*,*,*,*">
-          
+    <VerticalStackLayout>
+        
         <!-- title -->
-        <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
-            <Label Style="{StaticResource lblTitle}"
-                   Text="Statistics"
-                   HorizontalOptions="Center" />
+        <Grid BackgroundColor="{StaticResource Green}" HeightRequest="55" Padding="10,0">
+            <Label Style="{StaticResource lblTitle}" Text="Statistics" HorizontalOptions="Start" />
         </Grid>
+        
+        <!-- tabs -->
+        <Grid Margin="10"
+              RowSpacing="10"
+              ColumnSpacing="10"
+              ColumnDefinitions="*,*"
+              RowDefinitions="120,120">
 
-        <!-- account balances -->
-        <Frame Grid.Column="0" Grid.Row="1" Padding="10">
-            <Frame.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding GoToAccountSummaryCommand}" />
-            </Frame.GestureRecognizers>
-            <Grid>
-                <Image Style="{StaticResource imgTileIcon}" Source="credit_cards.png" />
-                <Label Style="{StaticResource lblTileTitle}" Text="Accounts" />
-            </Grid>
-        </Frame>
+            <!-- account balances -->
+            <Frame Grid.Column="0" Grid.Row="0" Padding="10">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoToAccountSummaryCommand}" />
+                </Frame.GestureRecognizers>
+                <Grid>
+                    <Image Style="{StaticResource imgTileIcon}" Source="accounts.svg" />
+                    <Label Style="{StaticResource lblTileTitle}" Text="Accounts" />
+                </Grid>
+            </Frame>
 
-        <!-- monthly breakdown -->
-        <Frame Grid.Column="1" Grid.Row="1" Padding="10">
-            <Frame.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding GoToBreakdownCommand}" />
-            </Frame.GestureRecognizers>
-            <Grid>
-                <Image Style="{StaticResource imgTileIcon}" Source="donut_chart.png" />
-                <Label Style="{StaticResource lblTileTitle}" Text="Breakdown"  />
-            </Grid>
-        </Frame>
+            <!-- monthly breakdown -->
+            <Frame Grid.Column="1" Grid.Row="0" Padding="10">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoToBreakdownCommand}" />
+                </Frame.GestureRecognizers>
+                <Grid>
+                    <Image Style="{StaticResource imgTileIcon}" Source="donut.svg" />
+                    <Label Style="{StaticResource lblTileTitle}" Text="Breakdown"  />
+                </Grid>
+            </Frame>
 
-        <!-- stocks -->
-        <Frame Grid.Column="0" Grid.Row="2" Padding="10">
-            <Frame.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding GoToStocksCommand}" />
-            </Frame.GestureRecognizers>
-            <Grid>
-                <Image Style="{StaticResource imgTileIcon}" Source="stocks.png" />
-                <Label Style="{StaticResource lblTileTitle}" Text="Stocks"  />
-            </Grid>
-        </Frame>
+            <!-- stocks -->
+            <Frame Grid.Column="0" Grid.Row="1" Padding="10">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoToStocksCommand}" />
+                </Frame.GestureRecognizers>
+                <Grid>
+                    <Image Style="{StaticResource imgTileIcon}" Source="stocks.svg" />
+                    <Label Style="{StaticResource lblTileTitle}" Text="Stocks"  />
+                </Grid>
+            </Frame>
 
-        <!-- insights -->
-        <Frame Grid.Column="1" Grid.Row="2"  Padding="10">
-            <Frame.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding GoToInsightsCommand}" />
-            </Frame.GestureRecognizers>
-            <Grid>
-                <Image Style="{StaticResource imgTileIcon}" Source="calculator.png" />
-                <Label Style="{StaticResource lblTileTitle}" Text="Insights"  />
-            </Grid>
-        </Frame>
+            <!-- insights -->
+            <Frame Grid.Column="1" Grid.Row="1"  Padding="10">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoToInsightsCommand}" />
+                </Frame.GestureRecognizers>
+                <Grid>
+                    <Image Style="{StaticResource imgTileIcon}" Source="bar_chart.svg" />
+                    <Label Style="{StaticResource lblTileTitle}" Text="Insights"  />
+                </Grid>
+            </Frame>
 
-        <!--
+            <!--
         <Frame Grid.Column="0" Grid.Row="3" Padding="10">
         
         </Frame>
@@ -95,6 +96,8 @@
         <Frame Grid.Column="1" Grid.Row="4">
 
         </Frame> -->
-    </Grid>
+        </Grid>
+        
+    </VerticalStackLayout>
 
 </ContentView>

@@ -37,7 +37,7 @@
     </ContentPage.Resources>
 
     <!-- main page -->
-    <Grid>
+    <Grid Padding="0,10,0,0">
         
         <!-- list of categories -->
         <CollectionView ItemsSource="{Binding Categories}"
@@ -46,7 +46,7 @@
                         IsGrouped="true" />
 
         <!-- add account button -->
-        <ImageButton Source="add.png"
+        <ImageButton Source="add.svg"
                      Margin="20"
                      WidthRequest="40"
                      HeightRequest="40"

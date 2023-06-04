@@ -55,18 +55,18 @@
         
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="30,*">
+    <Grid RowDefinitions="30,*" Padding="0,10,0,0">
         <!-- title -->
         <Grid>
             <Grid.Resources>
                 <Style TargetType="{x:Type ImageButton}" BasedOn="{StaticResource ibtnTinted}">
-                    <Setter Property="WidthRequest" Value="40" />
-                    <Setter Property="HeightRequest" Value="40" />
+                    <Setter Property="WidthRequest" Value="50" />
+                    <Setter Property="HeightRequest" Value="50" />
                     <Setter Property="Padding" Value="5" />
                     <Setter Property="Margin" Value="10,0,10,0" />
                 </Style>
             </Grid.Resources>
-            <ImageButton Source="left_arrow.png"
+            <ImageButton Source="left_arrow.svg"
                          HorizontalOptions="Start"
                          Command="{Binding DecrementMonthCommand}" />
             <Label Text="{Binding SelectedMonth, StringFormat='{0:MMM yyyy}'}"
@@ -74,7 +74,7 @@
                    FontSize="20"
                    VerticalOptions="Center"
                    HorizontalOptions="Center" />
-            <ImageButton Source="right_arrow.png"
+            <ImageButton Source="right_arrow.svg"
                          HorizontalOptions="End"
                          Command="{Binding IncrementMonthCommand}" />
         </Grid>

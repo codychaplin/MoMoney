@@ -9,57 +9,38 @@
     
 
     <!-- tab bar -->
-    <tabView:SfTabView x:Name="tvTabBar"
-                       TabBarHeight="54"
+    <tabView:SfTabView x:Name="TabBar"
+                       TabBarHeight="55"
                        TabBarPlacement="Bottom"
-                       SelectionChanged="tvTabBar_SelectionChanged"
+                       SelectionChanged="TabBar_SelectionChanged"
                        BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Background}}"
-                       IndicatorBackground="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource White}}">
-
-        <!-- tab bar styles -->
-        <tabView:SfTabView.Resources>
-            <Style TargetType="tabView:SfTabItem">
-                <Setter Property="VisualStateManager.VisualStateGroups">
-                    <VisualStateGroupList>
-                        <VisualStateGroup>
-                            <VisualState x:Name="Normal" >
-                                <VisualState.Setters>
-                                    <Setter Property="Scale" Value="1.1" />
-                                </VisualState.Setters>
-                            </VisualState>
-                            <VisualState x:Name="Selected">
-                                <VisualState.Setters>
-                                    <Setter Property="Scale" Value="1.3" />
-                                </VisualState.Setters>
-                            </VisualState>
-                        </VisualStateGroup>
-                    </VisualStateGroupList>
-                </Setter>
-            </Style>
-        </tabView:SfTabView.Resources>
+                       IndicatorBackground="{StaticResource Green}">
 
         <!-- tabs -->
         <tabView:SfTabView.Items>
 
             <!-- home page -->
             <tabView:SfTabItem x:Name="HomePageTab"
-                               ImageSource="{AppThemeBinding Light=tab_home_black.png, Dark=tab_home_white.png}" />
+                               Scale="1.2"
+                               ImageSource="{AppThemeBinding Light=tab_home_black.svg, Dark=tab_home_white.svg}" />
 
             <!-- transactions page -->
             <tabView:SfTabItem x:Name="TransactionsPageTab"
-                               ImageSource="{AppThemeBinding Light=tab_transactions_black.png, Dark=tab_transactions_white.png}" />
+                               Scale="1.1"
+                               ImageSource="{AppThemeBinding Light=tab_transactions_black.svg, Dark=tab_transactions_white.svg}" />
 
             <!-- add transaction page -->
             <tabView:SfTabItem x:Name="AddTransactionPageTab"
-                               ImageSource="{AppThemeBinding Light=tab_add_black.png, Dark=tab_add_white.png}" /> 
+                               Scale="1.3"
+                               ImageSource="{AppThemeBinding Light=tab_add_black.svg, Dark=tab_add_white.svg}" /> 
 
             <!-- stats page -->
             <tabView:SfTabItem x:Name="StatsPageTab"
-                               ImageSource="{AppThemeBinding Light=tab_stats_black.png, Dark=tab_stats_white.png}" />
+                               ImageSource="{AppThemeBinding Light=tab_stats_black.svg, Dark=tab_stats_white.svg}" />
 
             <!-- settings page -->
             <tabView:SfTabItem x:Name="SettingsPageTab"
-                               ImageSource="{AppThemeBinding Light=tab_settings_black.png, Dark=tab_settings_white.png}" />
+                               ImageSource="{AppThemeBinding Light=tab_settings_black.svg, Dark=tab_settings_white.svg}" />
 
         </tabView:SfTabView.Items>
 

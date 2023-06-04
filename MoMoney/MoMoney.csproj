@@ -57,6 +57,42 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\tabs\tab_add_black.svg" />
+	  <None Remove="Resources\Images\tabs\tab_add_green.svg" />
+	  <None Remove="Resources\Images\tabs\tab_add_white.svg" />
+	  <None Remove="Resources\Images\tabs\tab_home_black.svg" />
+	  <None Remove="Resources\Images\tabs\tab_home_green.svg" />
+	  <None Remove="Resources\Images\tabs\tab_home_white.svg" />
+	  <None Remove="Resources\Images\tabs\tab_settings_black.svg" />
+	  <None Remove="Resources\Images\tabs\tab_settings_green.svg" />
+	  <None Remove="Resources\Images\tabs\tab_settings_white.svg" />
+	  <None Remove="Resources\Images\tabs\tab_stats_black.svg" />
+	  <None Remove="Resources\Images\tabs\tab_stats_green.svg" />
+	  <None Remove="Resources\Images\tabs\tab_stats_white.svg" />
+	  <None Remove="Resources\Images\tabs\tab_transactions_black.svg" />
+	  <None Remove="Resources\Images\tabs\tab_transactions_green.svg" />
+	  <None Remove="Resources\Images\tabs\tab_transactions_white.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiImage Include="Resources\Images\tabs\tab_add_black.svg" />
+	  <MauiImage Include="Resources\Images\tabs\tab_add_green.svg" />
+	  <MauiImage Include="Resources\Images\tabs\tab_add_white.svg" />
+	  <MauiImage Include="Resources\Images\tabs\tab_home_black.svg" />
+	  <MauiImage Include="Resources\Images\tabs\tab_home_green.svg" />
+	  <MauiImage Include="Resources\Images\tabs\tab_home_white.svg" />
+	  <MauiImage Include="Resources\Images\tabs\tab_settings_black.svg" />
+	  <MauiImage Include="Resources\Images\tabs\tab_settings_green.svg" />
+	  <MauiImage Include="Resources\Images\tabs\tab_settings_white.svg" />
+	  <MauiImage Include="Resources\Images\tabs\tab_stats_black.svg" />
+	  <MauiImage Include="Resources\Images\tabs\tab_stats_green.svg" />
+	  <MauiImage Include="Resources\Images\tabs\tab_stats_white.svg" />
+	  <MauiImage Include="Resources\Images\tabs\tab_transactions_black.svg" />
+	  <MauiImage Include="Resources\Images\tabs\tab_transactions_green.svg" />
+	  <MauiImage Include="Resources\Images\tabs\tab_transactions_white.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Maui" Version="5.2.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
 	  <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
@@ -112,6 +148,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Components\AlignedButton.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\EditTransactionPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

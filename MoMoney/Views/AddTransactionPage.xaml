@@ -13,19 +13,24 @@
         <Grid>
             <VerticalStackLayout>
 
+                <!-- title -->
+                <Grid BackgroundColor="{StaticResource Green}" HeightRequest="55" Padding="10,0">
+                    <Label Style="{StaticResource lblTitle}" Text="Add Transaction" VerticalOptions="Center" />
+                </Grid>
+
                 <!-- transaction type buttons -->
-                <Frame Style="{StaticResource confrTile}" Margin="10" Padding="2">
-                    <Grid x:Name="grdTransactionTypeButtons" Margin="1" ColumnDefinitions="*,*,*" ColumnSpacing="10">
-                        <Button x:Name="btnIncome" Grid.Column="0" Text="Income" Clicked="btnIncome_Clicked" />
-                        <Button x:Name="btnExpense" Grid.Column="1" Text="Expense" Clicked="btnExpense_Clicked" />
-                        <Button x:Name="btnTransfer" Grid.Column="2" Text="Transfer" Clicked="btnTransfer_Clicked" />
+                <Frame HeightRequest="46" Margin="10" Padding="0" BackgroundColor="{StaticResource Gray700}">
+                    <Grid x:Name="grdTransactionTypeButtons" ColumnDefinitions="*,*,*">
+                        <Button x:Name="btnIncome" Grid.Column="0" Text="Income" HeightRequest="45" Clicked="btnIncome_Clicked" />
+                        <Button x:Name="btnExpense" Grid.Column="1" Text="Expense" HeightRequest="45" Clicked="btnExpense_Clicked" />
+                        <Button x:Name="btnTransfer" Grid.Column="2" Text="Transfer" HeightRequest="45" Clicked="btnTransfer_Clicked" />
                     </Grid>
                 </Frame>
                 
                 <!-- Date -->
                 <Frame Style="{StaticResource frTile}">
                     <Grid ColumnDefinitions="0.15*,*">
-                        <Image Source="calendar.png" Style="{StaticResource icon}" />
+                        <Image Source="calendar.svg" Style="{StaticResource icon}" />
                         <DatePicker x:Name="dtDate" 
                                     Grid.Column="1"
                                     VerticalOptions="Center" 
@@ -36,7 +41,7 @@
                 <!-- Account -->
                 <Frame Style="{StaticResource frTile}">
                     <Grid ColumnDefinitions="0.15*,*">
-                        <Image Source="credit_card.png" Style="{StaticResource icon}" />
+                        <Image Source="credit_card.svg" Style="{StaticResource icon}" />
                         <Picker x:Name="pckAccount"
                                 Grid.Column="1"
                                 Title="Select an Account"
@@ -50,7 +55,7 @@
                 <!-- Amount -->
                 <Frame Style="{StaticResource frTile}">
                     <Grid ColumnDefinitions="0.15*,*">
-                        <Image Source="dollar_symbol.png" Style="{StaticResource icon}" />
+                        <Image Source="dollar_symbol.svg" Style="{StaticResource icon}" />
                         <Entry x:Name="txtAmount"
                                Grid.Column="1"
                                Keyboard="Numeric"
@@ -62,7 +67,7 @@
                 <!-- Category -->
                 <Frame Style="{StaticResource frTile}">
                     <Grid ColumnDefinitions="0.15*,*">
-                        <Image Source="category.png" Style="{StaticResource icon}" />
+                        <Image Source="category.svg" Style="{StaticResource icon}" />
                         <Picker x:Name="pckCategory"
                                 Grid.Column="1"
                                 Title="Select a Category"
@@ -77,7 +82,7 @@
                 <!-- Subcategory -->
                 <Frame Style="{StaticResource frTile}">
                     <Grid ColumnDefinitions="0.15*,*">
-                        <Image Source="subcategory.png" Style="{StaticResource icon}" />
+                        <Image Source="subcategory.svg" Style="{StaticResource icon}" />
                         <Picker x:Name="pckSubcategory"
                                 Grid.Column="1"
                                 Title="Select a Subcategory"
@@ -91,7 +96,7 @@
                 <!-- Payee -->
                 <Frame x:Name="frPayee" Style="{StaticResource frTile}" IsVisible="True">
                     <Grid ColumnDefinitions="0.15*,*">
-                        <Image Source="account.png" Style="{StaticResource icon}" />
+                        <Image Source="account.svg" Style="{StaticResource icon}" />
                         <input:SfAutocomplete x:Name="entPayee"
                                               Grid.Column="1"
                                               TextColor="#888"
@@ -109,7 +114,7 @@
                 <!-- Transfer Payee Account -->
                 <Frame x:Name="frTransferTo" Style="{StaticResource frTile}" IsVisible="False">
                     <Grid ColumnDefinitions="0.15*,*">
-                        <Image Source="account.png" Style="{StaticResource icon}" />
+                        <Image Source="account.svg" Style="{StaticResource icon}" />
                         <Picker x:Name="pckTransferTo"
                                 Grid.Column="1"
                                 Title="Select an Account"
