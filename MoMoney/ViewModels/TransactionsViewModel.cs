@@ -375,14 +375,4 @@ public partial class TransactionsViewModel : ObservableObject
         for (int i = index; i < index + count && i < Transactions.Count; i++)
             LoadedTransactions.Add(Transactions[i]);
     }
-
-    /// <summary>
-    /// Goes to EditTransactionPage.xaml with a Transaction ID as a parameter.
-    /// </summary>
-    /// <param name="ID"></param>
-    [RelayCommand]
-    async Task GoToEditTransaction(int ID)
-    {
-        await Shell.Current.GoToAsync($"{nameof(EditTransactionPage)}?ID={ID}");
-    }
 }

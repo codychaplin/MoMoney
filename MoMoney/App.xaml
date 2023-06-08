@@ -2,8 +2,12 @@
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:MoMoney"
+             xmlns:models="clr-namespace:MoMoney.Models"
+             xmlns:viewmodels="clr-namespace:MoMoney.ViewModels"
+             xmlns:converters="clr-namespace:MoMoney.Converters"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="MoMoney.App">
+             x:Class="MoMoney.App"
+             x:Name="MoMoneyApp">
     <Application.Resources>
         
         <ResourceDictionary>
@@ -12,6 +16,64 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <converters:IconConverter x:Key="Icon" />
+            <converters:ShowValueConverter x:Key="ShowValue" />
+            <converters:IdToAccountConverter x:Key="IdToAccount" />
+            <converters:AmountColourConverter x:Key="AmountColour" />
+            <converters:IdToCategoryConverter x:Key="IdToCategory" />
+
+            <!-- transaction template -->
+            <DataTemplate x:Key="TransactionFrame" x:DataType="models:Transaction">
+                <Frame Style="{StaticResource frTransaction}">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Path=GoToEditTransactionCommand, Source={x:Reference MoMoneyApp}}"
+                                              CommandParameter="{Binding TransactionID}" />
+                    </Frame.GestureRecognizers>
+                    <Grid ColumnDefinitions="30,*">
+                        <!-- icon -->
+                        <Image Scale="0.75">
+                            <Image.Source>
+                                <MultiBinding Converter="{StaticResource Icon}">
+                                    <Binding Path="CategoryID" />
+                                    <Binding Path="SubcategoryID" />
+                                </MultiBinding>
+                            </Image.Source>
+                        </Image>
+                        <!-- subcategory -->
+                        <Label Grid.Column="1"
+                               FontSize="18"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Start"
+                               Style="{StaticResource lblTile}"
+                               Text="{Binding SubcategoryID, Converter={StaticResource IdToCategory}}" />
+                        <!-- account -->
+                        <Label Grid.Column="1"
+                               VerticalOptions="End"
+                               HorizontalOptions="Start"
+                               Style="{StaticResource lblTile}"
+                               TextColor="{StaticResource Gray300}"
+                               Text="{Binding AccountID, Converter={StaticResource IdToAccount}}" />
+                        <!-- amount -->
+                        <Label Grid.Column="1"
+                               FontSize="18"
+                               VerticalOptions="Start"
+                               HorizontalOptions="End"
+                               Style="{StaticResource lblTile}"
+                               TextColor="{Binding CategoryID, Converter={StaticResource AmountColour}}"
+                               Text="{Binding Amount, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
+                        <!-- date -->
+                        <Label Grid.Column="1"
+                               VerticalOptions="End"
+                               HorizontalOptions="End"
+                               Style="{StaticResource lblTile}"
+                               TextColor="{StaticResource Gray300}"
+                               Text="{Binding Date, StringFormat='{0:yyyy-MM-dd}'}" />
+                    </Grid>
+                </Frame>
+
+            </DataTemplate>
+
+            <!-- title -->
             <Style x:Key="lblTitle" TargetType="{x:Type Label}">
                 <Setter Property="FontSize" Value="18" />
                 <Setter Property="FontAttributes" Value="Bold" />
@@ -20,7 +82,7 @@
             </Style>
             
             <!-- binds colour to theme for ImageButtons and Images -->
-            <Style x:Key="ibtnTinted" TargetType="{x:Type ImageButton}">
+            <Style TargetType="{x:Type ImageButton}">
                 <Style.Behaviors>
                     <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                 </Style.Behaviors>
@@ -40,10 +102,10 @@
                 <Setter Property="VerticalTextAlignment" Value="Center" />
             </Style>
             <!-- frame tile -->
-            <Style x:Key="frTile" TargetType="{x:Type Frame}">
-                <Setter Property="Padding" Value="10" />
-                <Setter Property="HeightRequest" Value="55" />
-                <Setter Property="Margin" Value="10,0,10,10" />
+            <Style x:Key="frTransaction" TargetType="{x:Type Frame}">
+                <Setter Property="Padding" Value="5,10,10,10" />
+                <Setter Property="HeightRequest" Value="65" />
+                <Setter Property="Margin" Value="10,10,10,0" />
                 <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
             </Style>
             <!-- condensed frame tile -->
@@ -54,7 +116,7 @@
                 <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
             </Style>
             <!-- ImageButton tile -->
-            <Style x:Key="ibtnTile" TargetType="{x:Type ImageButton}" BasedOn="{StaticResource ibtnTinted}">
+            <Style x:Key="ibtnTile" TargetType="{x:Type ImageButton}">
                 <Setter Property="Padding" Value="7" />
                 <Setter Property="WidthRequest" Value="40" />
                 <Setter Property="HorizontalOptions" Value="End" />

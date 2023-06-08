@@ -59,7 +59,7 @@
         <!-- title -->
         <Grid>
             <Grid.Resources>
-                <Style TargetType="{x:Type ImageButton}" BasedOn="{StaticResource ibtnTinted}">
+                <Style TargetType="{x:Type ImageButton}">
                     <Setter Property="WidthRequest" Value="50" />
                     <Setter Property="HeightRequest" Value="50" />
                     <Setter Property="Padding" Value="5" />

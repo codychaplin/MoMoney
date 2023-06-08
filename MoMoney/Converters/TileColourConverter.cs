@@ -11,10 +11,10 @@ class TileColourConverter : IValueConverter
     {
         // if enabled, light gray, else, dark gray
         if (bool.TryParse(value.ToString(), out bool enabled))
-            return (enabled) ? Color.Parse("#303030") : Color.Parse("#212121");
+            return (enabled) ? Color.Parse("#313131") : Color.Parse("#212121");
 
         // return light gray by default
-        return Color.Parse("#303030");
+        return Color.Parse("#313131");
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

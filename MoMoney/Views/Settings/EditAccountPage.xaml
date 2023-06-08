@@ -53,8 +53,7 @@
             </Frame>
             <Switch Grid.Column="1"
                     HorizontalOptions="Start"
-                    IsToggled="{Binding Account.Enabled}"
-                    OnColor="{StaticResource Green}" />
+                    IsToggled="{Binding Account.Enabled}" />
         </Grid>
 
 

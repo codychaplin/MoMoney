@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
+using CommunityToolkit.Mvvm.Input;
+using MoMoney.Views;
 
 namespace MoMoney.ViewModels;
 

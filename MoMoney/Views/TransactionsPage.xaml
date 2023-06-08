@@ -15,16 +15,10 @@
     <!-- converters -->
     <ContentView.Resources>
         <converters:NullToVisibleConverter x:Key="NullToVisible" />
-        <converters:EmptyToVisibleConverter x:Key="EmptyToVisible" />
-        <converters:IdToCategoryConverter x:Key="IdToCategory" />
-        <converters:IdToAccountConverter x:Key="IdToAccount" />
-        <converters:AmountColourConverter x:Key="AmountColour" />
-        <converters:IconConverter x:Key="Icon" />
-        <converters:ShowValueConverter x:Key="ShowValue" />
     </ContentView.Resources>
 
     <!-- main page -->
-    <Grid x:Name="grid" RowDefinitions="55,0,*" RowSpacing="5">
+    <Grid x:Name="grid" RowDefinitions="55,0,*" RowSpacing="0">
         <Grid.Resources>
             <Style TargetType="{x:Type Frame}" x:Key="frFilter">
                 <Setter Property="Padding" Value="5,0,0,0" />
@@ -64,7 +58,7 @@
 
         <!-- filters -->
         <Grid x:Name="grdFilters" Grid.Row="1" RowDefinitions="*,*,*,*,*,*" IsVisible="False">
-            
+
             <!-- date range picker -->
             <Frame x:Name="frDates" Grid.Row="0" Style="{StaticResource frFilter}">
                 <Grid ColumnDefinitions="30,*,*">
@@ -203,82 +197,20 @@
                                           SelectionChanged="entPayee_SelectionChanged" />
                 </Grid>
             </Frame>
-            
+
         </Grid>
 
-        <ScrollView Grid.Row="2" HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never">
-            
-            <!-- list of transactions -->
-            <listview:SfListView x:Name="listView"
-                           ItemSize="70"
-                           LoadMoreOption="Auto"
-                           LoadMorePosition="End"
-                           ScrollBarVisibility="Always"
-                           ItemsSource="{Binding LoadedTransactions}"
-                           LoadMoreCommand="{Binding LoadMoreItemsCommand}">
-                <!-- template for each Transaction -->
-                <listview:SfListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Transaction">
 
-                        <Frame Style="{StaticResource frTile}" HeightRequest="60">
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Path=GoToEditTransactionCommand, Source={RelativeSource
-                                                                        AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                                                      CommandParameter="{Binding TransactionID}" />
-                            </Frame.GestureRecognizers>
-                            <Grid ColumnDefinitions="30,*" RowDefinitions="*,*">
-                                <!-- icon -->
-                                <Image Grid.RowSpan="2" Scale="0.75">
-                                    <Image.Source>
-                                        <MultiBinding Converter="{StaticResource Icon}">
-                                            <Binding Path="CategoryID" />
-                                            <Binding Path="SubcategoryID" />
-                                        </MultiBinding>
-                                    </Image.Source>
-                                </Image>
-                                <!-- subcategory -->
-                                <Label Grid.Column="1"
-                                       FontSize="18"
-                                       WidthRequest="140"
-                                       VerticalOptions="Center"
-                                       HorizontalOptions="Start"
-                                       Style="{StaticResource lblTile}"
-                                       Text="{Binding SubcategoryID, Converter={StaticResource IdToCategory}}" />
-                                <!-- account -->
-                                <Label Grid.Row="1"
-                                       Grid.Column="1"
-                                       WidthRequest="120"
-                                       VerticalOptions="Center"
-                                       HorizontalOptions="Start"
-                                       Style="{StaticResource lblTile}"
-                                       TextColor="{StaticResource Gray300}"
-                                       Text="{Binding AccountID, Converter={StaticResource IdToAccount}}" />
-                                <!-- amount -->
-                                <Label Grid.Column="1"
-                                       FontSize="18"
-                                       WidthRequest="100"
-                                       VerticalOptions="Center"
-                                       HorizontalOptions="End"
-                                       HorizontalTextAlignment="End"
-                                       Style="{StaticResource lblTile}"
-                                       TextColor="{Binding CategoryID, Converter={StaticResource AmountColour}}"
-                                       Text="{Binding Amount, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
-                                <!-- date -->
-                                <Label Grid.Row="1"
-                                       Grid.Column="1"
-                                       WidthRequest="90"
-                                       VerticalOptions="Center"
-                                       HorizontalOptions="End"
-                                       HorizontalTextAlignment="End"
-                                       Style="{StaticResource lblTile}"
-                                       TextColor="{StaticResource Gray300}"
-                                       Text="{Binding Date, StringFormat='{0:yyyy-MM-dd}'}" />
-                            </Grid>
-                        </Frame>
-
-                    </DataTemplate>
-                </listview:SfListView.ItemTemplate>
-            </listview:SfListView>
-        </ScrollView>
+        <!-- list of transactions -->
+        <listview:SfListView x:Name="listView"
+                             Grid.Row="2"
+                             ItemSize="75"
+                             LoadMoreOption="Auto"
+                             LoadMorePosition="End"
+                             ScrollBarVisibility="Always"
+                             ItemsSource="{Binding LoadedTransactions}"
+                             LoadMoreCommand="{Binding LoadMoreItemsCommand}"
+                             ItemTemplate="{StaticResource TransactionFrame}">
+        </listview:SfListView>
     </Grid>
 </ContentView>
