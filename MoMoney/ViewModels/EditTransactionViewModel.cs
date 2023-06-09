@@ -187,11 +187,13 @@ public partial class EditTransactionViewModel : ObservableObject
         Subcategory = InitialSubcategory;
     }
 
+    /// <summary>
+    /// Gets all distinct payees from all transactions
+    /// </summary>
     public async Task GetPayees()
     {
         var payees = await transactionService.GetPayeesFromTransactions();
         Payees = new ObservableCollection<string>(payees);
-
     }
 
     /// <summary>

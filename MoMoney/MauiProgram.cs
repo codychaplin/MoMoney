@@ -67,34 +67,34 @@ public static class MauiProgram
 		builder.Services.AddSingleton<StockSettingsPage>();
 		builder.Services.AddTransient<StockSettingsViewModel>();
 
-		builder.Services.AddSingleton<AccountSummaryPage>();
+		builder.Services.AddTransient<AccountSummaryPage>();
 		builder.Services.AddTransient<AccountSummaryViewModel>();
 
-		builder.Services.AddSingleton<BreakdownPage>();
+		builder.Services.AddTransient<BreakdownPage>();
 		builder.Services.AddTransient<BreakdownViewModel>();
 
-		builder.Services.AddSingleton<InsightsPage>();
+		builder.Services.AddTransient<InsightsPage>();
 		builder.Services.AddTransient<InsightsViewModel>();
 
-		builder.Services.AddSingleton<StocksPage>();
+		builder.Services.AddTransient<StocksPage>();
 		builder.Services.AddTransient<StocksViewModel>();
 
-		builder.Services.AddSingleton<AddAccountPage>();
+		builder.Services.AddTransient<AddAccountPage>();
 		builder.Services.AddTransient<AddAccountViewModel>();
 
-		builder.Services.AddSingleton<EditAccountPage>();
+		builder.Services.AddTransient<EditAccountPage>();
 		builder.Services.AddTransient<EditAccountViewModel>();
 
-		builder.Services.AddSingleton<AddCategoryPage>();
+		builder.Services.AddTransient<AddCategoryPage>();
 		builder.Services.AddTransient<AddCategoryViewModel>();
 
-		builder.Services.AddSingleton<EditCategoryPage>();
+		builder.Services.AddTransient<EditCategoryPage>();
 		builder.Services.AddTransient<EditCategoryViewModel>();
 
-		builder.Services.AddSingleton<AddStockPage>();
+		builder.Services.AddTransient<AddStockPage>();
 		builder.Services.AddTransient<AddStockViewModel>();
 
-		builder.Services.AddSingleton<EditStockPage>();
+		builder.Services.AddTransient<EditStockPage>();
 		builder.Services.AddTransient<EditStockViewModel>();
 
         return builder.Build();

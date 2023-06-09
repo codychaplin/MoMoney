@@ -1,4 +1,3 @@
-using MoMoney.Models;
 using MoMoney.ViewModels;
 
 namespace MoMoney.Views;
@@ -16,80 +15,50 @@ public partial class AddTransactionPage : ContentView
         BindingContext = vm;
 
         // initialize fields
-        dtDate.Date = DateTime.Today;
+        dtpDate.Date = DateTime.Today;
         txtAmount.Text = "";
-        Allowed(false, false, false); // disable fields on start
+        EnableEntries(false, false, false); // disable fields on start
         
-        Loaded += vm.GetAccounts;
         Loaded += vm.GetPayees;
+        Loaded += vm.GetAccounts;
         UpdatePage += vm.GetAccounts;
+        pckCategory.SelectedIndexChanged += vm.CategoryChanged;
     }
 
     /// <summary>
-    /// enabled/disables input fields.
-    /// </summary>
-    /// <param name="flag"></param>
-    /// <param name="category"></param>
-    /// <param name="subcategory"></param>
-    void Allowed(bool flag, bool category, bool subcategory)
-    {
-        dtDate.IsEnabled = flag;
-        pckAccount.IsEnabled = flag;
-        txtAmount.IsEnabled = flag;
-        pckCategory.IsEnabled = category;
-        pckSubcategory.IsEnabled = subcategory;
-        entPayee.IsEnabled = flag;
-    }
-
-    /// <summary>
-    /// Highlights button, enables Income input fields, and populates corresponding Category picker.
+    /// Highlights Income button, enables income input fields, and shows Payee field.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private async void btnIncome_Clicked(object sender, EventArgs e)
+    private void btnIncome_Clicked(object sender, EventArgs e)
     {
         ChangeButtonColour(sender as Button);
-
-        Allowed(true, false, true);
-        frPayee.IsVisible = true;
-        frTransferTo.IsVisible = false;
-
-        await vm.GetIncomeCategory();
-        pckCategory.SelectedIndex = 0;
+        EnableEntries(false, true, true);
+        MakePayeeVisible(true);
     }
 
     /// <summary>
-    /// Highlights button, enables Expense input fields, and populates corresponding Category picker.
+    /// Highlights Expense button, enables expense input fields, and shows Payee field.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private async void btnExpense_Clicked(object sender, EventArgs e)
+    private void btnExpense_Clicked(object sender, EventArgs e)
     {
         ChangeButtonColour(sender as Button);
-
-        Allowed(true, true, true);
-        frPayee.IsVisible = true;
-        frTransferTo.IsVisible = false;
-
-        await vm.GetExpenseCategories();
+        EnableEntries(true, true, true);
+        MakePayeeVisible(true);
     }
 
     /// <summary>
-    /// Highlights button, enables Transfer input fields, and populates corresponding Category picker.
+    /// Highlights Transfer button, enables transfer input fields, and shows TransferAccount field.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private async void btnTransfer_Clicked(object sender, EventArgs e)
+    private void btnTransfer_Clicked(object sender, EventArgs e)
     {
         ChangeButtonColour(sender as Button);
-
-        Allowed(true, false, false);
-
-        frPayee.IsVisible = false;
-        frTransferTo.IsVisible = true;
-
-        await vm.GetTransferCategory();
-        pckCategory.SelectedIndex = 0;
+        EnableEntries(false, false, true);
+        MakePayeeVisible(false);
     }
 
     /// <summary>
@@ -101,29 +70,43 @@ public partial class AddTransactionPage : ContentView
         foreach (Button btn in grdTransactionTypeButtons.Children.Cast<Button>())
         {
             if (btn == button)
-                btn.BackgroundColor = Color.FromArgb("42ba96");
+            {
+                if (Application.Current.Resources.TryGetValue("Green", out var green))
+                    btn.BackgroundColor = (Color)green;
+                else
+                    btn.BackgroundColor = Color.FromArgb("#42ba96");
+            }    
             else
-                btn.BackgroundColor = Color.FromArgb("2a2a2a");
+            {
+                if (Application.Current.Resources.TryGetValue("Gray900", out var gray))
+                    btn.BackgroundColor = (Color)gray;
+                else
+                    btn.BackgroundColor = Color.FromArgb("#212121");
+            }
         }
     }
 
     /// <summary>
-    /// Updates selected Category and subcategories for subcategory picker.
+    /// enables/disables input fields.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private async void pckCategory_SelectedIndexChanged(object sender, EventArgs e)
+    /// <param name="category"></param>
+    /// <param name="subcategory"></param>
+    /// <param name="other"></param>
+    void EnableEntries(bool category, bool subcategory, bool other)
     {
-        var parentCategory = (Category)pckCategory.SelectedItem;
-        if (parentCategory != null)
-        {
-            pckSubcategory.IsEnabled = !frTransferTo.IsVisible; // stays disabled if transfer
-            await vm.GetSubcategories(parentCategory);
+        dtpDate.IsEnabled = other;
+        pckAccount.IsEnabled = other;
+        txtAmount.IsEnabled = other;
+        pckCategory.IsEnabled = category;
+        pckSubcategory.IsEnabled = subcategory;
+        entPayee.IsEnabled = other;
+        pckTransferAccount.IsEnabled = other;
+    }
 
-            // if transfer, autoselect "Debit" as subcategory
-            if (parentCategory.CategoryID == Constants.TRANSFER_ID)
-                pckSubcategory.SelectedIndex = 0;
-        }
+    void MakePayeeVisible(bool payee)
+    {
+        frPayee.IsVisible = payee;
+        frTransferAccount.IsVisible = !payee;
     }
 
     /// <summary>
@@ -133,40 +116,18 @@ public partial class AddTransactionPage : ContentView
     /// <param name="e"></param>
     private void btnClear_Clicked(object sender, EventArgs e)
     {
-        Clear(false);
-        vm.Categories.Clear();
-        entPayee.SelectedItem = "";
-        pckCategory.IsEnabled = false;
-        pckSubcategory.IsEnabled = false;
+        Clear();
+        EnableEntries(false, false, false);
         ChangeButtonColour(new Button());
     }
 
     /// <summary>
-    /// Resets input fields on click.
+    /// Clears binded values and clears/shows payee entry.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void btnEnter_Clicked(object sender, EventArgs e)
+    void Clear()
     {
-        Clear(true);
-    }
-
-    /// <summary>
-    /// Resets input fields.
-    /// </summary>
-    void Clear(bool partial)
-    {
-        vm.Amount = 0;
-        txtAmount.Text = "";
+        vm.Clear();
         entPayee.SelectedItem = null;
-        pckTransferTo.SelectedIndex = -1;
-
-        if (partial) return;
-
-        dtDate.Date = DateTime.Now;
-        pckAccount.SelectedIndex = -1;
-        vm.Subcategories.Clear();
-        frPayee.IsVisible = true;
-        frTransferTo.IsVisible = false;
+        MakePayeeVisible(true);
     }
 }

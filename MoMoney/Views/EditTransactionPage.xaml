@@ -12,12 +12,7 @@
     <ScrollView Padding="0,10,0,0">
         <VerticalStackLayout>
             <VerticalStackLayout.Resources>
-                <Style TargetType="{x:Type Frame}">
-                    <Setter Property="Margin" Value="10,0,10,10" />
-                    <Setter Property="Padding" Value="10,0" />
-                    <Setter Property="HeightRequest" Value="65" />
-                    <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
-                </Style>
+                <Style TargetType="{x:Type Frame}" BasedOn="{StaticResource AddEditTile}" />
             </VerticalStackLayout.Resources>
 
             <!-- Date -->
@@ -91,9 +86,9 @@
                     <Image Source="account.svg" Style="{StaticResource icon}" />
                     <input:SfAutocomplete x:Name="entPayee"
                                           Grid.Column="1"
+                                          Margin="0,14"
                                           TextColor="#888"
                                           BackgroundColor="Transparent"
-                                          Margin="0,14"
                                           Stroke="{StaticResource Gray400}"
                                           ClearButtonIconColor="{StaticResource Gray400}"
                                           IsClearButtonVisible="True"

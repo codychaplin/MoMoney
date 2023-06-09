@@ -67,14 +67,16 @@ public partial class AddTransactionViewModel : ObservableObject
     /// <summary>
     /// Gets income category from database and refreshes Categories collection.
     /// </summary>
-    public async Task GetIncomeCategory()
+    [RelayCommand]
+    async Task GetIncomeCategory()
     {
         try
         {
             var income = await categoryService.GetCategory(Constants.INCOME_ID);
             Categories.Clear();
-            Categories.Add(income);
             Subcategories.Clear();
+            Categories.Add(income);
+            Category = income;
         }
         catch (CategoryNotFoundException ex)
         {
@@ -85,14 +87,16 @@ public partial class AddTransactionViewModel : ObservableObject
     /// <summary>
     /// Gets transfer category from database and refreshes Categories collection.
     /// </summary>
-    public async Task GetTransferCategory()
+    [RelayCommand]
+    async Task GetTransferCategory()
     {
         try
         {
             var transfer = await categoryService.GetCategory(Constants.TRANSFER_ID);
             Categories.Clear();
-            Categories.Add(transfer);
             Subcategories.Clear();
+            Categories.Add(transfer);
+            Category = transfer;
         }
         catch (CategoryNotFoundException ex)
         {
@@ -103,7 +107,8 @@ public partial class AddTransactionViewModel : ObservableObject
     /// <summary>
     /// Gets updated expense categories from database and refreshes Categories collection.
     /// </summary>
-    public async Task GetExpenseCategories()
+    [RelayCommand]
+    async Task GetExpenseCategories()
     {
         var categories = await categoryService.GetExpenseCategories();
         Categories.Clear();
@@ -116,22 +121,30 @@ public partial class AddTransactionViewModel : ObservableObject
     /// Updates Subcategories based on selected parent Category.
     /// </summary>
     /// <param name="parentCategory"></param>
-    public async Task GetSubcategories(Category parentCategory)
+    async Task GetSubcategories(Category parentCategory)
     {
-        if (parentCategory is not null)
-        {
-            var subcategories = await categoryService.GetSubcategories(parentCategory);
-            Subcategories.Clear();
-            foreach (var cat in subcategories)
-                Subcategories.Add(cat);
-        }
+        if (parentCategory is null)
+            return;
+
+        var subcategories = await categoryService.GetSubcategories(parentCategory);
+        Subcategories.Clear();
+        foreach (var cat in subcategories)
+            Subcategories.Add(cat);
     }
 
     public async void GetPayees(object sender, EventArgs e)
     {
         var payees = await transactionService.GetPayeesFromTransactions();
         Payees = new ObservableCollection<string>(payees);
+    }
 
+    public async void CategoryChanged(object sender, EventArgs e)
+    {
+        // check if Category is null, update subcategories, if transfer, auto-select "Debit"
+        if (Category is null) return;
+        await GetSubcategories(Category);
+        if (Category.CategoryID == Constants.TRANSFER_ID && Subcategories.Count > 0)
+            Subcategory = Subcategories.First();
     }
 
     /// <summary>
@@ -176,6 +189,8 @@ public partial class AddTransactionViewModel : ObservableObject
 
             await accountService.UpdateBalance(transaction.AccountID, transaction.Amount); // update corresponding Account balance
 
+            ClearAfterAdd();
+
             // update TransactionsPage Transactions
             var args = new TransactionEventArgs(transaction, TransactionEventArgs.CRUD.Create);
             TransactionsPage.TransactionsChanged?.Invoke(this, args);
@@ -192,5 +207,24 @@ public partial class AddTransactionViewModel : ObservableObject
         {
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+    }
+
+    void ClearAfterAdd()
+    {
+        Amount = 0;
+        TransferAccount = null;
+    }
+
+    public void Clear()
+    {
+        Date = DateTime.Today;
+        Account = null;
+        Amount = 0;
+        Category = null;
+        Subcategory = null;
+        TransferAccount = null;
+
+        Categories.Clear();
+        Subcategories.Clear();
     }
 }

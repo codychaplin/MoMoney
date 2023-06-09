@@ -108,7 +108,7 @@
                 <Label Style="{StaticResource lblAccountName}"
                        Text="{Binding InvestmentSum, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
             </Grid>
-            <Frame Margin="10,0,10,10">
+            <Frame>
                 <CollectionView ItemsSource="{Binding InvestmentAccounts}" />
             </Frame>
         </VerticalStackLayout>

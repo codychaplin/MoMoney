@@ -24,7 +24,10 @@
 
             <!-- transaction template -->
             <DataTemplate x:Key="TransactionFrame" x:DataType="models:Transaction">
-                <Frame Style="{StaticResource frTransaction}">
+                <Frame Padding="5,10,10,10"
+                       HeightRequest="65"
+                       Margin="10,10,10,0"
+                       BackgroundColor="{StaticResource Gray700}">
                     <Frame.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding Path=GoToEditTransactionCommand, Source={x:Reference MoMoneyApp}}"
                                               CommandParameter="{Binding TransactionID}" />
@@ -101,13 +104,15 @@
                 <Setter Property="HorizontalOptions" Value="Start" />
                 <Setter Property="VerticalTextAlignment" Value="Center" />
             </Style>
-            <!-- frame tile -->
-            <Style x:Key="frTransaction" TargetType="{x:Type Frame}">
-                <Setter Property="Padding" Value="5,10,10,10" />
+
+            <!-- add/edit tile -->
+            <Style x:Key="AddEditTile" TargetType="{x:Type Frame}">
+                <Setter Property="Margin" Value="10,0,10,10" />
+                <Setter Property="Padding" Value="10,0" />
                 <Setter Property="HeightRequest" Value="65" />
-                <Setter Property="Margin" Value="10,10,10,0" />
                 <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
             </Style>
+
             <!-- condensed frame tile -->
             <Style x:Key="confrTile" TargetType="{x:Type Frame}">
                 <Setter Property="Padding" Value="5,0,5,0" />
