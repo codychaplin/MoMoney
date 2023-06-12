@@ -18,7 +18,7 @@
             <!-- data maintenance -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Data Maintenance" />
             <components:AlignedButton Text="Logging" ShowArrow="True" Command="{Binding GoToLoggingCommand}" />
-            <components:AlignedButton Text="Bulk Editing" ShowArrow="True" Command="{Binding GoToBulkEditingCommand}" />
+            <!--<components:AlignedButton Text="Bulk Editing" ShowArrow="True" Command="{Binding GoToBulkEditingCommand}" />-->
 
         </VerticalStackLayout>
     </ScrollView>

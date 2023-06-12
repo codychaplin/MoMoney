@@ -113,6 +113,12 @@
                 <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
             </Style>
 
+            <!-- condensed frame tile -->
+            <Style x:Key="SmallTileFrame" TargetType="{x:Type Frame}" BasedOn="{StaticResource TileFrame}">
+                <Setter Property="Margin" Value="10,0,10,5" />
+                <Setter Property="HeightRequest" Value="45" />
+            </Style>
+
             <!-- tile grid -->
             <Style x:Key="TileGrid" TargetType="{x:Type Grid}">
                 <Setter Property="ColumnDefinitions" Value="30,*" />
@@ -125,14 +131,6 @@
                 <Setter Property="FontAttributes" Value="Bold" />
                 <Setter Property="Margin" Value="10,20,0,5" />
                 <Setter Property="TextColor" Value="{StaticResource Green}" />
-            </Style>
-
-            <!-- condensed frame tile -->
-            <Style x:Key="confrTile" TargetType="{x:Type Frame}">
-                <Setter Property="Padding" Value="5,0,5,0" />
-                <Setter Property="Margin" Value="10,0,10,5" />
-                <Setter Property="HeightRequest" Value="45" />
-                <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
             </Style>
 
             <!-- tile icon -->

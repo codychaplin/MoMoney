@@ -16,7 +16,7 @@
                 <DataTemplate x:DataType="models:Stock">
 
                     <!-- template -->
-                    <Frame Style="{StaticResource confrTile}">
+                    <Frame Style="{StaticResource SmallTileFrame}">
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Path=GoToEditStockCommand, Source={RelativeSource
                                                                     AncestorType={x:Type viewmodel:StockSettingsViewModel}}}"

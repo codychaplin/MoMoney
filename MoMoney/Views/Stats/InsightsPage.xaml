@@ -41,7 +41,7 @@
                 <ScrollView Orientation="Horizontal">
                 
                     <!-- chart -->
-                    <chart:SfCartesianChart HeightRequest="220"
+                    <chart:SfCartesianChart HeightRequest="280"
                                             EnableSideBySideSeriesPlacement="False"
                                             WidthRequest="540"
                                             Margin="5,0,5,10">

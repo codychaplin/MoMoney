@@ -17,11 +17,11 @@
         <converters:PositiveNegativeColourConverter x:Key="PosNegColour" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="100,*">
+    <Grid RowDefinitions="Auto,*">
         
         <!-- totals -->
-        <Frame Margin="10,10,10,0" Padding="10,5,10,5" BackgroundColor="{StaticResource Gray700}">
-            <Grid ColumnDefinitions="*,*" RowDefinitions="16,*,0.5*">
+        <Frame Margin="10,10,10,0" Padding="10">
+            <Grid ColumnDefinitions="*,*" RowDefinitions="0.5*,*,0.5*">
                 <Label Text="Total"
                        FontSize="16"
                        VerticalOptions="Center"

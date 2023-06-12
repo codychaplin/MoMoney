@@ -85,12 +85,27 @@
                            Margin="10,0,10,0"
                            TabBarPlacement="Top"
                            IndicatorPlacement="Bottom"
-                           IndicatorBackground="White"
+                           IndicatorBackground="{StaticResource Green}"
                            SelectedIndex="{Binding Index}">
             <tabView:SfTabView.Resources>
-                <Style TargetType="{x:Type tabView:SfTabItem}">
+                <Style TargetType="tabView:SfTabItem">
                     <Setter Property="FontSize" Value="14" />
-                    <Setter Property="TextColor" Value="White" />
+                    <Setter Property="VisualStateManager.VisualStateGroups">
+                        <VisualStateGroupList>
+                            <VisualStateGroup>
+                                <VisualState x:Name="Normal" >
+                                    <VisualState.Setters>
+                                        <Setter Property="TextColor" Value="White" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Property="TextColor" Value="{StaticResource Green}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateGroupList>
+                    </Setter>
                 </Style>
             </tabView:SfTabView.Resources>
 
