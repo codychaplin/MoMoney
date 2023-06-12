@@ -1,4 +1,8 @@
-# MoMoney v1.0.4
+# MoMoney v1.1.0
+
+### Fixes
+
+* Fixed loading indicator visiblity on TransactionsPage
 
 ### Changes
 
@@ -10,14 +14,14 @@
 * Implemented dependencies for services and viewmodels
 * Converted all pngs to svgs
 * Overhauled UI
-
+* Refactored/cleaned up logic
 
 # MoMoney v1.0.3
 
 ### Fixes
 
-* Fixed error not allowing users to enter a payee that doesn't already exist when adding/editing a transaction.
-* Account, Category, and Payee Edit pages now retrieve an object copy instead of a reference.
+* Fixed error not allowing users to enter a payee that doesn't already exist when adding/editing a transaction
+* Account, Category, and Payee Edit pages now retrieve an object copy instead of a reference
 
 ### Changes
 
@@ -31,7 +35,7 @@
 
 ### Changes
 
-* Changed Payee Entry to an SfAutocomplete in TransactionsPage, AddTransactionPage, and EditTransactionPage.
+* Changed Payee Entry to an SfAutocomplete in TransactionsPage, AddTransactionPage, and EditTransactionPage
 * Replaced standalone event methods with event subscriptions in TransactionPage's code behind
 * Simplified filter hiding/appearing on TransactionsPage
 * Moved small misc classes to Models folder.
@@ -42,12 +46,11 @@
 
 ### Fixes
 
-* Updating account balances that did not exist in list of Transactions.
-* Fixed percentage clipping on BreakdownPage.
-* Subcategory picker now stays disabled if Transfer is selected.
+* Updating account balances that did not exist in list of Transactions
+* Fixed percentage clipping on BreakdownPage
+* Subcategory picker now stays disabled if Transfer is selected
 
 
 # MoMoney v1.0.0
 
 Initial release
-

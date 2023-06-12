@@ -68,14 +68,4 @@ public partial class HomePage : ContentView
 	{
 		MainPage.TabView.SelectedIndex = 1;
     }
-
-    /// <summary>
-    /// Expands/unexpands date range picker
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void ImageButton_Clicked(object sender, EventArgs e)
-	{
-        ExpTitle.IsExpanded = !ExpTitle.IsExpanded;
-    }
 }

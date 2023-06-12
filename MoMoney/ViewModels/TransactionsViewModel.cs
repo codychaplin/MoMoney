@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Syncfusion.Maui.ListView;
-using MoMoney.Views;
 using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
@@ -60,6 +59,8 @@ public partial class TransactionsViewModel : ObservableObject
 
     bool showValue = true;
 
+    const int LOAD_COUNT = 50;
+
     public TransactionsViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService)
     {
         transactionService = _transactionService;
@@ -73,9 +74,20 @@ public partial class TransactionsViewModel : ObservableObject
     }
 
     /// <summary>
+    /// Loads data into filter pickers.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    public async void Loaded(object sender, EventArgs e)
+    {
+        await GetAccounts();
+        await GetParentCategories();
+    }
+
+    /// <summary>
     /// Depending on CRUD operation, update Transactions collection.
     /// </summary>
-    public async Task Refresh(TransactionEventArgs e)
+    public async void Refresh(object sender, TransactionEventArgs e)
     {
         switch (e.Type)
         {
@@ -100,7 +112,6 @@ public partial class TransactionsViewModel : ObservableObject
     /// Adds new Transaction to [Loaded]Transactions list.
     /// </summary>
     /// <param name="e"></param>
-    /// <returns></returns>
     async Task Create(TransactionEventArgs e)
     {
         Transactions.Insert(0, e.Transaction);
@@ -122,20 +133,23 @@ public partial class TransactionsViewModel : ObservableObject
         }
         else
         {
-            // if not transfer, add payee (transfers don't have a payee)
-            Payees.Add(e.Transaction.Payee);
+            // if not transfer, add payee if new (transfers don't have a payee)
+            string payee = e.Transaction.Payee;
+            if (!Payees.Contains(payee))
+                Payees.Add(payee);
         }
     }
 
     /// <summary>
     /// Get transactions from db, if count has changed, refresh Transactions collection.
     /// </summary>
-    /// <returns></returns>
     async Task Read()
     {
         var transactions = await transactionService.GetTransactionsFromTo(From, To, true);
         if (transactions.Count() != Transactions.Count)
         {
+            ListView.LoadMoreOption = LoadMoreOption.Auto;
+
             LoadedTransactions.Clear();
             Transactions.Clear();
             Transactions = new List<Transaction>(transactions);
@@ -145,7 +159,7 @@ public partial class TransactionsViewModel : ObservableObject
         }
         if (showValue != Constants.ShowValue)
         {
-            // workaround to triggering converter
+            // workaround for triggering converter
             if (LoadedTransactions.Any())
                 foreach (var trans in LoadedTransactions)
                     trans.Amount = (Constants.ShowValue) ? trans.Amount + 0.0001m : trans.Amount - 0.0001m;
@@ -191,7 +205,7 @@ public partial class TransactionsViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Removes transaction from collection
+    /// Removes transaction from collection.
     /// </summary>
     /// <param name="e"></param>
     void Delete(TransactionEventArgs e)
@@ -258,7 +272,7 @@ public partial class TransactionsViewModel : ObservableObject
     void ClearAccount()
     {
         Account = null;
-        UpdateFilter(this, new EventArgs());
+        UpdateFilter(this, default);
     }
 
     /// <summary>
@@ -269,7 +283,7 @@ public partial class TransactionsViewModel : ObservableObject
     {
         Category = null;
         Subcategory = null;
-        UpdateFilter(this, new EventArgs());
+        UpdateFilter(this, default);
     }
 
     /// <summary>
@@ -279,30 +293,30 @@ public partial class TransactionsViewModel : ObservableObject
     void ClearSubcategory()
     {
         Subcategory = null;
-        UpdateFilter(this, new EventArgs());
+        UpdateFilter(this, default);
     }
 
     /// <summary>
-    /// Calls UpdateFilter() and brings account frame to back.
+    /// Calls UpdateFilter() and brings slider to front.
     /// </summary>
     [RelayCommand]
     void AmountDragStarted(object obj)
     {
-        var frame = obj as Frame;
-        frame.ZIndex = 0;
+        var grid = obj as Grid;
+        grid.ZIndex = 3;
     }
 
     /// <summary>
-    /// Calls UpdateFilter() and brings account frame to front.
+    /// Calls UpdateFilter() and brings slider to back.
     /// </summary>
     [RelayCommand]
     async Task AmountDragCompleted(object obj)
     {
-        UpdateFilter(this, new EventArgs());
+        UpdateFilter(this, default);
 
-        var frame = obj as Frame;
-        await Task.Delay(200);
-        frame.ZIndex = 2;
+        var grid = obj as Grid;
+        await Task.Delay(300);
+        grid.ZIndex = 1;
     }
 
     /// <summary>
@@ -312,6 +326,7 @@ public partial class TransactionsViewModel : ObservableObject
     {
         if (ListView.DataSource != null)
         {
+            ListView.LoadMoreOption = LoadMoreOption.Auto;
             ListView.DataSource.Filter = FilterTransactions;
             ListView.DataSource.RefreshFilter();
         }
@@ -321,7 +336,6 @@ public partial class TransactionsViewModel : ObservableObject
     /// Checks if transaction matches filters.
     /// </summary>
     /// <param name="obj"></param>
-    /// <returns></returns>
     bool FilterTransactions(object obj)
     {
         // if all are blank, show Transaction
@@ -351,22 +365,26 @@ public partial class TransactionsViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Loads items from Transactions
+    /// Loads items from Transactions.
     /// </summary>
     [RelayCommand]
     async void LoadMoreItems()
     {
         ListView.IsLazyLoading = true;
-        await Task.Delay(10);
-        var index = LoadedTransactions.Count;
-        int loadCount = 50;
-        var count = index + loadCount >= Transactions.Count ? Transactions.Count - index : loadCount;
+        await Task.Delay(250);
+        int index = LoadedTransactions.Count;
+        int totalItems = Transactions.Count;
+        int count = index + LOAD_COUNT >= totalItems ? totalItems - index : LOAD_COUNT;
         AddTransactions(index, count);
         ListView.IsLazyLoading = false;
+
+        // disables loading indicator
+        if (totalItems > 0 && count == 0)
+            ListView.LoadMoreOption = LoadMoreOption.None;
     }
 
     /// <summary>
-    /// 
+    /// Copies transactions from Transactions to LoadedTransactions.
     /// </summary>
     /// <param name="index"></param>
     /// <param name="count"></param>

@@ -156,6 +156,10 @@ public partial class AddTransactionViewModel : ObservableObject
     {
         try
         {
+            if (Account is null || Category is null || Subcategory is null || 
+                (Category?.CategoryID == Constants.TRANSFER_ID && TransferAccount is null))
+                return;
+
             Transaction transaction = new();
 
             // add payee to Payees if not already in list

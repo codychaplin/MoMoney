@@ -42,13 +42,13 @@
                     <Grid HeightRequest="55" Padding="10,0" BackgroundColor="{StaticResource Green}">
                         <Label Style="{StaticResource lblTitle}"
                                Text="Dashboard"
-                               HorizontalOptions="Start"
-                               VerticalOptions="Center" />
-                        <ImageButton Source="calendar.svg"
-                                     HorizontalOptions="End"
-                                     HeightRequest="30"
-                                     WidthRequest="30"
-                                     Clicked="ImageButton_Clicked"/>
+                               VerticalOptions="Center"
+                               HorizontalOptions="Start" />
+                        <Image Style="{StaticResource imgTinted}"
+                               Source="calendar.svg"
+                               HeightRequest="30"
+                               WidthRequest="30" 
+                               HorizontalOptions="End" />
                     </Grid>
                 </toolkit:Expander.Header>
 
@@ -60,15 +60,9 @@
                        HorizontalOptions="Center"
                        BackgroundColor="{StaticResource Gray700}">
                     <HorizontalStackLayout Spacing="5">
-                        <HorizontalStackLayout.Resources>
-                            <Style TargetType="{x:Type DatePicker}">
-                                <Setter Property="HeightRequest" Value="45" />
-                                <Setter Property="Format" Value="MMM dd yyyy" />
-                            </Style>
-                        </HorizontalStackLayout.Resources>
-                        <DatePicker x:Name="dtFrom" Date="{Binding From}" />
+                        <DatePicker x:Name="dtFrom" Date="{Binding From}" HeightRequest="45" />
                         <Label Text="to" FontSize="16" VerticalOptions="Center" FontAttributes="Bold" />
-                        <DatePicker x:Name="dtTo" Date="{Binding To}" />
+                        <DatePicker x:Name="dtTo" Date="{Binding To}" HeightRequest="45" />
                         <Image Source="calendar.svg" Style="{StaticResource imgTinted}" />
                     </HorizontalStackLayout>
                 </Frame>

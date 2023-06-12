@@ -1,4 +1,5 @@
 using MoMoney.ViewModels;
+using Syncfusion.Maui.ListView.Helpers;
 
 namespace MoMoney.Views;
 
@@ -14,63 +15,25 @@ public partial class TransactionsPage : ContentView
         vm = _vm;
         BindingContext = vm;
 
-        vm.ListView = listView;
-        frAccounts.ZIndex = 2;
+        // add padding to bottom of sfListView
+        var scrollview = listView.GetScrollView();
+        scrollview.Padding = new Thickness(0, 0, 0, 10);
 
-        TransactionsChanged += Refresh;
+        vm.ListView = listView;
+
+        Loaded += vm.Loaded;
+        TransactionsChanged += vm.Refresh;
+
         dtFrom.DateSelected += InvokeTransactionsChanged;
         dtTo.DateSelected += InvokeTransactionsChanged;
+
         pckAccount.SelectedIndexChanged += vm.UpdateFilter;
         pckCategory.SelectedIndexChanged += vm.CategoryChanged;
         pckSubcategory.SelectedIndexChanged += vm.UpdateFilter;
     }
 
     /// <summary>
-    /// Loads data into filter pickers
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    async void ContentView_Loaded(object sender, EventArgs e)
-    {
-        await vm.GetAccounts();
-        await vm.GetParentCategories();
-    }
-
-    /// <summary>
-    /// Refreshes transactions on page. 
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    async void Refresh(object sender, TransactionEventArgs e)
-    {
-        // if triggered by tab bar (on MainPage), update dates
-        if (sender is ContentPage)
-        {
-            dtFrom.Date = vm.From;
-            dtTo.Date = vm.To;
-        }
-
-        // if read, delay to avoid lag when switching to TransactionsPage
-        if (e.Type == TransactionEventArgs.CRUD.Read)
-            await Task.Delay(100);
-        await vm.Refresh(e);
-    }
-
-    /// <summary>
-    /// Changes visibility of filter pickers
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    void ImageButton_Clicked(object sender, EventArgs e)
-    {
-        grid.RowDefinitions[1].Height = (grdFilters.IsVisible) ? 0 : 240;
-        grdFilters.IsVisible = !grdFilters.IsVisible;
-        rsAmountFrame.IsVisible = !rsAmountFrame.IsVisible;
-        rsAmount.IsVisible = !rsAmount.IsVisible;
-    }
-
-    /// <summary>
-    /// Invokes TransactionsChanged
+    /// Invokes TransactionsChanged.
     /// </summary>
     void InvokeTransactionsChanged(object sender, EventArgs e)
     {

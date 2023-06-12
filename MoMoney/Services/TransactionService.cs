@@ -46,8 +46,8 @@ public class TransactionService : ITransactionService
     {
         await momoney.Init();
         ValidateTransaction(updatedTransaction.Date, updatedTransaction.AccountID, updatedTransaction.Amount,
-                            updatedTransaction.CategoryID, updatedTransaction.SubcategoryID, updatedTransaction.Payee.Trim(),
-                            updatedTransaction.TransferID);
+                            updatedTransaction.CategoryID, updatedTransaction.SubcategoryID,
+                            updatedTransaction.Payee.Trim(), updatedTransaction.TransferID);
         await momoney.db.UpdateAsync(updatedTransaction);
     }
 
