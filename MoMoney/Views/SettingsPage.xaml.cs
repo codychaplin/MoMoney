@@ -4,12 +4,9 @@ namespace MoMoney.Views;
 
 public partial class SettingsPage : ContentView
 {
-    SettingsViewModel vm;
-
-    public SettingsPage(SettingsViewModel _vm)
+    public SettingsPage(SettingsViewModel vm)
     {
         InitializeComponent();
-        vm = _vm;
         BindingContext = vm;
     }
 

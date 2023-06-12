@@ -85,7 +85,7 @@
             </Style>
             
             <!-- binds colour to theme for ImageButtons and Images -->
-            <Style TargetType="{x:Type ImageButton}">
+            <Style x:Key="imgBtnTinted" TargetType="{x:Type ImageButton}">
                 <Style.Behaviors>
                     <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                 </Style.Behaviors>
@@ -113,6 +113,14 @@
                 <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
             </Style>
 
+            <!-- setings subtitle -->
+            <Style x:Key="SettingsSubtitle" TargetType="{x:Type Label}">
+                <Setter Property="CharacterSpacing" Value="1" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="Margin" Value="10,20,0,5" />
+                <Setter Property="TextColor" Value="{StaticResource Green}" />
+            </Style>
+
             <!-- condensed frame tile -->
             <Style x:Key="confrTile" TargetType="{x:Type Frame}">
                 <Setter Property="Padding" Value="5,0,5,0" />
@@ -120,16 +128,9 @@
                 <Setter Property="HeightRequest" Value="45" />
                 <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
             </Style>
-            <!-- ImageButton tile -->
-            <Style x:Key="ibtnTile" TargetType="{x:Type ImageButton}">
-                <Setter Property="Padding" Value="7" />
-                <Setter Property="WidthRequest" Value="40" />
-                <Setter Property="HorizontalOptions" Value="End" />
-                <Setter Property="VerticalOptions" Value="Center" />
-            </Style>
 
             <!-- tile icon -->
-            <Style x:Key="icon" TargetType="{x:Type Image}" BasedOn="{x:StaticResource imgTinted}">
+            <Style x:Key="imgIcon" TargetType="{x:Type Image}" BasedOn="{x:StaticResource imgTinted}">
                 <Setter Property="HeightRequest" Value="25" />
                 <Setter Property="Margin" Value="0,0,10,0" />
                 <Setter Property="VerticalOptions" Value="Center" />

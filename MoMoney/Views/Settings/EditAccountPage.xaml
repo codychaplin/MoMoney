@@ -13,7 +13,7 @@
         <!-- account name -->
         <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="account.svg" Style="{StaticResource icon}" />
+                <Image Source="account.svg" Style="{StaticResource imgIcon}" />
                 <Entry x:Name="txtName"
                        Grid.Column="1"
                        Placeholder="Account Name"
@@ -24,7 +24,7 @@
         <!-- account type with predefined values -->
         <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="piggy_bank.svg" Style="{StaticResource icon}" />
+                <Image Source="piggy_bank.svg" Style="{StaticResource imgIcon}" />
                 <Picker x:Name="pckType"
                         Grid.Column="1"
                         Title="Select a type"
@@ -43,7 +43,7 @@
         <Grid ColumnDefinitions="3.5*,*">
             <Frame Style="{StaticResource frTile}">
                 <Grid ColumnDefinitions="0.21*,*">
-                    <Image Source="dollar_symbol.svg" Style="{StaticResource icon}" HorizontalOptions="Start" />
+                    <Image Source="dollar_symbol.svg" Style="{StaticResource imgIcon}" HorizontalOptions="Start" />
                     <Entry x:Name="txtStartingBalance"
                            Grid.Column="1"
                            Keyboard="Numeric"

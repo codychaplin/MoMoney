@@ -13,7 +13,7 @@
         <!-- category name -->
         <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="subcategory.svg" Style="{StaticResource icon}" />
+                <Image Source="subcategory.svg" Style="{StaticResource imgIcon}" />
                 <Entry x:Name="txtName"
                        Grid.Column="1"
                        Placeholder="Category Name"
@@ -24,7 +24,7 @@
         <!-- parent category -->
         <Frame Style="{StaticResource frTile}">
             <Grid ColumnDefinitions="0.15*,*">
-                <Image Source="category.svg" Style="{StaticResource icon}" />
+                <Image Source="category.svg" Style="{StaticResource imgIcon}" />
                 <Picker x:Name="pckParent"
                         Grid.Column="1"
                         Title="Select a Parent"

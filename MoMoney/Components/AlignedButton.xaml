@@ -4,12 +4,14 @@
              x:Class="MoMoney.Components.AlignedButton"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Name="this">
-    <Grid BindingContext="{x:Reference this}" BackgroundColor="{StaticResource Gray700}">
+    <Grid BindingContext="{x:Reference this}" BackgroundColor="{StaticResource Gray900}">
         <Button HorizontalOptions="Fill"
                 CornerRadius="0"
                 HeightRequest="45"
+                BackgroundColor="{StaticResource Gray900}"
                 Command="{Binding Command}" />
         <Label Text="{Binding Text}"
+               TextColor="{StaticResource Gray200}"
                Padding="10,0"
                FontFamily="Roboto"
                VerticalOptions="Center"
@@ -19,7 +21,7 @@
                IsVisible="{Binding ShowArrow, FallbackValue=false}"
                HorizontalOptions="End">
             <Image.Behaviors>
-                <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource Gray200}}" />
             </Image.Behaviors>
         </Image>
     </Grid>

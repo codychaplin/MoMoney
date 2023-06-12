@@ -57,7 +57,7 @@ public class TransactionService : ITransactionService
         await momoney.db.DeleteAsync<Transaction>(ID);
     }
 
-    public async Task ResetTransactions()
+    public async Task RemoveAllTransactions()
     {
         await momoney.Init();
         await momoney.db.DeleteAllAsync<Transaction>();

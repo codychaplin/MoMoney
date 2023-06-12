@@ -15,6 +15,7 @@
 * Converted all pngs to svgs
 * Overhauled UI
 * Refactored/cleaned up logic
+* Split up settings page
 
 # MoMoney v1.0.3
 

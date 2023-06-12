@@ -9,7 +9,6 @@
              Title="Accounts">
 
     <ContentPage.Resources>
-        <!-- converters -->
         <converters:TileColourConverter x:Key="TileColour" />
         <converters:ShowValueConverter x:Key="ShowValue" />
     </ContentPage.Resources>
@@ -26,7 +25,7 @@
                         <Frame Style="{StaticResource confrTile}" BackgroundColor="{Binding Enabled, Converter={StaticResource TileColour}}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding Path=GoToEditAccountCommand, Source={RelativeSource
-                                                                    AncestorType={x:Type viewmodel:AccountsViewModel}}}"
+                                                                        AncestorType={x:Type viewmodel:AccountsViewModel}}}"
                                                       CommandParameter="{Binding AccountID}" />
                             </Frame.GestureRecognizers>
                             <Grid>
@@ -35,10 +34,10 @@
 
                                 <!-- Current Balance -->
                                 <Label Style="{StaticResource lblTile}"
-                                   IsVisible="{Binding Enabled}"
-                                   HorizontalOptions="End"
-                                   Padding="0,0,5,0"
-                                   Text="{Binding CurrentBalance, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
+                                       IsVisible="{Binding Enabled}"
+                                       HorizontalOptions="End"
+                                       Padding="0,0,5,0"
+                                       Text="{Binding CurrentBalance, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
                             </Grid>
                         </Frame>
                     </DataTemplate>

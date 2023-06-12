@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MoMoney.Views.Settings.ImportExportPage"
+             x:DataType="viewmodels:ImportExportViewModel"
+             xmlns:components="clr-namespace:MoMoney.Components"
+             xmlns:viewmodels="clr-namespace:MoMoney.ViewModels.Settings"
+             Title="Import &amp; Export">
+    <ScrollView>
+        <VerticalStackLayout>
+            
+            <!-- import -->
+            <Label Style="{StaticResource SettingsSubtitle}" Text="Import" />
+            <components:AlignedButton Text="Import Accounts from CSV" Command="{Binding ImportAccountsCSVCommand}" />
+            <components:AlignedButton Text="Import Categories from CSV" Command="{Binding ImportCategoriesCSVCommand}" />
+            <components:AlignedButton Text="Import Stocks from CSV" Command="{Binding ImportStocksCSVCommand}" />
+            <components:AlignedButton Text="Import Transactions from CSV" Command="{Binding ImportTransactionsCSVCommand}" />
+
+            <!-- export -->
+            <Label Style="{StaticResource SettingsSubtitle}" Text="Export" />
+            <components:AlignedButton Text="Export Transactions to CSV" Command="{Binding ExportTransactionsCSVCommand}" />
+            
+        </VerticalStackLayout>  
+    </ScrollView>
+</ContentPage>

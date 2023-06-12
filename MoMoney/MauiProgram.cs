@@ -67,7 +67,13 @@ public static class MauiProgram
 		builder.Services.AddSingleton<StockSettingsPage>();
 		builder.Services.AddTransient<StockSettingsViewModel>();
 
-		builder.Services.AddTransient<AccountSummaryPage>();
+        builder.Services.AddTransient<ImportExportPage>();
+        builder.Services.AddTransient<ImportExportViewModel>();
+
+        builder.Services.AddTransient<AdminPage>();
+        builder.Services.AddTransient<AdminViewModel>();
+
+        builder.Services.AddTransient<AccountSummaryPage>();
 		builder.Services.AddTransient<AccountSummaryViewModel>();
 
 		builder.Services.AddTransient<BreakdownPage>();

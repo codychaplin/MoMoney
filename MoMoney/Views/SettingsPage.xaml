@@ -6,16 +6,6 @@
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
              xmlns:components="clr-namespace:MoMoney.Components">
 
-    <!-- styles -->
-    <ContentView.Resources>
-        <Style x:Key="SubTitle" TargetType="{x:Type Label}">
-            <Setter Property="CharacterSpacing" Value="1" />
-            <Setter Property="FontAttributes" Value="Bold" />
-            <Setter Property="Margin" Value="10,20,0,5" />
-            <Setter Property="TextColor" Value="{StaticResource Green}" />
-        </Style>
-    </ContentView.Resources>
-
     <!-- main page -->
     <ScrollView>
         <VerticalStackLayout Margin="0,0,0,10">
@@ -25,41 +15,29 @@
                 <Label Style="{StaticResource lblTitle}" Text="Settings" VerticalOptions="Center" />
             </Grid>
 
-            <VerticalStackLayout>
-                <Label Style="{StaticResource SubTitle}" Text="Edit" />
-                <components:AlignedButton Text="Accounts" ShowArrow="True" Command="{Binding GoToAccountsCommand}" />
-                <components:AlignedButton Text="Categories" ShowArrow="True" Command="{Binding GoToCategoriesCommand}" />
-                <components:AlignedButton Text="Stocks" ShowArrow="True" Command="{Binding GoToStocksCommand}" />
-            </VerticalStackLayout>
+            <!-- edit models -->
+            <Label Style="{StaticResource SettingsSubtitle}" Text="Edit" />
+            <components:AlignedButton Text="Accounts" ShowArrow="True" Command="{Binding GoToAccountsCommand}" />
+            <components:AlignedButton Text="Categories" ShowArrow="True" Command="{Binding GoToCategoriesCommand}" />
+            <components:AlignedButton Text="Stocks" ShowArrow="True" Command="{Binding GoToStocksCommand}" />
 
-            <VerticalStackLayout>
-                <Label Style="{StaticResource SubTitle}" Text="Import/Export" />
-                <components:AlignedButton Text="Import Accounts from CSV" Command="{Binding ImportAccountsCSVCommand}" />
-                <components:AlignedButton Text="Import Categories from CSV" Command="{Binding ImportCategoriesCSVCommand}" />
-                <components:AlignedButton Text="Import Stocks from CSV" Command="{Binding ImportStocksCSVCommand}" />
-                <components:AlignedButton Text="Import Transactions from CSV" Command="{Binding ImportTransactionsCSVCommand}" />
-                <components:AlignedButton Text="Export Transactions to CSV" Command="{Binding ExportTransactionsCSVCommand}" />
-            </VerticalStackLayout>
+            <!-- import/export -->
+            <Label Style="{StaticResource SettingsSubtitle}" Text="Import/Export" />
+            <components:AlignedButton Text="Import/Export Data" ShowArrow="True" Command="{Binding GoToImportExportCommand}" />
 
-            <VerticalStackLayout>
-                <Label Style="{StaticResource SubTitle}" Text="Privacy" />
-                <Grid BackgroundColor="{StaticResource Gray700}" Padding="10,0">
-                    <Label Text="Show Sensitive Values" VerticalOptions="Center" />
-                    <Switch x:Name="swShowValues"
-                            IsToggled="True"
-                            HorizontalOptions="End"
-                            Toggled="swShowValues_Toggled" />
-                </Grid>
-            </VerticalStackLayout>
+            <!-- privacy -->
+            <Label Style="{StaticResource SettingsSubtitle}" Text="Privacy" />
+            <Grid BackgroundColor="{StaticResource Gray900}" Padding="10,0">
+                <Label Text="Show Sensitive Values" TextColor="{StaticResource Gray200}" VerticalOptions="Center" />
+                <Switch x:Name="swShowValues"
+                        IsToggled="True"
+                        HorizontalOptions="End"
+                        Toggled="swShowValues_Toggled" />
+            </Grid>
 
-            <VerticalStackLayout>
-                <Label Style="{StaticResource SubTitle}" Text="Debug" />
-                <components:AlignedButton Text="Calculate Account Balances" Command="{Binding CalculateAccountBalancesCommand}" />
-                <components:AlignedButton Text="Remove All Accounts" Command="{Binding RemoveAllAccountsCommand}" />
-                <components:AlignedButton Text="Remove All Categories" Command="{Binding RemoveAllCategoriesCommand}" />
-                <components:AlignedButton Text="Remove All Stocks" Command="{Binding RemoveAllStocksCommand}" />
-                <components:AlignedButton Text="Remove All Transactions" Command="{Binding RemoveAllTransactionsCommand}" />
-            </VerticalStackLayout>
+            <!-- admin -->
+            <Label Style="{StaticResource SettingsSubtitle}" Text="Admin" />
+            <components:AlignedButton Text="Data" ShowArrow="True" Command="{Binding GoToAdminCommand}" />
 
         </VerticalStackLayout>
     </ScrollView>

@@ -40,7 +40,7 @@ public interface ITransactionService
     /// <summary>
     /// Drops Transactions table and re-initializes it.
     /// </summary>
-    Task ResetTransactions();
+    Task RemoveAllTransactions();
 
     /// <summary>
     /// Gets an transaction from the transactions table using an ID.

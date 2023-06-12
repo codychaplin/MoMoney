@@ -24,7 +24,7 @@
             <!-- year picker -->
             <Frame HorizontalOptions="Center" Padding="5,5,10,5">
                 <HorizontalStackLayout>
-                    <Image Source="calendar.svg" Style="{StaticResource icon}" Margin="5" />
+                    <Image Source="calendar.svg" Style="{StaticResource imgIcon}" Margin="5" />
                     <Picker x:Name="pckDate"
                             Title="Select a Year"
                             HeightRequest="40"

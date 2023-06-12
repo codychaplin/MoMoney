@@ -18,7 +18,7 @@
             <!-- Date -->
             <Frame>
                 <Grid ColumnDefinitions="40,*">
-                    <Image Source="calendar.svg" Style="{StaticResource icon}" />
+                    <Image Source="calendar.svg" Style="{StaticResource imgIcon}" />
                     <DatePicker x:Name="dtDate"
                                 Grid.Column="1"
                                 VerticalOptions="Center"
@@ -28,7 +28,7 @@
             <!-- Account -->
             <Frame>
                 <Grid ColumnDefinitions="40,*">
-                    <Image Source="accounts.svg" Style="{StaticResource icon}" />
+                    <Image Source="accounts.svg" Style="{StaticResource imgIcon}" />
                     <Picker x:Name="pckAccount"
                             Grid.Column="1"
                             Title="Select an Account"
@@ -42,7 +42,7 @@
             <!-- Amount -->
             <Frame>
                 <Grid ColumnDefinitions="40,*">
-                    <Image Source="dollar_symbol.svg" Style="{StaticResource icon}" />
+                    <Image Source="dollar_symbol.svg" Style="{StaticResource imgIcon}" />
                     <Entry x:Name="txtAmount"
                            Grid.Column="1"
                            Keyboard="Numeric"
@@ -54,7 +54,7 @@
             <!-- Category -->
             <Frame>
                 <Grid ColumnDefinitions="40,*">
-                    <Image Source="category.svg" Style="{StaticResource icon}" />
+                    <Image Source="category.svg" Style="{StaticResource imgIcon}" />
                     <Picker x:Name="pckCategory"
                             x:DataType="models:Category"
                             Grid.Column="1"
@@ -69,7 +69,7 @@
             <!-- Subcategory -->
             <Frame>
                 <Grid ColumnDefinitions="40,*">
-                    <Image Source="subcategory.svg" Style="{StaticResource icon}" />
+                    <Image Source="subcategory.svg" Style="{StaticResource imgIcon}" />
                     <Picker x:Name="pckSubcategory"
                             x:DataType="models:Category"
                             Grid.Column="1"
@@ -83,7 +83,7 @@
             <!-- Payee -->
             <Frame x:Name="frPayee" IsVisible="True">
                 <Grid ColumnDefinitions="40,*">
-                    <Image Source="account.svg" Style="{StaticResource icon}" />
+                    <Image Source="account.svg" Style="{StaticResource imgIcon}" />
                     <input:SfAutocomplete x:Name="entPayee"
                                           Grid.Column="1"
                                           Margin="0,14"
@@ -102,7 +102,7 @@
             <!-- Transfer Payee Account -->
             <Frame x:Name="frPayeeAccount" IsVisible="False">
                 <Grid ColumnDefinitions="40,*">
-                    <Image Source="account.svg" Style="{StaticResource icon}" />
+                    <Image Source="account.svg" Style="{StaticResource imgIcon}" />
                     <Picker x:Name="pckPayeeAccount"
                             x:DataType="models:Account"
                             Grid.Column="1"
