@@ -24,17 +24,16 @@ public partial class MainPage : ContentPage
 
 	private void TabBar_SelectionChanged(object sender, TabSelectionChangedEventArgs e)
 	{
+		// change colour of selected tab icon
         var previousItem = e.OldIndex >= 0 ? TabBar.Items[(int)e.OldIndex] : null;
         var currentItem = e.NewIndex >= 0 ? TabBar.Items[(int)e.NewIndex] : null;
         string colour = (AppInfo.Current.RequestedTheme == AppTheme.Dark) ? "white" : "black";
-
         if (previousItem != null)
 		{
 			var imageSource = (FileImageSource)previousItem.ImageSource;
 			string name = imageSource.File.Replace("green", colour);
 			previousItem.ImageSource = name;
 		}
-
         if (currentItem != null)
         {
             var imageSource = (FileImageSource)currentItem.ImageSource;

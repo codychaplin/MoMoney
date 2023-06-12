@@ -49,7 +49,7 @@
                         <Setter Property="HeightRequest" Value="20" />
                         <Setter Property="HorizontalOptions" Value="Center" />
                     </Style>
-                    <Style TargetType="{x:Type ImageButton}" x:Key="ibtnIcon" BasedOn="{StaticResource ibtnTinted}">
+                    <Style TargetType="{x:Type ImageButton}" x:Key="ibtnIcon" BasedOn="{StaticResource imgBtnTinted}">
                         <Setter Property="Source" Value="clear.svg" />
                         <Setter Property="WidthRequest" Value="20" />
                         <Setter Property="HeightRequest" Value="20" />

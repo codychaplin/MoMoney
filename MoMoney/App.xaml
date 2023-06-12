@@ -105,12 +105,18 @@
                 <Setter Property="VerticalTextAlignment" Value="Center" />
             </Style>
 
-            <!-- add/edit tile -->
-            <Style x:Key="AddEditTile" TargetType="{x:Type Frame}">
+            <!-- tile frame -->
+            <Style x:Key="TileFrame" TargetType="{x:Type Frame}">
                 <Setter Property="Margin" Value="10,0,10,10" />
                 <Setter Property="Padding" Value="10,0" />
                 <Setter Property="HeightRequest" Value="65" />
                 <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
+            </Style>
+
+            <!-- tile grid -->
+            <Style x:Key="TileGrid" TargetType="{x:Type Grid}">
+                <Setter Property="ColumnDefinitions" Value="30,*" />
+                <Setter Property="VerticalOptions" Value="Center" />
             </Style>
 
             <!-- setings subtitle -->

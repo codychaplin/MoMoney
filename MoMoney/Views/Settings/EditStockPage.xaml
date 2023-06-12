@@ -11,8 +11,8 @@
         <VerticalStackLayout>
 
             <!-- symbol -->
-            <Frame Style="{StaticResource frTile}">
-                <Grid ColumnDefinitions="0.15*,*">
+            <Frame Style="{StaticResource TileFrame}">
+                <Grid Style="{StaticResource TileGrid}">
                     <Image Source="label.svg" Style="{StaticResource imgIcon}" />
                     <Entry x:Name="txtSymbol"
                            Grid.Column="1"
@@ -21,8 +21,8 @@
                 </Grid>
             </Frame>
             <!-- quantity -->
-            <Frame Style="{StaticResource frTile}">
-                <Grid ColumnDefinitions="0.15*,*">
+            <Frame Style="{StaticResource TileFrame}">
+                <Grid Style="{StaticResource TileGrid}">
                     <Image Source="number.svg" Style="{StaticResource imgIcon}" />
                     <Entry x:Name="txtQuantity"
                            Grid.Column="1"
@@ -32,8 +32,8 @@
                 </Grid>
             </Frame>
             <!-- cost -->
-            <Frame Style="{StaticResource frTile}">
-                <Grid ColumnDefinitions="0.15*,*">
+            <Frame Style="{StaticResource TileFrame}">
+                <Grid Style="{StaticResource TileGrid}">
                     <Image Source="shopping_cart.svg" Style="{StaticResource imgIcon}" />
                     <Entry x:Name="txtCost"
                            Grid.Column="1"
@@ -43,8 +43,8 @@
                 </Grid>
             </Frame>
             <!-- market price -->
-            <Frame Style="{StaticResource frTile}">
-                <Grid ColumnDefinitions="0.15*,*">
+            <Frame Style="{StaticResource TileFrame}">
+                <Grid Style="{StaticResource TileGrid}">
                     <Image Source="market.svg" Style="{StaticResource imgIcon}" />
                     <Entry x:Name="txtMarketPrice"
                            Grid.Column="1"
@@ -54,8 +54,8 @@
                 </Grid>
             </Frame>
             <!-- book value -->
-            <Frame Style="{StaticResource frTile}">
-                <Grid ColumnDefinitions="0.15*,*">
+            <Frame Style="{StaticResource TileFrame}">
+                <Grid Style="{StaticResource TileGrid}">
                     <Image Source="book.svg" Style="{StaticResource imgIcon}" />
                     <Entry x:Name="txtBookValue"
                            Grid.Column="1"

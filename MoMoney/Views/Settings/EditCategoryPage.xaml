@@ -11,8 +11,8 @@
     <VerticalStackLayout Padding="0,10,0,0">
 
         <!-- category name -->
-        <Frame Style="{StaticResource frTile}">
-            <Grid ColumnDefinitions="0.15*,*">
+        <Frame Style="{StaticResource TileFrame}">
+            <Grid Style="{StaticResource TileGrid}">
                 <Image Source="subcategory.svg" Style="{StaticResource imgIcon}" />
                 <Entry x:Name="txtName"
                        Grid.Column="1"
@@ -22,8 +22,8 @@
         </Frame>
 
         <!-- parent category -->
-        <Frame Style="{StaticResource frTile}">
-            <Grid ColumnDefinitions="0.15*,*">
+        <Frame Style="{StaticResource TileFrame}">
+            <Grid Style="{StaticResource TileGrid}">
                 <Image Source="category.svg" Style="{StaticResource imgIcon}" />
                 <Picker x:Name="pckParent"
                         Grid.Column="1"

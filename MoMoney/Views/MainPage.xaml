@@ -13,7 +13,7 @@
                        TabBarHeight="55"
                        TabBarPlacement="Bottom"
                        SelectionChanged="TabBar_SelectionChanged"
-                       BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Background}}"
+                       BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}"
                        IndicatorBackground="{StaticResource Green}">
 
         <!-- tabs -->

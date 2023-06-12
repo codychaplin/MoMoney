@@ -10,8 +10,8 @@
     <VerticalStackLayout Padding="0,10,0,0">
 
         <!-- account name -->
-        <Frame Style="{StaticResource frTile}">
-            <Grid ColumnDefinitions="0.15*,*">
+        <Frame Style="{StaticResource TileFrame}">
+            <Grid Style="{StaticResource TileGrid}">
                 <Image Source="account.svg" Style="{StaticResource imgIcon}" />
                 <Entry x:Name="txtName"
                        Grid.Column="1"
@@ -20,8 +20,8 @@
             </Grid>
         </Frame>
         <!-- account type with predefined values -->
-        <Frame Style="{StaticResource frTile}">
-            <Grid ColumnDefinitions="0.15*,*">
+        <Frame Style="{StaticResource TileFrame}">
+            <Grid Style="{StaticResource TileGrid}">
                 <Image Source="piggy_bank.svg" Style="{StaticResource imgIcon}" />
                 <Picker x:Name="pckType"
                         Grid.Column="1"
@@ -37,8 +37,8 @@
             </Grid>
         </Frame>
         <!-- starting balance -->
-        <Frame Style="{StaticResource frTile}">
-            <Grid ColumnDefinitions="0.15*,*">
+        <Frame Style="{StaticResource TileFrame}">
+            <Grid Style="{StaticResource TileGrid}">
                 <Image Source="dollar_symbol.svg" Style="{StaticResource imgIcon}" />
                 <Entry x:Name="txtStartingBalance"
                        Grid.Column="1"
