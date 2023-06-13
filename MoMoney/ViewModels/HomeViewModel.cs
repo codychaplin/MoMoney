@@ -48,8 +48,7 @@ public partial class HomeViewModel : ObservableObject
         categoryService = _categoryService;
 
         // first two months, show 1 year, starting March show YTD
-        //From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
-        From = new(DateTime.Today.Year - 1, 1, 1);
+        From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
         To = DateTime.Today;
     }
 
@@ -115,31 +114,38 @@ public partial class HomeViewModel : ObservableObject
             }
 
             // update top income subcategory
-            var subcategoryID = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
-                                            .GroupBy(t => t.SubcategoryID)
-                                            .Select(group => new
-                                            {
-                                                Total = group.Sum(t => t.Amount),
-                                                group.FirstOrDefault().SubcategoryID
-                                            })
-                                            .MaxBy(g => g.Total)
-                                            .SubcategoryID;
+            var incomeTransactions = transactions.Where(t => t.CategoryID == Constants.INCOME_ID);
+            if (incomeTransactions.Any())
+            {
+                var subcategoryID = incomeTransactions.GroupBy(t => t.SubcategoryID)
+                                                      .Select(group => new
+                                                      {
+                                                          Total = group.Sum(t => t.Amount),
+                                                          group.FirstOrDefault().SubcategoryID
+                                                      })
+                                                      .MaxBy(g => g.Total)
+                                                      .SubcategoryID;
 
-            Category subcategory = await categoryService.GetCategory(subcategoryID);
-            TopIncomeSubcategory = subcategory.CategoryName;
+                Category subcategory = await categoryService.GetCategory(subcategoryID);
+                TopIncomeSubcategory = subcategory.CategoryName;
+            }
 
             // update top expense category
-            var categoryID = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
-                                         .GroupBy(t => t.CategoryID)
-                                         .Select(group => new
-                                         {
-                                             Total = group.Sum(t => t.Amount),
-                                             group.FirstOrDefault().CategoryID
-                                         })
-                                         .MinBy(g => g.Total)
-                                         .CategoryID;
-            Category category = await categoryService.GetCategory(categoryID);
-            TopExpenseCategory = category.CategoryName;
+            var expenseTransactions = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID);
+            if (expenseTransactions.Any())
+            {
+
+                var categoryID = expenseTransactions.GroupBy(t => t.CategoryID)
+                                                    .Select(group => new
+                                                    {
+                                                        Total = group.Sum(t => t.Amount),
+                                                        group.FirstOrDefault().CategoryID
+                                                    })
+                                                    .MinBy(g => g.Total)
+                                                    .CategoryID;
+                Category category = await categoryService.GetCategory(categoryID);
+                TopExpenseCategory = category.CategoryName;
+            }
         }
         catch (CategoryNotFoundException ex)
         {

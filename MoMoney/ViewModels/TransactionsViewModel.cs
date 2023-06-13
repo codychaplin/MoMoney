@@ -68,8 +68,7 @@ public partial class TransactionsViewModel : ObservableObject
         categoryService = _categoryService;
 
         // first two months, show 1 year, starting March show YTD
-        //From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
-        From = new(DateTime.Today.Year - 1, 1, 1);
+        From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
         To = DateTime.Today;
     }
 

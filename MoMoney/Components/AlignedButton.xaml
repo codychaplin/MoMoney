@@ -11,7 +11,7 @@
                 BackgroundColor="{StaticResource Gray900}"
                 Command="{Binding Command}" />
         <Label Text="{Binding Text}"
-               TextColor="{StaticResource Gray200}"
+               TextColor="{StaticResource Gray100}"
                Padding="10,0"
                FontFamily="Roboto"
                VerticalOptions="Center"
@@ -21,7 +21,7 @@
                IsVisible="{Binding ShowArrow, FallbackValue=false}"
                HorizontalOptions="End">
             <Image.Behaviors>
-                <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource Gray200}}" />
+                <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource Gray100}}" />
             </Image.Behaviors>
         </Image>
     </Grid>

@@ -4,10 +4,10 @@ using MoMoney.Data;
 using MoMoney.Views;
 using MoMoney.Services;
 using MoMoney.ViewModels;
+using MoMoney.Views.Stats;
+using MoMoney.Views.Settings;
 using MoMoney.ViewModels.Stats;
 using MoMoney.ViewModels.Settings;
-using MoMoney.Views.Settings;
-using MoMoney.Views.Stats;
 
 namespace MoMoney;
 
@@ -28,8 +28,8 @@ public static class MauiProgram
 				fonts.AddFont("Metropolis-Bold.otf", "MetropolisBold");
 			});
 
-		// db
-		builder.Services.AddSingleton<MoMoneydb>();
+        // db
+        builder.Services.AddSingleton<MoMoneydb>();
 
 		// services
 		builder.Services.AddSingleton<IAccountService, AccountService>();

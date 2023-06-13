@@ -28,7 +28,7 @@
             <!-- privacy -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Privacy" />
             <Grid BackgroundColor="{StaticResource Gray900}" Padding="10,0">
-                <Label Text="Show Sensitive Values" TextColor="{StaticResource Gray200}" VerticalOptions="Center" />
+                <Label Text="Show Sensitive Values" TextColor="{StaticResource Gray100}" VerticalOptions="Center" />
                 <Switch x:Name="swShowValues"
                         IsToggled="True"
                         HorizontalOptions="End"
