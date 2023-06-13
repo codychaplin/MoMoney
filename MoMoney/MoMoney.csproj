@@ -49,9 +49,6 @@
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
 
-		<!-- Custom Fonts -->
-		<MauiFont Include="Resources\Fonts\*" />
-
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
@@ -98,11 +95,11 @@
 	  <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
 	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.5" />
-	  <PackageReference Include="Syncfusion.Maui.Charts" Version="21.2.8" />
-	  <PackageReference Include="Syncfusion.Maui.Inputs" Version="21.2.8" />
-	  <PackageReference Include="Syncfusion.Maui.ListView" Version="21.2.8" />
-	  <PackageReference Include="Syncfusion.Maui.Sliders" Version="21.2.8" />
-	  <PackageReference Include="Syncfusion.Maui.TabView" Version="21.2.8" />
+	  <PackageReference Include="Syncfusion.Maui.Charts" Version="21.2.10" />
+	  <PackageReference Include="Syncfusion.Maui.Inputs" Version="21.2.10" />
+	  <PackageReference Include="Syncfusion.Maui.ListView" Version="21.2.10" />
+	  <PackageReference Include="Syncfusion.Maui.Sliders" Version="21.2.10" />
+	  <PackageReference Include="Syncfusion.Maui.TabView" Version="21.2.10" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -221,5 +218,7 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionMoMoneyHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 
 </Project>

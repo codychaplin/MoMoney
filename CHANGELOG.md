@@ -1,3 +1,9 @@
+# MoMoney v1.1.1
+
+### Changes
+
+* Updated Syncfusion controls to v21.2.10
+
 # MoMoney v1.1.0
 
 ### Fixes
