@@ -22,6 +22,7 @@ public class MoMoneydb
             await db.CreateTableAsync<Transaction>();
             await db.CreateTableAsync<Account>();
             await db.CreateTableAsync<Stock>();
+            await db.CreateTableAsync<Log>();
 
             var category = await db.CreateTableAsync<Category>();
             if (category == CreateTableResult.Created)

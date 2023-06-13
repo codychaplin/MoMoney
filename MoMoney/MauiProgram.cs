@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Maui;
-using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Core.Hosting;
 using MoMoney.Data;
 using MoMoney.Views;
@@ -19,10 +18,13 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder.UseMauiApp<App>()
 			   .ConfigureSyncfusionCore()
-			   .UseMauiCommunityToolkit();
+               .UseMauiCommunityToolkit();
 
         // db
         builder.Services.AddSingleton<MoMoneydb>();
+
+		// logging
+        builder.Services.AddTransient(typeof(ILoggerService<>), typeof(LoggerService<>));
 
 		// services
 		builder.Services.AddSingleton<IAccountService, AccountService>();

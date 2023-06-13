@@ -1,8 +1,13 @@
 # MoMoney v1.1.1
 
+### Fixes
+
+* Fixed Transaction tile clipping issue
+
 ### Changes
 
 * Updated Syncfusion controls to v21.2.10
+* Added custom db logging for CUD (CRUD - Read) operations
 
 # MoMoney v1.1.0
 

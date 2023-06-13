@@ -8,17 +8,19 @@ namespace MoMoney.Services;
 public class TransactionService : ITransactionService
 {
     readonly MoMoneydb momoney;
+    readonly ILoggerService<TransactionService> logger;
 
-    public TransactionService(MoMoneydb _momoney)
+    public TransactionService(MoMoneydb _momoney, ILoggerService<TransactionService> _logger)
     {
         momoney = _momoney;
+        logger = _logger;
     }
 
     public async Task<Transaction> AddTransaction(DateTime date, int accountID, decimal amount, int categoryID,
         int subcategoryID, string payee, int? transferID)
     {
         await momoney.Init();
-
+        
         ValidateTransaction(date, accountID, amount, categoryID, subcategoryID, payee, transferID);
 
         var transaction = new Transaction
@@ -33,6 +35,7 @@ public class TransactionService : ITransactionService
         };
 
         await momoney.db.InsertAsync(transaction);
+        await logger.LogInfo($"Added Transaction#{transaction.TransactionID} to db.");
         return transaction;
     }
 
@@ -40,6 +43,7 @@ public class TransactionService : ITransactionService
     {
         await momoney.Init();
         await momoney.db.InsertAllAsync(transactions);
+        await logger.LogInfo($"Added {transactions.Count} Transactions to db.");
     }
 
     public async Task UpdateTransaction(Transaction updatedTransaction)
@@ -49,12 +53,14 @@ public class TransactionService : ITransactionService
                             updatedTransaction.CategoryID, updatedTransaction.SubcategoryID,
                             updatedTransaction.Payee.Trim(), updatedTransaction.TransferID);
         await momoney.db.UpdateAsync(updatedTransaction);
+        await logger.LogInfo($"Updated Transaction#{updatedTransaction.TransactionID} in db.");
     }
 
     public async Task RemoveTransaction(int ID)
     {
         await momoney.Init();
         await momoney.db.DeleteAsync<Transaction>(ID);
+        await logger.LogInfo($"Removed Transaction#{ID} from db.");
     }
 
     public async Task RemoveAllTransactions()
@@ -63,6 +69,7 @@ public class TransactionService : ITransactionService
         await momoney.db.DeleteAllAsync<Transaction>();
         await momoney.db.DropTableAsync<Transaction>();
         await momoney.db.CreateTableAsync<Transaction>();
+        await logger.LogInfo($"Removed all Transactions from db.");
     }
 
     public async Task<Transaction> GetTransaction(int ID)

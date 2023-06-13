@@ -1,6 +1,6 @@
-﻿using MoMoney.Models;
+﻿using MoMoney.Data;
+using MoMoney.Models;
 using MoMoney.Exceptions;
-using MoMoney.Data;
 
 namespace MoMoney.Services;
 
@@ -8,12 +8,14 @@ namespace MoMoney.Services;
 public class AccountService : IAccountService
 {
     readonly MoMoneydb momoney;
+    readonly ILoggerService<AccountService> logger;
 
     public Dictionary<int, Account> Accounts { get; private set; } = new();
 
-    public AccountService(MoMoneydb _momoney)
+    public AccountService(MoMoneydb _momoney, ILoggerService<AccountService> _logger)
     {
         momoney = _momoney;
+        logger = _logger;
     }
 
     /// <summary>
@@ -46,6 +48,7 @@ public class AccountService : IAccountService
         // adds Account to db and dictionary
         await momoney.db.InsertAsync(account);
         Accounts.Add(account.AccountID, account);
+        await logger.LogInfo($"Added Account#{account.AccountID} to db.");
     }
 
     public async Task AddAccounts(List<Account> accounts)
@@ -62,6 +65,8 @@ public class AccountService : IAccountService
         await momoney.db.InsertAllAsync(accounts);
         foreach (var acc in accounts)
             Accounts.Add(acc.AccountID, acc);
+
+        await logger.LogInfo($"Added {accounts.Count} Accounts to db.");
     }
 
     public async Task UpdateAccount(Account updatedAccount)
@@ -69,6 +74,7 @@ public class AccountService : IAccountService
         await Init();
         await momoney.db.UpdateAsync(updatedAccount);
         Accounts[updatedAccount.AccountID] = updatedAccount;
+        await logger.LogInfo($"Updated Account#{updatedAccount.AccountID} in db.");
     }
 
     public async Task RemoveAccount(int ID)
@@ -76,6 +82,7 @@ public class AccountService : IAccountService
         await Init();
         await momoney.db.DeleteAsync<Account>(ID);
         Accounts.Remove(ID);
+        await logger.LogInfo($"Removed Account#{ID} from db.");
     }
 
     public async Task RemoveAllAccounts()
@@ -85,6 +92,7 @@ public class AccountService : IAccountService
         await momoney.db.DropTableAsync<Account>();
         await momoney.db.CreateTableAsync<Account>();
         Accounts.Clear();
+        await logger.LogInfo($"Removed all Accounts from db.");
     }
 
     public async Task<Account> GetAccount(int ID)
@@ -137,9 +145,16 @@ public class AccountService : IAccountService
     {
         await Init();
         await momoney.db.QueryAsync<Account>($"UPDATE Account SET CurrentBalance=CurrentBalance + {amount} WHERE AccountID={ID}");
-        Accounts[ID].CurrentBalance += amount; 
+        decimal balanceBefore = Accounts[ID].CurrentBalance;
+        Accounts[ID].CurrentBalance += amount;
+        decimal balanceAfter = Accounts[ID].CurrentBalance;
+        await logger.LogInfo($"Updated Account#{ID} balance from {balanceBefore} to {balanceAfter}.");
     }
 
+    /// <summary>
+    /// Gets all Accounts from Accounts table as a dictionary with Account ID as key.
+    /// </summary>
+    /// <returns>Dictionary of Account objects</returns>
     async Task<Dictionary<int, Account>> GetAccountsAsDict()
     {
         await momoney.Init();
