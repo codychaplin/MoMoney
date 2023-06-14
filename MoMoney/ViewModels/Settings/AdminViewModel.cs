@@ -106,16 +106,16 @@ public partial class AdminViewModel : ObservableObject
         }
     }
 
-    /*/// <summary>
+    /// <summary>
     /// Goes to LoggingPage.xaml.
     /// </summary>
     [RelayCommand]
     async Task GoToLogging()
     {
-        //await Shell.Current.GoToAsync(nameof(LoggingPage));
+        await Shell.Current.GoToAsync(nameof(LoggingPage));
     }
 
-    /// <summary>
+    /*/// <summary>
     /// Goes to BulkEditingPage.xaml.
     /// </summary>
     [RelayCommand]

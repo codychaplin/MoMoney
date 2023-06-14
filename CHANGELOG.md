@@ -8,6 +8,7 @@
 
 * Updated Syncfusion controls to v21.2.10
 * Added custom db logging for CUD (CRUD - Read) operations
+* Added LoggingPage to view logs in a DataGrid
 
 # MoMoney v1.1.0
 

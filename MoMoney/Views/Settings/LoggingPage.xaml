@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MoMoney.Views.Settings.LoggingPage"
+             x:DataType="viewmodel:LoggingViewModel"
+             xmlns:models="clr-namespace:MoMoney.Models"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+             Title="Logs">
+
+    <Frame Margin="10" Padding="0">
+        <sf:SfDataGrid ItemsSource="{Binding Logs}"
+                       SelectionMode="None"
+                       ColumnWidthMode="Auto"
+                       RowHeight="35"
+                       HorizontalScrollBarVisibility="Always">
+            <sf:SfDataGrid.Columns>
+                <sf:DataGridTextColumn HeaderText="ID" MappingName="LogId" Visible="False" />
+                <sf:DataGridDateColumn HeaderText="Timestamp" MappingName="Timestamp" CellPadding="0,0,10,0" Format="yy-MM-dd HH:mm:ss" Width="110" />
+                <sf:DataGridTextColumn HeaderText="Level" MappingName="Level" CellPadding="0,0,10,0" Width="80" />
+                <sf:DataGridTextColumn HeaderText="Message" MappingName="Message" CellPadding="0,0,10,0" ColumnWidthMode="FitByCell" />
+                <sf:DataGridTextColumn HeaderText="Class" MappingName="ClassName" CellPadding="0,0,10,0" Width="120" />
+                <sf:DataGridTextColumn HeaderText="Exception" MappingName="ExceptionType" CellPadding="0,0,10,0" Width="120" />
+            </sf:SfDataGrid.Columns>
+            <sf:SfDataGrid.DefaultStyle>
+                <sf:DataGridStyle HeaderRowBackground="{StaticResource Gray700}"
+                                  HeaderRowTextColor="White"
+                                  RowBackground="{StaticResource Gray900}"
+                                  AlternateRowBackground="{StaticResource Gray700}"
+                                  RowFontSize="12"
+                                  RowTextColor="White" />
+            </sf:SfDataGrid.DefaultStyle>
+        </sf:SfDataGrid>
+    </Frame>
+</ContentPage>

@@ -151,7 +151,7 @@ public partial class TransactionsViewModel : ObservableObject
 
             LoadedTransactions.Clear();
             Transactions.Clear();
-            Transactions = new List<Transaction>(transactions);
+            Transactions = new(transactions);
 
             Payees.Clear();
             Payees = new ObservableCollection<string>(transactions.Select(t => t.Payee).Distinct());

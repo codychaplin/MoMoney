@@ -68,6 +68,9 @@ public static class MauiProgram
         builder.Services.AddTransient<AdminPage>();
         builder.Services.AddTransient<AdminViewModel>();
 
+        builder.Services.AddTransient<LoggingPage>();
+        builder.Services.AddTransient<LoggingViewModel>();
+
         builder.Services.AddTransient<AccountSummaryPage>();
 		builder.Services.AddTransient<AccountSummaryViewModel>();
 

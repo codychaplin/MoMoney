@@ -33,6 +33,7 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute(nameof(InsightsPage), typeof(InsightsPage));
 		// settings
 		Routing.RegisterRoute(nameof(AdminPage), typeof(AdminPage));
+		Routing.RegisterRoute(nameof(LoggingPage), typeof(LoggingPage));
 		Routing.RegisterRoute(nameof(ImportExportPage), typeof(ImportExportPage));
 	}
 }
