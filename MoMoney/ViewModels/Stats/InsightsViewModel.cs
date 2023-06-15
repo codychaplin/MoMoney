@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
+using MoMoney.Helpers;
 
 namespace MoMoney.ViewModels.Stats;
 
@@ -195,7 +196,7 @@ public partial class InsightsViewModel : ObservableObject
     /// <returns></returns>
     void GetTotals(IEnumerable<Transaction> transactions)
     {
-        if (Constants.ShowValue)
+        if (Utilities.ShowValue)
         {
             TotalIncome = transactions.Where(t => t.CategoryID == Constants.INCOME_ID).Sum(t => t.Amount);
             TotalExpense = Math.Abs(transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID).Sum(t => t.Amount));

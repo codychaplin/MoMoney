@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Java.Util.Logging;
+using Microsoft.Extensions.Logging;
 using MoMoney.Data;
 using MoMoney.Models;
 
@@ -47,5 +48,13 @@ public class LoggerService<T> : ILoggerService<T>
     {
         await momoney.Init();
         return await momoney.db.Table<Log>().ToListAsync();
+    }
+
+    public async Task RemoveLogs()
+    {
+        await momoney.Init();
+        await momoney.db.DeleteAllAsync<Log>();
+        await momoney.db.DropTableAsync<Log>();
+        await momoney.db.CreateTableAsync<Log>();
     }
 }

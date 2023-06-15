@@ -1,3 +1,4 @@
+using MoMoney.Helpers;
 using MoMoney.ViewModels.Stats;
 
 namespace MoMoney.Views.Stats;
@@ -11,7 +12,7 @@ public partial class InsightsPage : ContentPage
 		Loaded += _vm.Init;
 		pckDate.SelectedIndexChanged += _vm.Refresh;
 
-		if (Constants.ShowValue)
+		if (Utilities.ShowValue)
 		{
             IncExpChartIncLbl.LabelFormat = "$0";
             IncExpChartExpLbl.LabelFormat = "$0;$0";

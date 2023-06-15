@@ -4,32 +4,66 @@
              x:Class="MoMoney.Views.Settings.LoggingPage"
              x:DataType="viewmodel:LoggingViewModel"
              xmlns:models="clr-namespace:MoMoney.Models"
+             xmlns:selectors="clr-namespace:MoMoney.Selectors"
              xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
-             xmlns:sf="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
              Title="Logs">
 
-    <Frame Margin="10" Padding="0">
-        <sf:SfDataGrid ItemsSource="{Binding Logs}"
-                       SelectionMode="None"
-                       ColumnWidthMode="Auto"
-                       RowHeight="35"
-                       HorizontalScrollBarVisibility="Always">
-            <sf:SfDataGrid.Columns>
-                <sf:DataGridTextColumn HeaderText="ID" MappingName="LogId" Visible="False" />
-                <sf:DataGridDateColumn HeaderText="Timestamp" MappingName="Timestamp" CellPadding="0,0,10,0" Format="yy-MM-dd HH:mm:ss" Width="110" />
-                <sf:DataGridTextColumn HeaderText="Level" MappingName="Level" CellPadding="0,0,10,0" Width="80" />
-                <sf:DataGridTextColumn HeaderText="Message" MappingName="Message" CellPadding="0,0,10,0" ColumnWidthMode="FitByCell" />
-                <sf:DataGridTextColumn HeaderText="Class" MappingName="ClassName" CellPadding="0,0,10,0" Width="120" />
-                <sf:DataGridTextColumn HeaderText="Exception" MappingName="ExceptionType" CellPadding="0,0,10,0" Width="120" />
-            </sf:SfDataGrid.Columns>
-            <sf:SfDataGrid.DefaultStyle>
-                <sf:DataGridStyle HeaderRowBackground="{StaticResource Gray700}"
-                                  HeaderRowTextColor="White"
-                                  RowBackground="{StaticResource Gray900}"
-                                  AlternateRowBackground="{StaticResource Gray700}"
-                                  RowFontSize="12"
-                                  RowTextColor="White" />
-            </sf:SfDataGrid.DefaultStyle>
-        </sf:SfDataGrid>
-    </Frame>
+    <ContentPage.Resources>
+
+        <!-- small item template -->
+        <DataTemplate x:Key="Small" x:DataType="models:Log">
+            <Grid RowDefinitions="*,*" Padding="10,3" BackgroundColor="{StaticResource Gray700}">
+                <Grid.Resources>
+                    <Style TargetType="{x:Type Label}">
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="TextColor" Value="{StaticResource Gray300}" />
+                    </Style>
+                </Grid.Resources>
+                <Label Text="{Binding Message}" HorizontalOptions="Start"  TextColor="White" />
+                <Label Text="{Binding Level}" Grid.Row="1" HorizontalOptions="Start" />
+                <Label Text="{Binding Timestamp, StringFormat='{0:yy-MM-dd HH:mm:ss}'}" Grid.Row="1" HorizontalOptions="End" />
+            </Grid>
+        </DataTemplate>
+        
+        <!-- large item template -->
+        <DataTemplate x:Key="Large" x:DataType="models:Log">
+            <Grid RowDefinitions="*,*,*" Padding="10,5" BackgroundColor="{StaticResource Gray700}">
+                <Grid.Resources>
+                    <Style TargetType="{x:Type Label}">
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="TextColor" Value="{StaticResource Gray300}" />
+                    </Style>
+                </Grid.Resources>
+                <Label Text="{Binding ClassName}" HorizontalOptions="Start" />
+                <Label Text="{Binding ExceptionType}" HorizontalOptions="End" />
+                <Label Text="{Binding Message}" HorizontalOptions="Start" Grid.Row="1" TextColor="White" />
+                <Label Text="{Binding Level}" Grid.Row="2" HorizontalOptions="Start" />
+                <Label Text="{Binding Timestamp, StringFormat='{0:yy-MM-dd HH:mm:ss}'}" Grid.Row="2" HorizontalOptions="End" />
+            </Grid>
+        </DataTemplate>
+
+        <selectors:LogDataTemplateSelector x:Key="LogDataTemplateSelector"
+                                           SmallTemplate="{StaticResource Small}"
+                                           LargeTemplate="{StaticResource Large}"
+                                           ListView="{x:Reference listview}"
+                                           Switch="{x:Reference switch}" />
+
+    </ContentPage.Resources>
+
+    <Grid Margin="10" RowDefinitions="Auto,*">
+        <HorizontalStackLayout>
+            <Label Text="Large Tiles" VerticalOptions="Center" />
+            <Switch x:Name="switch" IsToggled="True" Toggled="switch_Toggled" />
+        </HorizontalStackLayout>
+
+        <Frame Grid.Row="1" Margin="0,5,0,0" Padding="0">
+            <sf:SfListView x:Name="listview"
+                           ItemsSource="{Binding Logs}"
+                           ItemTemplate="{StaticResource LogDataTemplateSelector}"
+                           ItemSpacing="1">
+            </sf:SfListView>
+        </Frame>
+    </Grid>
+
 </ContentPage>

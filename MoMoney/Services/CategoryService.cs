@@ -2,6 +2,7 @@
 using MoMoney.Models;
 using MoMoney.Exceptions;
 using Android.Accounts;
+using MoMoney.Helpers;
 
 namespace MoMoney.Services;
 
@@ -42,7 +43,7 @@ public class CategoryService : ICategoryService
         // adds Category to db and dictionary
         await momoney.db.InsertAsync(category);
         Categories.Add(category.CategoryID, category);
-        await logger.LogInfo($"Added Category#{category.CategoryID} to db.");
+        await logger.LogInfo($"Added Category #{category.CategoryID} to db.");
     }
 
     public async Task AddCategories(List<Category> categories)
@@ -69,7 +70,7 @@ public class CategoryService : ICategoryService
         await Init();
         await momoney.db.UpdateAsync(updatedCategory);
         Categories[updatedCategory.CategoryID] = updatedCategory;
-        await logger.LogInfo($"Updated Category#{updatedCategory.CategoryID} in db.");
+        await logger.LogInfo($"Updated Category #{updatedCategory.CategoryID} in db.");
     }
 
     public async Task RemoveCategory(int ID)
@@ -77,7 +78,7 @@ public class CategoryService : ICategoryService
         await Init();
         await momoney.db.DeleteAsync<Category>(ID);
         Categories.Remove(ID);
-        await logger.LogInfo($"Removed Category#{ID} from db.");
+        await logger.LogInfo($"Removed Category #{ID} from db.");
     }
 
     public async Task RemoveAllCategories()

@@ -1,3 +1,4 @@
+using MoMoney.Helpers;
 using MoMoney.ViewModels;
 
 namespace MoMoney.Views;
@@ -17,6 +18,6 @@ public partial class SettingsPage : ContentView
     /// <param name="e"></param>
     private void swShowValues_Toggled(object sender, ToggledEventArgs e)
     {
-        Constants.ShowValue = swShowValues.IsToggled;
+        Utilities.ShowValue = swShowValues.IsToggled;
     }
 }

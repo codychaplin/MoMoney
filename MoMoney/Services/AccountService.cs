@@ -48,7 +48,7 @@ public class AccountService : IAccountService
         // adds Account to db and dictionary
         await momoney.db.InsertAsync(account);
         Accounts.Add(account.AccountID, account);
-        await logger.LogInfo($"Added Account#{account.AccountID} to db.");
+        await logger.LogInfo($"Added Account #{account.AccountID} to db.");
     }
 
     public async Task AddAccounts(List<Account> accounts)
@@ -74,7 +74,7 @@ public class AccountService : IAccountService
         await Init();
         await momoney.db.UpdateAsync(updatedAccount);
         Accounts[updatedAccount.AccountID] = updatedAccount;
-        await logger.LogInfo($"Updated Account#{updatedAccount.AccountID} in db.");
+        await logger.LogInfo($"Updated Account #{updatedAccount.AccountID} in db.");
     }
 
     public async Task RemoveAccount(int ID)
@@ -82,7 +82,7 @@ public class AccountService : IAccountService
         await Init();
         await momoney.db.DeleteAsync<Account>(ID);
         Accounts.Remove(ID);
-        await logger.LogInfo($"Removed Account#{ID} from db.");
+        await logger.LogInfo($"Removed Account #{ID} from db.");
     }
 
     public async Task RemoveAllAccounts()
@@ -148,7 +148,7 @@ public class AccountService : IAccountService
         decimal balanceBefore = Accounts[ID].CurrentBalance;
         Accounts[ID].CurrentBalance += amount;
         decimal balanceAfter = Accounts[ID].CurrentBalance;
-        await logger.LogInfo($"Updated Account#{ID} balance from {balanceBefore} to {balanceAfter}.");
+        await logger.LogInfo($"Updated Account #{ID} balance from {balanceBefore} to {balanceAfter}.");
     }
 
     /// <summary>

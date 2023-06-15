@@ -8,7 +8,8 @@
 
 * Updated Syncfusion controls to v21.2.10
 * Added custom db logging for CUD (CRUD - Read) operations
-* Added LoggingPage to view logs in a DataGrid
+* Added LoggingPage to view logs in a ListView
+* Moved Constants.cs to Helpers namespace and added Utilities.cs for mutables
 
 # MoMoney v1.1.0
 

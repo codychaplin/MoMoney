@@ -5,6 +5,7 @@ using MoMoney.Services;
 using MoMoney.Exceptions;
 using CommunityToolkit.Mvvm.Input;
 using MoMoney.Views;
+using MoMoney.Helpers;
 
 namespace MoMoney.ViewModels;
 
@@ -72,7 +73,7 @@ public partial class HomeViewModel : ObservableObject
     /// </summary>
     async Task GetNetworth()
     {
-        if (Constants.ShowValue == false)
+        if (Utilities.ShowValue == false)
         {
             Networth = 0;
             return;
@@ -102,7 +103,7 @@ public partial class HomeViewModel : ObservableObject
         try
         {
             // update income/expense totals
-            if (Constants.ShowValue)
+            if (Utilities.ShowValue)
             {
                 TotalIncome = transactions.Where(t => t.CategoryID == Constants.INCOME_ID).Sum(t => t.Amount);
                 TotalExpenses = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID).Sum(t => t.Amount);

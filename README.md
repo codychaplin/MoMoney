@@ -12,6 +12,7 @@ Works on Android 10.0 and later.
 * Get real-time stock prices
 * Import/Export data via CSV
 * Ability to hide sensitive values
+* Database logging
 
 ## How to Use
 * Accounts and categories are needed before transactions are added

@@ -1,6 +1,7 @@
 ﻿using MoMoney.Data;
 using MoMoney.Models;
 using MoMoney.Exceptions;
+using MoMoney.Helpers;
 
 namespace MoMoney.Services;
 
@@ -35,7 +36,7 @@ public class TransactionService : ITransactionService
         };
 
         await momoney.db.InsertAsync(transaction);
-        await logger.LogInfo($"Added Transaction#{transaction.TransactionID} to db.");
+        await logger.LogInfo($"Added Transaction #{transaction.TransactionID} to db.");
         return transaction;
     }
 
@@ -53,14 +54,14 @@ public class TransactionService : ITransactionService
                             updatedTransaction.CategoryID, updatedTransaction.SubcategoryID,
                             updatedTransaction.Payee.Trim(), updatedTransaction.TransferID);
         await momoney.db.UpdateAsync(updatedTransaction);
-        await logger.LogInfo($"Updated Transaction#{updatedTransaction.TransactionID} in db.");
+        await logger.LogInfo($"Updated Transaction #{updatedTransaction.TransactionID} in db.");
     }
 
     public async Task RemoveTransaction(int ID)
     {
         await momoney.Init();
         await momoney.db.DeleteAsync<Transaction>(ID);
-        await logger.LogInfo($"Removed Transaction#{ID} from db.");
+        await logger.LogInfo($"Removed Transaction #{ID} from db.");
     }
 
     public async Task RemoveAllTransactions()

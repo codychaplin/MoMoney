@@ -12,14 +12,16 @@ public partial class AdminViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
+    readonly ILoggerService<AdminViewModel> logService;
 
     public AdminViewModel(ITransactionService _transactionService, IAccountService _accountService,
-        ICategoryService _categoryService, IStockService _stockService)
+        ICategoryService _categoryService, IStockService _stockService, ILoggerService<AdminViewModel> _logService)
     {
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
         stockService = _stockService;
+        logService = _logService;
     }
 
     /// <summary>
@@ -99,6 +101,27 @@ public partial class AdminViewModel : ObservableObject
         try
         {
             await stockService.RemoveStocks();
+        }
+        catch (SQLiteException ex)
+        {
+            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+        }
+    }
+
+    /// <summary>
+    /// Removes all Logs from database.
+    /// </summary>
+    [RelayCommand]
+    async Task RemoveAllLogs()
+    {
+        bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Logs?", "Yes", "No");
+
+        if (!flag)
+            return;
+
+        try
+        {
+            await logService.RemoveLogs();
         }
         catch (SQLiteException ex)
         {

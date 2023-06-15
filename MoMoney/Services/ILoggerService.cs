@@ -45,4 +45,9 @@ public interface ILoggerService<T>
     /// </summary>
     /// <returns>List of Log objects</returns>
     Task<IEnumerable<Log>> GetLogs();
+
+    /// <summary>
+    /// Removes ALL Logs from Logs table.
+    /// </summary>
+    Task RemoveLogs();
 }

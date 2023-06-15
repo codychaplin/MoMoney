@@ -5,6 +5,7 @@ using Syncfusion.Maui.ListView;
 using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
+using MoMoney.Helpers;
 
 namespace MoMoney.ViewModels;
 
@@ -156,15 +157,15 @@ public partial class TransactionsViewModel : ObservableObject
             Payees.Clear();
             Payees = new ObservableCollection<string>(transactions.Select(t => t.Payee).Distinct());
         }
-        if (showValue != Constants.ShowValue)
+        if (showValue != Utilities.ShowValue)
         {
             // workaround for triggering converter
             if (LoadedTransactions.Any())
                 foreach (var trans in LoadedTransactions)
-                    trans.Amount = (Constants.ShowValue) ? trans.Amount + 0.0001m : trans.Amount - 0.0001m;
+                    trans.Amount = (Utilities.ShowValue) ? trans.Amount + 0.0001m : trans.Amount - 0.0001m;
         }
 
-        showValue = Constants.ShowValue;
+        showValue = Utilities.ShowValue;
     }
 
     /// <summary>
