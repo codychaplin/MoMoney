@@ -12,16 +12,16 @@ public partial class AdminViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
-    readonly ILoggerService<AdminViewModel> logService;
+    readonly ILoggerService<AdminViewModel> logger;
 
     public AdminViewModel(ITransactionService _transactionService, IAccountService _accountService,
-        ICategoryService _categoryService, IStockService _stockService, ILoggerService<AdminViewModel> _logService)
+        ICategoryService _categoryService, IStockService _stockService, ILoggerService<AdminViewModel> _logger)
     {
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
         stockService = _stockService;
-        logService = _logService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -41,6 +41,7 @@ public partial class AdminViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
@@ -62,6 +63,7 @@ public partial class AdminViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
@@ -83,6 +85,7 @@ public partial class AdminViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
@@ -104,6 +107,7 @@ public partial class AdminViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
@@ -121,10 +125,11 @@ public partial class AdminViewModel : ObservableObject
 
         try
         {
-            await logService.RemoveLogs();
+            await logger.RemoveLogs();
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }

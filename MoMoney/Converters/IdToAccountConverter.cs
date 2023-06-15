@@ -10,10 +10,12 @@ namespace MoMoney.Converters;
 class IdToAccountConverter : IValueConverter
 {
     readonly IAccountService accountService;
+    readonly ILoggerService<IdToAccountConverter> logger;
 
     public IdToAccountConverter()
     {
         accountService = MauiApplication.Current.Services.GetService<IAccountService>();
+        logger = MauiApplication.Current.Services.GetService<ILoggerService<IdToAccountConverter>>();
     }
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -34,7 +36,11 @@ class IdToAccountConverter : IValueConverter
                     var acc = task.Result;
                     return acc.AccountName;
                 }
-                catch (AccountNotFoundException) { return ""; }
+                catch (AccountNotFoundException ex)
+                {
+                    logger.LogError(ex.Message, ex.GetType().Name);
+                    return "";
+                }
             }
         }
 

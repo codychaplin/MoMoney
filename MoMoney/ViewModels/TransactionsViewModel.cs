@@ -14,6 +14,7 @@ public partial class TransactionsViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
+    readonly ILoggerService<TransactionsViewModel> logger;
 
     [ObservableProperty]
     public ObservableCollection<Transaction> loadedTransactions = new();
@@ -62,11 +63,13 @@ public partial class TransactionsViewModel : ObservableObject
 
     const int LOAD_COUNT = 50;
 
-    public TransactionsViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService)
+    public TransactionsViewModel(ITransactionService _transactionService, IAccountService _accountService,
+        ICategoryService _categoryService, ILoggerService<TransactionsViewModel> _logger)
     {
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
+        logger = _logger;
 
         // first two months, show 1 year, starting March show YTD
         From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
@@ -126,9 +129,11 @@ public partial class TransactionsViewModel : ObservableObject
                 Transactions.Insert(0, otherTrans);
                 LoadedTransactions.Insert(0, otherTrans);
             }
-            catch (TransactionNotFoundException)
+            catch (TransactionNotFoundException ex)
             {
-                await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
+                string message = $"Could not find corresponding transfer for Transaction #{e.Transaction.TransactionID}";
+                await logger.LogError(message, ex.GetType().Name);
+                await Shell.Current.DisplayAlert("Error", message, "OK");
             }
         }
         else

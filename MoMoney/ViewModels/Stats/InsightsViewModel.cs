@@ -11,6 +11,7 @@ public partial class InsightsViewModel : ObservableObject
 {
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
+    readonly ILoggerService<InsightsViewModel> logger;
 
     [ObservableProperty]
     public int selectedYear;
@@ -40,10 +41,11 @@ public partial class InsightsViewModel : ObservableObject
     [ObservableProperty]
     public decimal topExpenseCategoryAmount = 0;
 
-    public InsightsViewModel(ITransactionService _transactionService, ICategoryService _categoryService)
+    public InsightsViewModel(ITransactionService _transactionService, ICategoryService _categoryService, ILoggerService<InsightsViewModel> _logger)
     {
         transactionService = _transactionService;
         categoryService = _categoryService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -185,6 +187,7 @@ public partial class InsightsViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
         }
     }

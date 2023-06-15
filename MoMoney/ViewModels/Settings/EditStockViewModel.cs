@@ -11,6 +11,7 @@ namespace MoMoney.ViewModels.Settings;
 public partial class EditStockViewModel : ObservableObject
 {
     readonly IStockService stockService;
+    readonly ILoggerService<EditStockViewModel> logger;
 
     [ObservableProperty]
     public Stock stock = new();
@@ -19,9 +20,10 @@ public partial class EditStockViewModel : ObservableObject
 
     public string Symbol { get; set; } // Stock Symbol
 
-    public EditStockViewModel(IStockService _stockService)
+    public EditStockViewModel(IStockService _stockService, ILoggerService<EditStockViewModel> _logger)
     {
         stockService = _stockService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -43,6 +45,7 @@ public partial class EditStockViewModel : ObservableObject
         }
         catch (StockNotFoundException ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Stock Not Found Error", ex.Message, "OK");
         }
     }
@@ -65,6 +68,7 @@ public partial class EditStockViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
@@ -87,6 +91,7 @@ public partial class EditStockViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }

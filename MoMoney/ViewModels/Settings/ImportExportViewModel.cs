@@ -15,14 +15,16 @@ public partial class ImportExportViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
+    readonly ILoggerService<ImportExportViewModel> logger;
 
     public ImportExportViewModel(ITransactionService _transactionService, IAccountService _accountService,
-        ICategoryService _categoryService, IStockService _stockService)
+        ICategoryService _categoryService, IStockService _stockService, ILoggerService<ImportExportViewModel> _logger)
     {
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
         stockService = _stockService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -82,14 +84,17 @@ public partial class ImportExportViewModel : ObservableObject
                     }
                     catch (SQLiteException ex)
                     {
+                        await logger.LogCritical(ex.Message, ex.GetType().Name);
                         await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
                     }
                     catch (InvalidAccountException ex)
                     {
+                        await logger.LogWarning(ex.Message, ex.GetType().Name);
                         await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
                     }
                     catch (DuplicateAccountException ex)
                     {
+                        await logger.LogError(ex.Message, ex.GetType().Name);
                         await Shell.Current.DisplayAlert("Import Aborted", ex.Message, "OK");
                     }
                     finally
@@ -105,7 +110,7 @@ public partial class ImportExportViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            // if invalid, display error
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -170,10 +175,12 @@ public partial class ImportExportViewModel : ObservableObject
                     }
                     catch (InvalidCategoryException ex)
                     {
+                        await logger.LogWarning(ex.Message, ex.GetType().Name);
                         await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
                     }
                     catch (DuplicateCategoryException ex)
                     {
+                        await logger.LogError(ex.Message, ex.GetType().Name);
                         await Shell.Current.DisplayAlert("Import Aborted", ex.Message, "OK");
                     }
                     finally
@@ -187,6 +194,7 @@ public partial class ImportExportViewModel : ObservableObject
         }
         catch (Exception ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -286,14 +294,17 @@ public partial class ImportExportViewModel : ObservableObject
                     }
                     catch (CategoryNotFoundException ex)
                     {
+                        await logger.LogError(ex.Message, ex.GetType().Name);
                         await Shell.Current.DisplayAlert("Category Not Found Error", $"Transaction {i}: {ex.Message}", "OK");
                     }
                     catch (AccountNotFoundException ex)
                     {
+                        await logger.LogError(ex.Message, ex.GetType().Name);
                         await Shell.Current.DisplayAlert("Account Not Found Error", $"Transaction {i}: {ex.Message}", "OK");
                     }
                     catch (Exception ex)
                     {
+                        await logger.LogError(ex.Message, ex.GetType().Name);
                         await Shell.Current.DisplayAlert("Error", $"Transaction {i}: {ex.Message}", "OK");
                     }
                     finally
@@ -307,7 +318,7 @@ public partial class ImportExportViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            // if invalid, display error
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -371,14 +382,17 @@ public partial class ImportExportViewModel : ObservableObject
                     }
                     catch (SQLiteException ex)
                     {
+                        await logger.LogCritical(ex.Message, ex.GetType().Name);
                         await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
                     }
                     catch (InvalidStockException ex)
                     {
+                        await logger.LogWarning(ex.Message, ex.GetType().Name);
                         await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
                     }
                     catch (DuplicateStockException ex)
                     {
+                        await logger.LogError(ex.Message, ex.GetType().Name);
                         await Shell.Current.DisplayAlert("Import Aborted", ex.Message, "OK");
                     }
                     finally
@@ -394,7 +408,7 @@ public partial class ImportExportViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            // if invalid, display error
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -442,6 +456,7 @@ public partial class ImportExportViewModel : ObservableObject
             }
             catch (Exception ex)
             {
+                await logger.LogError(ex.Message, ex.GetType().Name);
                 await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
             }
             finally
@@ -495,10 +510,12 @@ public partial class ImportExportViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

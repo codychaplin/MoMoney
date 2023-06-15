@@ -59,9 +59,9 @@
 
         <Frame Grid.Row="1" Margin="0,5,0,0" Padding="0">
             <sf:SfListView x:Name="listview"
+                           ItemSpacing="1"
                            ItemsSource="{Binding Logs}"
-                           ItemTemplate="{StaticResource LogDataTemplateSelector}"
-                           ItemSpacing="1">
+                           ItemTemplate="{StaticResource LogDataTemplateSelector}">
             </sf:SfListView>
         </Frame>
     </Grid>

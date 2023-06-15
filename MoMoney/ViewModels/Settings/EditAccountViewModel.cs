@@ -1,11 +1,10 @@
 ﻿using SQLite;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MoMoney.Views;
 using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
-using MoMoney.Views;
-using Kotlin.Contracts;
 
 namespace MoMoney.ViewModels.Settings;
 
@@ -13,15 +12,17 @@ namespace MoMoney.ViewModels.Settings;
 public partial class EditAccountViewModel : ObservableObject
 {
     readonly IAccountService accountService;
+    readonly ILoggerService<EditAccountViewModel> logger;
 
     [ObservableProperty]
     public Account account = new();
 
     public string ID { get; set; } // account ID
 
-    public EditAccountViewModel(IAccountService _accountService)
+    public EditAccountViewModel(IAccountService _accountService, ILoggerService<EditAccountViewModel> _logger)
     {
         accountService = _accountService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -38,13 +39,16 @@ public partial class EditAccountViewModel : ObservableObject
             }
             catch (AccountNotFoundException ex)
             {
+                await logger.LogError(ex.Message, ex.GetType().Name);
                 await Shell.Current.DisplayAlert("Account Not Found Error", ex.Message, "OK");
             }
 
             return;
         }
-        
-        await Shell.Current.DisplayAlert("Account Not Found Error", $"{ID} is not a valid ID", "OK");
+
+        string message = $"{ID} is not a valid ID";
+        await logger.LogError(message);
+        await Shell.Current.DisplayAlert("Account Not Found Error", message, "OK");
     }
 
     /// <summary>
@@ -69,6 +73,7 @@ public partial class EditAccountViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
@@ -91,6 +96,7 @@ public partial class EditAccountViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }

@@ -10,6 +10,7 @@ namespace MoMoney.ViewModels.Stats;
 public partial class StocksViewModel : ObservableObject
 {
     readonly IStockService stockService;
+    readonly ILoggerService<StocksViewModel> logger;
 
     [ObservableProperty]
     public ObservableCollection<DetailedStock> stocks = new();
@@ -28,9 +29,10 @@ public partial class StocksViewModel : ObservableObject
 
     public CancellationTokenSource cts = new();
 
-    public StocksViewModel(IStockService _stockService)
+    public StocksViewModel(IStockService _stockService, ILoggerService<StocksViewModel> _logger)
     {
         stockService = _stockService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -113,10 +115,12 @@ public partial class StocksViewModel : ObservableObject
         }
         catch (HttpRequestException ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("HTTP Error", ex.Message, "OK");
         }
         catch (InvalidStockException ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Parse Error", ex.Message, "OK");
         }
         catch (InvalidOperationException)
@@ -129,6 +133,7 @@ public partial class StocksViewModel : ObservableObject
         }
         catch (Exception ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
         finally

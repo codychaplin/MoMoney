@@ -15,6 +15,7 @@ public partial class AddTransactionViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
+    readonly ILoggerService<AddTransactionViewModel> logger;
 
     [ObservableProperty]
     public ObservableCollection<Account> accounts = new();
@@ -46,11 +47,13 @@ public partial class AddTransactionViewModel : ObservableObject
     [ObservableProperty]
     public Account transferAccount = new();
 
-    public AddTransactionViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService)
+    public AddTransactionViewModel(ITransactionService _transactionService, IAccountService _accountService,
+        ICategoryService _categoryService, ILoggerService<AddTransactionViewModel> _logger)
     {
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -81,6 +84,7 @@ public partial class AddTransactionViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
+            await logger.LogWarning(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -101,6 +105,7 @@ public partial class AddTransactionViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
+            await logger.LogWarning(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -202,14 +207,17 @@ public partial class AddTransactionViewModel : ObservableObject
         }
         catch (InvalidTransactionException ex)
         {
+            await logger.LogWarning(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

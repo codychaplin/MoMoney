@@ -11,6 +11,7 @@ namespace MoMoney.ViewModels.Settings;
 public partial class EditCategoryViewModel : ObservableObject
 {
     readonly ICategoryService categoryService;
+    readonly ILoggerService<EditCategoryViewModel> logger;
 
     [ObservableProperty]
     public ObservableCollection<Category> parents = new(); // list of categories
@@ -26,9 +27,10 @@ public partial class EditCategoryViewModel : ObservableObject
 
     public string ID { get; set; } // category ID
 
-    public EditCategoryViewModel(ICategoryService _categoryService)
+    public EditCategoryViewModel(ICategoryService _categoryService, ILoggerService<EditCategoryViewModel> _logger)
     {
         categoryService = _categoryService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -46,13 +48,16 @@ public partial class EditCategoryViewModel : ObservableObject
             }
             catch (CategoryNotFoundException ex)
             {
+                await logger.LogError(ex.Message, ex.GetType().Name);
                 await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
             }
 
             return;
         }
 
-        await Shell.Current.DisplayAlert("Category Not Found Error", $"{ID} is not a valid ID", "OK");
+        string message = $"{ID} is not a valid ID";
+        await logger.LogError(message);
+        await Shell.Current.DisplayAlert("Category Not Found Error", message, "OK");
     }
 
     /// <summary>

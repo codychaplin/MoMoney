@@ -10,6 +10,7 @@ namespace MoMoney.ViewModels.Settings;
 public partial class AddCategoryViewModel : ObservableObject
 {
     readonly ICategoryService categoryService;
+    readonly ILoggerService<AddCategoryViewModel> logger;
 
     [ObservableProperty]
     public ObservableCollection<Category> parents = new(); // list of categories
@@ -20,9 +21,10 @@ public partial class AddCategoryViewModel : ObservableObject
     [ObservableProperty]
     public string parent; // category parent
 
-    public AddCategoryViewModel(ICategoryService _categoryService)
+    public AddCategoryViewModel(ICategoryService _categoryService, ILoggerService<AddCategoryViewModel> _logger)
     {
         categoryService = _categoryService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -38,6 +40,7 @@ public partial class AddCategoryViewModel : ObservableObject
         }
         catch (DuplicateCategoryException ex)
         {
+            await logger.LogWarning(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

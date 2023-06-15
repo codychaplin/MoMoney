@@ -10,6 +10,7 @@ namespace MoMoney.ViewModels.Settings;
 public partial class AddAccountViewModel : ObservableObject
 {
     readonly IAccountService accountService;
+    readonly ILoggerService<AddAccountViewModel> logger;
 
     [ObservableProperty]
     public string name; // account name
@@ -20,9 +21,10 @@ public partial class AddAccountViewModel : ObservableObject
     [ObservableProperty]
     public decimal startingBalance; // starting balance
 
-    public AddAccountViewModel(IAccountService _accountService)
+    public AddAccountViewModel(IAccountService _accountService, ILoggerService<AddAccountViewModel> _logger)
     {
         accountService = _accountService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -39,10 +41,12 @@ public partial class AddAccountViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
         catch (DuplicateAccountException ex)
         {
+            await logger.LogWarning(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

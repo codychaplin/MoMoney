@@ -11,13 +11,15 @@ namespace MoMoney.ViewModels.Settings;
 public partial class CategoriesViewModel : ObservableObject
 {
     readonly ICategoryService categoryService;
+    readonly ILoggerService<CategoriesViewModel> logger;
 
     [ObservableProperty]
     public ObservableCollection<CategoryGroup> categories = new();
 
-    public CategoriesViewModel(ICategoryService _categoryService)
+    public CategoriesViewModel(ICategoryService _categoryService, ILoggerService<CategoriesViewModel> _logger)
     {
         categoryService = _categoryService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -51,6 +53,7 @@ public partial class CategoriesViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
         }
     }

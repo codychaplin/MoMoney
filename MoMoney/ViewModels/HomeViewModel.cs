@@ -1,11 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
+using MoMoney.Helpers;
 using MoMoney.Services;
 using MoMoney.Exceptions;
-using CommunityToolkit.Mvvm.Input;
-using MoMoney.Views;
-using MoMoney.Helpers;
 
 namespace MoMoney.ViewModels;
 
@@ -14,6 +12,7 @@ public partial class HomeViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
+    readonly ILoggerService<HomeViewModel> logger;
 
     [ObservableProperty]
     public ObservableCollection<Transaction> recentTransactions = new();
@@ -42,11 +41,13 @@ public partial class HomeViewModel : ObservableObject
     [ObservableProperty]
     public ObservableCollection<BalanceOverTimeData> data = new();
 
-    public HomeViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService)
+    public HomeViewModel(ITransactionService _transactionService, IAccountService _accountService,
+        ICategoryService _categoryService, ILoggerService<HomeViewModel> _logger)
     {
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
+        logger = _logger;
 
         // first two months, show 1 year, starting March show YTD
         From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
@@ -150,10 +151,12 @@ public partial class HomeViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
