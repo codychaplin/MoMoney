@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.Settings.AddCategoryPage"
-             x:DataType="viewmodel:AddCategoryViewModel"
+             x:Class="MoMoney.Views.Settings.Edit.EditCategoryPage"
+             x:DataType="viewmodel:EditCategoryViewModel"
              xmlns:model="clr-namespace:MoMoney.Models"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
-             Title="Add Category">
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings.Edit"
+             Title="Edit Category">
 
     <!-- main page -->
     <VerticalStackLayout Padding="0,10,0,0">
@@ -17,10 +17,10 @@
                 <Entry x:Name="txtName"
                        Grid.Column="1"
                        Placeholder="Category Name"
-                       Text="{Binding Name}" />
+                       Text="{Binding Category.CategoryName}" />
             </Grid>
         </Frame>
-        
+
         <!-- parent category -->
         <Frame Style="{StaticResource TileFrame}">
             <Grid Style="{StaticResource TileGrid}">
@@ -29,27 +29,33 @@
                         Grid.Column="1"
                         Title="Select a Parent"
                         x:DataType="model:Category"
-                        ItemsSource="{Binding Path=Parents, Source={RelativeSource AncestorType={x:Type viewmodel:AddCategoryViewModel}}}"
-                        SelectedItem="{Binding Path=Parent, Source={RelativeSource AncestorType={x:Type viewmodel:AddCategoryViewModel}}}"
+                        ItemsSource="{Binding Path=Parents, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}"
+                        SelectedItem="{Binding Path=Parent, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}"
                         ItemDisplayBinding="{Binding CategoryName}">
                 </Picker>
             </Grid>
         </Frame>
-        
-        <!-- clear/enter buttons -->
-        <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnDefinitions="*,*" ColumnSpacing="10">
-            <Button x:Name="btnClear"
+
+        <!-- delete/clear/enter buttons -->
+        <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnDefinitions="*,*,*" ColumnSpacing="10">
+            <Button x:Name="btnDelete"
                     Grid.Column="0"
+                    Text="Delete"
+                    HeightRequest="45"
+                    BackgroundColor="{StaticResource Red}"
+                    Command="{Binding RemoveCommand}" />
+            <Button x:Name="btnClear"
+                    Grid.Column="1"
                     Text="Clear"
                     HeightRequest="45"
                     BackgroundColor="{StaticResource Blue}"
                     Clicked="btnClear_Clicked" />
             <Button x:Name="btnEnter"
-                    Grid.Column="1"
-                    Text="Accept"
+                    Grid.Column="2"
+                    Text="Update"
                     HeightRequest="45"
                     BackgroundColor="{StaticResource Green}"
-                    Command="{Binding AddCommand}" />
+                    Command="{Binding EditCommand}" />
         </Grid>
         
     </VerticalStackLayout>

@@ -2,11 +2,11 @@ using MoMoney.ViewModels.Stats;
 
 namespace MoMoney.Views.Stats;
 
-public partial class StocksPage : ContentPage
+public partial class StockStatsPage : ContentPage
 {
-	StocksViewModel vm;
+    StockStatsViewModel vm;
 
-	public StocksPage(StocksViewModel _vm)
+	public StockStatsPage(StockStatsViewModel _vm)
 	{
 		InitializeComponent();
 		vm = _vm;

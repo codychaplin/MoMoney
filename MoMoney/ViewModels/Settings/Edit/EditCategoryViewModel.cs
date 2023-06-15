@@ -5,7 +5,7 @@ using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
 
-namespace MoMoney.ViewModels.Settings;
+namespace MoMoney.ViewModels.Settings.Edit;
 
 [QueryProperty(nameof(ID), nameof(ID))]
 public partial class EditCategoryViewModel : ObservableObject

@@ -1,15 +1,14 @@
-using MoMoney.Models;
-using MoMoney.ViewModels.Settings;
+using MoMoney.ViewModels.Settings.Edit;
 
-namespace MoMoney.Views.Settings;
+namespace MoMoney.Views.Settings.Edit;
 
 public partial class EditCategoryPage : ContentPage
 {
     EditCategoryViewModel vm;
 
     public EditCategoryPage(EditCategoryViewModel _vm)
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         vm = _vm;
         BindingContext = vm;
     }
@@ -42,8 +41,8 @@ public partial class EditCategoryPage : ContentPage
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void btnClear_Clicked(object sender, EventArgs e)
-	{
-		txtName.Text = "";
+    {
+        txtName.Text = "";
         pckParent.SelectedIndex = -1;
     }
 }

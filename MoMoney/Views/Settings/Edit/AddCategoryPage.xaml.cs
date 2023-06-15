@@ -1,14 +1,14 @@
-using MoMoney.ViewModels.Settings;
+using MoMoney.ViewModels.Settings.Edit;
 
-namespace MoMoney.Views.Settings;
+namespace MoMoney.Views.Settings.Edit;
 
 public partial class AddCategoryPage : ContentPage
 {
     AddCategoryViewModel vm;
 
-	public AddCategoryPage(AddCategoryViewModel _vm)
-	{
-		InitializeComponent();
+    public AddCategoryPage(AddCategoryViewModel _vm)
+    {
+        InitializeComponent();
         vm = _vm;
         BindingContext = vm;
     }
@@ -25,8 +25,8 @@ public partial class AddCategoryPage : ContentPage
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void btnClear_Clicked(object sender, EventArgs e)
-	{
-		txtName.Text = "";
+    {
+        txtName.Text = "";
         pckParent.SelectedIndex = -1;
     }
 }

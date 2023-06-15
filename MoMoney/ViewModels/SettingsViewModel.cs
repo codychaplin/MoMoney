@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Views.Settings;
+using MoMoney.Views.Settings.Edit;
 
 namespace MoMoney.ViewModels;
 
@@ -30,7 +31,7 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     async Task GoToStocks()
     {
-        await Shell.Current.GoToAsync(nameof(StockSettingsPage));
+        await Shell.Current.GoToAsync(nameof(StocksPage));
     }
 
     /// <summary>

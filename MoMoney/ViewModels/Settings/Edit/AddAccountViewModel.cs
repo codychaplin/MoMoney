@@ -5,7 +5,7 @@ using MoMoney.Views;
 using MoMoney.Services;
 using MoMoney.Exceptions;
 
-namespace MoMoney.ViewModels.Settings;
+namespace MoMoney.ViewModels.Settings.Edit;
 
 public partial class AddAccountViewModel : ObservableObject
 {

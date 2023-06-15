@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Services;
 
-namespace MoMoney.ViewModels.Settings;
+namespace MoMoney.ViewModels.Settings.Edit;
 
 public partial class AddStockViewModel : ObservableObject
 {

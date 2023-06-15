@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.Settings.StockSettingsPage"
-             x:DataType="viewmodel:StockSettingsViewModel"
+             x:Class="MoMoney.Views.Settings.Edit.StocksPage"
+             x:DataType="viewmodel:StocksViewModel"
              xmlns:models="clr-namespace:MoMoney.Models"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings.Edit"
              Title="Stocks">
 
     <!-- main page -->
@@ -19,7 +19,7 @@
                     <Frame Style="{StaticResource SmallTileFrame}">
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Path=GoToEditStockCommand, Source={RelativeSource
-                                                                    AncestorType={x:Type viewmodel:StockSettingsViewModel}}}"
+                                                                    AncestorType={x:Type viewmodel:StocksViewModel}}}"
                                                   CommandParameter="{Binding Symbol}" />
                         </Frame.GestureRecognizers>
                         <Grid BackgroundColor="{StaticResource Gray700}">

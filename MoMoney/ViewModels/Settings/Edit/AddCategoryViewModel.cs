@@ -5,7 +5,7 @@ using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
 
-namespace MoMoney.ViewModels.Settings;
+namespace MoMoney.ViewModels.Settings.Edit;
 
 public partial class AddCategoryViewModel : ObservableObject
 {

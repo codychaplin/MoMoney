@@ -7,10 +7,10 @@ using MoMoney.Exceptions;
 
 namespace MoMoney.ViewModels.Stats;
 
-public partial class StocksViewModel : ObservableObject
+public partial class StockStatsViewModel : ObservableObject
 {
     readonly IStockService stockService;
-    readonly ILoggerService<StocksViewModel> logger;
+    readonly ILoggerService<StockStatsViewModel> logger;
 
     [ObservableProperty]
     public ObservableCollection<DetailedStock> stocks = new();
@@ -29,7 +29,7 @@ public partial class StocksViewModel : ObservableObject
 
     public CancellationTokenSource cts = new();
 
-    public StocksViewModel(IStockService _stockService, ILoggerService<StocksViewModel> _logger)
+    public StockStatsViewModel(IStockService _stockService, ILoggerService<StockStatsViewModel> _logger)
     {
         stockService = _stockService;
         logger = _logger;

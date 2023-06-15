@@ -3,9 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
-using MoMoney.Views.Settings;
+using MoMoney.Views.Settings.Edit;
 
-namespace MoMoney.ViewModels.Settings;
+namespace MoMoney.ViewModels.Settings.Edit;
 
 public partial class AccountsViewModel : ObservableObject
 {

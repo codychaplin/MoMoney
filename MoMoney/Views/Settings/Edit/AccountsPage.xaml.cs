@@ -1,6 +1,6 @@
-using MoMoney.ViewModels.Settings;
+using MoMoney.ViewModels.Settings.Edit;
 
-namespace MoMoney.Views.Settings;
+namespace MoMoney.Views.Settings.Edit;
 
 public partial class AccountsPage : ContentPage
 {

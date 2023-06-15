@@ -1,13 +1,15 @@
 ﻿using CommunityToolkit.Maui;
 using Syncfusion.Maui.Core.Hosting;
 using MoMoney.Data;
-using MoMoney.Views;
 using MoMoney.Services;
+using MoMoney.Views;
 using MoMoney.ViewModels;
 using MoMoney.Views.Stats;
-using MoMoney.Views.Settings;
 using MoMoney.ViewModels.Stats;
+using MoMoney.Views.Settings;
 using MoMoney.ViewModels.Settings;
+using MoMoney.Views.Settings.Edit;
+using MoMoney.ViewModels.Settings.Edit;
 
 namespace MoMoney;
 
@@ -59,8 +61,8 @@ public static class MauiProgram
 		builder.Services.AddSingleton<CategoriesPage>();
 		builder.Services.AddTransient<CategoriesViewModel>();
 
-		builder.Services.AddSingleton<StockSettingsPage>();
-		builder.Services.AddTransient<StockSettingsViewModel>();
+		builder.Services.AddSingleton<StocksPage>();
+		builder.Services.AddTransient<StocksViewModel>();
 
         builder.Services.AddTransient<ImportExportPage>();
         builder.Services.AddTransient<ImportExportViewModel>();
@@ -80,8 +82,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<InsightsPage>();
 		builder.Services.AddTransient<InsightsViewModel>();
 
-		builder.Services.AddTransient<StocksPage>();
-		builder.Services.AddTransient<StocksViewModel>();
+		builder.Services.AddTransient<StockStatsPage>();
+		builder.Services.AddTransient<StockStatsViewModel>();
 
 		builder.Services.AddTransient<AddAccountPage>();
 		builder.Services.AddTransient<AddAccountViewModel>();

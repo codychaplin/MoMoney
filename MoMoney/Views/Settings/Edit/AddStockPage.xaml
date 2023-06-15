@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.Settings.AddStockPage"
+             x:Class="MoMoney.Views.Settings.Edit.AddStockPage"
              x:DataType="viewmodel:AddStockViewModel"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings.Edit"
              Title="Add Stock">
 
     <!-- main page -->

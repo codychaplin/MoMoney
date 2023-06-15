@@ -5,7 +5,7 @@ using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
 
-namespace MoMoney.ViewModels.Settings;
+namespace MoMoney.ViewModels.Settings.Edit;
 
 [QueryProperty(nameof(Symbol), nameof(Symbol))]
 public partial class EditStockViewModel : ObservableObject
