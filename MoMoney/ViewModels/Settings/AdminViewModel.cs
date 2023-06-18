@@ -143,12 +143,12 @@ public partial class AdminViewModel : ObservableObject
         await Shell.Current.GoToAsync(nameof(LoggingPage));
     }
 
-    /*/// <summary>
+    /// <summary>
     /// Goes to BulkEditingPage.xaml.
     /// </summary>
     [RelayCommand]
     async Task GoToBulkEditing()
     {
         await Shell.Current.GoToAsync(nameof(BulkEditingPage));
-    }*/
+    }
 }

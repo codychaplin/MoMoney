@@ -59,7 +59,6 @@ public partial class AddTransactionViewModel : ObservableObject
     /// <summary>
     /// Gets accounts from database and refreshes Accounts collection.
     /// </summary>
-    /// <returns></returns>
     public async void GetAccounts(object sender, EventArgs e)
     {
         var accounts = await accountService.GetActiveAccounts();

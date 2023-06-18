@@ -1,7 +1,7 @@
 ﻿using MoMoney.Data;
 using MoMoney.Models;
-using MoMoney.Exceptions;
 using MoMoney.Helpers;
+using MoMoney.Exceptions;
 
 namespace MoMoney.Services;
 
@@ -88,6 +88,21 @@ public class TransactionService : ITransactionService
         return await momoney.db.Table<Transaction>().OrderBy(t => t.Date).ToListAsync();
     }
 
+    public async Task<List<Transaction>> GetFilteredTransactions(Account account, Category category, Category subcategory, string payee)
+    {
+        await momoney.Init();
+        IEnumerable<Transaction> transactions = await momoney.db.Table<Transaction>().ToListAsync();
+        if (account != null)
+            transactions = transactions.Where(t => t.AccountID == account.AccountID);
+        if (category != null)
+            transactions = transactions.Where(t => t.CategoryID == category.CategoryID);
+        if (subcategory != null)
+            transactions = transactions.Where(t => t.SubcategoryID == subcategory.CategoryID);
+        if (!string.IsNullOrEmpty(payee))
+            transactions = transactions.Where(t => t.Payee == payee);
+        return transactions.ToList();
+    }
+
     public async Task<IEnumerable<string>> GetPayeesFromTransactions()
     {
         await momoney.Init();
@@ -114,6 +129,12 @@ public class TransactionService : ITransactionService
     {
         await momoney.Init();
         return await momoney.db.Table<Transaction>().FirstOrDefaultAsync();
+    }
+
+    public async Task<int> GetTransactionCount()
+    {
+        await momoney.Init();
+        return await momoney.db.Table<Transaction>().CountAsync();
     }
 
     /// <summary>

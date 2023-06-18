@@ -55,7 +55,7 @@
             <Style x:Key="TileFrame" TargetType="{x:Type Frame}">
                 <Setter Property="Margin" Value="10,0,10,10" />
                 <Setter Property="Padding" Value="10,0" />
-                <Setter Property="HeightRequest" Value="65" />
+                <Setter Property="HeightRequest" Value="60" />
                 <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
             </Style>
 

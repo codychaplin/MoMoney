@@ -3,6 +3,8 @@
 ### Fixes
 
 * Fixed Transaction tile clipping issue
+* Allow scrolling when keyboard covers screen
+* Transaction type buttons now change colour properly
 
 ### Changes
 
@@ -10,6 +12,8 @@
 * Added custom db logging for CUD (CRUD - Read) operations
 * Added LoggingPage to view logs in a ListView
 * Moved Constants.cs to Helpers namespace and added Utilities.cs for mutables
+* Updated Settings namespace structure
+* Added BulkEditingPage
 
 # MoMoney v1.1.0
 

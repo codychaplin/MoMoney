@@ -103,6 +103,9 @@ public static class MauiProgram
 		builder.Services.AddTransient<EditStockPage>();
 		builder.Services.AddTransient<EditStockViewModel>();
 
+        builder.Services.AddTransient<BulkEditingPage>();
+        builder.Services.AddTransient<BulkEditingViewModel>();
+
         return builder.Build();
 	}
 }

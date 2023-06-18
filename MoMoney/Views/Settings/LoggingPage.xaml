@@ -35,11 +35,15 @@
                         <Setter Property="TextColor" Value="{StaticResource Gray300}" />
                     </Style>
                 </Grid.Resources>
-                <Label Text="{Binding ClassName}" HorizontalOptions="Start" />
-                <Label Text="{Binding ExceptionType}" HorizontalOptions="End" />
+                <Label Text="{Binding ClassName}" HorizontalOptions="Start" MinimumWidthRequest="170" />
+                <Label Text="{Binding ExceptionType}" HorizontalOptions="End" HorizontalTextAlignment="End" MinimumWidthRequest="170"/>
                 <Label Text="{Binding Message}" HorizontalOptions="Start" Grid.Row="1" TextColor="White" />
-                <Label Text="{Binding Level}" Grid.Row="2" HorizontalOptions="Start" />
-                <Label Text="{Binding Timestamp, StringFormat='{0:yy-MM-dd HH:mm:ss}'}" Grid.Row="2" HorizontalOptions="End" />
+                <Label Text="{Binding Level}" Grid.Row="2" HorizontalOptions="Start" MinimumWidthRequest="100" />
+                <Label Text="{Binding Timestamp, StringFormat='{0:yy-MM-dd HH:mm:ss}'}"
+                       Grid.Row="2"
+                       HorizontalOptions="End"
+                       HorizontalTextAlignment="End"
+                       MinimumWidthRequest="120" />
             </Grid>
         </DataTemplate>
 
