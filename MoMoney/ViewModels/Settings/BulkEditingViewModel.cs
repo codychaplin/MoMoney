@@ -68,7 +68,7 @@ public partial class BulkEditingViewModel : ObservableObject
         await GetCategories();
         await GetPayees();
         TotalTransactionCount = await transactionService.GetTransactionCount();
-        UpdateText(0);
+        UpdateText();
     }
 
     /// <summary>
@@ -162,7 +162,7 @@ public partial class BulkEditingViewModel : ObservableObject
     {
         FindAccount = null;
         FoundTransactionCount = 0;
-        UpdateText(0);
+        UpdateText();
     }
 
     /// <summary>
@@ -174,7 +174,7 @@ public partial class BulkEditingViewModel : ObservableObject
         FindCategory = null;
         FindSubcategory = null;
         FoundTransactionCount = 0;
-        UpdateText(0);
+        UpdateText();
     }
 
     /// <summary>
@@ -185,7 +185,7 @@ public partial class BulkEditingViewModel : ObservableObject
     {
         FindSubcategory = null;
         FoundTransactionCount = 0;
-        UpdateText(0);
+        UpdateText();
     }
 
     /// <summary>
@@ -196,7 +196,7 @@ public partial class BulkEditingViewModel : ObservableObject
     {
         ReplaceAccount = null;
         FoundTransactionCount = 0;
-        UpdateText(0);
+        UpdateText();
     }
 
     /// <summary>
@@ -208,7 +208,7 @@ public partial class BulkEditingViewModel : ObservableObject
         ReplaceCategory = null;
         ReplaceSubcategory = null;
         FoundTransactionCount = 0;
-        UpdateText(0);
+        UpdateText();
     }
 
     /// <summary>
@@ -219,7 +219,7 @@ public partial class BulkEditingViewModel : ObservableObject
     {
         ReplaceSubcategory = null;
         FoundTransactionCount = 0;
-        UpdateText(0);
+        UpdateText();
     }
 
     [RelayCommand]
@@ -235,7 +235,7 @@ public partial class BulkEditingViewModel : ObservableObject
 
             FoundTransactions = await transactionService.GetFilteredTransactions(FindAccount, FindCategory, FindSubcategory, FindPayee);
             FoundTransactionCount = FoundTransactions.Count;
-            UpdateText(0);
+            UpdateText(0, true, false);
         }
         catch (SQLiteException ex)
         {
@@ -285,18 +285,18 @@ public partial class BulkEditingViewModel : ObservableObject
         }
         finally
         {
-            UpdateText(i);
+            UpdateText(i, true, true);
         }
     }
 
-    void UpdateText(int replaced)
+    void UpdateText(int replacedCount = 0, bool found = false, bool replaced = false)
     {
         StringBuilder sb = new();
         sb.Append($"Total Transactions: {TotalTransactionCount}\n");
-        if (FoundTransactionCount != 0)
+        if (found)
             sb.Append($"Transactions Found: {FoundTransactionCount}\n");
-        if (replaced != 0)
-            sb.Append($"Transactions Replaced: {replaced} \n");
+        if (replaced)
+            sb.Append($"Transactions Replaced: {replacedCount} \n");
         Info = sb.ToString();
     }
 }

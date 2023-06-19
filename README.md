@@ -13,6 +13,7 @@ Works on Android 10.0 and later.
 * Import/Export data via CSV
 * Ability to hide sensitive values
 * Database logging
+* Bulk editing (find/replace) for transactions
 
 ## How to Use
 * Accounts and categories are needed before transactions are added

@@ -9,6 +9,11 @@ public partial class LoggingPage : ContentPage
 		InitializeComponent();
 		BindingContext = vm;
 		Loaded += vm.Init;
+		vm.listview = listview;
+
+		pckLevels.SelectedIndexChanged += vm.UpdateFilter;
+		pckClasses.SelectedIndexChanged += vm.UpdateFilter;
+		pckExceptions.SelectedIndexChanged += vm.UpdateFilter;
 	}
 
 	/// <summary>

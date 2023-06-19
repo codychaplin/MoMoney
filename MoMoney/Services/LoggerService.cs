@@ -1,7 +1,7 @@
-﻿using Java.Util.Logging;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MoMoney.Data;
 using MoMoney.Models;
+using MoMoney.Exceptions;
 
 namespace MoMoney.Services;
 
@@ -44,10 +44,21 @@ public class LoggerService<T> : ILoggerService<T>
         await Log(LogLevel.Critical, message, exceptionType);
     }
 
+    public async Task<Log> GetLog(int ID)
+    {
+        await momoney.Init();
+
+        var log = await momoney.db.Table<Log>().FirstOrDefaultAsync(l => l.LogId == ID);
+        if (log is null)
+            throw new LogNotFoundException($"Could not find Log with ID '{ID}'.");
+        else
+            return log;
+    }
+
     public async Task<IEnumerable<Log>> GetLogs()
     {
         await momoney.Init();
-        return await momoney.db.Table<Log>().ToListAsync();
+        return await momoney.db.Table<Log>().OrderByDescending(l => l.Timestamp).ToListAsync();
     }
 
     public async Task RemoveLogs()

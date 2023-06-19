@@ -21,4 +21,6 @@ public static class Constants
 
     // month name array alias
     public static readonly string[] MONTHS = CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedMonthNames;
+
+    public const int LOAD_COUNT = 50;
 }

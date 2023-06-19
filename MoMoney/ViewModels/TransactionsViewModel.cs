@@ -3,9 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Syncfusion.Maui.ListView;
 using MoMoney.Models;
+using MoMoney.Helpers;
 using MoMoney.Services;
 using MoMoney.Exceptions;
-using MoMoney.Helpers;
 
 namespace MoMoney.ViewModels;
 
@@ -60,8 +60,6 @@ public partial class TransactionsViewModel : ObservableObject
     public SfListView ListView { get; set; }
 
     bool showValue = true;
-
-    const int LOAD_COUNT = 50;
 
     public TransactionsViewModel(ITransactionService _transactionService, IAccountService _accountService,
         ICategoryService _categoryService, ILoggerService<TransactionsViewModel> _logger)
@@ -379,7 +377,7 @@ public partial class TransactionsViewModel : ObservableObject
         await Task.Delay(250);
         int index = LoadedTransactions.Count;
         int totalItems = Transactions.Count;
-        int count = index + LOAD_COUNT >= totalItems ? totalItems - index : LOAD_COUNT;
+        int count = index + Constants.LOAD_COUNT >= totalItems ? totalItems - index : Constants.LOAD_COUNT;
         AddTransactions(index, count);
         ListView.IsLazyLoading = false;
 

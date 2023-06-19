@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using MoMoney.Models;
+using MoMoney.Exceptions;
 
 namespace MoMoney.Services;
 public interface ILoggerService<T>
@@ -39,6 +40,14 @@ public interface ILoggerService<T>
     /// <param name="message"></param>
     /// <param name="exceptionType"></param>
     Task LogCritical(string message, string exceptionType = "");
+
+    /// <summary>
+    /// Gets an log from the Logs table using an ID.
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <returns>Log object</returns>
+    /// <exception cref="LogNotFoundException"></exception>
+    Task<Log> GetLog(int ID);
 
     /// <summary>
     /// Gets all Logs from Logs table as a list.

@@ -8,7 +8,7 @@ public class Log
     [PrimaryKey, AutoIncrement]
     public int LogId { get; set; }
     public DateTime Timestamp { get; set; }
-    public string Level { get; set; } = LogLevel.Information.ToString();
+    public LogLevel Level { get; set; } = LogLevel.Information;
     public string Message { get; set; } = "";
     public string ClassName { get; set; } = "";
     public string ExceptionType { get; set; } = "";
@@ -18,7 +18,7 @@ public class Log
     public Log(LogLevel level, string className, string message, string exceptionType)
     {
         Timestamp = DateTime.Now;
-        Level = level.ToString();
+        Level = level;
         ClassName = className;
         Message = message;
         ExceptionType = exceptionType;
