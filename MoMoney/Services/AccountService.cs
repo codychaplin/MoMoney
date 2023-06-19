@@ -145,9 +145,9 @@ public class AccountService : IAccountService
     {
         await Init();
         await momoney.db.QueryAsync<Account>($"UPDATE Account SET CurrentBalance=CurrentBalance + {amount} WHERE AccountID={ID}");
-        decimal balanceBefore = Accounts[ID].CurrentBalance;
+        decimal balanceBefore = Math.Round(Accounts[ID].CurrentBalance, 2);
         Accounts[ID].CurrentBalance += amount;
-        decimal balanceAfter = Accounts[ID].CurrentBalance;
+        decimal balanceAfter = Math.Round(Accounts[ID].CurrentBalance, 2);
         await logger.LogInfo($"Updated Account #{ID} balance from {balanceBefore} to {balanceAfter}.");
     }
 

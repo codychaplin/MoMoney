@@ -5,6 +5,7 @@
 * Fixed Transaction tile clipping issue
 * Allow scrolling when keyboard covers screen
 * Transaction type buttons now change colour properly
+* Fixed HomePage crashing on reopen by adding Grid around chart
 
 ### Changes
 
