@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Syncfusion.Maui.ListView;
 using MoMoney.Models;
+using MoMoney.Helpers;
 using MoMoney.Services;
 using MoMoney.Exceptions;
 
@@ -13,6 +14,7 @@ public partial class TransactionsViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
+    readonly ILoggerService<TransactionsViewModel> logger;
 
     [ObservableProperty]
     public ObservableCollection<Transaction> loadedTransactions = new();
@@ -59,13 +61,13 @@ public partial class TransactionsViewModel : ObservableObject
 
     bool showValue = true;
 
-    const int LOAD_COUNT = 50;
-
-    public TransactionsViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService)
+    public TransactionsViewModel(ITransactionService _transactionService, IAccountService _accountService,
+        ICategoryService _categoryService, ILoggerService<TransactionsViewModel> _logger)
     {
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
+        logger = _logger;
 
         // first two months, show 1 year, starting March show YTD
         From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
@@ -125,9 +127,11 @@ public partial class TransactionsViewModel : ObservableObject
                 Transactions.Insert(0, otherTrans);
                 LoadedTransactions.Insert(0, otherTrans);
             }
-            catch (TransactionNotFoundException)
+            catch (TransactionNotFoundException ex)
             {
-                await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
+                string message = $"Could not find corresponding transfer for Transaction #{e.Transaction.TransactionID}";
+                await logger.LogError(message, ex.GetType().Name);
+                await Shell.Current.DisplayAlert("Error", message, "OK");
             }
         }
         else
@@ -151,20 +155,20 @@ public partial class TransactionsViewModel : ObservableObject
 
             LoadedTransactions.Clear();
             Transactions.Clear();
-            Transactions = new List<Transaction>(transactions);
+            Transactions = new(transactions);
 
             Payees.Clear();
             Payees = new ObservableCollection<string>(transactions.Select(t => t.Payee).Distinct());
         }
-        if (showValue != Constants.ShowValue)
+        if (showValue != Utilities.ShowValue)
         {
             // workaround for triggering converter
             if (LoadedTransactions.Any())
                 foreach (var trans in LoadedTransactions)
-                    trans.Amount = (Constants.ShowValue) ? trans.Amount + 0.0001m : trans.Amount - 0.0001m;
+                    trans.Amount = (Utilities.ShowValue) ? trans.Amount + 0.0001m : trans.Amount - 0.0001m;
         }
 
-        showValue = Constants.ShowValue;
+        showValue = Utilities.ShowValue;
     }
 
     /// <summary>
@@ -373,7 +377,7 @@ public partial class TransactionsViewModel : ObservableObject
         await Task.Delay(250);
         int index = LoadedTransactions.Count;
         int totalItems = Transactions.Count;
-        int count = index + LOAD_COUNT >= totalItems ? totalItems - index : LOAD_COUNT;
+        int count = index + Constants.LOAD_COUNT >= totalItems ? totalItems - index : Constants.LOAD_COUNT;
         AddTransactions(index, count);
         ListView.IsLazyLoading = false;
 

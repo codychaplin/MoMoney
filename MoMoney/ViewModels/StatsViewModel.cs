@@ -30,7 +30,7 @@ public partial class StatsViewModel : ObservableObject
     [RelayCommand]
     async Task GoToStocks()
     {
-        await Shell.Current.GoToAsync(nameof(StocksPage));
+        await Shell.Current.GoToAsync(nameof(StockStatsPage));
     }
 
     /// <summary>

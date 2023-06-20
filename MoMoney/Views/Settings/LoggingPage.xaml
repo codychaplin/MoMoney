@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MoMoney.Views.Settings.LoggingPage"
+             x:DataType="viewmodel:LoggingViewModel"
+             xmlns:models="clr-namespace:MoMoney.Models"
+             xmlns:selectors="clr-namespace:MoMoney.Selectors"
+             xmlns:converters="clr-namespace:MoMoney.Converters"
+             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
+             Title="Logs">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="filter.svg" Command="{Binding ToggleExpandCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Resources>
+        
+        <converters:NoneToVisibleConverter x:Key="NoneToVisible" />
+        <converters:NullToVisibleConverter x:Key="NullToVisible" />
+
+        <!-- small item template -->
+        <DataTemplate x:Key="Small" x:DataType="models:Log">
+            <Grid RowDefinitions="*,*" Padding="10,3" BackgroundColor="{StaticResource Gray700}">
+                <Grid.Resources>
+                    <Style TargetType="{x:Type Label}">
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="TextColor" Value="{StaticResource Gray300}" />
+                    </Style>
+                </Grid.Resources>
+                <Label Text="{Binding Message}" HorizontalOptions="Start"  TextColor="White" MinimumWidthRequest="170" />
+                <Label Text="{Binding Level}" Grid.Row="1" HorizontalOptions="Start" MinimumWidthRequest="100" />
+                <Label Text="{Binding Timestamp, StringFormat='{0:yy-MM-dd HH:mm:ss}'}"
+                       Grid.Row="1"
+                       HorizontalOptions="End"
+                       HorizontalTextAlignment="End"
+                       MinimumWidthRequest="120" />
+            </Grid>
+        </DataTemplate>
+        
+        <!-- large item template -->
+        <DataTemplate x:Key="Large" x:DataType="models:Log">
+            <Grid RowDefinitions="*,*,*" Padding="10,5" BackgroundColor="{StaticResource Gray700}">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding Path=OpenPopupCommand, Source={RelativeSource AncestorType={x:Type viewmodel:LoggingViewModel}}}"
+                                          CommandParameter="{Binding LogId}" />
+                </Grid.GestureRecognizers>
+                <Grid.Resources>
+                    <Style TargetType="{x:Type Label}">
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="TextColor" Value="{StaticResource Gray300}" />
+                    </Style>
+                </Grid.Resources>
+                <Label Text="{Binding ClassName}" HorizontalOptions="Start" MinimumWidthRequest="170" />
+                <Label Text="{Binding ExceptionType}" HorizontalOptions="End" HorizontalTextAlignment="End" MinimumWidthRequest="170" />
+                <Label Text="{Binding Message}" HorizontalOptions="Start" Grid.Row="1" TextColor="White" />
+                <Label Text="{Binding Level}" Grid.Row="2" HorizontalOptions="Start" MinimumWidthRequest="100" />
+                <Label Text="{Binding Timestamp, StringFormat='{0:yy-MM-dd HH:mm:ss}'}"
+                       Grid.Row="2"
+                       HorizontalOptions="End"
+                       HorizontalTextAlignment="End"
+                       MinimumWidthRequest="120" />
+            </Grid>
+        </DataTemplate>
+
+        <selectors:LogDataTemplateSelector x:Key="LogDataTemplateSelector"
+                                           SmallTemplate="{StaticResource Small}"
+                                           LargeTemplate="{StaticResource Large}"
+                                           ListView="{x:Reference listview}"
+                                           Switch="{x:Reference switch}" />
+
+    </ContentPage.Resources>
+
+    <!-- content -->
+    <Grid Margin="10,5,10,10" RowDefinitions="Auto,*">
+        <toolkit:Expander IsExpanded="{Binding IsExpanded}">
+            <VerticalStackLayout Spacing="5" Padding="0,5">
+                <VerticalStackLayout.Resources>
+                    <Style TargetType="{Type Frame}">
+                        <Setter Property="Padding" Value="10,2" />
+                        <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
+                    </Style>
+                    <Style TargetType="{Type Grid}">
+                        <Setter Property="ColumnDefinitions" Value="80,*,20" />
+                    </Style>
+                    <Style TargetType="{Type Label}">
+                        <Setter Property="Grid.Column" Value="0" />
+                        <Setter Property="FontAttributes" Value="Bold" />
+                        <Setter Property="VerticalOptions" Value="Center" />
+                    </Style>
+                    <Style TargetType="{Type Picker}">
+                        <Setter Property="Grid.Column" Value="1" />
+                        <Setter Property="FontSize" Value="13" />
+                    </Style>
+                    <Style TargetType="{x:Type ImageButton}" x:Key="ibtnIcon" BasedOn="{StaticResource imgBtnTinted}">
+                        <Setter Property="Grid.Column" Value="2" />
+                        <Setter Property="Source" Value="clear.svg" />
+                        <Setter Property="WidthRequest" Value="20" />
+                        <Setter Property="HeightRequest" Value="20" />
+                        <Setter Property="HorizontalOptions" Value="Center" />
+                    </Style>
+                </VerticalStackLayout.Resources>
+                
+                <Frame Padding="10,0">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <!-- tile switch -->
+                        <Label Text="Large Tiles" />
+                        <Switch x:Name="switch" Grid.Column="1" HorizontalOptions="Start" IsToggled="True" Toggled="switch_Toggled" />
+                    </Grid>
+                </Frame>
+
+                <!-- filters -->
+                <Frame>
+                    <Grid>
+                        <Label Text="Log Levels" />
+                        <Picker x:Name="pckLevels" ItemsSource="{Binding Levels}" Title="Levels" SelectedItem="{Binding Level}" />
+                        <ImageButton Style="{StaticResource ibtnIcon}"
+                                     Command="{Binding ClearLevelCommand}"
+                                     IsVisible="{Binding Level, Converter={StaticResource NoneToVisible}}" />
+                    </Grid>
+                </Frame>
+                <Frame>
+                    <Grid>
+                        <Label Text="Classes" />
+                        <Picker x:Name="pckClasses" ItemsSource="{Binding Classes}" Title="Classes" SelectedItem="{Binding ClassName}" />
+                        <ImageButton Style="{StaticResource ibtnIcon}"
+                                     Command="{Binding ClearClassCommand}"
+                                     IsVisible="{Binding ClassName, Converter={StaticResource NullToVisible}}" />
+                    </Grid>
+                </Frame>
+                <Frame>
+                    <Grid>
+                        <Label Text="Exceptions" />
+                        <Picker x:Name="pckExceptions" ItemsSource="{Binding Exceptions}" Title="Exceptions" SelectedItem="{Binding ExceptionType}" />
+                        <ImageButton Style="{StaticResource ibtnIcon}"
+                                     Command="{Binding ClearExceptionCommand}"
+                                     IsVisible="{Binding ExceptionType, Converter={StaticResource NullToVisible}}" />
+                    </Grid>
+                </Frame>
+
+            </VerticalStackLayout>
+        </toolkit:Expander>
+
+        <Frame Grid.Row="1" Margin="0,5,0,0" Padding="0">
+            <sf:SfListView x:Name="listview"
+                           ItemSpacing="1"
+                           LoadMoreOption="None"
+                           LoadMorePosition="End"
+                           ScrollBarVisibility="Always"
+                           ItemsSource="{Binding LoadedLogs}"
+                           LoadMoreCommand="{Binding LoadMoreItemsCommand}"
+                           ItemTemplate="{StaticResource LogDataTemplateSelector}">
+            </sf:SfListView>
+        </Frame>
+    </Grid>
+
+</ContentPage>

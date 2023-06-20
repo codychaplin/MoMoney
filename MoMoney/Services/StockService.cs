@@ -1,6 +1,7 @@
-﻿using MoMoney.Models;
+﻿using MoMoney.Data;
+using MoMoney.Models;
 using MoMoney.Exceptions;
-using MoMoney.Data;
+using Android.Webkit;
 
 namespace MoMoney.Services;
 
@@ -8,12 +9,14 @@ namespace MoMoney.Services;
 public class StockService : IStockService
 {
     readonly MoMoneydb momoney;
+    readonly ILoggerService<StockService> logger;
 
     public Dictionary<string, Stock> Stocks { get; private set; } = new();
 
-    public StockService(MoMoneydb _momoney)
+    public StockService(MoMoneydb _momoney, ILoggerService<StockService> _logger)
     {
         momoney = _momoney;
+        logger = _logger;
     }
 
     public async Task Init()
@@ -43,6 +46,7 @@ public class StockService : IStockService
 
         await momoney.db.InsertAsync(stock);
         Stocks.Add(stock.Symbol, stock);
+        await logger.LogInfo($"Added Stock '{stock.Symbol}' to db.");
     }
 
     public async Task AddStocks(List<Stock> stocks)
@@ -59,6 +63,8 @@ public class StockService : IStockService
         await momoney.db.InsertAllAsync(stocks);
         foreach (var stk in stocks)
             Stocks.Add(stk.Symbol, stk);
+
+        await logger.LogInfo($"Added {stocks.Count} Stocks to db.");
     }
 
     public async Task UpdateStock(Stock updatedStock)
@@ -67,6 +73,7 @@ public class StockService : IStockService
         ValidateStock(updatedStock.Symbol, updatedStock.Quantity, updatedStock.Cost, updatedStock.MarketPrice, updatedStock.BookValue);
         await momoney.db.UpdateAsync(updatedStock);
         Stocks[updatedStock.Symbol] = updatedStock;
+        await logger.LogInfo($"Updated Stock '{updatedStock.Symbol}' in db.");
     }
 
     public async Task UpdateStock(Stock updatedStock, Stock oldStock)
@@ -77,6 +84,7 @@ public class StockService : IStockService
         await momoney.db.InsertAsync(updatedStock);
         Stocks.Remove(oldStock.Symbol);
         Stocks[updatedStock.Symbol] = updatedStock;
+        await logger.LogInfo($"Updated Stock '{updatedStock.Symbol}' in db.");
     }
 
     public async Task RemoveStock(string symbol)
@@ -84,6 +92,7 @@ public class StockService : IStockService
         await Init();
         await momoney.db.DeleteAsync<Stock>(symbol);
         Stocks.Remove(symbol);
+        await logger.LogInfo($"Removed Stock '{symbol}' from db.");
     }
 
     public async Task RemoveStocks()
@@ -93,6 +102,7 @@ public class StockService : IStockService
         await momoney.db.DropTableAsync<Stock>();
         await momoney.db.CreateTableAsync<Stock>();
         Stocks.Clear();
+        await logger.LogInfo($"Removed all Stocks from db.");
     }
 
     public async Task<Stock> GetStock(string symbol)

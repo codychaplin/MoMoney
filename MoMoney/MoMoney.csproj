@@ -16,7 +16,7 @@
 		<ApplicationIdGuid>060046E2-FDB6-4E63-9250-A1589815AA45</ApplicationIdGuid>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0.3</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>1.1.1</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">29.0</SupportedOSPlatformVersion>
@@ -32,11 +32,13 @@
 	  <AndroidSigningKeyPass>key-momoney</AndroidSigningKeyPass>
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
 	  <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
+	  <ApplicationDisplayVersion>1.1.1</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android33.0|AnyCPU'">
 	  <AndroidSigningStorePass></AndroidSigningStorePass>
 	  <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
+	  <ApplicationDisplayVersion>1.1.1</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -48,9 +50,6 @@
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
-
-		<!-- Custom Fonts -->
-		<MauiFont Include="Resources\Fonts\*" />
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
@@ -98,30 +97,30 @@
 	  <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
 	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.5" />
-	  <PackageReference Include="Syncfusion.Maui.Charts" Version="21.2.8" />
-	  <PackageReference Include="Syncfusion.Maui.Inputs" Version="21.2.8" />
-	  <PackageReference Include="Syncfusion.Maui.ListView" Version="21.2.8" />
-	  <PackageReference Include="Syncfusion.Maui.Sliders" Version="21.2.8" />
-	  <PackageReference Include="Syncfusion.Maui.TabView" Version="21.2.8" />
+	  <PackageReference Include="Syncfusion.Maui.Charts" Version="21.2.10" />
+	  <PackageReference Include="Syncfusion.Maui.Inputs" Version="21.2.10" />
+	  <PackageReference Include="Syncfusion.Maui.ListView" Version="21.2.10" />
+	  <PackageReference Include="Syncfusion.Maui.Sliders" Version="21.2.10" />
+	  <PackageReference Include="Syncfusion.Maui.TabView" Version="21.2.10" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Compile Update="Views\EditTransactionPage.xaml.cs">
 	    <DependentUpon>EditTransactionPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Settings\CategoriesPage.xaml.cs">
+	  <Compile Update="Views\Settings\Edit\CategoriesPage.xaml.cs">
 	    <DependentUpon>CategoriesPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Settings\AddCategoryPage.xaml.cs">
+	  <Compile Update="Views\Settings\Edit\AddCategoryPage.xaml.cs">
 	    <DependentUpon>AddCategoryPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Settings\EditCategoryPage.xaml.cs">
+	  <Compile Update="Views\Settings\Edit\EditCategoryPage.xaml.cs">
 	    <DependentUpon>EditCategoryPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Settings\EditAccountPage.xaml.cs">
+	  <Compile Update="Views\Settings\Edit\EditAccountPage.xaml.cs">
 	    <DependentUpon>EditAccountPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Settings\AddAccountPage.xaml.cs">
+	  <Compile Update="Views\Settings\Edit\AddAccountPage.xaml.cs">
 	    <DependentUpon>AddAccountPage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\AddTransactionPage.xaml.cs">
@@ -133,8 +132,8 @@
 	  <Compile Update="Views\Settings\AdminPage.xaml.cs">
 	    <DependentUpon>AdminPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Settings\StockSettingsPage.xaml.cs">
-	    <DependentUpon>StockSettingsPage.xaml</DependentUpon>
+	  <Compile Update="Views\Settings\Edit\StocksPage.xaml.cs">
+	    <DependentUpon>StocksPage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\StatsPage.xaml.cs">
 	    <DependentUpon>StatsPage.xaml</DependentUpon>
@@ -145,8 +144,8 @@
 	  <Compile Update="Views\Stats\BreakdownPage.xaml.cs">
 	    <DependentUpon>BreakdownPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Stats\StocksPage.xaml.cs">
-	    <DependentUpon>StocksPage.xaml</DependentUpon>
+	  <Compile Update="Views\Stats\StockStatsPage.xaml.cs">
+	    <DependentUpon>StockStatsPage.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -160,28 +159,31 @@
 	  <MauiXaml Update="Views\Settings\AdminPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Settings\BulkEditingPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Settings\ImportExportPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Settings\AddStockPage.xaml">
+	  <MauiXaml Update="Views\Settings\Edit\AddStockPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Settings\CategoriesPage.xaml">
+	  <MauiXaml Update="Views\Settings\Edit\CategoriesPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Settings\AccountsPage.xaml">
+	  <MauiXaml Update="Views\Settings\Edit\AccountsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Settings\AddCategoryPage.xaml">
+	  <MauiXaml Update="Views\Settings\Edit\AddCategoryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Settings\EditCategoryPage.xaml">
+	  <MauiXaml Update="Views\Settings\Edit\EditCategoryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Settings\EditAccountPage.xaml">
+	  <MauiXaml Update="Views\Settings\Edit\EditAccountPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Settings\AddAccountPage.xaml">
+	  <MauiXaml Update="Views\Settings\Edit\AddAccountPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\AddTransactionPage.xaml">
@@ -190,10 +192,13 @@
 	  <MauiXaml Update="Views\MainPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Settings\EditStockPage.xaml">
+	  <MauiXaml Update="Views\Settings\Edit\EditStockPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Settings\StockSettingsPage.xaml">
+	  <MauiXaml Update="Views\Settings\LoggingPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Settings\Edit\StocksPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\StatsPage.xaml">
@@ -214,12 +219,18 @@
 	  <MauiXaml Update="Views\Stats\InsightsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Stats\StocksPage.xaml">
+	  <MauiXaml Update="Views\Stats\StockStatsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\TransactionsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Resources\Raw\" />
+	</ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionMoMoneyHideInfoBar="True" XamarinHotReloadUnhandledDeviceExceptionMoMoneyHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 
 </Project>

@@ -12,14 +12,16 @@ public partial class AdminViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
+    readonly ILoggerService<AdminViewModel> logger;
 
     public AdminViewModel(ITransactionService _transactionService, IAccountService _accountService,
-        ICategoryService _categoryService, IStockService _stockService)
+        ICategoryService _categoryService, IStockService _stockService, ILoggerService<AdminViewModel> _logger)
     {
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
         stockService = _stockService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -39,6 +41,7 @@ public partial class AdminViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
@@ -60,6 +63,7 @@ public partial class AdminViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
@@ -81,6 +85,7 @@ public partial class AdminViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
@@ -102,17 +107,40 @@ public partial class AdminViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
     }
 
-    /*/// <summary>
+    /// <summary>
+    /// Removes all Logs from database.
+    /// </summary>
+    [RelayCommand]
+    async Task RemoveAllLogs()
+    {
+        bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Logs?", "Yes", "No");
+
+        if (!flag)
+            return;
+
+        try
+        {
+            await logger.RemoveLogs();
+        }
+        catch (SQLiteException ex)
+        {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+        }
+    }
+
+    /// <summary>
     /// Goes to LoggingPage.xaml.
     /// </summary>
     [RelayCommand]
     async Task GoToLogging()
     {
-        //await Shell.Current.GoToAsync(nameof(LoggingPage));
+        await Shell.Current.GoToAsync(nameof(LoggingPage));
     }
 
     /// <summary>
@@ -122,5 +150,5 @@ public partial class AdminViewModel : ObservableObject
     async Task GoToBulkEditing()
     {
         await Shell.Current.GoToAsync(nameof(BulkEditingPage));
-    }*/
+    }
 }

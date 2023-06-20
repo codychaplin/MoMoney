@@ -1,3 +1,4 @@
+using MoMoney.Helpers;
 using MoMoney.ViewModels.Stats;
 
 namespace MoMoney.Views.Stats;
@@ -11,7 +12,7 @@ public partial class BreakdownPage : ContentPage
         Loaded += _vm.Init;
 		sfTabView.SelectionChanged += _vm.Update;
 
-		if (Constants.ShowValue)
+		if (Utilities.ShowValue)
 		{
 			ExpChartLbl.LabelFormat = "$0";
 			IncChartLbl.LabelFormat = "$0";

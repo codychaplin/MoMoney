@@ -6,6 +6,7 @@ using MoMoney.Views;
 using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
+using MoMoney.Helpers;
 
 namespace MoMoney.ViewModels;
 
@@ -14,6 +15,7 @@ public partial class AddTransactionViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
+    readonly ILoggerService<AddTransactionViewModel> logger;
 
     [ObservableProperty]
     public ObservableCollection<Account> accounts = new();
@@ -45,17 +47,18 @@ public partial class AddTransactionViewModel : ObservableObject
     [ObservableProperty]
     public Account transferAccount = new();
 
-    public AddTransactionViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService)
+    public AddTransactionViewModel(ITransactionService _transactionService, IAccountService _accountService,
+        ICategoryService _categoryService, ILoggerService<AddTransactionViewModel> _logger)
     {
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
+        logger = _logger;
     }
 
     /// <summary>
     /// Gets accounts from database and refreshes Accounts collection.
     /// </summary>
-    /// <returns></returns>
     public async void GetAccounts(object sender, EventArgs e)
     {
         var accounts = await accountService.GetActiveAccounts();
@@ -80,6 +83,7 @@ public partial class AddTransactionViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
+            await logger.LogWarning(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -100,6 +104,7 @@ public partial class AddTransactionViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
+            await logger.LogWarning(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -201,14 +206,17 @@ public partial class AddTransactionViewModel : ObservableObject
         }
         catch (InvalidTransactionException ex)
         {
+            await logger.LogWarning(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

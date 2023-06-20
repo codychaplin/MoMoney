@@ -1,6 +1,8 @@
-﻿using MoMoney.Models;
+﻿using MoMoney.Data;
+using MoMoney.Models;
 using MoMoney.Exceptions;
-using MoMoney.Data;
+using Android.Accounts;
+using MoMoney.Helpers;
 
 namespace MoMoney.Services;
 
@@ -8,12 +10,14 @@ namespace MoMoney.Services;
 public class CategoryService : ICategoryService
 {
     readonly MoMoneydb momoney;
+    readonly ILoggerService<CategoryService> logger;
 
     public Dictionary<int, Category> Categories { get; set; } = new();
 
-    public CategoryService(MoMoneydb _momoney)
+    public CategoryService(MoMoneydb _momoney, ILoggerService<CategoryService> _logger)
     {
         momoney = _momoney;
+        logger = _logger;
     }
 
     public async Task Init()
@@ -39,6 +43,7 @@ public class CategoryService : ICategoryService
         // adds Category to db and dictionary
         await momoney.db.InsertAsync(category);
         Categories.Add(category.CategoryID, category);
+        await logger.LogInfo($"Added Category #{category.CategoryID} to db.");
     }
 
     public async Task AddCategories(List<Category> categories)
@@ -56,6 +61,8 @@ public class CategoryService : ICategoryService
         await momoney.db.InsertAllAsync(categories);
         foreach (var cat in categories)
             Categories.Add(cat.CategoryID, cat);
+
+        await logger.LogInfo($"Added {categories.Count} Categories to db.");
     }
 
     public async Task UpdateCategory(Category updatedCategory)
@@ -63,6 +70,7 @@ public class CategoryService : ICategoryService
         await Init();
         await momoney.db.UpdateAsync(updatedCategory);
         Categories[updatedCategory.CategoryID] = updatedCategory;
+        await logger.LogInfo($"Updated Category #{updatedCategory.CategoryID} in db.");
     }
 
     public async Task RemoveCategory(int ID)
@@ -70,6 +78,7 @@ public class CategoryService : ICategoryService
         await Init();
         await momoney.db.DeleteAsync<Category>(ID);
         Categories.Remove(ID);
+        await logger.LogInfo($"Removed Category #{ID} from db.");
     }
 
     public async Task RemoveAllCategories()
@@ -79,6 +88,7 @@ public class CategoryService : ICategoryService
         await momoney.db.DropTableAsync<Category>();
         await momoney.db.CreateTableAsync<Category>();
         Categories.Clear();
+        await logger.LogInfo($"Removed all Categories from db.");
     }
 
     public async Task<Category> GetCategory(int ID)
@@ -193,7 +203,7 @@ public class CategoryService : ICategoryService
     }
 
     /// <summary>
-    /// Gets all Categories from Categories table as a dictionary with Category ID as Key.
+    /// Gets all Categories from Categories table as a dictionary with Category ID as key.
     /// </summary>
     /// <returns>Dictionary of Category objects</returns>
     async Task<Dictionary<int, Category>> GetCategoriesAsDict()

@@ -1,13 +1,15 @@
 ﻿using CommunityToolkit.Maui;
 using Syncfusion.Maui.Core.Hosting;
 using MoMoney.Data;
-using MoMoney.Views;
 using MoMoney.Services;
+using MoMoney.Views;
 using MoMoney.ViewModels;
 using MoMoney.Views.Stats;
-using MoMoney.Views.Settings;
 using MoMoney.ViewModels.Stats;
+using MoMoney.Views.Settings;
 using MoMoney.ViewModels.Settings;
+using MoMoney.Views.Settings.Edit;
+using MoMoney.ViewModels.Settings.Edit;
 
 namespace MoMoney;
 
@@ -16,20 +18,15 @@ public static class MauiProgram
 	public static MauiApp CreateMauiApp()
 	{
 		var builder = MauiApp.CreateBuilder();
-		builder
-			.UseMauiApp<App>()
-            .ConfigureSyncfusionCore()
-            .UseMauiCommunityToolkit()
-            .ConfigureFonts(fonts =>
-			{
-				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-				fonts.AddFont("Metropolis-Regular.otf", "Metropolis");
-				fonts.AddFont("Metropolis-Bold.otf", "MetropolisBold");
-			});
+		builder.UseMauiApp<App>()
+			   .ConfigureSyncfusionCore()
+               .UseMauiCommunityToolkit();
 
         // db
         builder.Services.AddSingleton<MoMoneydb>();
+
+		// logging
+        builder.Services.AddTransient(typeof(ILoggerService<>), typeof(LoggerService<>));
 
 		// services
 		builder.Services.AddSingleton<IAccountService, AccountService>();
@@ -64,14 +61,17 @@ public static class MauiProgram
 		builder.Services.AddSingleton<CategoriesPage>();
 		builder.Services.AddTransient<CategoriesViewModel>();
 
-		builder.Services.AddSingleton<StockSettingsPage>();
-		builder.Services.AddTransient<StockSettingsViewModel>();
+		builder.Services.AddSingleton<StocksPage>();
+		builder.Services.AddTransient<StocksViewModel>();
 
         builder.Services.AddTransient<ImportExportPage>();
         builder.Services.AddTransient<ImportExportViewModel>();
 
         builder.Services.AddTransient<AdminPage>();
         builder.Services.AddTransient<AdminViewModel>();
+
+        builder.Services.AddTransient<LoggingPage>();
+        builder.Services.AddTransient<LoggingViewModel>();
 
         builder.Services.AddTransient<AccountSummaryPage>();
 		builder.Services.AddTransient<AccountSummaryViewModel>();
@@ -82,8 +82,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<InsightsPage>();
 		builder.Services.AddTransient<InsightsViewModel>();
 
-		builder.Services.AddTransient<StocksPage>();
-		builder.Services.AddTransient<StocksViewModel>();
+		builder.Services.AddTransient<StockStatsPage>();
+		builder.Services.AddTransient<StockStatsViewModel>();
 
 		builder.Services.AddTransient<AddAccountPage>();
 		builder.Services.AddTransient<AddAccountViewModel>();
@@ -102,6 +102,9 @@ public static class MauiProgram
 
 		builder.Services.AddTransient<EditStockPage>();
 		builder.Services.AddTransient<EditStockViewModel>();
+
+        builder.Services.AddTransient<BulkEditingPage>();
+        builder.Services.AddTransient<BulkEditingViewModel>();
 
         return builder.Build();
 	}

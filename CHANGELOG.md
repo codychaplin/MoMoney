@@ -1,3 +1,21 @@
+# MoMoney v1.1.1
+
+### Fixes
+
+* Fixed Transaction tile clipping issue
+* Allow scrolling when keyboard covers screen
+* Transaction type buttons now change colour properly
+* Fixed HomePage crashing on reopen by adding Grid around chart
+
+### Changes
+
+* Updated Syncfusion controls to v21.2.10
+* Added custom db logging for CUD (CRUD - Read) operations
+* Added LoggingPage to view and filter logs in a ListView
+* Moved Constants.cs to Helpers namespace and added Utilities.cs for mutables
+* Updated Settings namespace structure
+* Added BulkEditingPage
+
 # MoMoney v1.1.0
 
 ### Fixes
@@ -13,8 +31,7 @@
 * Converted static services classes to interfaces
 * Implemented dependencies for services and viewmodels
 * Converted all pngs to svgs
-* Overhauled UI
-* Refactored/cleaned up logic
+* Refactored/cleaned up UI and logic
 * Split up settings page
 
 # MoMoney v1.0.3

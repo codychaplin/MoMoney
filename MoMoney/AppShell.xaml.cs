@@ -1,5 +1,6 @@
 ﻿using MoMoney.Views;
 using MoMoney.Views.Settings;
+using MoMoney.Views.Settings.Edit;
 using MoMoney.Views.Stats;
 
 namespace MoMoney;
@@ -21,7 +22,7 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute(nameof(AddCategoryPage), typeof(AddCategoryPage));
 		Routing.RegisterRoute(nameof(EditCategoryPage), typeof(EditCategoryPage));
 		// stocks
-		Routing.RegisterRoute(nameof(StockSettingsPage), typeof(StockSettingsPage));
+		Routing.RegisterRoute(nameof(StocksPage), typeof(StocksPage));
 		Routing.RegisterRoute(nameof(AddStockPage), typeof(AddStockPage));
 		Routing.RegisterRoute(nameof(EditStockPage), typeof(EditStockPage));
 		// transactions
@@ -29,10 +30,12 @@ public partial class AppShell : Shell
 		// stats
 		Routing.RegisterRoute(nameof(AccountSummaryPage), typeof(AccountSummaryPage));
 		Routing.RegisterRoute(nameof(BreakdownPage), typeof(BreakdownPage));
-		Routing.RegisterRoute(nameof(StocksPage), typeof(StocksPage));
+		Routing.RegisterRoute(nameof(StockStatsPage), typeof(StockStatsPage));
 		Routing.RegisterRoute(nameof(InsightsPage), typeof(InsightsPage));
 		// settings
 		Routing.RegisterRoute(nameof(AdminPage), typeof(AdminPage));
+		Routing.RegisterRoute(nameof(LoggingPage), typeof(LoggingPage));
 		Routing.RegisterRoute(nameof(ImportExportPage), typeof(ImportExportPage));
+		Routing.RegisterRoute(nameof(BulkEditingPage), typeof(BulkEditingPage));
 	}
 }

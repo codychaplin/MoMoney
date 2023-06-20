@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MoMoney.Helpers;
 using MoMoney.Models;
 using MoMoney.Services;
 
@@ -60,25 +61,25 @@ public partial class AccountSummaryViewModel : ObservableObject
                 {
                     case AccountType.Checkings:
                         CheckingsAccounts.Add(acc);
-                        if (Constants.ShowValue == false) break; // if ShowValue is false, skip calculations
+                        if (Utilities.ShowValue == false) break; // if ShowValue is false, skip calculations
                         CheckingsSum += acc.CurrentBalance;
                         Networth += acc.CurrentBalance;
                         break;
                     case AccountType.Savings:
                         SavingsAccounts.Add(acc);
-                        if (Constants.ShowValue == false) break;
+                        if (Utilities.ShowValue == false) break;
                         SavingsSum += acc.CurrentBalance;
                         Networth += acc.CurrentBalance;
                         break;
                     case AccountType.Credit:
                         CreditAccounts.Add(acc);
-                        if (Constants.ShowValue == false) break;
+                        if (Utilities.ShowValue == false) break;
                         CreditSum += acc.CurrentBalance;
                         Networth += acc.CurrentBalance;
                         break;
                     case AccountType.Investments:
                         InvestmentAccounts.Add(acc);
-                        if (Constants.ShowValue == false) break;
+                        if (Utilities.ShowValue == false) break;
                         InvestmentSum += acc.CurrentBalance;
                         Networth += acc.CurrentBalance;
                         break;

@@ -57,6 +57,12 @@ public interface ITransactionService
     Task<IEnumerable<Transaction>> GetTransactions();
 
     /// <summary>
+    /// Gets Transactions from Transaction table that match parameters as a list.
+    /// </summary>
+    /// <returns>List of Transaction objects</returns>
+    Task<List<Transaction>> GetFilteredTransactions(Account account, Category category, Category subcategory, string payee);
+
+    /// <summary>
     /// Gets all distinct payees from Transactions table.
     /// </summary>
     /// <returns></returns>
@@ -76,4 +82,10 @@ public interface ITransactionService
     /// </summary>
     /// <returns>Transaction object</returns>
     Task<Transaction> GetFirstTransaction();
+
+    /// <summary>
+    /// Gets total number of Transactions in db.
+    /// </summary>
+    /// <returns>Integer representing number of Transactions</returns>
+    Task<int> GetTransactionCount();
 }

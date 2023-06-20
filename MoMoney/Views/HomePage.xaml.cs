@@ -1,3 +1,4 @@
+using MoMoney.Helpers;
 using MoMoney.ViewModels;
 
 namespace MoMoney.Views;
@@ -40,7 +41,7 @@ public partial class HomePage : ContentView
         }
 
         // show/hide YAxis label amount
-        if (Constants.ShowValue)
+        if (Utilities.ShowValue)
             YAxisLbl.LabelFormat = "$0,k";
         else
             YAxisLbl.LabelFormat = "$?";

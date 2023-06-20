@@ -22,60 +22,6 @@
             <converters:AmountColourConverter x:Key="AmountColour" />
             <converters:IdToCategoryConverter x:Key="IdToCategory" />
 
-            <!-- transaction template -->
-            <DataTemplate x:Key="TransactionFrame" x:DataType="models:Transaction">
-                <Frame Padding="5,10,10,10"
-                       HeightRequest="65"
-                       Margin="10,10,10,0"
-                       BackgroundColor="{StaticResource Gray700}">
-                    <Frame.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding Path=GoToEditTransactionCommand, Source={x:Reference MoMoneyApp}}"
-                                              CommandParameter="{Binding TransactionID}" />
-                    </Frame.GestureRecognizers>
-                    <Grid ColumnDefinitions="30,*">
-                        <!-- icon -->
-                        <Image Scale="0.75">
-                            <Image.Source>
-                                <MultiBinding Converter="{StaticResource Icon}">
-                                    <Binding Path="CategoryID" />
-                                    <Binding Path="SubcategoryID" />
-                                </MultiBinding>
-                            </Image.Source>
-                        </Image>
-                        <!-- subcategory -->
-                        <Label Grid.Column="1"
-                               FontSize="18"
-                               VerticalOptions="Start"
-                               HorizontalOptions="Start"
-                               Style="{StaticResource lblTile}"
-                               Text="{Binding SubcategoryID, Converter={StaticResource IdToCategory}}" />
-                        <!-- account -->
-                        <Label Grid.Column="1"
-                               VerticalOptions="End"
-                               HorizontalOptions="Start"
-                               Style="{StaticResource lblTile}"
-                               TextColor="{StaticResource Gray300}"
-                               Text="{Binding AccountID, Converter={StaticResource IdToAccount}}" />
-                        <!-- amount -->
-                        <Label Grid.Column="1"
-                               FontSize="18"
-                               VerticalOptions="Start"
-                               HorizontalOptions="End"
-                               Style="{StaticResource lblTile}"
-                               TextColor="{Binding CategoryID, Converter={StaticResource AmountColour}}"
-                               Text="{Binding Amount, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
-                        <!-- date -->
-                        <Label Grid.Column="1"
-                               VerticalOptions="End"
-                               HorizontalOptions="End"
-                               Style="{StaticResource lblTile}"
-                               TextColor="{StaticResource Gray300}"
-                               Text="{Binding Date, StringFormat='{0:yyyy-MM-dd}'}" />
-                    </Grid>
-                </Frame>
-
-            </DataTemplate>
-
             <!-- title -->
             <Style x:Key="lblTitle" TargetType="{x:Type Label}">
                 <Setter Property="FontSize" Value="18" />
@@ -109,7 +55,7 @@
             <Style x:Key="TileFrame" TargetType="{x:Type Frame}">
                 <Setter Property="Margin" Value="10,0,10,10" />
                 <Setter Property="Padding" Value="10,0" />
-                <Setter Property="HeightRequest" Value="65" />
+                <Setter Property="HeightRequest" Value="60" />
                 <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
             </Style>
 
@@ -139,6 +85,68 @@
                 <Setter Property="Margin" Value="0,0,10,0" />
                 <Setter Property="VerticalOptions" Value="Center" />
             </Style>
+
+            <!-- transaction template -->
+            <DataTemplate x:Key="TransactionFrame" x:DataType="models:Transaction">
+                <Frame Padding="5,10,10,10"
+                       HeightRequest="65"
+                       Margin="10,10,10,0"
+                       BackgroundColor="{StaticResource Gray700}">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Path=GoToEditTransactionCommand, Source={x:Reference MoMoneyApp}}"
+                                              CommandParameter="{Binding TransactionID}" />
+                    </Frame.GestureRecognizers>
+                    <Grid ColumnDefinitions="30,*">
+                        <!-- icon -->
+                        <Image Scale="0.75">
+                            <Image.Source>
+                                <MultiBinding Converter="{StaticResource Icon}">
+                                    <Binding Path="CategoryID" />
+                                    <Binding Path="SubcategoryID" />
+                                </MultiBinding>
+                            </Image.Source>
+                        </Image>
+                        <!-- subcategory -->
+                        <Label Grid.Column="1"
+                               FontSize="18"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Start"
+                               MinimumWidthRequest="180"
+                               HorizontalTextAlignment="Start"
+                               Style="{StaticResource lblTile}"
+                               Text="{Binding SubcategoryID, Converter={StaticResource IdToCategory}}" />
+                        <!-- account -->
+                        <Label Grid.Column="1"
+                               VerticalOptions="End"
+                               HorizontalOptions="Start"
+                               MinimumWidthRequest="150"
+                               HorizontalTextAlignment="Start"
+                               Style="{StaticResource lblTile}"
+                               TextColor="{StaticResource Gray300}"
+                               Text="{Binding AccountID, Converter={StaticResource IdToAccount}}" />
+                        <!-- amount -->
+                        <Label Grid.Column="1"
+                               FontSize="18"
+                               VerticalOptions="Start"
+                               HorizontalOptions="End"
+                               MinimumWidthRequest="100"
+                               HorizontalTextAlignment="End"
+                               Style="{StaticResource lblTile}"
+                               TextColor="{Binding CategoryID, Converter={StaticResource AmountColour}}"
+                               Text="{Binding Amount, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
+                        <!-- date -->
+                        <Label Grid.Column="1"
+                               VerticalOptions="End"
+                               HorizontalOptions="End"
+                               MinimumWidthRequest="100"
+                               HorizontalTextAlignment="End"
+                               Style="{StaticResource lblTile}"
+                               TextColor="{StaticResource Gray300}"
+                               Text="{Binding Date, StringFormat='{0:yyyy-MM-dd}'}" />
+                    </Grid>
+                </Frame>
+
+            </DataTemplate>
 
         </ResourceDictionary>
         

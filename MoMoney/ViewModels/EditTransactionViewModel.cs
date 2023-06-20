@@ -6,6 +6,7 @@ using MoMoney.Views;
 using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
+using MoMoney.Helpers;
 
 namespace MoMoney.ViewModels;
 
@@ -15,6 +16,7 @@ public partial class EditTransactionViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
+    readonly ILoggerService<EditTransactionViewModel> logger;
 
     public string ID { get; set; }
 
@@ -52,11 +54,13 @@ public partial class EditTransactionViewModel : ObservableObject
 
     Transaction InitialTransaction;
 
-    public EditTransactionViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService)
+    public EditTransactionViewModel(ITransactionService _transactionService, IAccountService _accountService,
+        ICategoryService _categoryService, ILoggerService<EditTransactionViewModel> _logger)
     {
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -87,19 +91,26 @@ public partial class EditTransactionViewModel : ObservableObject
             }
             catch (TransactionNotFoundException ex)
             {
+                await logger.LogError(ex.Message, ex.GetType().Name);
                 await Shell.Current.DisplayAlert("Transaction Error", ex.Message, "OK");
             }
             catch (AccountNotFoundException ex)
             {
+                await logger.LogError(ex.Message, ex.GetType().Name);
                 await Shell.Current.DisplayAlert("Account Error", ex.Message, "OK");
             }
             catch (CategoryNotFoundException ex)
             {
+                await logger.LogError(ex.Message, ex.GetType().Name);
                 await Shell.Current.DisplayAlert("Category Error", ex.Message, "OK");
             }
         }
         else
-            await Shell.Current.DisplayAlert("Transaction ID Error", $"{ID} is not a valid ID", "OK");
+        {
+            string message = $"{ID} is not a valid ID";
+            await logger.LogError(message);
+            await Shell.Current.DisplayAlert("Transaction ID Error", message, "OK");
+        }
     }
 
     /// <summary>
@@ -134,6 +145,7 @@ public partial class EditTransactionViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
         }
     }
@@ -153,6 +165,7 @@ public partial class EditTransactionViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
         }
     }
@@ -288,14 +301,17 @@ public partial class EditTransactionViewModel : ObservableObject
         }
         catch (SQLiteException ex)
         {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
-        catch (TransactionNotFoundException)
+        catch (TransactionNotFoundException ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
         }
         catch (Exception ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
 
@@ -310,49 +326,53 @@ public partial class EditTransactionViewModel : ObservableObject
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete this transaction?", "Yes", "No");
 
-        if (flag)
+        if (!flag)
+            return;
+
+        try
         {
-            try
+            // remove Transaction and update corresponding Account balance
+            await transactionService.RemoveTransaction(Transaction.TransactionID);
+            decimal amount = (Transaction.CategoryID == Constants.INCOME_ID) ? -Transaction.Amount : Transaction.Amount;
+            await accountService.UpdateBalance(Transaction.AccountID, amount);
+
+            // update TransactionsPage Transactions
+            var args = new TransactionEventArgs(Transaction, TransactionEventArgs.CRUD.Delete);
+            TransactionsPage.TransactionsChanged?.Invoke(this, args);
+
+            if (Transaction.CategoryID == Constants.TRANSFER_ID)
             {
+                // get other Transaction
+                int transID = Transaction.TransactionID;
+                int otherTransID = (Transaction.SubcategoryID == Constants.DEBIT_ID) ? transID + 1 : transID - 1;
+                Transaction otherTrans = await transactionService.GetTransaction(otherTransID);
+
                 // remove Transaction and update corresponding Account balance
-                await transactionService.RemoveTransaction(Transaction.TransactionID);
-                decimal amount = (Transaction.CategoryID == Constants.INCOME_ID) ? -Transaction.Amount : Transaction.Amount;
-                await accountService.UpdateBalance(Transaction.AccountID, amount);
+                await transactionService.RemoveTransaction(otherTransID);
+                await accountService.UpdateBalance(otherTrans.AccountID, -amount);
 
                 // update TransactionsPage Transactions
-                var args = new TransactionEventArgs(Transaction, TransactionEventArgs.CRUD.Delete);
+                args.Transaction = otherTrans;
                 TransactionsPage.TransactionsChanged?.Invoke(this, args);
-
-                if (Transaction.CategoryID == Constants.TRANSFER_ID)
-                {
-                    // get other Transaction
-                    int transID = Transaction.TransactionID;
-                    int otherTransID = (Transaction.SubcategoryID == Constants.DEBIT_ID) ? transID + 1 : transID - 1;
-                    Transaction otherTrans = await transactionService.GetTransaction(otherTransID);
-
-                    // remove Transaction and update corresponding Account balance
-                    await transactionService.RemoveTransaction(otherTransID);
-                    await accountService.UpdateBalance(otherTrans.AccountID, -amount);
-
-                    // update TransactionsPage Transactions
-                    args.Transaction = otherTrans;
-                    TransactionsPage.TransactionsChanged?.Invoke(this, args);
-                }
             }
-            catch (SQLiteException ex)
-            {
-                await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
-            }
-            catch (TransactionNotFoundException)
-            {
-                await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
-            }
-            catch (Exception ex)
-            {
-                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
-            }
-
-            await Shell.Current.GoToAsync("..");
         }
+        catch (SQLiteException ex)
+        {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+        }
+        catch (TransactionNotFoundException ex)
+        {
+            await logger.LogError(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+
+        await Shell.Current.GoToAsync("..");
+
     }
 }

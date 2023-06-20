@@ -1,5 +1,6 @@
 ﻿using MoMoney.Data;
 using MoMoney.Models;
+using MoMoney.Helpers;
 using MoMoney.Exceptions;
 
 namespace MoMoney.Services;
@@ -8,17 +9,19 @@ namespace MoMoney.Services;
 public class TransactionService : ITransactionService
 {
     readonly MoMoneydb momoney;
+    readonly ILoggerService<TransactionService> logger;
 
-    public TransactionService(MoMoneydb _momoney)
+    public TransactionService(MoMoneydb _momoney, ILoggerService<TransactionService> _logger)
     {
         momoney = _momoney;
+        logger = _logger;
     }
 
     public async Task<Transaction> AddTransaction(DateTime date, int accountID, decimal amount, int categoryID,
         int subcategoryID, string payee, int? transferID)
     {
         await momoney.Init();
-
+        
         ValidateTransaction(date, accountID, amount, categoryID, subcategoryID, payee, transferID);
 
         var transaction = new Transaction
@@ -33,6 +36,7 @@ public class TransactionService : ITransactionService
         };
 
         await momoney.db.InsertAsync(transaction);
+        await logger.LogInfo($"Added Transaction #{transaction.TransactionID} to db.");
         return transaction;
     }
 
@@ -40,6 +44,7 @@ public class TransactionService : ITransactionService
     {
         await momoney.Init();
         await momoney.db.InsertAllAsync(transactions);
+        await logger.LogInfo($"Added {transactions.Count} Transactions to db.");
     }
 
     public async Task UpdateTransaction(Transaction updatedTransaction)
@@ -49,12 +54,14 @@ public class TransactionService : ITransactionService
                             updatedTransaction.CategoryID, updatedTransaction.SubcategoryID,
                             updatedTransaction.Payee.Trim(), updatedTransaction.TransferID);
         await momoney.db.UpdateAsync(updatedTransaction);
+        await logger.LogInfo($"Updated Transaction #{updatedTransaction.TransactionID} in db.");
     }
 
     public async Task RemoveTransaction(int ID)
     {
         await momoney.Init();
         await momoney.db.DeleteAsync<Transaction>(ID);
+        await logger.LogInfo($"Removed Transaction #{ID} from db.");
     }
 
     public async Task RemoveAllTransactions()
@@ -63,6 +70,7 @@ public class TransactionService : ITransactionService
         await momoney.db.DeleteAllAsync<Transaction>();
         await momoney.db.DropTableAsync<Transaction>();
         await momoney.db.CreateTableAsync<Transaction>();
+        await logger.LogInfo($"Removed all Transactions from db.");
     }
 
     public async Task<Transaction> GetTransaction(int ID)
@@ -78,6 +86,21 @@ public class TransactionService : ITransactionService
     {
         await momoney.Init();
         return await momoney.db.Table<Transaction>().OrderBy(t => t.Date).ToListAsync();
+    }
+
+    public async Task<List<Transaction>> GetFilteredTransactions(Account account, Category category, Category subcategory, string payee)
+    {
+        await momoney.Init();
+        IEnumerable<Transaction> transactions = await momoney.db.Table<Transaction>().ToListAsync();
+        if (account != null)
+            transactions = transactions.Where(t => t.AccountID == account.AccountID);
+        if (category != null)
+            transactions = transactions.Where(t => t.CategoryID == category.CategoryID);
+        if (subcategory != null)
+            transactions = transactions.Where(t => t.SubcategoryID == subcategory.CategoryID);
+        if (!string.IsNullOrEmpty(payee))
+            transactions = transactions.Where(t => t.Payee == payee);
+        return transactions.ToList();
     }
 
     public async Task<IEnumerable<string>> GetPayeesFromTransactions()
@@ -106,6 +129,12 @@ public class TransactionService : ITransactionService
     {
         await momoney.Init();
         return await momoney.db.Table<Transaction>().FirstOrDefaultAsync();
+    }
+
+    public async Task<int> GetTransactionCount()
+    {
+        await momoney.Init();
+        return await momoney.db.Table<Transaction>().CountAsync();
     }
 
     /// <summary>

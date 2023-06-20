@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Models;
 using MoMoney.Services;
 using MoMoney.Exceptions;
+using MoMoney.Helpers;
 
 namespace MoMoney.ViewModels.Stats;
 
@@ -10,6 +11,7 @@ public partial class InsightsViewModel : ObservableObject
 {
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
+    readonly ILoggerService<InsightsViewModel> logger;
 
     [ObservableProperty]
     public int selectedYear;
@@ -39,10 +41,11 @@ public partial class InsightsViewModel : ObservableObject
     [ObservableProperty]
     public decimal topExpenseCategoryAmount = 0;
 
-    public InsightsViewModel(ITransactionService _transactionService, ICategoryService _categoryService)
+    public InsightsViewModel(ITransactionService _transactionService, ICategoryService _categoryService, ILoggerService<InsightsViewModel> _logger)
     {
         transactionService = _transactionService;
         categoryService = _categoryService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -184,6 +187,7 @@ public partial class InsightsViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
+            await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
         }
     }
@@ -195,7 +199,7 @@ public partial class InsightsViewModel : ObservableObject
     /// <returns></returns>
     void GetTotals(IEnumerable<Transaction> transactions)
     {
-        if (Constants.ShowValue)
+        if (Utilities.ShowValue)
         {
             TotalIncome = transactions.Where(t => t.CategoryID == Constants.INCOME_ID).Sum(t => t.Amount);
             TotalExpense = Math.Abs(transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID).Sum(t => t.Amount));

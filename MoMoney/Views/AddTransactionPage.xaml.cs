@@ -72,16 +72,16 @@ public partial class AddTransactionPage : ContentView
             if (btn == button)
             {
                 if (Application.Current.Resources.TryGetValue("Green", out var green))
-                    btn.BackgroundColor = (Color)green;
+                    btn.Background = (Color)green;
                 else
-                    btn.BackgroundColor = Color.FromArgb("#42ba96");
+                    btn.Background = Color.FromArgb("#42ba96");
             }    
             else
             {
                 if (Application.Current.Resources.TryGetValue("Gray900", out var gray))
-                    btn.BackgroundColor = (Color)gray;
+                    btn.Background = (Color)gray;
                 else
-                    btn.BackgroundColor = Color.FromArgb("#212121");
+                    btn.Background = Color.FromArgb("#212121");
             }
         }
     }

@@ -10,10 +10,12 @@ namespace MoMoney.Converters;
 class IdToCategoryConverter : IValueConverter
 {
     readonly ICategoryService categoryService;
+    readonly ILoggerService<IdToCategoryConverter> logger;
 
     public IdToCategoryConverter()
     {
         categoryService = MauiApplication.Current.Services.GetService<ICategoryService>();
+        logger = MauiApplication.Current.Services.GetService<ILoggerService<IdToCategoryConverter>>();
     }
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -34,7 +36,11 @@ class IdToCategoryConverter : IValueConverter
                     var cat = task.Result;
                     return cat.CategoryName;
                 }
-                catch (CategoryNotFoundException) { return ""; }
+                catch (CategoryNotFoundException ex)
+                {
+                    logger.LogError(ex.Message, ex.GetType().Name);
+                    return "";
+                }
             }
         }
 
