@@ -6,6 +6,8 @@
 * Imports/exports now deal with CSVs properly
 * Added Log exporting
 * Added timers to CRUD logs
+* Added version number to SettingsPage
+* Removed unnecessary ObervableObject inheritances
 
 # MoMoney v1.1.1
 

@@ -1,10 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Views.Stats;
 
 namespace MoMoney.ViewModels;
 
-public partial class StatsViewModel : ObservableObject
+public partial class StatsViewModel
 {
     /// <summary>
     /// Goes to AccountSummaryPage.xaml.

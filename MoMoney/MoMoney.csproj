@@ -32,13 +32,14 @@
 	  <AndroidSigningKeyPass>key-momoney</AndroidSigningKeyPass>
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
 	  <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
-	  <ApplicationDisplayVersion>1.1.1</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>1.1.2</ApplicationDisplayVersion>
+	  <RunAOTCompilation>True</RunAOTCompilation>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android33.0|AnyCPU'">
 	  <AndroidSigningStorePass></AndroidSigningStorePass>
 	  <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
-	  <ApplicationDisplayVersion>1.1.1</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>1.1.2</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
