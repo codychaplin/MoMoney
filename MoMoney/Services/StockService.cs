@@ -2,6 +2,7 @@
 using MoMoney.Models;
 using MoMoney.Exceptions;
 using Android.Webkit;
+using System.Diagnostics;
 
 namespace MoMoney.Services;
 
@@ -28,6 +29,8 @@ public class StockService : IStockService
 
     public async Task AddStock(string symbol, int quantity, decimal cost, decimal marketprice, decimal bookvalue)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         ValidateStock(symbol, quantity, cost, marketprice, bookvalue);
 
@@ -46,11 +49,15 @@ public class StockService : IStockService
 
         await momoney.db.InsertAsync(stock);
         Stocks.Add(stock.Symbol, stock);
-        await logger.LogInfo($"Added Stock '{stock.Symbol}' to db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Added Stock '{stock.Symbol}' to db.");
     }
 
     public async Task AddStocks(List<Stock> stocks)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         var dbStocks = await momoney.db.Table<Stock>().ToListAsync();
 
@@ -64,45 +71,62 @@ public class StockService : IStockService
         foreach (var stk in stocks)
             Stocks.Add(stk.Symbol, stk);
 
-        await logger.LogInfo($"Added {stocks.Count} Stocks to db.");
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Added {stocks.Count} Stocks to db.");
     }
 
     public async Task UpdateStock(Stock updatedStock)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         ValidateStock(updatedStock.Symbol, updatedStock.Quantity, updatedStock.Cost, updatedStock.MarketPrice, updatedStock.BookValue);
         await momoney.db.UpdateAsync(updatedStock);
         Stocks[updatedStock.Symbol] = updatedStock;
-        await logger.LogInfo($"Updated Stock '{updatedStock.Symbol}' in db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Updated Stock '{updatedStock.Symbol}' in db.");
     }
 
     public async Task UpdateStock(Stock updatedStock, Stock oldStock)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         ValidateStock(updatedStock.Symbol, updatedStock.Quantity, updatedStock.Cost, updatedStock.MarketPrice, updatedStock.BookValue);
         await momoney.db.DeleteAsync(oldStock);
         await momoney.db.InsertAsync(updatedStock);
         Stocks.Remove(oldStock.Symbol);
         Stocks[updatedStock.Symbol] = updatedStock;
-        await logger.LogInfo($"Updated Stock '{updatedStock.Symbol}' in db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Updated Stock '{updatedStock.Symbol}' in db.");
     }
 
     public async Task RemoveStock(string symbol)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         await momoney.db.DeleteAsync<Stock>(symbol);
         Stocks.Remove(symbol);
-        await logger.LogInfo($"Removed Stock '{symbol}' from db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Removed Stock '{symbol}' from db.");
     }
 
     public async Task RemoveStocks()
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         await momoney.db.DeleteAllAsync<Stock>();
         await momoney.db.DropTableAsync<Stock>();
         await momoney.db.CreateTableAsync<Stock>();
         Stocks.Clear();
-        await logger.LogInfo($"Removed all Stocks from db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Removed all Stocks from db.");
     }
 
     public async Task<Stock> GetStock(string symbol)

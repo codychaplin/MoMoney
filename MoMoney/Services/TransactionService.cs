@@ -2,6 +2,7 @@
 using MoMoney.Models;
 using MoMoney.Helpers;
 using MoMoney.Exceptions;
+using System.Diagnostics;
 
 namespace MoMoney.Services;
 
@@ -20,6 +21,8 @@ public class TransactionService : ITransactionService
     public async Task<Transaction> AddTransaction(DateTime date, int accountID, decimal amount, int categoryID,
         int subcategoryID, string payee, int? transferID)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await momoney.Init();
         
         ValidateTransaction(date, accountID, amount, categoryID, subcategoryID, payee, transferID);
@@ -36,41 +39,59 @@ public class TransactionService : ITransactionService
         };
 
         await momoney.db.InsertAsync(transaction);
-        await logger.LogInfo($"Added Transaction #{transaction.TransactionID} to db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Added Transaction #{transaction.TransactionID} to db.");
         return transaction;
     }
 
     public async Task AddTransactions(List<Transaction> transactions)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await momoney.Init();
         await momoney.db.InsertAllAsync(transactions);
-        await logger.LogInfo($"Added {transactions.Count} Transactions to db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Added {transactions.Count} Transactions to db.");
     }
 
     public async Task UpdateTransaction(Transaction updatedTransaction)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await momoney.Init();
         ValidateTransaction(updatedTransaction.Date, updatedTransaction.AccountID, updatedTransaction.Amount,
                             updatedTransaction.CategoryID, updatedTransaction.SubcategoryID,
                             updatedTransaction.Payee.Trim(), updatedTransaction.TransferID);
         await momoney.db.UpdateAsync(updatedTransaction);
-        await logger.LogInfo($"Updated Transaction #{updatedTransaction.TransactionID} in db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Updated Transaction #{updatedTransaction.TransactionID} in db.");
     }
 
     public async Task RemoveTransaction(int ID)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await momoney.Init();
         await momoney.db.DeleteAsync<Transaction>(ID);
-        await logger.LogInfo($"Removed Transaction #{ID} from db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Removed Transaction #{ID} from db.");
     }
 
     public async Task RemoveAllTransactions()
     {
+        Stopwatch sw = Stopwatch.StartNew();
+        
         await momoney.Init();
         await momoney.db.DeleteAllAsync<Transaction>();
         await momoney.db.DropTableAsync<Transaction>();
         await momoney.db.CreateTableAsync<Transaction>();
-        await logger.LogInfo($"Removed all Transactions from db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Removed all Transactions from db.");
     }
 
     public async Task<Transaction> GetTransaction(int ID)

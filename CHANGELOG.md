@@ -5,6 +5,7 @@
 * Added confirmation before replacing transactions in BulkEditingPage
 * Imports/exports now deal with CSVs properly
 * Added Log exporting
+* Added timers to CRUD logs
 
 # MoMoney v1.1.1
 
