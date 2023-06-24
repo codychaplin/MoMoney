@@ -85,7 +85,7 @@ public class TransactionService : ITransactionService
     public async Task<IEnumerable<Transaction>> GetTransactions()
     {
         await momoney.Init();
-        return await momoney.db.Table<Transaction>().OrderBy(t => t.Date).ToListAsync();
+        return await momoney.db.Table<Transaction>().OrderBy(t => t.Date).ThenBy(t => t.TransactionID).ToListAsync();
     }
 
     public async Task<List<Transaction>> GetFilteredTransactions(Account account, Category category, Category subcategory, string payee)

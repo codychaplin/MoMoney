@@ -1,3 +1,11 @@
+# MoMoney v1.1.2
+
+### Changes
+
+* Added confirmation before replacing transactions in BulkEditingPage
+* Imports/exports now deal with CSVs properly
+* Added Log exporting
+
 # MoMoney v1.1.1
 
 ### Fixes
