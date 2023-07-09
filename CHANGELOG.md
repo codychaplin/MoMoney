@@ -1,5 +1,9 @@
 # MoMoney v1.1.2
 
+### Fixes
+
+* Fixed updating of data on BreakdownPage when month is empty
+
 ### Changes
 
 * Added confirmation before replacing transactions in BulkEditingPage
@@ -8,6 +12,7 @@
 * Added timers to CRUD logs
 * Added version number to SettingsPage
 * Removed unnecessary ObervableObject inheritances
+* Added year view to BreakdownPage
 
 # MoMoney v1.1.1
 
