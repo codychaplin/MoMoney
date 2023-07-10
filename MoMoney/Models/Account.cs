@@ -1,14 +1,20 @@
 ﻿using SQLite;
+using CsvHelper.Configuration.Attributes;
 
 namespace MoMoney.Models;
 public class Account
 {
-    [PrimaryKey, AutoIncrement]
+    [PrimaryKey, AutoIncrement, CsvHelper.Configuration.Attributes.Ignore]
     public int AccountID { get; set; }
+    [Index(0)]
     public string AccountName { get; set; }
+    [Index(1)]
     public string AccountType { get; set; }
+    [Index(2)]
     public decimal StartingBalance { get; set; }
+    [Index(2)]
     public decimal CurrentBalance { get; set; }
+    [Index(3)]
     public bool Enabled { get; set; }
 
     public Account() { }
@@ -34,8 +40,7 @@ public class Account
     }
 }
 
-// account type 
-public enum AccountType
+public enum AccountType // account types
 {
     Checkings,
     Savings,

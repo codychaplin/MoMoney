@@ -38,6 +38,9 @@
             <!-- admin -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Admin" />
             <components:AlignedButton Text="Data" ShowArrow="True" Command="{Binding GoToAdminCommand}" />
+            
+            <!-- about -->
+            <Label x:Name="lblVersion" Margin="10,20" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
 
         </VerticalStackLayout>
     </ScrollView>

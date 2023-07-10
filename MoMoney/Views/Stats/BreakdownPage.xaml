@@ -12,11 +12,15 @@
              xmlns:data="clr-namespace:Syncfusion.Maui.DataSource;assembly=Syncfusion.Maui.DataSource"
              NavigationPage.HasNavigationBar="False"
              Title="Breakdown">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="{Binding Type}" Command="{Binding ChangeTypeCommand}" />
+    </ContentPage.ToolbarItems>
 
     <ContentPage.Resources>
 
         <!-- converter -->
         <converters:ShowValueConverter x:Key="ShowValue" />
+        <converters:DateConverter x:Key="DateConverter" />
 
         <!-- SfListView Data Source -->
         <data:DataSource x:Key="DataSource">
@@ -68,15 +72,21 @@
             </Grid.Resources>
             <ImageButton Source="left_arrow.svg"
                          HorizontalOptions="Start"
-                         Command="{Binding DecrementMonthCommand}" />
-            <Label Text="{Binding SelectedMonth, StringFormat='{0:MMM yyyy}'}"
-                   FontAttributes="Bold"
+                         Command="{Binding DecrementCommand}" />
+            <Label FontAttributes="Bold"
                    FontSize="20"
                    VerticalOptions="Center"
-                   HorizontalOptions="Center" />
+                   HorizontalOptions="Center">
+                <Label.Text>
+                    <MultiBinding Converter="{StaticResource DateConverter}">
+                        <Binding Path="SelectedTime" />
+                        <Binding Path="Type" />
+                    </MultiBinding>
+                </Label.Text>
+            </Label>
             <ImageButton Source="right_arrow.svg"
                          HorizontalOptions="End"
-                         Command="{Binding IncrementMonthCommand}" />
+                         Command="{Binding IncrementCommand}" />
         </Grid>
 
         <tabView:SfTabView x:Name="sfTabView"

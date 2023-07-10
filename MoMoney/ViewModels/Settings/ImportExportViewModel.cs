@@ -1,15 +1,19 @@
-﻿using SQLite;
+﻿using System.Globalization;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
+using SQLite;
+using CsvHelper;
+using CsvHelper.Configuration;
+using CsvHelper.TypeConversion;
 using MoMoney.Views;
 using MoMoney.Models;
+using MoMoney.Helpers;
 using MoMoney.Services;
 using MoMoney.Exceptions;
-using MoMoney.Helpers;
+using MoMoney.Converters;
 
 namespace MoMoney.ViewModels.Settings;
 
-public partial class ImportExportViewModel : ObservableObject
+public partial class ImportExportViewModel
 {
     readonly IStockService stockService;
     readonly IAccountService accountService;
@@ -35,78 +39,48 @@ public partial class ImportExportViewModel : ObservableObject
     {
         try
         {
-            var options = new PickOptions { PickerTitle = "Select a .CSV file" };
-            var result = await FilePicker.Default.PickAsync(options);
+            var result = await SelectFile();
 
-            if (result != null)
+            List<Account> accounts = new();
+            int i = 1;
+
+            // read CSV and add each element to above list
+            try
             {
-                if (result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+                using var sr = new StreamReader(result.FullPath);
+                using var csv = new CsvReader(sr, config);
+                await foreach (var account in csv.GetRecordsAsync<Account>())
                 {
-                    List<Account> accounts = new();
-
-                    using var sr = new StreamReader(result.FullPath);
-                    try
-                    {
-                        while (sr.Peek() != -1)
-                        {
-                            // format line
-                            string row = sr.ReadLine();
-                            string[] accountInfo = row.Split(',');
-
-                            // split line into Account parameters and create new account
-                            string name = accountInfo[0];
-                            if (string.IsNullOrEmpty(name))
-                                throw new InvalidAccountException("Account name cannot be blank");
-
-                            if (!Enum.TryParse(typeof(AccountType), accountInfo[1], true, out var type))
-                                throw new InvalidAccountException("'" + accountInfo[1] + "' is not a valid account type");
-
-                            if (!decimal.TryParse(accountInfo[2], out decimal startingBalance))
-                                throw new InvalidAccountException("'" + accountInfo[2] + "' is not a number");
-
-                            if (!bool.TryParse(accountInfo[3], out bool enabled))
-                                throw new InvalidAccountException("'" + accountInfo[2] + "' is not a number");
-
-                            // if valid, create new Account object and add to accounts
-                            Account account = new()
-                            {
-                                AccountName = name,
-                                AccountType = type.ToString(),
-                                StartingBalance = startingBalance,
-                                CurrentBalance = startingBalance,
-                                Enabled = enabled
-                            };
-                            accounts.Add(account);
-                        }
-
-                        await accountService.AddAccounts(accounts);
-                        AddTransactionPage.UpdatePage?.Invoke(null, new EventArgs()); // update accounts on AddTransactionPage
-                    }
-                    catch (SQLiteException ex)
-                    {
-                        await logger.LogCritical(ex.Message, ex.GetType().Name);
-                        await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
-                    }
-                    catch (InvalidAccountException ex)
-                    {
-                        await logger.LogWarning(ex.Message, ex.GetType().Name);
-                        await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
-                    }
-                    catch (DuplicateAccountException ex)
-                    {
-                        await logger.LogError(ex.Message, ex.GetType().Name);
-                        await Shell.Current.DisplayAlert("Import Aborted", ex.Message, "OK");
-                    }
-                    finally
-                    {
-                        sr.Close(); // close stream reader regardless
-                    }
-                }
-                else
-                {
-                    throw new FormatException("Invalid file type. Must be a CSV");
+                    accounts.Add(account);
+                    i++;
                 }
             }
+            catch (TypeConverterException ex)
+            {
+                string message = $"Account {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
+                throw new InvalidAccountException(message);
+            }
+
+            // add accounts to db and update accounts on AddTransactionPage
+            await accountService.AddAccounts(accounts);
+            AddTransactionPage.UpdatePage?.Invoke(null, new EventArgs());
+            await logger.LogInfo($"Imported {accounts.Count} accounts from '{result.FileName}'.");
+        }
+        catch (SQLiteException ex)
+        {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+        }
+        catch (InvalidAccountException ex)
+        {
+            await logger.LogWarning(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Warning", ex.Message, "OK");
+        }
+        catch (DuplicateAccountException ex)
+        {
+            await logger.LogError(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Duplicate Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
@@ -123,74 +97,55 @@ public partial class ImportExportViewModel : ObservableObject
     {
         try
         {
-            var options = new PickOptions { PickerTitle = "Select a .CSV file" };
-            var result = await FilePicker.Default.PickAsync(options);
+            var result = await SelectFile();
 
-            if (result != null)
+            List<Category> categories = new();
+            int i = 1;
+
+            // read CSV and add each element to above list
+            try
             {
-                if (result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+                using var sr = new StreamReader(result.FullPath);
+                using var csv = new CsvReader(sr, config);
+                await foreach (var category in csv.GetRecordsAsync<Category>())
                 {
-                    List<Category> categories = new();
-
-                    using var sr = new StreamReader(result.FullPath);
-                    try
+                    // check if parent category exists
+                    string parent = category.ParentName;
+                    if (!string.IsNullOrEmpty(parent))
                     {
-                        while (sr.Peek() != -1)
-                        {
-                            // format line
-                            string row = sr.ReadLine();
-                            string[] categoryInfo = row.Split(',');
-
-                            // split line into Category parameters and create new Category
-                            string name = categoryInfo[1];
-                            if (string.IsNullOrEmpty(name))
-                                throw new InvalidCategoryException("Category name cannot be blank");
-
-                            string parent = categoryInfo[0];
-                            if (!string.IsNullOrEmpty(parent))
-                            {
-                                try
-                                {
-                                    // check if parent exists in db
-                                    var parentCat = await categoryService.GetParentCategory(parent);
-                                }
-                                catch (CategoryNotFoundException)
-                                {
-                                    // if doesn't exist in db, check if exists in categories list
-                                    if (!categories.Select(c => c.CategoryName).Contains(parent))
-                                        throw new InvalidCategoryException("Parent Category does not exist");
-                                }
-                            }
-
-                            Category category = new()
-                            {
-                                CategoryName = name,
-                                ParentName = parent
-                            };
-
-                            categories.Add(category);
-                        }
-
-                        await categoryService.AddCategories(categories);
+                        var parentCat = await categoryService.GetParentCategory(parent);
+                        if (!categories.Select(c => c.CategoryName).Contains(parent))
+                            throw new InvalidCategoryException($"'{parent}' is not an existing parent category.");
                     }
-                    catch (InvalidCategoryException ex)
-                    {
-                        await logger.LogWarning(ex.Message, ex.GetType().Name);
-                        await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
-                    }
-                    catch (DuplicateCategoryException ex)
-                    {
-                        await logger.LogError(ex.Message, ex.GetType().Name);
-                        await Shell.Current.DisplayAlert("Import Aborted", ex.Message, "OK");
-                    }
-                    finally
-                    {
-                        sr.Close(); // close stream reader regardless
-                    }
+
+                    categories.Add(category);
+                    i++;
                 }
-                else
-                    throw new FormatException("Invalid file type. Must be a CSV");
             }
+            catch (TypeConverterException ex)
+            {
+                string message = $"Category {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
+                throw new InvalidCategoryException(message);
+            }
+
+            await categoryService.AddCategories(categories);
+            await logger.LogInfo($"Imported {categories.Count} categories from '{result.FileName}'.");
+        }
+        catch (SQLiteException ex)
+        {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+        }
+        catch (InvalidCategoryException ex)
+        {
+            await logger.LogWarning(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Warning", ex.Message, "OK");
+        }
+        catch (DuplicateCategoryException ex)
+        {
+            await logger.LogError(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Duplicate Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
@@ -207,114 +162,54 @@ public partial class ImportExportViewModel : ObservableObject
     {
         try
         {
-            var options = new PickOptions { PickerTitle = "Select a .CSV file" };
-            var result = await FilePicker.Default.PickAsync(options);
+            var result = await SelectFile();
 
-            if (result != null)
+            // initial list and counter
+            List<Transaction> transactions = new();
+            int i = 1;
+
+            // read CSV and add each element to above list
+            try
             {
-                if (result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+                using var sr = new StreamReader(result.FullPath);
+                using var csv = new CsvReader(sr, config);
+                TransactionImportConverter.accounts = await accountService.GetAccountsAsNameDict();
+                TransactionImportConverter.categories = await categoryService.GetCategoriesAsNameDict();
+                csv.Context.TypeConverterCache.AddConverter<Transaction>(new TransactionImportConverter());
+                csv.Context.RegisterClassMap<TransactionImportMap>();
+                await foreach (var transaction in csv.GetRecordsAsync<Transaction>())
                 {
-                    List<Transaction> transactions = new();
-                    var accountsDict = await accountService.GetAccountsAsNameDict();
-                    var categoriesDict = await categoryService.GetCategoriesAsNameDict();
-
-                    using var sr = new StreamReader(result.FullPath);
-                    int i = 1;
-                    try
+                    // transfer Id
+                    if (transaction.SubcategoryID == Constants.CREDIT_ID)
                     {
-                        var file = await sr.ReadToEndAsync();
-                        var rows = file.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
-
-                        foreach (var row in rows)
-                        {
-                            // format line
-                            string[] transactionsInfo = row.Split(',');
-
-                            if (transactionsInfo.Length != 6)
-                                throw new FormatException($"Transaction {i} does not have the correct amount of fields");
-
-                            // split line into Transaction parameters and create new Transaction
-
-                            // date
-                            if (!DateTime.TryParse(transactionsInfo[0], out var date))
-                                throw new InvalidTransactionException($"Transaction {i}: Invalid date");
-
-                            // account
-                            if (!accountsDict.TryGetValue(transactionsInfo[1], out var accountID))
-                                throw new InvalidAccountException($"Transaction {i}: '{transactionsInfo[1]}' is not a valid Account");
-
-                            // amount
-                            if (!decimal.TryParse(transactionsInfo[2], out decimal amount))
-                                throw new InvalidTransactionException($"Transaction {i}: '{transactionsInfo[2]}' is not a valid number");
-
-                            // category
-                            if (!categoriesDict.TryGetValue($"{transactionsInfo[3]},", out var categoryID))
-                                throw new InvalidCategoryException($"Transaction {i}: '{transactionsInfo[3]}' is not a valid Category");
-
-                            // subcategory
-                            if (!categoriesDict.TryGetValue($"{transactionsInfo[4]},{transactionsInfo[3]}", out var subcategoryID))
-                                throw new InvalidCategoryException($"Transaction {i}: '{transactionsInfo[4]}' is not a valid Category");
-
-                            // payee
-                            string payee = "";
-                            if (categoryID != Constants.TRANSFER_ID && string.IsNullOrEmpty(transactionsInfo[5]))
-                                throw new InvalidTransactionException($"Transaction {i}: Payee cannot be blank");
-                            else
-                                payee = transactionsInfo[5].Trim();
-
-                            // transfer ID
-                            int? transferID;
-                            if (subcategoryID == Constants.CREDIT_ID)
-                            {
-                                transactions[i - 2].TransferID = accountID; // -2 because i started at 1, not 0
-                                transferID = transactions[i - 2].AccountID;
-                            }
-                            else
-                                transferID = null;
-
-                            Transaction transaction = new()
-                            {
-                                Date = date,
-                                AccountID = accountID,
-                                Amount = amount,
-                                CategoryID = categoryID,
-                                SubcategoryID = subcategoryID,
-                                Payee = payee,
-                                TransferID = transferID
-                            };
-
-                            transactions.Add(transaction);
-                            i++;
-                        }
-
-                        await transactionService.AddTransactions(transactions);
-
-                        // update account balances after transactions are successfully added
-                        await CalculateAccountBalances();
+                        transactions[i - 2].TransferID = transaction.AccountID; // -2 because i started at 1, not 0
+                        transaction.TransferID = transactions[i - 2].AccountID;
                     }
-                    catch (CategoryNotFoundException ex)
-                    {
-                        await logger.LogError(ex.Message, ex.GetType().Name);
-                        await Shell.Current.DisplayAlert("Category Not Found Error", $"Transaction {i}: {ex.Message}", "OK");
-                    }
-                    catch (AccountNotFoundException ex)
-                    {
-                        await logger.LogError(ex.Message, ex.GetType().Name);
-                        await Shell.Current.DisplayAlert("Account Not Found Error", $"Transaction {i}: {ex.Message}", "OK");
-                    }
-                    catch (Exception ex)
-                    {
-                        await logger.LogError(ex.Message, ex.GetType().Name);
-                        await Shell.Current.DisplayAlert("Error", $"Transaction {i}: {ex.Message}", "OK");
-                    }
-                    finally
-                    {
-                        sr.Close();
-                    }
+
+                    transactions.Add(transaction);
+                    i++;
                 }
-                else
-                    throw new FormatException("Invalid file type. Must be a CSV");
             }
+            catch (TypeConverterException ex)
+            {
+                string message = $"Transaction {i}: '{ex.Text}' is not a valid value for '{ex.MemberMapData.Member.Name}'";
+                throw new InvalidTransactionException(message);
+            }
+
+            await transactionService.AddTransactions(transactions);
+            await CalculateAccountBalances();
+            await logger.LogInfo($"Imported {transactions.Count} transactions from '{result.FileName}'.");
+        }
+        catch (SQLiteException ex)
+        {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+        }
+        catch (InvalidTransactionException ex)
+        {
+            await logger.LogWarning(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Warning", ex.Message, "OK");
         }
         catch (Exception ex)
         {
@@ -324,93 +219,73 @@ public partial class ImportExportViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Prompts the user to open a CSV file. Valid Accounts are then added to the database.
+    /// Prompts the user to open a CSV file. Valid Stocks are then added to the database.
     /// </summary>
     [RelayCommand]
     async Task ImportStocksCSV()
     {
         try
         {
-            var options = new PickOptions { PickerTitle = "Select a .CSV file" };
-            var result = await FilePicker.Default.PickAsync(options);
+            var result = await SelectFile();
 
-            if (result != null)
+            List<Stock> stocks = new();
+            int i = 1;
+
+            // read CSV and add each element to above list
+            try
             {
-                if (result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+                using var sr = new StreamReader(result.FullPath);
+                using var csv = new CsvReader(sr, config);
+                await foreach (var stock in csv.GetRecordsAsync<Stock>())
                 {
-                    List<Stock> stocks = new();
-
-                    using var sr = new StreamReader(result.FullPath);
-                    try
-                    {
-                        while (sr.Peek() != -1)
-                        {
-                            // format line
-                            string row = sr.ReadLine();
-                            string[] stockInfo = row.Split(',');
-
-                            // split line into Account parameters and create new account
-                            string symbol = stockInfo[0];
-                            if (string.IsNullOrEmpty(symbol))
-                                throw new InvalidStockException("Stock Symbol cannot be blank");
-
-                            if (!int.TryParse(stockInfo[1], out int quantity))
-                                throw new InvalidStockException("'" + stockInfo[1] + "' is not a number");
-
-                            if (!decimal.TryParse(stockInfo[2], out decimal cost))
-                                throw new InvalidStockException("'" + stockInfo[2] + "' is not a number");
-
-                            if (!decimal.TryParse(stockInfo[3], out decimal marketPrice))
-                                throw new InvalidStockException("'" + stockInfo[3] + "' is not a number");
-
-                            if (!decimal.TryParse(stockInfo[4], out decimal bookValue))
-                                throw new InvalidStockException("'" + stockInfo[4] + "' is not a number");
-
-                            // if valid, create new Account object and add to accounts
-                            Stock stock = new()
-                            {
-                                Symbol = symbol,
-                                Quantity = quantity,
-                                Cost = cost,
-                                MarketPrice = marketPrice,
-                                BookValue = bookValue
-                            };
-                            stocks.Add(stock);
-                        }
-
-                        await stockService.AddStocks(stocks);
-                    }
-                    catch (SQLiteException ex)
-                    {
-                        await logger.LogCritical(ex.Message, ex.GetType().Name);
-                        await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
-                    }
-                    catch (InvalidStockException ex)
-                    {
-                        await logger.LogWarning(ex.Message, ex.GetType().Name);
-                        await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
-                    }
-                    catch (DuplicateStockException ex)
-                    {
-                        await logger.LogError(ex.Message, ex.GetType().Name);
-                        await Shell.Current.DisplayAlert("Import Aborted", ex.Message, "OK");
-                    }
-                    finally
-                    {
-                        sr.Close(); // close stream reader regardless
-                    }
-                }
-                else
-                {
-                    throw new FormatException("Invalid file type. Must be a CSV");
+                    stocks.Add(stock);
+                    i++;
                 }
             }
+            catch (TypeConverterException ex)
+            {
+                string message = $"Stock {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
+                throw new InvalidStockException(message);
+            }
+
+            await stockService.AddStocks(stocks);
+            await logger.LogInfo($"Imported {stocks.Count} stocks from '{result.FileName}'.");
+        }
+        catch (SQLiteException ex)
+        {
+            await logger.LogCritical(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+        }
+        catch (InvalidStockException ex)
+        {
+            await logger.LogWarning(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Warning", ex.Message, "OK");
+        }
+        catch (DuplicateStockException ex)
+        {
+            await logger.LogError(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Duplicate Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+    }
+
+    async Task<FileResult> SelectFile()
+    {
+        var options = new PickOptions { PickerTitle = "Select a .CSV file" };
+        var result = await FilePicker.Default.PickAsync(options);
+
+        if (result == null)
+            throw new ArgumentException("File not valid.");
+
+        if (!result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
+            throw new FormatException("Invalid file type. Must be a CSV");
+
+        return result;
     }
 
     /// <summary>
@@ -420,54 +295,88 @@ public partial class ImportExportViewModel : ObservableObject
     [Obsolete]
     async Task ExportTransactionsCSV()
     {
-        // check if app has storage write permissions
-        var status = await Permissions.RequestAsync<Permissions.StorageWrite>();
-        if (status == PermissionStatus.Granted)
+        try
         {
+            // check if app has storage write permissions
+            var status = await Permissions.RequestAsync<Permissions.StorageWrite>();
+            if (status != PermissionStatus.Granted)
+            {
+                await Shell.Current.DisplayAlert("Permission Error", "Storage permissions are required in order to save to CSV", "OK");
+                return;
+            }
+
             // create file in downloads folder
             string path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
-            string targetFile = Path.Combine(path, "transactions.csv");
-            using FileStream stream = File.OpenWrite(targetFile);
-            using StreamWriter streamWriter = new(stream);
+            string name = "transactions.csv";
+            string targetFile = Path.Combine(path, name);
 
-            try
-            {
-                // get data
-                var transactions = await transactionService.GetTransactions();
-                transactions = transactions.OrderBy(t => t.Date)
-                                           .ThenBy(t => t.TransactionID);
+            // open writer
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+            using var writer = new StreamWriter(targetFile);
+            using var csv = new CsvWriter(writer, config);
 
-                foreach (var trans in transactions)
-                {
-                    // formats transaction parameters in CSV format
-                    var date = trans.Date.ToString("yyyy-MM-dd");
-                    var account = accountService.Accounts[trans.AccountID].AccountName;
-                    var amount = trans.Amount;
-                    var category = categoryService.Categories[trans.CategoryID].CategoryName;
-                    var subcategory = categoryService.Categories[trans.SubcategoryID].CategoryName;
-                    var payee = trans.Payee;
-                    string line = $"{date},{account},{amount},{category},{subcategory},{payee}";
+            // configure converter and map
+            TransactionExportConverter.accounts = accountService.Accounts;
+            TransactionExportConverter.categories = categoryService.Categories;
+            csv.Context.TypeConverterCache.AddConverter<Transaction>(new TransactionExportConverter());
+            csv.Context.RegisterClassMap<TransactionExportMap>();
 
-                    // prints line to file
-                    await streamWriter.WriteLineAsync(line);
-                }
+            // get transactions from db and write to csv
+            var transactions = await transactionService.GetTransactions();
+            csv.WriteRecords(transactions);
 
-                await Shell.Current.DisplayAlert("Success", $"File has been successfully downloaded to:\n'{targetFile}'", "OK");
-            }
-            catch (Exception ex)
-            {
-                await logger.LogError(ex.Message, ex.GetType().Name);
-                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
-            }
-            finally
-            {
-                // close stream regardless
-                streamWriter.Close();
-                stream.Close();
-            }
+            // log/display success message
+            await logger.LogInfo($"Exported {transactions.Count()} transactions to '{name}'.");
+            string message = $"Successfully downloaded file with {transactions.Count()} transactions to:\n'{targetFile}'";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
         }
-        else
-            await Shell.Current.DisplayAlert("Permission Error", "Storage permissions are required in order to save to CSV", "OK");
+        catch (Exception ex)
+        {
+            await logger.LogError(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+    }
+
+    /// <summary>
+    /// Exports Logs from database to a CSV file.
+    /// </summary>
+    [RelayCommand]
+    async Task ExportLogsCSV()
+    {
+        try
+        {
+            // check if app has storage write permissions
+            var status = await Permissions.RequestAsync<Permissions.StorageWrite>();
+            if (status != PermissionStatus.Granted)
+            {
+                await Shell.Current.DisplayAlert("Permission Error", "Storage permissions are required in order to save to CSV", "OK");
+                return;
+            }
+
+            // create file in downloads folder
+            string path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
+            string name = "logs.csv";
+            string targetFile = Path.Combine(path, name);
+
+            // open writer
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+            using var writer = new StreamWriter(targetFile);
+            using var csv = new CsvWriter(writer, config);
+
+            // get transactions from db and write to csv
+            var logs = await logger.GetLogs();
+            csv.WriteRecords(logs);
+
+            // log/display success message
+            await logger.LogInfo($"Exported {logs.Count()} logs to '{name}'.");
+            string message = $"Successfully downloaded file with {logs.Count()} logs to:\n'{targetFile}'";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -481,14 +390,10 @@ public partial class ImportExportViewModel : ObservableObject
             var transactions = await transactionService.GetTransactions();
             var accounts = await accountService.GetAccounts();
             if (!transactions.Any())
-            {
                 return;
-            }
+            
             if (!accounts.Any())
-            {
-                await Shell.Current.DisplayAlert("Attention", "No Accounts in Database", "OK");
                 return;
-            }
 
             // group transactions by account, sum amounts, and convert to dictionary
             var currentBalances = transactions.GroupBy(t => t.AccountID)

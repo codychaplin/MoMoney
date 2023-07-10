@@ -255,6 +255,10 @@ public partial class BulkEditingViewModel : ObservableObject
         if (FoundTransactions == null || !FoundTransactions.Any())
             await Find();
 
+        bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to replace {FoundTransactionCount} transactions", "Yes", "No");
+        if (!flag)
+            return;
+
         int i = 0;
         try
         {

@@ -3,6 +3,7 @@ using MoMoney.Models;
 using MoMoney.Exceptions;
 using Android.Accounts;
 using MoMoney.Helpers;
+using System.Diagnostics;
 
 namespace MoMoney.Services;
 
@@ -29,6 +30,8 @@ public class CategoryService : ICategoryService
 
     public async Task AddCategory(string categoryName, string parentName)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         var res = await momoney.db.Table<Category>().CountAsync(c => c.CategoryName == categoryName && c.ParentName == parentName);
         if (res > 0)
@@ -43,11 +46,15 @@ public class CategoryService : ICategoryService
         // adds Category to db and dictionary
         await momoney.db.InsertAsync(category);
         Categories.Add(category.CategoryID, category);
-        await logger.LogInfo($"Added Category #{category.CategoryID} to db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Added Category #{category.CategoryID} to db.");
     }
 
     public async Task AddCategories(List<Category> categories)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         var dbCategories = await momoney.db.Table<Category>().ToListAsync();
 
@@ -62,33 +69,46 @@ public class CategoryService : ICategoryService
         foreach (var cat in categories)
             Categories.Add(cat.CategoryID, cat);
 
-        await logger.LogInfo($"Added {categories.Count} Categories to db.");
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Added {categories.Count} Categories to db.");
     }
 
     public async Task UpdateCategory(Category updatedCategory)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         await momoney.db.UpdateAsync(updatedCategory);
         Categories[updatedCategory.CategoryID] = updatedCategory;
-        await logger.LogInfo($"Updated Category #{updatedCategory.CategoryID} in db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Updated Category #{updatedCategory.CategoryID} in db.");
     }
 
     public async Task RemoveCategory(int ID)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         await momoney.db.DeleteAsync<Category>(ID);
         Categories.Remove(ID);
-        await logger.LogInfo($"Removed Category #{ID} from db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Removed Category #{ID} from db.");
     }
 
     public async Task RemoveAllCategories()
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         await momoney.db.DeleteAllAsync<Category>();
         await momoney.db.DropTableAsync<Category>();
         await momoney.db.CreateTableAsync<Category>();
         Categories.Clear();
-        await logger.LogInfo($"Removed all Categories from db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Removed all Categories from db.");
     }
 
     public async Task<Category> GetCategory(int ID)

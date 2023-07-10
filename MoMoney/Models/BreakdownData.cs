@@ -1,7 +1,7 @@
 ﻿
 namespace MoMoney.Models;
 
-public class MonthData
+public class BreakdownData
 {
     public string Category { get; set; }
     public decimal Amount { get; set; }

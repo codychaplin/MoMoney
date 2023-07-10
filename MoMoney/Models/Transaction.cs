@@ -1,5 +1,8 @@
 ﻿using SQLite;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MoMoney.Converters;
+using CsvHelper.Configuration;
+using MoMoney.Services;
 
 namespace MoMoney.Models;
 
@@ -78,5 +81,35 @@ public partial class Transaction : ObservableObject
                trans1.SubcategoryID == trans2.SubcategoryID &&
                trans1.Payee == trans2.Payee &&
                trans1.TransferID == trans2.TransferID;
+    }
+}
+
+public class TransactionImportMap : ClassMap<Transaction>
+{
+    public TransactionImportMap()
+    {
+        Map(t => t.TransactionID).Ignore();
+        Map(t => t.Date).Index(0);
+        Map(t => t.AccountID).Index(1).TypeConverter<TransactionImportConverter>();
+        Map(t => t.Amount).Index(2);
+        Map(t => t.CategoryID).Index(3).TypeConverter<TransactionImportConverter>();
+        Map(t => t.SubcategoryID).Index(4).TypeConverter<TransactionImportConverter>();
+        Map(t => t.Payee).Index(5).TypeConverter<TransactionImportConverter>();
+        Map(t => t.TransferID).Ignore();
+    }
+}
+
+public class TransactionExportMap : ClassMap<Transaction>
+{
+    public TransactionExportMap()
+    {
+        Map(t => t.TransactionID).Ignore();
+        Map(t => t.Date).Index(0).TypeConverterOption.Format("yyyy-MM-dd");
+        Map(t => t.AccountID).Index(1).TypeConverter<TransactionExportConverter>();
+        Map(t => t.Amount).Index(2);
+        Map(t => t.CategoryID).Index(3).TypeConverter<TransactionExportConverter>();
+        Map(t => t.SubcategoryID).Index(4).TypeConverter<TransactionExportConverter>();
+        Map(t => t.Payee).Index(5);
+        Map(t => t.TransferID).Ignore();
     }
 }

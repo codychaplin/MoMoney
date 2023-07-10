@@ -19,6 +19,7 @@
             <!-- export -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Export" />
             <components:AlignedButton Text="Export Transactions to CSV" Command="{Binding ExportTransactionsCSVCommand}" />
+            <components:AlignedButton Text="Export Logs to CSV" Command="{Binding ExportLogsCSVCommand}" />
             
         </VerticalStackLayout>  
     </ScrollView>

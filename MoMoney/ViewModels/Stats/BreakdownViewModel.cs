@@ -24,17 +24,22 @@ public partial class BreakdownViewModel : ObservableObject
     public List<Brush> expensePalette = new();
 
     [ObservableProperty]
-    public ObservableCollection<MonthData> incomeData = new();
+    public ObservableCollection<BreakdownData> incomeData = new();
     [ObservableProperty]
-    public ObservableCollection<MonthData> expenseData = new();
+    public ObservableCollection<BreakdownData> expenseData = new();
 
     [ObservableProperty]
-    public DateTime selectedMonth = new();
+    public DateTime selectedTime = new();
+
+    [ObservableProperty]
+    public string type = "Month";
+
     List<DateTime> Months = new();
+    List<DateTime> Years = new();
 
     [ObservableProperty]
     public int index = 0;
-    int monthIndex = 0;
+    int timeIndex = 0;
 
     EventHandler<EventArgs> OnUpdate { get; set; }
 
@@ -44,9 +49,6 @@ public partial class BreakdownViewModel : ObservableObject
         categoryService = _categoryService;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     public async void Init(object s, EventArgs e)
     {
         InitPalettes();
@@ -65,11 +67,15 @@ public partial class BreakdownViewModel : ObservableObject
         {
             Months.Add(start);
             start = start.AddMonths(1);
-        } 
+        }
+
+        // create list of years
+        for (int i = first.Date.Year; i <= DateTime.Today.Year; i++)
+            Years.Add(new DateTime(i, 1, 1));
 
         // set index, set SelectedMonth, subscribe Update to EventHandler, then invoke EventHandler
-        monthIndex = Months.Count - 1;
-        SelectedMonth = Months[monthIndex];
+        timeIndex = Months.Count - 1;
+        SelectedTime = Months[timeIndex];
         OnUpdate += Update;
         OnUpdate?.Invoke(this, new EventArgs());
     }
@@ -99,19 +105,40 @@ public partial class BreakdownViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void DecrementMonth()
+    public void ChangeType()
     {
-        if (monthIndex > 0)
-            SelectedMonth = Months[--monthIndex];
+        if (Type == "Month")
+        {
+            Type = "Year";
+            timeIndex = Years.Count - 1;
+            SelectedTime = Years[timeIndex];
+        }
+        else
+        {
+            Type = "Month";
+            timeIndex = Months.Count - 1;
+            SelectedTime = Months[timeIndex];
+        }
 
         OnUpdate?.Invoke(this, new EventArgs());
     }
 
     [RelayCommand]
-    public void IncrementMonth()
+    public void Decrement()
     {
-        if (monthIndex < Months.Count - 1)
-            SelectedMonth = Months[++monthIndex];
+        var timeType = (Type == "Month") ? Months : Years;
+        if (timeIndex > 0)
+            SelectedTime = timeType[--timeIndex];
+
+        OnUpdate?.Invoke(this, new EventArgs());
+    }
+
+    [RelayCommand]
+    public void Increment()
+    {
+        var timeType = (Type == "Month") ? Months : Years;
+        if (timeIndex < timeType.Count - 1)
+            SelectedTime = timeType[++timeIndex];
 
         OnUpdate?.Invoke(this, new EventArgs());
     }
@@ -119,11 +146,27 @@ public partial class BreakdownViewModel : ObservableObject
     public async void Update(object s, EventArgs e)
     {
         // gets start/end dates then gets transactions between those dates
-        DateTime from = new(SelectedMonth.Year, SelectedMonth.Month, 1);
-        DateTime to = new(SelectedMonth.Year, SelectedMonth.Month, SelectedMonth.AddMonths(1).AddDays(-1).Day);
+        DateTime from;
+        DateTime to;
+        if (Type == "Month")
+        {
+            from = new(SelectedTime.Year, SelectedTime.Month, 1);
+            to = new(SelectedTime.Year, SelectedTime.Month, SelectedTime.AddMonths(1).AddDays(-1).Day);
+        }
+        else
+        {
+            from = new(SelectedTime.Year, 1, 1);
+            to = new(SelectedTime.Year, 12, 31);
+        }
         var transactions = await transactionService.GetTransactionsFromTo(from, to, false);
         if (!transactions.Any())
+        {
+            ExpenseSum = 0;
+            IncomeSum = 0;
+            ExpenseData.Clear();
+            IncomeData.Clear();
             return;
+        }
         
         // calculates sums for tab headers
         // absolute value for expenses just to make it look cleaner
@@ -147,13 +190,13 @@ public partial class BreakdownViewModel : ObservableObject
     {
         // group transactions by Category, sum amounts, get Category name from ID, assign colour from palette
         int i = 0;
-        ExpenseData = new ObservableCollection<MonthData>(
+        ExpenseData = new ObservableCollection<BreakdownData>(
             await Task.Run(() =>
                 transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
                             .GroupBy(t => t.CategoryID)
                             .Select(group => {
                             var amount = Math.Abs(group.Sum(t => t.Amount));
-                                return new MonthData
+                                return new BreakdownData
                                 {
                                     Amount = amount,
                                     ActualAmount = amount,
@@ -176,13 +219,13 @@ public partial class BreakdownViewModel : ObservableObject
     {
         // group transactions by Subcategory, sum amounts, get Subcategory name from ID, assign colour from palette
         int i = 0;
-        IncomeData = new ObservableCollection<MonthData>(
+        IncomeData = new ObservableCollection<BreakdownData>(
             await Task.Run(() =>
                 transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
                             .GroupBy(t => t.SubcategoryID)
                             .Select(group => {
                                 var amount = group.Sum(t => t.Amount);
-                                return new MonthData
+                                return new BreakdownData
                                 {
                                     ActualAmount = amount,
                                     Amount = (amount > 0) ? amount : 0,

@@ -1,12 +1,11 @@
 ﻿using SQLite;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Services;
 using MoMoney.Views.Settings;
 
 namespace MoMoney.ViewModels.Settings;
 
-public partial class AdminViewModel : ObservableObject
+public partial class AdminViewModel
 {
     readonly IStockService stockService;
     readonly IAccountService accountService;

@@ -278,6 +278,7 @@ public partial class EditTransactionViewModel : ObservableObject
                 Transaction otherTrans = await transactionService.GetTransaction(otherTransID);
 
                 // update
+                otherTrans.Date = Transaction.Date;
                 otherTrans.AccountID = (int)Transaction.TransferID;
                 otherTrans.TransferID = Transaction.AccountID;
                 otherTrans.Amount = Transaction.Amount * -1;

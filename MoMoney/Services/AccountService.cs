@@ -1,6 +1,7 @@
 ﻿using MoMoney.Data;
 using MoMoney.Models;
 using MoMoney.Exceptions;
+using System.Diagnostics;
 
 namespace MoMoney.Services;
 
@@ -30,6 +31,8 @@ public class AccountService : IAccountService
 
     public async Task AddAccount(string accountName, string accountType, decimal startingBalance)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         var res = await momoney.db.Table<Account>().CountAsync(a => a.AccountName == accountName);
         if (res > 0)
@@ -48,11 +51,15 @@ public class AccountService : IAccountService
         // adds Account to db and dictionary
         await momoney.db.InsertAsync(account);
         Accounts.Add(account.AccountID, account);
-        await logger.LogInfo($"Added Account #{account.AccountID} to db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Added Account #{account.AccountID} to db.");
     }
 
     public async Task AddAccounts(List<Account> accounts)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         var dbAccounts = await momoney.db.Table<Account>().ToListAsync();
 
@@ -66,33 +73,46 @@ public class AccountService : IAccountService
         foreach (var acc in accounts)
             Accounts.Add(acc.AccountID, acc);
 
-        await logger.LogInfo($"Added {accounts.Count} Accounts to db.");
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Added {accounts.Count} Accounts to db.");
     }
 
     public async Task UpdateAccount(Account updatedAccount)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         await momoney.db.UpdateAsync(updatedAccount);
         Accounts[updatedAccount.AccountID] = updatedAccount;
-        await logger.LogInfo($"Updated Account #{updatedAccount.AccountID} in db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Updated Account #{updatedAccount.AccountID} in db.");
     }
 
     public async Task RemoveAccount(int ID)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         await momoney.db.DeleteAsync<Account>(ID);
         Accounts.Remove(ID);
-        await logger.LogInfo($"Removed Account #{ID} from db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Removed Account #{ID} from db.");
     }
 
     public async Task RemoveAllAccounts()
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         await momoney.db.DeleteAllAsync<Account>();
         await momoney.db.DropTableAsync<Account>();
         await momoney.db.CreateTableAsync<Account>();
         Accounts.Clear();
-        await logger.LogInfo($"Removed all Accounts from db.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Removed all Accounts from db.");
     }
 
     public async Task<Account> GetAccount(int ID)
@@ -143,12 +163,16 @@ public class AccountService : IAccountService
 
     public async Task UpdateBalance(int ID, decimal amount)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+
         await Init();
         await momoney.db.QueryAsync<Account>($"UPDATE Account SET CurrentBalance=CurrentBalance + {amount} WHERE AccountID={ID}");
         decimal balanceBefore = Math.Round(Accounts[ID].CurrentBalance, 2);
         Accounts[ID].CurrentBalance += amount;
         decimal balanceAfter = Math.Round(Accounts[ID].CurrentBalance, 2);
-        await logger.LogInfo($"Updated Account #{ID} balance from {balanceBefore} to {balanceAfter}.");
+
+        sw.Stop();
+        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] Updated Account #{ID} balance from {balanceBefore} to {balanceAfter}.");
     }
 
     /// <summary>

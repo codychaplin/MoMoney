@@ -1,11 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Views.Settings;
 using MoMoney.Views.Settings.Edit;
 
 namespace MoMoney.ViewModels;
 
-public partial class SettingsViewModel : ObservableObject
+public partial class SettingsViewModel
 {
     /// <summary>
     /// Goes to AccountsPage.xaml.
