@@ -1,3 +1,14 @@
+# MoMoney v1.1.3
+
+### Fixes
+
+* Fixed alignment in BreakdownPage and LoggingPage
+* Fixed NullReferenceException in TransactionService and updating dates in EditTransactionViewModel
+
+### Changes
+
+* 
+
 # MoMoney v1.1.2
 
 ### Fixes
