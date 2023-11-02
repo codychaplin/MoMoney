@@ -1,9 +1,8 @@
-﻿using MoMoney.Data;
+﻿using System.Diagnostics;
+using MoMoney.Data;
 using MoMoney.Models;
 using MoMoney.Exceptions;
-using Android.Accounts;
 using MoMoney.Helpers;
-using System.Diagnostics;
 
 namespace MoMoney.Services;
 
@@ -140,7 +139,7 @@ public class CategoryService : ICategoryService
             return cat;
     }
 
-    public async Task<Category> GetParentCategory(string name)
+    public async Task<Category> GetParentCategory(string name, bool tryGet = false)
     {
         await Init();
         var cats = Categories.Values.Where(a => a.CategoryName.Equals(name, StringComparison.OrdinalIgnoreCase));
@@ -148,7 +147,7 @@ public class CategoryService : ICategoryService
             return cats.First();
 
         var cat = await momoney.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryName == name && c.ParentName == "");
-        if (cat is null)
+        if (cat is null && !tryGet)
             throw new CategoryNotFoundException($"Could not find Category with name '{name}'.");
         else
             return cat;

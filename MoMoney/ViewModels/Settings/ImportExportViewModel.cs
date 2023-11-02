@@ -114,8 +114,8 @@ public partial class ImportExportViewModel
                     string parent = category.ParentName;
                     if (!string.IsNullOrEmpty(parent))
                     {
-                        var parentCat = await categoryService.GetParentCategory(parent);
-                        if (!categories.Select(c => c.CategoryName).Contains(parent))
+                        var parentCat = await categoryService.GetParentCategory(parent, true);
+                        if (parentCat == null && !categories.Select(c => c.CategoryName).Contains(parent))
                             throw new InvalidCategoryException($"'{parent}' is not an existing parent category.");
                     }
 

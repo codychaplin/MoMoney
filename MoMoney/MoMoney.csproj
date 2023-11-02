@@ -16,7 +16,7 @@
 		<ApplicationIdGuid>060046E2-FDB6-4E63-9250-A1589815AA45</ApplicationIdGuid>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.1.1</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>1.1.3</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">29.0</SupportedOSPlatformVersion>
@@ -32,14 +32,14 @@
 	  <AndroidSigningKeyPass>key-momoney</AndroidSigningKeyPass>
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
 	  <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
-	  <ApplicationDisplayVersion>1.1.2</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>1.1.3</ApplicationDisplayVersion>
 	  <RunAOTCompilation>True</RunAOTCompilation>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android33.0|AnyCPU'">
 	  <AndroidSigningStorePass></AndroidSigningStorePass>
 	  <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
-	  <ApplicationDisplayVersion>1.1.2</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>1.1.3</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

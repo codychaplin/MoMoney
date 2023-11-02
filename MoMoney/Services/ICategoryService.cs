@@ -68,9 +68,10 @@ public interface ICategoryService
     /// Gets Category from the Categories table using name. Only works for parent categories.
     /// </summary>
     /// <param name="name"></param>
+    /// <param name="tryGet"></param>
     /// <returns>Category object</returns>
     /// <exception cref="CategoryNotFoundException"></exception>
-    Task<Category> GetParentCategory(string name);
+    Task<Category> GetParentCategory(string name, bool tryGet = false);
 
     /// <summary>
     /// Gets all Categories from Categories table as a dictionary with Category ID as Key.

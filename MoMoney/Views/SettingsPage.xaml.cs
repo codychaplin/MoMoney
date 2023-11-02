@@ -9,6 +9,7 @@ public partial class SettingsPage : ContentView
     {
         InitializeComponent();
         BindingContext = vm;
+        var vers = AppInfo.Current.VersionString;
         lblVersion.Text = $"MoMoney ({AppInfo.Current.VersionString})";
     }
 
