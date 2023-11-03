@@ -5,6 +5,8 @@
 * Fixed alignment in BreakdownPage and LoggingPage
 * Fixed NullReferenceException in TransactionService and updating dates in EditTransactionViewModel
 * Fixed category importing bug
+* Fixed text clipping on EditTransactionPage
+* Fixed Stock initialization on StockStatsPage
 
 # MoMoney v1.1.2
 

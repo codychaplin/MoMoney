@@ -17,6 +17,6 @@ public partial class StockStatsPage : ContentPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-        vm.cts?.Cancel();
+        vm.cts?.Cancel(); // cancel webscraping, if in progress
     }
 }

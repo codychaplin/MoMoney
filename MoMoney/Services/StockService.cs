@@ -157,7 +157,6 @@ public class StockService : IStockService
     /// <returns>List of Stock objects</returns>
     async Task<Dictionary<string, Stock>> GetStocksAsDict()
     {
-        await momoney.Init();
         var stocks = await momoney.db.Table<Stock>().ToListAsync();
         return stocks.ToDictionary(s => s.Symbol, s => s);
     }

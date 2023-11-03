@@ -27,7 +27,7 @@ Works on Android 10.0 and later.
 * Accounts: `Account Name, Account Type, Starting Balance, Status (Active/Disabled)`
 * NOTE: Account Type is `[Checkings,Savings,Credit,Investments]`
 * Categories: `Parent Category Name, Subcategory Name, Status (Active/Disabled)`
-* Stocks: `Symbol:Exchange Name, Quantity, Cost, Market Price, Book Value`
+* Stocks: `Symbol:Exchange Name, Quantity, Cost, Book Value, Market Price`
 * NOTE: Uses Google Finance's exchange names
 
 ## Technologies Used

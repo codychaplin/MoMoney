@@ -43,7 +43,7 @@ public partial class StockStatsViewModel : ObservableObject
     public async void Init(object s, EventArgs e)
     {
         // populate collection with cached values first
-        var stocks = stockService.Stocks.Values.OrderByDescending(s => s.MarketPrice);
+        var stocks = await stockService.GetStocks();
         if (!stocks.Any())
             return;
 
