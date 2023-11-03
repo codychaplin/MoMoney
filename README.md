@@ -1,4 +1,4 @@
-# MoMoney v1.1.2
+# MoMoney v1.1.3
 ## About
 MoMoney is a personal finance tracker Android app made with .NET MAUI.
 Works on Android 10.0 and later.
@@ -27,7 +27,7 @@ Works on Android 10.0 and later.
 * Accounts: `Account Name, Account Type, Starting Balance, Status (Active/Disabled)`
 * NOTE: Account Type is `[Checkings,Savings,Credit,Investments]`
 * Categories: `Parent Category Name, Subcategory Name, Status (Active/Disabled)`
-* Stocks: `Symbol:Exchange Name, Quantity, Cost, Market Price, Book Value`
+* Stocks: `Symbol:Exchange Name, Quantity, Cost, Book Value, Market Price`
 * NOTE: Uses Google Finance's exchange names
 
 ## Technologies Used

@@ -161,6 +161,12 @@ public class AccountService : IAccountService
         return await momoney.db.Table<Account>().Where(a => a.Enabled).ToListAsync();
     }
 
+    public async Task<int> GetAccountCount()
+    {
+        await momoney.Init();
+        return await momoney.db.Table<Account>().CountAsync();
+    }
+
     public async Task UpdateBalance(int ID, decimal amount)
     {
         Stopwatch sw = Stopwatch.StartNew();

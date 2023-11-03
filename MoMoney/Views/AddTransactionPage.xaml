@@ -11,6 +11,9 @@
     <!-- main page -->
     <ScrollView>
         <VerticalStackLayout>
+            <VerticalStackLayout.Resources>
+                <Style TargetType="{x:Type Frame}" BasedOn="{StaticResource TileFrame}" />
+            </VerticalStackLayout.Resources>
 
             <!-- title -->
             <Grid BackgroundColor="{StaticResource Green}" HeightRequest="55" Padding="10,0">
@@ -45,7 +48,7 @@
             </Frame>
                 
             <!-- Date -->
-            <Frame Style="{StaticResource TileFrame}">
+            <Frame>
                 <Grid ColumnDefinitions="40,*">
                     <Image Source="calendar.svg" Style="{StaticResource imgIcon}" />
                     <DatePicker x:Name="dtpDate" 
@@ -56,7 +59,7 @@
             </Frame>
                 
             <!-- Account -->
-            <Frame Style="{StaticResource TileFrame}">
+            <Frame>
                 <Grid ColumnDefinitions="40,*">
                     <Image Source="credit_card.svg" Style="{StaticResource imgIcon}" />
                     <Picker x:Name="pckAccount"
@@ -71,7 +74,7 @@
             </Frame>
                 
             <!-- Amount -->
-            <Frame Style="{StaticResource TileFrame}">
+            <Frame>
                 <Grid ColumnDefinitions="40,*">
                     <Image Source="dollar_symbol.svg" Style="{StaticResource imgIcon}" />
                     <Entry x:Name="txtAmount"
@@ -84,7 +87,7 @@
             </Frame>
                 
             <!-- Category -->
-            <Frame Style="{StaticResource TileFrame}">
+            <Frame>
                 <Grid ColumnDefinitions="40,*">
                     <Image Source="category.svg" Style="{StaticResource imgIcon}" />
                     <Picker x:Name="pckCategory"
@@ -99,7 +102,7 @@
             </Frame>
                 
             <!-- Subcategory -->
-            <Frame Style="{StaticResource TileFrame}">
+            <Frame>
                 <Grid ColumnDefinitions="40,*">
                     <Image Source="subcategory.svg" Style="{StaticResource imgIcon}" />
                     <Picker x:Name="pckSubcategory"
@@ -114,26 +117,26 @@
             </Frame>
                 
             <!-- Payee -->
-            <Frame x:Name="frPayee" Style="{StaticResource TileFrame}" IsVisible="True">
+            <Frame x:Name="frPayee" IsVisible="True">
                 <Grid ColumnDefinitions="40,*">
                     <Image Source="account.svg" Style="{StaticResource imgIcon}" />
                     <input:SfAutocomplete x:Name="entPayee"
-                                            Grid.Column="1"
-                                            Margin="0,10"
-                                            TextColor="#888"
-                                            BackgroundColor="Transparent"
-                                            Stroke="{StaticResource Gray400}"
-                                            ClearButtonIconColor="{StaticResource Gray400}"
-                                            IsClearButtonVisible="True"
-                                            MaxDropDownHeight = "200"
-                                            Placeholder="Payee"
-                                            TextSearchMode="Contains"
-                                            ItemsSource="{Binding Payees}" />
+                                          Grid.Column="1"
+                                          Margin="0,10"
+                                          TextColor="#888"
+                                          BackgroundColor="Transparent"
+                                          Stroke="{StaticResource Gray400}"
+                                          ClearButtonIconColor="{StaticResource Gray400}"
+                                          IsClearButtonVisible="True"
+                                          MaxDropDownHeight = "200"
+                                          Placeholder="Payee"
+                                          TextSearchMode="Contains"
+                                          ItemsSource="{Binding Payees}" />
                 </Grid>
             </Frame>
                 
             <!-- Transfer Payee Account -->
-            <Frame x:Name="frTransferAccount" Style="{StaticResource TileFrame}" IsVisible="False">
+            <Frame x:Name="frTransferAccount" IsVisible="False">
                 <Grid ColumnDefinitions="40,*">
                     <Image Source="account.svg" Style="{StaticResource imgIcon}" />
                     <Picker x:Name="pckTransferAccount"

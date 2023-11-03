@@ -151,13 +151,18 @@ public class StockService : IStockService
         return await momoney.db.Table<Stock>().ToListAsync();
     }
 
+    public async Task<int> GetStockCount()
+    {
+        await momoney.Init();
+        return await momoney.db.Table<Stock>().CountAsync();
+    }
+
     /// <summary>
     /// Gets all Stocks from Stocks table as a list.
     /// </summary>
     /// <returns>List of Stock objects</returns>
     async Task<Dictionary<string, Stock>> GetStocksAsDict()
     {
-        await momoney.Init();
         var stocks = await momoney.db.Table<Stock>().ToListAsync();
         return stocks.ToDictionary(s => s.Symbol, s => s);
     }

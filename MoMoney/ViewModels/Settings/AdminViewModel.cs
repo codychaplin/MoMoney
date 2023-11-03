@@ -36,7 +36,10 @@ public partial class AdminViewModel
 
         try
         {
+            int count = await transactionService.GetTransactionCount();
             await transactionService.RemoveAllTransactions();
+            string message = count == 1 ? "1 transaction has been deleted." : $"{count} transactions have been deleted.";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
         }
         catch (SQLiteException ex)
         {
@@ -58,7 +61,10 @@ public partial class AdminViewModel
 
         try
         {
+            int count = await accountService.GetAccountCount();
             await accountService.RemoveAllAccounts();
+            string message = count == 1 ? "1 account has been deleted." : $"{count} accounts have been deleted.";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
         }
         catch (SQLiteException ex)
         {
@@ -80,7 +86,10 @@ public partial class AdminViewModel
 
         try
         {
+            int count = await categoryService.GetCategoryCount();
             await categoryService.RemoveAllCategories();
+            string message = count == 1 ? "1 category has been deleted." : $"{count} categories have been deleted.";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
         }
         catch (SQLiteException ex)
         {
@@ -102,7 +111,10 @@ public partial class AdminViewModel
 
         try
         {
+            int count = await stockService.GetStockCount();
             await stockService.RemoveStocks();
+            string message = count == 1 ? "1 stock has been deleted." : $"{count} stocks have been deleted.";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
         }
         catch (SQLiteException ex)
         {
@@ -124,7 +136,10 @@ public partial class AdminViewModel
 
         try
         {
+            int count = await logger.GetLogCount();
             await logger.RemoveLogs();
+            string message = count == 1 ? "1 log has been deleted." : $"{count} logs have been deleted.";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
         }
         catch (SQLiteException ex)
         {
