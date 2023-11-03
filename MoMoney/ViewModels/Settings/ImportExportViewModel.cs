@@ -58,13 +58,14 @@ public partial class ImportExportViewModel
             }
             catch (TypeConverterException ex)
             {
-                string message = $"Account {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
-                throw new InvalidAccountException(message);
+                string errorMessage = $"Account {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
+                throw new InvalidAccountException(errorMessage);
             }
 
             // add accounts to db and update accounts on AddTransactionPage
             await accountService.AddAccounts(accounts);
-            await Shell.Current.DisplayAlert("Success", $"{i} accounts have been added.", "OK");
+            string message = i == 2 ? "1 account has been added." : $"{i - 1} accounts have been added";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
             AddTransactionPage.UpdatePage?.Invoke(null, new EventArgs());
             await logger.LogInfo($"Imported {accounts.Count} accounts from '{result.FileName}'.");
         }
@@ -126,12 +127,13 @@ public partial class ImportExportViewModel
             }
             catch (TypeConverterException ex)
             {
-                string message = $"Category {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
-                throw new InvalidCategoryException(message);
+                string errorMessage = $"Category {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
+                throw new InvalidCategoryException(errorMessage);
             }
 
             await categoryService.AddCategories(categories);
-            await Shell.Current.DisplayAlert("Success", $"{i} categories have been added.", "OK");
+            string message = i == 2 ? "1 category has been added." : $"{i - 1} categories have been added";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
             await logger.LogInfo($"Imported {categories.Count} categories from '{result.FileName}'.");
         }
         catch (SQLiteException ex)
@@ -195,13 +197,14 @@ public partial class ImportExportViewModel
             }
             catch (TypeConverterException ex)
             {
-                string message = $"Transaction {i}: '{ex.Text}' is not a valid value for '{ex.MemberMapData.Member.Name}'";
-                throw new InvalidTransactionException(message);
+                string errorMessage = $"Transaction {i}: '{ex.Text}' is not a valid value for '{ex.MemberMapData.Member.Name}'";
+                throw new InvalidTransactionException(errorMessage);
             }
 
             await transactionService.AddTransactions(transactions);
             await CalculateAccountBalances();
-            await Shell.Current.DisplayAlert("Success", $"{i} transactions have been added.", "OK");
+            string message = i == 2 ? "1 transaction has been added." : $"{i - 1} transactions have been added";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
             await logger.LogInfo($"Imported {transactions.Count} transactions from '{result.FileName}'.");
         }
         catch (SQLiteException ex)
@@ -248,12 +251,13 @@ public partial class ImportExportViewModel
             }
             catch (TypeConverterException ex)
             {
-                string message = $"Stock {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
-                throw new InvalidStockException(message);
+                string errorMessage = $"Stock {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
+                throw new InvalidStockException(errorMessage);
             }
 
             await stockService.AddStocks(stocks);
-            await Shell.Current.DisplayAlert("Success", $"{i} stocks have been added.", "OK");
+            string message = i == 2 ? "1 stock has been added." : $"{i - 1} stocks have been added";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
             await logger.LogInfo($"Imported {stocks.Count} stocks from '{result.FileName}'.");
         }
         catch (SQLiteException ex)
@@ -332,7 +336,7 @@ public partial class ImportExportViewModel
             // log/display success message
             int count = transactions.Count();
             await logger.LogInfo($"Exported {count} transactions to '{name}'.");
-            string message = $"Successfully downloaded file with {count} transactions to:\n'{targetFile}'";
+            string message = $"Successfully downloaded file with {count} " + (count == 1 ? "transaction" : "transactions") + $" to:\n'{targetFile}'";
             await Shell.Current.DisplayAlert("Success", message, "OK");
         }
         catch (Exception ex)
@@ -375,7 +379,7 @@ public partial class ImportExportViewModel
             // log/display success message
             int count = logs.Count();
             await logger.LogInfo($"Exported {count} logs to '{name}'.");
-            string message = $"Successfully downloaded file with {count} logs to:\n'{targetFile}'";
+            string message = $"Successfully downloaded file with {count} " + (count == 1 ? "log" : "logs") + $" to:\n'{targetFile}'";
             await Shell.Current.DisplayAlert("Success", message, "OK");
         }
         catch (Exception ex)

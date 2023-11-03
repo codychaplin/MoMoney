@@ -38,7 +38,8 @@ public partial class AdminViewModel
         {
             int count = await transactionService.GetTransactionCount();
             await transactionService.RemoveAllTransactions();
-            await Shell.Current.DisplayAlert("Success", $"{count} transactions have been deleted.", "OK");
+            string message = count == 1 ? "1 transaction has been deleted." : $"{count} transactions have been deleted.";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
         }
         catch (SQLiteException ex)
         {
@@ -62,7 +63,8 @@ public partial class AdminViewModel
         {
             int count = await accountService.GetAccountCount();
             await accountService.RemoveAllAccounts();
-            await Shell.Current.DisplayAlert("Success", $"{count} accounts have been deleted.", "OK");
+            string message = count == 1 ? "1 account has been deleted." : $"{count} accounts have been deleted.";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
         }
         catch (SQLiteException ex)
         {
@@ -86,7 +88,8 @@ public partial class AdminViewModel
         {
             int count = await categoryService.GetCategoryCount();
             await categoryService.RemoveAllCategories();
-            await Shell.Current.DisplayAlert("Success", $"{count} categories have been deleted.", "OK");
+            string message = count == 1 ? "1 category has been deleted." : $"{count} categories have been deleted.";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
         }
         catch (SQLiteException ex)
         {
@@ -110,7 +113,8 @@ public partial class AdminViewModel
         {
             int count = await stockService.GetStockCount();
             await stockService.RemoveStocks();
-            await Shell.Current.DisplayAlert("Success", $"{count} stocks have been deleted.", "OK");
+            string message = count == 1 ? "1 stock has been deleted." : $"{count} stocks have been deleted.";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
         }
         catch (SQLiteException ex)
         {
@@ -134,7 +138,8 @@ public partial class AdminViewModel
         {
             int count = await logger.GetLogCount();
             await logger.RemoveLogs();
-            await Shell.Current.DisplayAlert("Success", $"{count} logs have been deleted.", "OK");
+            string message = count == 1 ? "1 log has been deleted." : $"{count} logs have been deleted.";
+            await Shell.Current.DisplayAlert("Success", message, "OK");
         }
         catch (SQLiteException ex)
         {
