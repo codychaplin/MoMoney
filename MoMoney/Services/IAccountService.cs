@@ -78,6 +78,12 @@ public interface IAccountService
     Task<IEnumerable<Account>> GetActiveAccounts();
 
     /// <summary>
+    /// Gets total number of Accounts in db.
+    /// </summary>
+    /// <returns>Integer representing number of Accounts</returns>
+    Task<int> GetAccountCount();
+
+    /// <summary>
     /// Updates CurrentBalance of specified Account.
     /// </summary>
     /// <param name="ID"></param>

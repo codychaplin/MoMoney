@@ -108,4 +108,10 @@ public interface ICategoryService
     /// </summary>
     /// <returns>List of Category objects</returns>
     Task<IEnumerable<Category>> GetSubcategories(Category parentCategory);
+
+    /// <summary>
+    /// Gets total number of Categories in db.
+    /// </summary>
+    /// <returns>Integer representing number of Categories</returns>
+    Task<int> GetCategoryCount();
 }

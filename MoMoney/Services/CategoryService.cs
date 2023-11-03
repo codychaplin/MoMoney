@@ -221,6 +221,12 @@ public class CategoryService : ICategoryService
                                .ToListAsync();
     }
 
+    public async Task<int> GetCategoryCount()
+    {
+        await momoney.Init();
+        return await momoney.db.Table<Category>().CountAsync();
+    }
+
     /// <summary>
     /// Gets all Categories from Categories table as a dictionary with Category ID as key.
     /// </summary>

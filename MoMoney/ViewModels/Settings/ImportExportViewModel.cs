@@ -64,6 +64,7 @@ public partial class ImportExportViewModel
 
             // add accounts to db and update accounts on AddTransactionPage
             await accountService.AddAccounts(accounts);
+            await Shell.Current.DisplayAlert("Success", $"{i} accounts have been added.", "OK");
             AddTransactionPage.UpdatePage?.Invoke(null, new EventArgs());
             await logger.LogInfo($"Imported {accounts.Count} accounts from '{result.FileName}'.");
         }
@@ -130,6 +131,7 @@ public partial class ImportExportViewModel
             }
 
             await categoryService.AddCategories(categories);
+            await Shell.Current.DisplayAlert("Success", $"{i} categories have been added.", "OK");
             await logger.LogInfo($"Imported {categories.Count} categories from '{result.FileName}'.");
         }
         catch (SQLiteException ex)
@@ -199,6 +201,7 @@ public partial class ImportExportViewModel
 
             await transactionService.AddTransactions(transactions);
             await CalculateAccountBalances();
+            await Shell.Current.DisplayAlert("Success", $"{i} transactions have been added.", "OK");
             await logger.LogInfo($"Imported {transactions.Count} transactions from '{result.FileName}'.");
         }
         catch (SQLiteException ex)
@@ -250,6 +253,7 @@ public partial class ImportExportViewModel
             }
 
             await stockService.AddStocks(stocks);
+            await Shell.Current.DisplayAlert("Success", $"{i} stocks have been added.", "OK");
             await logger.LogInfo($"Imported {stocks.Count} stocks from '{result.FileName}'.");
         }
         catch (SQLiteException ex)
@@ -326,8 +330,9 @@ public partial class ImportExportViewModel
             csv.WriteRecords(transactions);
 
             // log/display success message
-            await logger.LogInfo($"Exported {transactions.Count()} transactions to '{name}'.");
-            string message = $"Successfully downloaded file with {transactions.Count()} transactions to:\n'{targetFile}'";
+            int count = transactions.Count();
+            await logger.LogInfo($"Exported {count} transactions to '{name}'.");
+            string message = $"Successfully downloaded file with {count} transactions to:\n'{targetFile}'";
             await Shell.Current.DisplayAlert("Success", message, "OK");
         }
         catch (Exception ex)
@@ -368,8 +373,9 @@ public partial class ImportExportViewModel
             csv.WriteRecords(logs);
 
             // log/display success message
-            await logger.LogInfo($"Exported {logs.Count()} logs to '{name}'.");
-            string message = $"Successfully downloaded file with {logs.Count()} logs to:\n'{targetFile}'";
+            int count = logs.Count();
+            await logger.LogInfo($"Exported {count} logs to '{name}'.");
+            string message = $"Successfully downloaded file with {count} logs to:\n'{targetFile}'";
             await Shell.Current.DisplayAlert("Success", message, "OK");
         }
         catch (Exception ex)

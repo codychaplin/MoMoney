@@ -59,4 +59,10 @@ public interface ILoggerService<T>
     /// Removes ALL Logs from Logs table.
     /// </summary>
     Task RemoveLogs();
+
+    /// <summary>
+    /// Gets total number of Logs in db.
+    /// </summary>
+    /// <returns>Integer representing number of Logs</returns>
+    Task<int> GetLogCount();
 }

@@ -151,6 +151,12 @@ public class StockService : IStockService
         return await momoney.db.Table<Stock>().ToListAsync();
     }
 
+    public async Task<int> GetStockCount()
+    {
+        await momoney.Init();
+        return await momoney.db.Table<Stock>().CountAsync();
+    }
+
     /// <summary>
     /// Gets all Stocks from Stocks table as a list.
     /// </summary>

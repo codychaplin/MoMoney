@@ -68,4 +68,10 @@ public class LoggerService<T> : ILoggerService<T>
         await momoney.db.DropTableAsync<Log>();
         await momoney.db.CreateTableAsync<Log>();
     }
+
+    public async Task<int> GetLogCount()
+    {
+        await momoney.Init();
+        return await momoney.db.Table<Log>().CountAsync();
+    }
 }

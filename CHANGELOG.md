@@ -8,6 +8,10 @@
 * Fixed text clipping on EditTransactionPage
 * Fixed Stock initialization on StockStatsPage
 
+### Changes
+
+* Added confirmation and count when importing, exporting, adding, and deleting bulk data
+
 # MoMoney v1.1.2
 
 ### Fixes

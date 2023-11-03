@@ -68,4 +68,10 @@ public interface IStockService
     /// </summary>
     /// <returns>List of Stock objects</returns>
     Task<List<Stock>> GetStocks();
+
+    /// <summary>
+    /// Gets total number of Stocks in db.
+    /// </summary>
+    /// <returns>Integer representing number of Stocks</returns>
+    Task<int> GetStockCount();
 }
