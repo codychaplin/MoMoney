@@ -371,7 +371,7 @@ public partial class TransactionsViewModel : ObservableObject
     /// Loads items from Transactions.
     /// </summary>
     [RelayCommand]
-    async void LoadMoreItems()
+    async Task LoadMoreItems()
     {
         ListView.IsLazyLoading = true;
         await Task.Delay(250);
