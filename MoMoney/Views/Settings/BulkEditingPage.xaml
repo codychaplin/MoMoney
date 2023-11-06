@@ -3,9 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Settings.BulkEditingPage"
              x:DataType="viewmodels:BulkEditingViewModel"
-             xmlns:models="clr-namespace:MoMoney.Models"
-             xmlns:viewmodels="clr-namespace:MoMoney.ViewModels.Settings"
-             xmlns:converters="clr-namespace:MoMoney.Converters"
+             xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+             xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
+             xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
              xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              Title="Bulk Editing">
 

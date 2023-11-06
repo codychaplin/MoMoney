@@ -1,5 +1,5 @@
-using MoMoney.Helpers;
-using MoMoney.ViewModels;
+using MoMoney.Core.Helpers;
+using MoMoney.Core.ViewModels;
 
 namespace MoMoney.Views;
 
@@ -9,7 +9,6 @@ public partial class SettingsPage : ContentView
     {
         InitializeComponent();
         BindingContext = vm;
-        var vers = AppInfo.Current.VersionString;
         lblVersion.Text = $"MoMoney ({AppInfo.Current.VersionString})";
     }
 

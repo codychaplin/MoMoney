@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.StatsPage"
              x:DataType="viewmodel:StatsViewModel"
-             xmlns:models="clr-namespace:MoMoney.Models"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels">
+             xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core">
 
     <ContentView.Resources>
         <Style x:Key="imgTileIcon" TargetType="{x:Type Image}" BasedOn="{StaticResource imgTinted}">

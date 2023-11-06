@@ -1,3 +1,4 @@
+
 namespace MoMoney.Tests
 {
     public class UnitTest1
@@ -5,7 +6,7 @@ namespace MoMoney.Tests
         [Fact]
         public void Test1()
         {
-
+            
         }
     }
 }

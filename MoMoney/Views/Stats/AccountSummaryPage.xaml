@@ -3,9 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Stats.AccountSummaryPage"
              x:DataType="viewmodel:AccountSummaryViewModel"
-             xmlns:models="clr-namespace:MoMoney.Models"
-             xmlns:converters="clr-namespace:MoMoney.Converters"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Stats"
+             xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+             xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
              Title="Account Summary">
 
     <ContentPage.Resources>

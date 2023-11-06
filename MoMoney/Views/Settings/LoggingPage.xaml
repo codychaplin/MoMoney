@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Settings.LoggingPage"
              x:DataType="viewmodel:LoggingViewModel"
-             xmlns:models="clr-namespace:MoMoney.Models"
+             xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
              xmlns:selectors="clr-namespace:MoMoney.Selectors"
-             xmlns:converters="clr-namespace:MoMoney.Converters"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings"
+             xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:sf="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
              Title="Logs">

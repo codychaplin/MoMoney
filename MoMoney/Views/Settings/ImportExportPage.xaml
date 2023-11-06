@@ -4,7 +4,7 @@
              x:Class="MoMoney.Views.Settings.ImportExportPage"
              x:DataType="viewmodels:ImportExportViewModel"
              xmlns:components="clr-namespace:MoMoney.Components"
-             xmlns:viewmodels="clr-namespace:MoMoney.ViewModels.Settings"
+             xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
              Title="Import &amp; Export">
     <ScrollView>
         <VerticalStackLayout>

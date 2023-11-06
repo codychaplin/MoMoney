@@ -1,5 +1,7 @@
-using MoMoney.ViewModels;
+using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Maui.ListView.Helpers;
+using MoMoney.Core.Helpers;
+using MoMoney.Core.ViewModels;
 
 namespace MoMoney.Views;
 
@@ -30,6 +32,11 @@ public partial class TransactionsPage : ContentView
         pckAccount.SelectedIndexChanged += vm.UpdateFilter;
         pckCategory.SelectedIndexChanged += vm.CategoryChanged;
         pckSubcategory.SelectedIndexChanged += vm.UpdateFilter;
+
+        WeakReferenceMessenger.Default.Register<RefreshTransactionsMessage>(this, (r, m) =>
+        {
+            TransactionsChanged?.Invoke(r, m.Value);
+        });
     }
 
     /// <summary>

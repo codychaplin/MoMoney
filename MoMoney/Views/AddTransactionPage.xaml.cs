@@ -1,12 +1,12 @@
-using MoMoney.ViewModels;
+using CommunityToolkit.Mvvm.Messaging;
+using MoMoney.Core.Helpers;
+using MoMoney.Core.ViewModels;
 
 namespace MoMoney.Views;
 
 public partial class AddTransactionPage : ContentView
 {
     AddTransactionViewModel vm;
-
-    public static EventHandler<EventArgs> UpdatePage { get; set; }
 
     public AddTransactionPage(AddTransactionViewModel _vm)
 	{
@@ -21,8 +21,12 @@ public partial class AddTransactionPage : ContentView
         
         Loaded += vm.GetPayees;
         Loaded += vm.GetAccounts;
-        UpdatePage += vm.GetAccounts;
         pckCategory.SelectedIndexChanged += vm.CategoryChanged;
+
+        WeakReferenceMessenger.Default.Register<UpdateAccountsMessage>(this, (r, m) =>
+        {
+            vm.GetAccounts(r, default);
+        });
     }
 
     /// <summary>

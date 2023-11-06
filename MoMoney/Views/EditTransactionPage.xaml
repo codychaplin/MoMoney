@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.EditTransactionPage"
              x:DataType="viewmodel:EditTransactionViewModel"
-             xmlns:models="clr-namespace:MoMoney.Models"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
+             xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
              xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              Title="Edit Transaction">
 

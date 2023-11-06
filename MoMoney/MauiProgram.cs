@@ -1,15 +1,15 @@
 ﻿using CommunityToolkit.Maui;
 using Syncfusion.Maui.Core.Hosting;
-using MoMoney.Data;
-using MoMoney.Services;
+using MoMoney.Core.Data;
 using MoMoney.Views;
-using MoMoney.ViewModels;
 using MoMoney.Views.Stats;
-using MoMoney.ViewModels.Stats;
 using MoMoney.Views.Settings;
-using MoMoney.ViewModels.Settings;
 using MoMoney.Views.Settings.Edit;
-using MoMoney.ViewModels.Settings.Edit;
+using MoMoney.Core.Services;
+using MoMoney.Core.ViewModels;
+using MoMoney.Core.ViewModels.Stats;
+using MoMoney.Core.ViewModels.Settings;
+using MoMoney.Core.ViewModels.Settings.Edit;
 
 namespace MoMoney;
 
@@ -28,8 +28,8 @@ public static class MauiProgram
 		// logging
         builder.Services.AddTransient(typeof(ILoggerService<>), typeof(LoggerService<>));
 
-		// services
-		builder.Services.AddSingleton<IAccountService, AccountService>();
+        // services
+        builder.Services.AddSingleton<IAccountService, AccountService>();
 		builder.Services.AddSingleton<ICategoryService, CategoryService>();
 		builder.Services.AddSingleton<IStockService, StockService>();
 		builder.Services.AddSingleton<ITransactionService, TransactionService>();

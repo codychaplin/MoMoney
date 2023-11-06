@@ -20,8 +20,6 @@
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">29.0</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
-		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<AndroidSigningKeyStore>pherda-apps.keystore</AndroidSigningKeyStore>
 	</PropertyGroup>
 
@@ -53,7 +51,15 @@
 		<MauiImage Include="Resources\Images\*" />
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
-		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AndroidResource Remove="Resources\Raw\**" />
+	  <Compile Remove="Resources\Raw\**" />
+	  <EmbeddedResource Remove="Resources\Raw\**" />
+	  <MauiCss Remove="Resources\Raw\**" />
+	  <MauiXaml Remove="Resources\Raw\**" />
+	  <None Remove="Resources\Raw\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -230,7 +236,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Resources\Raw\" />
+	  <ProjectReference Include="..\MoMoney.Core\MoMoney.Core.csproj" />
 	</ItemGroup>
 
 	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionMoMoneyHideInfoBar="True" XamarinHotReloadUnhandledDeviceExceptionMoMoneyHideInfoBar="True" /></VisualStudio></ProjectExtensions>

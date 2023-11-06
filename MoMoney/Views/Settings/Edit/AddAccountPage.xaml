@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Settings.Edit.AddAccountPage"
              x:DataType="viewmodel:AddAccountViewModel"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings.Edit"
+             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
              Title="Add Account">
 
     <!-- main page -->

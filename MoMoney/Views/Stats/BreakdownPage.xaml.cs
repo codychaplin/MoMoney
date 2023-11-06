@@ -1,5 +1,5 @@
-using MoMoney.Helpers;
-using MoMoney.ViewModels.Stats;
+using MoMoney.Core.Helpers;
+using MoMoney.Core.ViewModels.Stats;
 
 namespace MoMoney.Views.Stats;
 

@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.Stats.InsightsPage"
              x:DataType="viewmodel:InsightsViewModel"
-             xmlns:converters="clr-namespace:MoMoney.Converters"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Stats"
+             xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
              xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
              Title="Insights">
 

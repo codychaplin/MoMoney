@@ -1,4 +1,4 @@
-using MoMoney.ViewModels.Settings;
+using MoMoney.Core.ViewModels.Settings;
 
 namespace MoMoney.Views.Settings;
 

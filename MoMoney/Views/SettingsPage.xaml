@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MoMoney.Views.SettingsPage"
              x:DataType="viewmodel:SettingsViewModel"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
+             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
              xmlns:components="clr-namespace:MoMoney.Components">
 
     <!-- main page -->
