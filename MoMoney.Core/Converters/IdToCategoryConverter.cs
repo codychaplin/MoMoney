@@ -7,7 +7,7 @@ namespace MoMoney.Core.Converters;
 /// <summary>
 /// Gets Category name from Category ID
 /// </summary>
-class IdToCategoryConverter : IValueConverter
+public class IdToCategoryConverter : IValueConverter
 {
 # if ANDROID
     readonly ICategoryService categoryService;
@@ -17,8 +17,8 @@ class IdToCategoryConverter : IValueConverter
     public IdToCategoryConverter()
     {
 #if ANDROID
-        categoryService = MauiApplication.Current.Services.GetService<ICategoryService>();
-        logger = MauiApplication.Current.Services.GetService<ILoggerService<IdToCategoryConverter>>();
+        categoryService = IPlatformApplication.Current.Services.GetService<ICategoryService>();
+        logger = IPlatformApplication.Current.Services.GetService<ILoggerService<IdToCategoryConverter>>();
 #endif
     }
 

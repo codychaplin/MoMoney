@@ -7,6 +7,7 @@ namespace MoMoney.Core.Data;
 public class MoMoneydb
 {
     public SQLiteAsyncConnection db { get; private set; }
+    bool initialized = false;
 
     /// <summary>
     /// Creates new database connection, creates tables if not exists and adds default data to tables.
@@ -16,16 +17,22 @@ public class MoMoneydb
         try
         {
             if (db is not null)
+            {
+                while (!initialized)
+                {
+                    await Task.Delay(100);
+                }
                 return;
+            }
 
             db = new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
 
-            await db.CreateTableAsync<Transaction>();
-            await db.CreateTableAsync<Account>();
-            await db.CreateTableAsync<Stock>();
             await db.CreateTableAsync<Log>();
-
+            await db.CreateTableAsync<Stock>();
+            await db.CreateTableAsync<Account>();
+            await db.CreateTableAsync<Transaction>();
             var category = await db.CreateTableAsync<Category>();
+
             if (category == CreateTableResult.Created)
             {
                 await db.InsertAllAsync(GetDefaultCategories());
@@ -40,6 +47,8 @@ public class MoMoneydb
                     await db.InsertAllAsync(GetDefaultCategories());
                 }
             }
+
+            initialized = true;
         }
         catch (Exception ex)
         {
@@ -54,11 +63,11 @@ public class MoMoneydb
     List<Category> GetDefaultCategories()
     {
         return new List<Category>
-            {
-                new Category { CategoryName = "Income", ParentName = "" }, // 1
-                new Category { CategoryName = "Transfer", ParentName = "" }, // 2
-                new Category { CategoryName = "Debit", ParentName = "Transfer" }, // 3
-                new Category { CategoryName = "Credit", ParentName = "Transfer" } // 4
-            };
+        {
+            new Category { CategoryName = "Income", ParentName = "" }, // 1
+            new Category { CategoryName = "Transfer", ParentName = "" }, // 2
+            new Category { CategoryName = "Debit", ParentName = "Transfer" }, // 3
+            new Category { CategoryName = "Credit", ParentName = "Transfer" } // 4
+        };
     }
 }

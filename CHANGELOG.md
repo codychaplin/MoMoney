@@ -1,3 +1,17 @@
+# MoMoney v1.1.4
+
+### Fixes
+
+* Fixed issues from .NET 8 upgrade
+* first time sqlite crash
+* Amount in AddTransactionPage clears properly instead of to 0
+
+### Changes
+
+* Upgraded to .NET 8
+* Fully added light mode support
+* Added empty views
+
 # MoMoney v1.1.3
 
 ### Fixes

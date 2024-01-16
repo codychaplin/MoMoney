@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style name="Maui.LightTheme" parent="Maui.MainTheme">
+		<item name="colorPrimary">@color/Black</item>
+		<item name="android:actionMenuTextColor">@color/Black</item>
+	</style>
+	<style name="Maui.DarkTheme" parent="Maui.MainTheme">
+		<item name="colorPrimary">@color/White</item>
+		<item name="android:actionMenuTextColor">@color/White</item>
+	</style>
+
+</resources>

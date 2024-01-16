@@ -305,8 +305,8 @@ public partial class TransactionsViewModel : ObservableObject
     [RelayCommand]
     void AmountDragStarted(object obj)
     {
-        var grid = obj as Grid;
-        grid.ZIndex = 3;
+        var frame = obj as Frame;
+        frame.ZIndex = 3;
     }
 
     /// <summary>
@@ -317,9 +317,9 @@ public partial class TransactionsViewModel : ObservableObject
     {
         UpdateFilter(this, default);
 
-        var grid = obj as Grid;
+        var frame = obj as Frame;
         await Task.Delay(300);
-        grid.ZIndex = 1;
+        frame.ZIndex = 1;
     }
 
     /// <summary>
@@ -382,7 +382,7 @@ public partial class TransactionsViewModel : ObservableObject
         ListView.IsLazyLoading = false;
 
         // disables loading indicator
-        if (totalItems > 0 && count == 0)
+        if (count == 0)
             ListView.LoadMoreOption = LoadMoreOption.None;
     }
 

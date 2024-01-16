@@ -5,7 +5,7 @@ namespace MoMoney.Core.Converters;
 /// <summary>
 /// Changes string format based on type
 /// </summary>
-class DateConverter : IMultiValueConverter
+public class DateConverter : IMultiValueConverter
 {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {

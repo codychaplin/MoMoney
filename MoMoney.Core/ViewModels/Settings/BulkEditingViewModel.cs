@@ -68,6 +68,7 @@ public partial class BulkEditingViewModel : ObservableObject
         await GetCategories();
         await GetPayees();
         TotalTransactionCount = await transactionService.GetTransactionCount();
+        ReplacePayee = string.Empty;
         UpdateText();
     }
 
@@ -94,7 +95,7 @@ public partial class BulkEditingViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Gets categories from database and refreshes Categories collection.
+    /// Gets payees from transactions and refreshes Payees collection.
     /// </summary>
     public async Task GetPayees()
     {
@@ -223,19 +224,20 @@ public partial class BulkEditingViewModel : ObservableObject
     }
 
     [RelayCommand]
-    async Task Find()
+    async Task<bool> Find()
     {
         try
         {
             if (FindAccount == null && FindCategory == null && FindSubcategory == null && string.IsNullOrEmpty(FindPayee))
             {
                 await Shell.Current.DisplayAlert("Warning", "Please select at least one filter", "OK");
-                return;
+                return false;
             }
 
             FoundTransactions = await transactionService.GetFilteredTransactions(FindAccount, FindCategory, FindSubcategory, FindPayee);
             FoundTransactionCount = FoundTransactions.Count;
             UpdateText(0, true, false);
+            return true;
         }
         catch (SQLiteException ex)
         {
@@ -247,17 +249,18 @@ public partial class BulkEditingViewModel : ObservableObject
             await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+
+        return false;
     }
 
     [RelayCommand]
     async Task Replace()
     {
-        if (FoundTransactions == null || !FoundTransactions.Any())
-            await Find();
+        if (FoundTransactions == null || FoundTransactions.Count == 0)
+            if (await Find() == false) return;
 
         bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to replace {FoundTransactionCount} transactions", "Yes", "No");
-        if (!flag)
-            return;
+        if (!flag) return;
 
         int i = 0;
         try

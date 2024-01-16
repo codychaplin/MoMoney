@@ -5,7 +5,7 @@ namespace MoMoney.Core.Converters;
 /// <summary>
 /// Changes text colour based on category
 /// </summary>
-class PositiveNegativeColourConverter : IValueConverter
+public class PositiveNegativeColourConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
@@ -16,10 +16,12 @@ class PositiveNegativeColourConverter : IValueConverter
             else if (amount < 0)
                 return Color.Parse("#df4759"); // red
             else
-                return Color.Parse("#ffffff"); // white
+                return Application.Current.RequestedTheme == AppTheme.Light
+                    ? Color.Parse("#000000") // black
+                    : Color.Parse("#ffffff"); // white
         }
 
-        return "000000"; // error = black
+        return Color.Parse("#999999"); // error = gray
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

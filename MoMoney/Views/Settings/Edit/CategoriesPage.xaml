@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.Settings.Edit.CategoriesPage"
-             x:DataType="viewmodel:CategoriesViewModel"
-             xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
-             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
-             Title="Categories">
+<ContentPage
+    x:Class="MoMoney.Views.Settings.Edit.CategoriesPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
+    Title="Categories"
+    x:DataType="viewmodel:CategoriesViewModel">
 
     <ContentPage.Resources>
         <DataTemplate x:Key="HeaderTemplate" x:DataType="models:CategoryGroup">
-            <Frame Style="{StaticResource SmallTileFrame}" BackgroundColor="{StaticResource Green}">
+            <Frame BackgroundColor="{StaticResource Green}" Style="{StaticResource SmallTileFrame}">
                 <Frame.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryStringCommand, Source={RelativeSource
-                                                            AncestorType={x:Type viewmodel:CategoriesViewModel}}}"
-                                          CommandParameter="{Binding CategoryName}" />
+                    <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryStringCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding CategoryName}" />
                 </Frame.GestureRecognizers>
                 <Grid>
-                    <Label Style="{StaticResource lblTile}" FontSize="20" Text="{Binding CategoryName}" />
+                    <Label
+                        FontSize="20"
+                        Style="{StaticResource lblTile}"
+                        Text="{Binding CategoryName}" />
                 </Grid>
             </Frame>
         </DataTemplate>
         <DataTemplate x:Key="ItemTemplate" x:DataType="models:Category">
-            <Frame Style="{StaticResource SmallTileFrame}" Padding="10,0,0,0">
+            <Frame Padding="10,0,0,0" Style="{StaticResource SmallTileFrame}">
                 <Frame.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource
-                                                            AncestorType={x:Type viewmodel:CategoriesViewModel}}}"
-                                          CommandParameter="{Binding CategoryID}" />
+                    <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding CategoryID}" />
                 </Frame.GestureRecognizers>
                 <Grid>
                     <Label Style="{StaticResource lblTile}" Text="{Binding CategoryName}" />
@@ -34,23 +34,24 @@
         </DataTemplate>
     </ContentPage.Resources>
 
-    <!-- main page -->
+    <!--  main page  -->
     <Grid Padding="0,10,0,0">
-        
-        <!-- list of categories -->
-        <CollectionView ItemsSource="{Binding Categories}"
-                        ItemTemplate="{StaticResource ItemTemplate}"
-                        GroupHeaderTemplate="{StaticResource HeaderTemplate}"
-                        IsGrouped="true" />
 
-        <!-- add account button -->
-        <ImageButton Source="add.svg"
-                     Margin="20"
-                     WidthRequest="40"
-                     HeightRequest="40"
-                     VerticalOptions="End"
-                     HorizontalOptions="End"
-                     Command="{Binding GoToAddCategoryCommand}">
-        </ImageButton>
+        <!--  list of categories  -->
+        <CollectionView
+            GroupHeaderTemplate="{StaticResource HeaderTemplate}"
+            IsGrouped="true"
+            ItemTemplate="{StaticResource ItemTemplate}"
+            ItemsSource="{Binding Categories}" />
+
+        <!--  add account button  -->
+        <ImageButton
+            Margin="20"
+            Command="{Binding GoToAddCategoryCommand}"
+            HeightRequest="40"
+            HorizontalOptions="End"
+            Source="add.svg"
+            VerticalOptions="End"
+            WidthRequest="40" />
     </Grid>
 </ContentPage>

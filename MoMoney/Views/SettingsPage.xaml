@@ -1,46 +1,79 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.SettingsPage"
-             x:DataType="viewmodel:SettingsViewModel"
-             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
-             xmlns:components="clr-namespace:MoMoney.Components">
+<ContentView
+    x:Class="MoMoney.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:MoMoney.Components"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
+    x:DataType="viewmodel:SettingsViewModel"
+    BackgroundColor="{AppThemeBinding Light={StaticResource White},
+                                      Dark={StaticResource Gray950}}">
 
-    <!-- main page -->
+    <!--  main page  -->
     <ScrollView>
         <VerticalStackLayout Margin="0,0,0,10">
 
-            <!-- title -->
-            <Grid HeightRequest="55" Padding="10,0,0,0" BackgroundColor="{StaticResource Green}">
-                <Label Style="{StaticResource lblTitle}" Text="Settings" VerticalOptions="Center" />
+            <!--  title  -->
+            <Grid
+                Padding="10,0,0,0"
+                BackgroundColor="{StaticResource Green}"
+                HeightRequest="55">
+                <Label
+                    Style="{StaticResource lblTitle}"
+                    Text="Settings"
+                    VerticalOptions="Center" />
             </Grid>
 
-            <!-- edit models -->
+            <!--  edit models  -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Edit" />
-            <components:AlignedButton Text="Accounts" ShowArrow="True" Command="{Binding GoToAccountsCommand}" />
-            <components:AlignedButton Text="Categories" ShowArrow="True" Command="{Binding GoToCategoriesCommand}" />
-            <components:AlignedButton Text="Stocks" ShowArrow="True" Command="{Binding GoToStocksCommand}" />
+            <components:AlignedButton
+                Command="{Binding GoToAccountsCommand}"
+                ShowArrow="True"
+                Text="Accounts" />
+            <components:AlignedButton
+                Command="{Binding GoToCategoriesCommand}"
+                ShowArrow="True"
+                Text="Categories" />
+            <components:AlignedButton
+                Command="{Binding GoToStocksCommand}"
+                ShowArrow="True"
+                Text="Stocks" />
 
-            <!-- import/export -->
+            <!--  import/export  -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Import/Export" />
-            <components:AlignedButton Text="Import/Export Data" ShowArrow="True" Command="{Binding GoToImportExportCommand}" />
+            <components:AlignedButton
+                Command="{Binding GoToImportExportCommand}"
+                ShowArrow="True"
+                Text="Import/Export Data" />
 
-            <!-- privacy -->
+            <!--  privacy  -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Privacy" />
-            <Grid BackgroundColor="{StaticResource Gray900}" Padding="10,0">
-                <Label Text="Show Sensitive Values" TextColor="{StaticResource Gray100}" VerticalOptions="Center" />
-                <Switch x:Name="swShowValues"
-                        IsToggled="True"
-                        HorizontalOptions="End"
-                        Toggled="swShowValues_Toggled" />
+            <Grid Padding="10,0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                <Label
+                    Text="Show Sensitive Values"
+                    TextColor="{AppThemeBinding Light={StaticResource Black},
+                                                Dark={StaticResource White}}"
+                    VerticalOptions="Center" />
+                <Switch
+                    x:Name="swShowValues"
+                    HorizontalOptions="End"
+                    IsToggled="True"
+                    Toggled="swShowValues_Toggled" />
             </Grid>
 
-            <!-- admin -->
+            <!--  admin  -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Admin" />
-            <components:AlignedButton Text="Data" ShowArrow="True" Command="{Binding GoToAdminCommand}" />
-            
-            <!-- about -->
-            <Label x:Name="lblVersion" Margin="10,20" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+            <components:AlignedButton
+                Command="{Binding GoToAdminCommand}"
+                ShowArrow="True"
+                Text="Data" />
+
+            <!--  about  -->
+            <Label
+                x:Name="lblVersion"
+                Margin="10,20"
+                TextColor="{AppThemeBinding Light={StaticResource Gray600},
+                                            Dark={StaticResource Gray300}}" />
 
         </VerticalStackLayout>
     </ScrollView>

@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.Settings.Edit.EditAccountPage"
-             x:DataType="viewmodel:EditAccountViewModel"
-             xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
-             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
-             Title="Edit Account">
+<ContentPage
+    x:Class="MoMoney.Views.Settings.Edit.EditAccountPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
+    Title="Edit Account"
+    x:DataType="viewmodel:EditAccountViewModel">
 
-    <!-- main page -->
+    <!--  main page  -->
     <VerticalStackLayout Padding="0,10,0,0">
 
-        <!-- account name -->
+        <!--  account name  -->
         <Frame Style="{StaticResource TileFrame}">
             <Grid Style="{StaticResource TileGrid}">
                 <Image Source="account.svg" Style="{StaticResource imgIcon}" />
-                <Entry x:Name="txtName"
-                       Grid.Column="1"
-                       Placeholder="Account Name"
-                       Text="{Binding Account.AccountName}" />
+                <Entry
+                    x:Name="txtName"
+                    Grid.Column="1"
+                    Placeholder="Account Name"
+                    Text="{Binding Account.AccountName}" />
             </Grid>
         </Frame>
-        
-        <!-- account type with predefined values -->
+
+        <!--  account type with predefined values  -->
         <Frame Style="{StaticResource TileFrame}">
             <Grid Style="{StaticResource TileGrid}">
                 <Image Source="piggy_bank.svg" Style="{StaticResource imgIcon}" />
-                <Picker x:Name="pckType"
-                        Grid.Column="1"
-                        Title="Select a type"
-                        SelectedItem="{Binding Account.AccountType}">
+                <Picker
+                    x:Name="pckType"
+                    Title="Select a type"
+                    Grid.Column="1"
+                    SelectedItem="{Binding Account.AccountType}">
                     <Picker.Items>
                         <x:String>Checkings</x:String>
                         <x:String>Savings</x:String>
@@ -38,46 +41,59 @@
                 </Picker>
             </Grid>
         </Frame>
-        
-        <!-- starting balance -->
+
+        <!--  starting balance  -->
         <Grid ColumnDefinitions="3.5*,*">
             <Frame Style="{StaticResource TileFrame}">
                 <Grid Style="{StaticResource TileGrid}">
-                    <Image Source="dollar_symbol.svg" Style="{StaticResource imgIcon}" HorizontalOptions="Start" />
-                    <Entry x:Name="txtStartingBalance"
-                           Grid.Column="1"
-                           Keyboard="Numeric"
-                           Placeholder="Starting Balance"
-                           Text="{Binding Account.StartingBalance}" />
+                    <Image
+                        HorizontalOptions="Start"
+                        Source="dollar_symbol.svg"
+                        Style="{StaticResource imgIcon}" />
+                    <Entry
+                        x:Name="txtStartingBalance"
+                        Grid.Column="1"
+                        Keyboard="Numeric"
+                        Placeholder="Starting Balance"
+                        Text="{Binding Account.StartingBalance}" />
                 </Grid>
             </Frame>
-            <Switch Grid.Column="1"
-                    HorizontalOptions="Start"
-                    IsToggled="{Binding Account.Enabled}" />
+            <Switch
+                Grid.Column="1"
+                HorizontalOptions="Start"
+                IsToggled="{Binding Account.Enabled}" />
         </Grid>
 
 
-        <!-- delete/clear/enter buttons -->
-        <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnDefinitions="*,*,*" ColumnSpacing="10">
-            <Button x:Name="btnDelete"
-                    Grid.Column="0"
-                    Text="Delete"
-                    HeightRequest="45"
-                    BackgroundColor="{StaticResource Red}"
-                    Command="{Binding RemoveCommand}" />
-            <Button x:Name="btnClear"
-                    Grid.Column="1"
-                    Text="Clear"
-                    HeightRequest="45"
-                    BackgroundColor="{StaticResource Blue}"
-                    Clicked="btnClear_Clicked" />
-            <Button x:Name="btnEnter"
-                    Grid.Column="2"
-                    Text="Update"
-                    HeightRequest="45"
-                    BackgroundColor="{StaticResource Green}"
-                    Command="{Binding EditCommand}" />
+        <!--  delete/clear/enter buttons  -->
+        <Grid
+            x:Name="grdAcceptButtons"
+            Margin="10,0,10,10"
+            Padding="2"
+            ColumnDefinitions="*,*,*"
+            ColumnSpacing="10">
+            <Button
+                x:Name="btnDelete"
+                Grid.Column="0"
+                BackgroundColor="{StaticResource Red}"
+                Command="{Binding RemoveCommand}"
+                HeightRequest="45"
+                Text="Delete" />
+            <Button
+                x:Name="btnClear"
+                Grid.Column="1"
+                BackgroundColor="{StaticResource Blue}"
+                Clicked="btnClear_Clicked"
+                HeightRequest="45"
+                Text="Clear" />
+            <Button
+                x:Name="btnEnter"
+                Grid.Column="2"
+                BackgroundColor="{StaticResource Green}"
+                Command="{Binding EditCommand}"
+                HeightRequest="45"
+                Text="Update" />
         </Grid>
-        
+
     </VerticalStackLayout>
 </ContentPage>

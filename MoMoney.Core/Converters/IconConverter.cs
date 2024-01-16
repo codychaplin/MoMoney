@@ -6,7 +6,7 @@ namespace MoMoney.Core.Converters;
 /// <summary>
 /// Changes icon based on category
 /// </summary>
-class IconConverter : IMultiValueConverter
+public class IconConverter : IMultiValueConverter
 {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {

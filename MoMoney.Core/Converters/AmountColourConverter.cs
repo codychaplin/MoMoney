@@ -6,7 +6,7 @@ namespace MoMoney.Core.Converters;
 /// <summary>
 /// Changes text colour based on category
 /// </summary>
-class AmountColourConverter : IValueConverter
+public class AmountColourConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

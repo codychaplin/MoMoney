@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.StatsPage"
-             x:DataType="viewmodel:StatsViewModel"
-             xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
-             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core">
+<ContentView
+    x:Class="MoMoney.Views.StatsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
+    x:DataType="viewmodel:StatsViewModel"
+    BackgroundColor="{AppThemeBinding Light={StaticResource White},
+                                      Dark={StaticResource Gray950}}">
 
     <ContentView.Resources>
-        <Style x:Key="imgTileIcon" TargetType="{x:Type Image}" BasedOn="{StaticResource imgTinted}">
+        <Style
+            x:Key="imgTileIcon"
+            BasedOn="{StaticResource imgTinted}"
+            TargetType="{x:Type Image}">
             <Setter Property="Margin" Value="0,10,0,0" />
             <Setter Property="WidthRequest" Value="50" />
             <Setter Property="HeightRequest" Value="50" />
@@ -19,70 +25,94 @@
             <Setter Property="HorizontalOptions" Value="Center" />
             <Setter Property="VerticalOptions" Value="End" />
         </Style>
+        <Style TargetType="{x:Type Frame}">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="HasShadow" Value="False" />
+        </Style>
     </ContentView.Resources>
 
-    <!-- main page -->
+    <!--  main page  -->
     <VerticalStackLayout>
-        
-        <!-- title -->
-        <Grid BackgroundColor="{StaticResource Green}" HeightRequest="55" Padding="10,0">
-            <Label Style="{StaticResource lblTitle}" Text="Statistics" HorizontalOptions="Start" />
-        </Grid>
-        
-        <!-- tabs -->
-        <Grid Margin="10"
-              RowSpacing="10"
-              ColumnSpacing="10"
-              ColumnDefinitions="*,*"
-              RowDefinitions="120,120">
 
-            <!-- account balances -->
-            <Frame Grid.Column="0" Grid.Row="0" Padding="10">
+        <!--  title  -->
+        <Grid
+            Padding="10,0"
+            BackgroundColor="{StaticResource Green}"
+            HeightRequest="55">
+            <Label
+                HorizontalOptions="Start"
+                Style="{StaticResource lblTitle}"
+                Text="Statistics" />
+        </Grid>
+
+        <!--  tabs  -->
+        <Grid
+            Margin="10"
+            ColumnDefinitions="*,*"
+            ColumnSpacing="10"
+            RowDefinitions="120,120"
+            RowSpacing="10">
+
+            <!--  accounts  -->
+            <Frame
+                Grid.Row="0"
+                Grid.Column="0"
+                Padding="10">
                 <Frame.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding GoToAccountSummaryCommand}" />
                 </Frame.GestureRecognizers>
                 <Grid>
-                    <Image Style="{StaticResource imgTileIcon}" Source="accounts.svg" />
+                    <Image Source="accounts.svg" Style="{StaticResource imgTileIcon}" />
                     <Label Style="{StaticResource lblTileTitle}" Text="Accounts" />
                 </Grid>
             </Frame>
 
-            <!-- monthly breakdown -->
-            <Frame Grid.Column="1" Grid.Row="0" Padding="10">
+            <!--  breakdown  -->
+            <Frame
+                Grid.Row="0"
+                Grid.Column="1"
+                Padding="10">
                 <Frame.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding GoToBreakdownCommand}" />
                 </Frame.GestureRecognizers>
                 <Grid>
-                    <Image Style="{StaticResource imgTileIcon}" Source="donut.svg" />
-                    <Label Style="{StaticResource lblTileTitle}" Text="Breakdown"  />
+                    <Image Source="donut.svg" Style="{StaticResource imgTileIcon}" />
+                    <Label Style="{StaticResource lblTileTitle}" Text="Breakdown" />
                 </Grid>
             </Frame>
 
-            <!-- stocks -->
-            <Frame Grid.Column="0" Grid.Row="1" Padding="10">
+            <!--  stocks  -->
+            <Frame
+                Grid.Row="1"
+                Grid.Column="0"
+                Padding="10">
                 <Frame.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding GoToStocksCommand}" />
                 </Frame.GestureRecognizers>
                 <Grid>
-                    <Image Style="{StaticResource imgTileIcon}" Source="stocks.svg" />
-                    <Label Style="{StaticResource lblTileTitle}" Text="Stocks"  />
+                    <Image Source="stocks.svg" Style="{StaticResource imgTileIcon}" />
+                    <Label Style="{StaticResource lblTileTitle}" Text="Stocks" />
                 </Grid>
             </Frame>
 
-            <!-- insights -->
-            <Frame Grid.Column="1" Grid.Row="1"  Padding="10">
+            <!--  insights  -->
+            <Frame
+                Grid.Row="1"
+                Grid.Column="1"
+                Padding="10">
                 <Frame.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding GoToInsightsCommand}" />
                 </Frame.GestureRecognizers>
                 <Grid>
-                    <Image Style="{StaticResource imgTileIcon}" Source="bar_chart.svg" />
-                    <Label Style="{StaticResource lblTileTitle}" Text="Insights"  />
+                    <Image Source="bar_chart.svg" Style="{StaticResource imgTileIcon}" />
+                    <Label Style="{StaticResource lblTileTitle}" Text="Insights" />
                 </Grid>
             </Frame>
 
             <!--
         <Frame Grid.Column="0" Grid.Row="3" Padding="10">
-        
+
         </Frame>
 
         <Frame Grid.Column="1" Grid.Row="3">
@@ -95,9 +125,9 @@
 
         <Frame Grid.Column="1" Grid.Row="4">
 
-        </Frame> -->
+        </Frame>-->
         </Grid>
-        
+
     </VerticalStackLayout>
 
 </ContentView>

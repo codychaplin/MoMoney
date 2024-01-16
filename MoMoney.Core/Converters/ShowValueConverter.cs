@@ -6,7 +6,7 @@ namespace MoMoney.Core.Converters;
 /// <summary>
 /// Converts value to "$****.**" if Utilities.ShowValue is true
 /// </summary>
-class ShowValueConverter : IValueConverter
+public class ShowValueConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

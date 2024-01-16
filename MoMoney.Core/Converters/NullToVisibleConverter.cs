@@ -5,7 +5,7 @@ namespace MoMoney.Core.Converters;
 /// <summary>
 /// Changes visibility of button based on whether the corresponding value is null.
 /// </summary>
-class NullToVisibleConverter : IValueConverter
+public class NullToVisibleConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

@@ -40,6 +40,7 @@ public partial class ImportExportViewModel
         try
         {
             var result = await SelectFile();
+            if (result == null) return;
 
             List<Account> accounts = new();
             int i = 1;
@@ -100,6 +101,7 @@ public partial class ImportExportViewModel
         try
         {
             var result = await SelectFile();
+            if (result == null) return;
 
             List<Category> categories = new();
             int i = 1;
@@ -167,6 +169,7 @@ public partial class ImportExportViewModel
         try
         {
             var result = await SelectFile();
+            if (result == null) return;
 
             // initial list and counter
             List<Transaction> transactions = new();
@@ -233,6 +236,7 @@ public partial class ImportExportViewModel
         try
         {
             var result = await SelectFile();
+            if (result == null) return;
 
             List<Stock> stocks = new();
             int i = 1;
@@ -288,9 +292,8 @@ public partial class ImportExportViewModel
         var result = await FilePicker.Default.PickAsync(options);
 
         if (result == null)
-            throw new ArgumentException("File not valid.");
-
-        if (!result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
+            return null;
+        else if (result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
             throw new FormatException("Invalid file type. Must be a CSV");
 
         return result;

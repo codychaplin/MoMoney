@@ -57,6 +57,8 @@ public partial class BreakdownViewModel : ObservableObject
         if (first is null)
         {
             Months.Add(DateTime.Today);
+            Years.Add(DateTime.Today);
+            SelectedTime = Months[0];
             return;
         }
 

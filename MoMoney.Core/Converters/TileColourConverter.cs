@@ -5,7 +5,7 @@ namespace MoMoney.Core.Converters;
 /// <summary>
 /// Changes background colour based on Enabled value
 /// </summary>
-class TileColourConverter : IValueConverter
+public class TileColourConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

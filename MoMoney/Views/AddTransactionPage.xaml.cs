@@ -75,17 +75,27 @@ public partial class AddTransactionPage : ContentView
         {
             if (btn == button)
             {
-                if (Application.Current.Resources.TryGetValue("Green", out var green))
-                    btn.Background = (Color)green;
+                if (Application.Current.Resources.TryGetValue("Primary", out var primary))
+                    btn.Background = (Color)primary;
                 else
                     btn.Background = Color.FromArgb("#42ba96");
             }    
             else
             {
-                if (Application.Current.Resources.TryGetValue("Gray900", out var gray))
-                    btn.Background = (Color)gray;
+                if (Application.Current.RequestedTheme == AppTheme.Dark)
+                {
+                    if (Application.Current.Resources.TryGetValue("Gray900", out var gray))
+                        btn.Background = (Color)gray;
+                    else
+                        btn.Background = Color.FromArgb("#212121");
+                }
                 else
-                    btn.Background = Color.FromArgb("#212121");
+                {
+                    if (Application.Current.Resources.TryGetValue("Gray200", out var gray))
+                        btn.Background = (Color)gray;
+                    else
+                        btn.Background = Color.FromArgb("#C8C8C8");
+                }
             }
         }
     }
@@ -131,6 +141,7 @@ public partial class AddTransactionPage : ContentView
     void Clear()
     {
         vm.Clear();
+        txtAmount.Text = "";
         entPayee.SelectedItem = null;
         MakePayeeVisible(true);
     }

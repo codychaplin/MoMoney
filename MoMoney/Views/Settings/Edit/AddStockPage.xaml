@@ -1,83 +1,96 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.Settings.Edit.AddStockPage"
-             x:DataType="viewmodel:AddStockViewModel"
-             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
-             Title="Add Stock">
+<ContentPage
+    x:Class="MoMoney.Views.Settings.Edit.AddStockPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
+    Title="Add Stock"
+    x:DataType="viewmodel:AddStockViewModel">
 
-    <!-- main page -->
+    <!--  main page  -->
     <ScrollView Padding="0,10,0,0">
         <VerticalStackLayout>
 
-            <!-- symbol -->
+            <!--  symbol  -->
             <Frame Style="{StaticResource TileFrame}">
                 <Grid Style="{StaticResource TileGrid}">
                     <Image Source="label.svg" Style="{StaticResource imgIcon}" />
-                    <Entry x:Name="txtSymbol"
-                           Grid.Column="1"
-                           Placeholder="RBC.TO"
-                           Text="{Binding Symbol}" />
+                    <Entry
+                        x:Name="txtSymbol"
+                        Grid.Column="1"
+                        Placeholder="RBC.TO"
+                        Text="{Binding Symbol}" />
                 </Grid>
             </Frame>
-            <!-- quantity -->
+            <!--  quantity  -->
             <Frame Style="{StaticResource TileFrame}">
                 <Grid Style="{StaticResource TileGrid}">
                     <Image Source="number.svg" Style="{StaticResource imgIcon}" />
-                    <Entry x:Name="txtQuantity"
-                           Grid.Column="1"
-                           Placeholder="Quantity"
-                           Keyboard="Numeric"
-                           Text="{Binding Quantity}" />
+                    <Entry
+                        x:Name="txtQuantity"
+                        Grid.Column="1"
+                        Keyboard="Numeric"
+                        Placeholder="Quantity"
+                        Text="{Binding Quantity}" />
                 </Grid>
             </Frame>
-            <!-- cost -->
+            <!--  cost  -->
             <Frame Style="{StaticResource TileFrame}">
                 <Grid Style="{StaticResource TileGrid}">
                     <Image Source="shopping_cart.svg" Style="{StaticResource imgIcon}" />
-                    <Entry x:Name="txtCost"
-                           Grid.Column="1"
-                           Keyboard="Numeric"
-                           Placeholder="Cost"
-                           Text="{Binding Cost}" />
+                    <Entry
+                        x:Name="txtCost"
+                        Grid.Column="1"
+                        Keyboard="Numeric"
+                        Placeholder="Cost"
+                        Text="{Binding Cost}" />
                 </Grid>
             </Frame>
-            <!-- market price -->
+            <!--  market price  -->
             <Frame Style="{StaticResource TileFrame}">
                 <Grid Style="{StaticResource TileGrid}">
                     <Image Source="market.svg" Style="{StaticResource imgIcon}" />
-                    <Entry x:Name="txtMarketPrice"
-                           Grid.Column="1"
-                           Keyboard="Numeric"
-                           Placeholder="Market Price"
-                           Text="{Binding MarketPrice}" />
+                    <Entry
+                        x:Name="txtMarketPrice"
+                        Grid.Column="1"
+                        Keyboard="Numeric"
+                        Placeholder="Market Price"
+                        Text="{Binding MarketPrice}" />
                 </Grid>
             </Frame>
-            <!-- book value -->
+            <!--  book value  -->
             <Frame Style="{StaticResource TileFrame}">
                 <Grid Style="{StaticResource TileGrid}">
                     <Image Source="book.svg" Style="{StaticResource imgIcon}" />
-                    <Entry x:Name="txtBookValue"
-                           Grid.Column="1"
-                           Keyboard="Numeric"
-                           Placeholder="Book Value"
-                           Text="{Binding BookValue}" />
+                    <Entry
+                        x:Name="txtBookValue"
+                        Grid.Column="1"
+                        Keyboard="Numeric"
+                        Placeholder="Book Value"
+                        Text="{Binding BookValue}" />
                 </Grid>
             </Frame>
-            <!-- clear/enter buttons -->
-            <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnDefinitions="*,*" ColumnSpacing="10">
-                <Button x:Name="btnClear"
-                        Grid.Column="0"
-                        Text="Clear"
-                        HeightRequest="45"
-                        BackgroundColor="{StaticResource Blue}"
-                        Clicked="btnClear_Clicked" />
-                <Button x:Name="btnEnter"
-                        Grid.Column="1"
-                        Text="Accept"
-                        HeightRequest="45"
-                        BackgroundColor="{StaticResource Green}"
-                        Command="{Binding AddCommand}" />
+            <!--  clear/enter buttons  -->
+            <Grid
+                x:Name="grdAcceptButtons"
+                Margin="10,0,10,10"
+                Padding="2"
+                ColumnDefinitions="*,*"
+                ColumnSpacing="10">
+                <Button
+                    x:Name="btnClear"
+                    Grid.Column="0"
+                    BackgroundColor="{StaticResource Blue}"
+                    Clicked="btnClear_Clicked"
+                    HeightRequest="45"
+                    Text="Clear" />
+                <Button
+                    x:Name="btnEnter"
+                    Grid.Column="1"
+                    BackgroundColor="{StaticResource Green}"
+                    Command="{Binding AddCommand}"
+                    HeightRequest="45"
+                    Text="Accept" />
             </Grid>
 
         </VerticalStackLayout>

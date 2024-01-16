@@ -1,56 +1,65 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.Settings.Edit.AddCategoryPage"
-             x:DataType="viewmodel:AddCategoryViewModel"
-             xmlns:model="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
-             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
-             Title="Add Category">
+<ContentPage
+    x:Class="MoMoney.Views.Settings.Edit.AddCategoryPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:model="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
+    Title="Add Category"
+    x:DataType="viewmodel:AddCategoryViewModel">
 
-    <!-- main page -->
+    <!--  main page  -->
     <VerticalStackLayout Padding="0,10,0,0">
 
-        <!-- category name -->
+        <!--  category name  -->
         <Frame Style="{StaticResource TileFrame}">
             <Grid Style="{StaticResource TileGrid}">
                 <Image Source="subcategory.svg" Style="{StaticResource imgIcon}" />
-                <Entry x:Name="txtName"
-                       Grid.Column="1"
-                       Placeholder="Category Name"
-                       Text="{Binding Name}" />
+                <Entry
+                    x:Name="txtName"
+                    Grid.Column="1"
+                    Placeholder="Category Name"
+                    Text="{Binding Name}" />
             </Grid>
         </Frame>
-        
-        <!-- parent category -->
+
+        <!--  parent category  -->
         <Frame Style="{StaticResource TileFrame}">
             <Grid Style="{StaticResource TileGrid}">
                 <Image Source="category.svg" Style="{StaticResource imgIcon}" />
-                <Picker x:Name="pckParent"
-                        Grid.Column="1"
-                        Title="Select a Parent"
-                        x:DataType="model:Category"
-                        ItemsSource="{Binding Path=Parents, Source={RelativeSource AncestorType={x:Type viewmodel:AddCategoryViewModel}}}"
-                        SelectedItem="{Binding Path=Parent, Source={RelativeSource AncestorType={x:Type viewmodel:AddCategoryViewModel}}}"
-                        ItemDisplayBinding="{Binding CategoryName}">
-                </Picker>
+                <Picker
+                    x:Name="pckParent"
+                    Title="Select a Parent"
+                    Grid.Column="1"
+                    x:DataType="model:Category"
+                    ItemDisplayBinding="{Binding CategoryName}"
+                    ItemsSource="{Binding Path=Parents, Source={RelativeSource AncestorType={x:Type viewmodel:AddCategoryViewModel}}}"
+                    SelectedItem="{Binding Path=Parent, Source={RelativeSource AncestorType={x:Type viewmodel:AddCategoryViewModel}}}" />
             </Grid>
         </Frame>
-        
-        <!-- clear/enter buttons -->
-        <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnDefinitions="*,*" ColumnSpacing="10">
-            <Button x:Name="btnClear"
-                    Grid.Column="0"
-                    Text="Clear"
-                    HeightRequest="45"
-                    BackgroundColor="{StaticResource Blue}"
-                    Clicked="btnClear_Clicked" />
-            <Button x:Name="btnEnter"
-                    Grid.Column="1"
-                    Text="Accept"
-                    HeightRequest="45"
-                    BackgroundColor="{StaticResource Green}"
-                    Command="{Binding AddCommand}" />
+
+        <!--  clear/enter buttons  -->
+        <Grid
+            x:Name="grdAcceptButtons"
+            Margin="10,0,10,10"
+            Padding="2"
+            ColumnDefinitions="*,*"
+            ColumnSpacing="10">
+            <Button
+                x:Name="btnClear"
+                Grid.Column="0"
+                BackgroundColor="{StaticResource Blue}"
+                Clicked="btnClear_Clicked"
+                HeightRequest="45"
+                Text="Clear" />
+            <Button
+                x:Name="btnEnter"
+                Grid.Column="1"
+                BackgroundColor="{StaticResource Green}"
+                Command="{Binding AddCommand}"
+                HeightRequest="45"
+                Text="Accept" />
         </Grid>
-        
+
     </VerticalStackLayout>
 </ContentPage>

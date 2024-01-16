@@ -10,6 +10,9 @@ public partial class SettingsPage : ContentView
         InitializeComponent();
         BindingContext = vm;
         lblVersion.Text = $"MoMoney ({AppInfo.Current.VersionString})";
+        // switch toggle to avoid ThumbColor bug
+        swShowValues.IsToggled = false;
+        swShowValues.IsToggled = true;
     }
 
     /// <summary>

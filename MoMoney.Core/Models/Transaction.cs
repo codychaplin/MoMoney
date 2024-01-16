@@ -1,8 +1,7 @@
 ﻿using SQLite;
+using CsvHelper.Configuration;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Converters;
-using CsvHelper.Configuration;
-using MoMoney.Core.Services;
 
 namespace MoMoney.Core.Models;
 

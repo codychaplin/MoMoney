@@ -7,7 +7,7 @@ namespace MoMoney.Core.Converters;
 /// <summary>
 /// Gets Account name from Account ID
 /// </summary>
-class IdToAccountConverter : IValueConverter
+public class IdToAccountConverter : IValueConverter
 {
 #if ANDROID
     readonly IAccountService accountService;
@@ -17,8 +17,8 @@ class IdToAccountConverter : IValueConverter
     public IdToAccountConverter()
     {
 #if ANDROID
-        accountService = MauiApplication.Current.Services.GetService<IAccountService>();
-        logger = MauiApplication.Current.Services.GetService<ILoggerService<IdToAccountConverter>>();
+        accountService = IPlatformApplication.Current.Services.GetService<IAccountService>();
+        logger = IPlatformApplication.Current.Services.GetService<ILoggerService<IdToAccountConverter>>();
 #endif
     }
 
