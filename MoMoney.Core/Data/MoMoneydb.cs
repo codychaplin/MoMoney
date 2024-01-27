@@ -31,22 +31,7 @@ public class MoMoneydb
             await db.CreateTableAsync<Stock>();
             await db.CreateTableAsync<Account>();
             await db.CreateTableAsync<Transaction>();
-            var category = await db.CreateTableAsync<Category>();
-
-            if (category == CreateTableResult.Created)
-            {
-                await db.InsertAllAsync(GetDefaultCategories());
-            }
-            else
-            {
-                int count = await db.Table<Category>().CountAsync();
-                if (count < 1)
-                {
-                    await db.DropTableAsync<Category>();
-                    await db.CreateTableAsync<Category>();
-                    await db.InsertAllAsync(GetDefaultCategories());
-                }
-            }
+            await CreateCategories();
 
             initialized = true;
         }
@@ -56,18 +41,38 @@ public class MoMoneydb
         }
     }
 
+    public async Task CreateCategories()
+    {
+        var category = await db.CreateTableAsync<Category>();
+
+        if (category == CreateTableResult.Created)
+        {
+            await db.InsertAllAsync(GetDefaultCategories());
+        }
+        else
+        {
+            int count = await db.Table<Category>().CountAsync();
+            if (count < 1)
+            {
+                await db.DropTableAsync<Category>();
+                await db.CreateTableAsync<Category>();
+                await db.InsertAllAsync(GetDefaultCategories());
+            }
+        }
+    }
+
     /// <summary>
     /// Gets default categories.
     /// </summary>
     /// <returns>List of default categories</returns>
     List<Category> GetDefaultCategories()
     {
-        return new List<Category>
-        {
-            new Category { CategoryName = "Income", ParentName = "" }, // 1
-            new Category { CategoryName = "Transfer", ParentName = "" }, // 2
-            new Category { CategoryName = "Debit", ParentName = "Transfer" }, // 3
-            new Category { CategoryName = "Credit", ParentName = "Transfer" } // 4
-        };
+        return
+        [
+            new Category(Constants.INCOME_ID, "Income", string.Empty), // 1
+            new Category(Constants.TRANSFER_ID, "Transfer", string.Empty), // 2
+            new Category(Constants.DEBIT_ID, "Debit", "Transfer"), // 3
+            new Category(Constants.CREDIT_ID, "Credit", "Transfer") // 4
+        ];
     }
 }

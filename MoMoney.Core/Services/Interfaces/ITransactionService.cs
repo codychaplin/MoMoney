@@ -1,7 +1,7 @@
 ﻿using MoMoney.Core.Models;
 using MoMoney.Core.Exceptions;
 
-namespace MoMoney.Core.Services;
+namespace MoMoney.Core.Services.Interfaces;
 
 public interface ITransactionService
 {
@@ -16,7 +16,7 @@ public interface ITransactionService
     /// <param name="payee"></param>
     /// <param name="transferID"></param>
     /// <returns>Newly created Transaction</returns>
-    Task<Transaction> AddTransaction(DateTime date, int accountID, decimal amount, int categoryID,
+    Task AddTransaction(DateTime date, int accountID, decimal amount, int categoryID,
         int subcategoryID, string payee, int? transferID);
 
     /// <summary>
@@ -26,7 +26,7 @@ public interface ITransactionService
     Task AddTransactions(List<Transaction> transactions);
 
     /// <summary>
-    /// Given an Transaction object, updates the corresponding transaction in the Transactions table.
+    /// Given a Transaction object and optionally, the original transaction, updates the corresponding transaction in the Transactions table.
     /// </summary>
     /// <param name="updatedTransaction"></param>
     Task UpdateTransaction(Transaction updatedTransaction);
@@ -34,8 +34,8 @@ public interface ITransactionService
     /// <summary>
     /// Removes Transaction from Transactions table.
     /// </summary>
-    /// <param name="ID"></param>
-    Task RemoveTransaction(int ID);
+    /// <param name="transaction"></param>
+    Task RemoveTransaction(Transaction transaction);
 
     /// <summary>
     /// Drops Transactions table and re-initializes it.

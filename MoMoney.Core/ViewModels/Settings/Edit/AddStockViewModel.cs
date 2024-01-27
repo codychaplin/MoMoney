@@ -1,7 +1,7 @@
 ﻿using SQLite;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MoMoney.Core.Services;
+using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 

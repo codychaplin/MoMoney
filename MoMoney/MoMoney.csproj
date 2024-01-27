@@ -61,6 +61,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Platforms\Android\Resources\values-night\colors.xml" />
+	  <None Remove="Platforms\Android\Resources\values-night\Styles.xml" />
+	  <None Remove="Platforms\Android\Resources\values\colors.xml" />
 	  <None Remove="Platforms\Android\Resources\values\Styles.xml" />
 	</ItemGroup>
 

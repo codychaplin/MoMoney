@@ -1,11 +1,9 @@
 ﻿using SQLite;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
-using MoMoney.Core.Helpers;
-using MoMoney.Core.Services;
 using MoMoney.Core.Exceptions;
+using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
@@ -36,7 +34,6 @@ public partial class EditAccountViewModel : ObservableObject
             try
             {
                 Account = await accountService.GetAccount(id);
-                WeakReferenceMessenger.Default.Send(new UpdateAccountsMessage()); // update accounts on AddTransactionPage
             }
             catch (AccountNotFoundException ex)
             {
@@ -70,7 +67,6 @@ public partial class EditAccountViewModel : ObservableObject
         try
         {
             await accountService.UpdateAccount(Account);
-            WeakReferenceMessenger.Default.Send(new UpdateAccountsMessage());
             await Shell.Current.GoToAsync("..");
         }
         catch (SQLiteException ex)
@@ -87,14 +83,11 @@ public partial class EditAccountViewModel : ObservableObject
     async Task Remove()
     {
         bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Account.AccountName}\"?", "Yes", "No");
-
-        if (!flag)
-            return;
+        if (!flag) return;
 
         try
         {
             await accountService.RemoveAccount(Account.AccountID);
-            WeakReferenceMessenger.Default.Send(new UpdateAccountsMessage());
             await Shell.Current.GoToAsync("..");
         }
         catch (SQLiteException ex)

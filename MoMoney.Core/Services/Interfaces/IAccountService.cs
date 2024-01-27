@@ -1,7 +1,7 @@
 ﻿using MoMoney.Core.Models;
 using MoMoney.Core.Exceptions;
 
-namespace MoMoney.Core.Services;
+namespace MoMoney.Core.Services.Interfaces;
 
 public interface IAccountService
 {

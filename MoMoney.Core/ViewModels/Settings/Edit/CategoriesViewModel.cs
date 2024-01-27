@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
-using MoMoney.Core.Services;
 using MoMoney.Core.Exceptions;
+using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
@@ -65,6 +65,7 @@ public partial class CategoriesViewModel : ObservableObject
         var categories = await categoryService.GetCategories();
         Categories.Clear();
         // groups categories by parent except where ParentName == ""
+        // new parent categories will not show up in the list until a subcategory is added
         foreach (var cat in categories.GroupBy(c => c.ParentName))
             if (!string.IsNullOrEmpty(cat.Key))
                 Categories.Add(new CategoryGroup(cat));

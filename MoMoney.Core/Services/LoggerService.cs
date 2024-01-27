@@ -2,6 +2,7 @@
 using MoMoney.Core.Data;
 using MoMoney.Core.Models;
 using MoMoney.Core.Exceptions;
+using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.Services;
 

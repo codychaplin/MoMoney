@@ -7,10 +7,11 @@ namespace MoMoney.Views;
 public partial class AddTransactionPage : ContentView
 {
     AddTransactionViewModel vm;
+    TransactionType transactionType;
 
     public AddTransactionPage(AddTransactionViewModel _vm)
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         vm = _vm;
         BindingContext = vm;
 
@@ -18,14 +19,22 @@ public partial class AddTransactionPage : ContentView
         dtpDate.Date = DateTime.Today;
         txtAmount.Text = "";
         EnableEntries(false, false, false); // disable fields on start
-        
+        transactionType = TransactionType.None;
+
         Loaded += vm.GetPayees;
         Loaded += vm.GetAccounts;
         pckCategory.SelectedIndexChanged += vm.CategoryChanged;
 
-        WeakReferenceMessenger.Default.Register<UpdateAccountsMessage>(this, (r, m) =>
+        // register to receive messages when accounts and categories are updated
+        WeakReferenceMessenger.Default.Register<UpdateAccountsMessage>(this, (r, m) => { vm.GetAccounts(r, default); });
+        WeakReferenceMessenger.Default.Register<UpdateCategoriesMessage>(this, (r, m) =>
         {
-            vm.GetAccounts(r, default);
+            if (transactionType == TransactionType.Income)
+                vm.GetIncomeCategoryCommand.Execute(r);
+            else if (transactionType == TransactionType.Expense)
+                vm.GetExpenseCategoriesCommand.Execute(r);
+            else if (transactionType == TransactionType.Transfer)
+                vm.GetTransferCategoryCommand.Execute(r);
         });
     }
 
@@ -36,6 +45,7 @@ public partial class AddTransactionPage : ContentView
     /// <param name="e"></param>
     private void btnIncome_Clicked(object sender, EventArgs e)
     {
+        transactionType = TransactionType.Income;
         ChangeButtonColour(sender as Button);
         EnableEntries(false, true, true);
         MakePayeeVisible(true);
@@ -48,6 +58,7 @@ public partial class AddTransactionPage : ContentView
     /// <param name="e"></param>
     private void btnExpense_Clicked(object sender, EventArgs e)
     {
+        transactionType = TransactionType.Expense;
         ChangeButtonColour(sender as Button);
         EnableEntries(true, true, true);
         MakePayeeVisible(true);
@@ -60,6 +71,7 @@ public partial class AddTransactionPage : ContentView
     /// <param name="e"></param>
     private void btnTransfer_Clicked(object sender, EventArgs e)
     {
+        transactionType = TransactionType.Transfer;
         ChangeButtonColour(sender as Button);
         EnableEntries(false, false, true);
         MakePayeeVisible(false);
@@ -79,7 +91,7 @@ public partial class AddTransactionPage : ContentView
                     btn.Background = (Color)primary;
                 else
                     btn.Background = Color.FromArgb("#42ba96");
-            }    
+            }
             else
             {
                 if (Application.Current.RequestedTheme == AppTheme.Dark)
@@ -144,5 +156,13 @@ public partial class AddTransactionPage : ContentView
         txtAmount.Text = "";
         entPayee.SelectedItem = null;
         MakePayeeVisible(true);
+    }
+
+    enum TransactionType
+    {
+        None,
+        Income,
+        Expense,
+        Transfer
     }
 }

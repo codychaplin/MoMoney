@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
-using MoMoney.Core.Services;
 using MoMoney.Core.Exceptions;
+using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.Converters;
 
@@ -9,22 +9,17 @@ namespace MoMoney.Core.Converters;
 /// </summary>
 public class IdToCategoryConverter : IValueConverter
 {
-# if ANDROID
     readonly ICategoryService categoryService;
     readonly ILoggerService<IdToCategoryConverter> logger;
-#endif
 
     public IdToCategoryConverter()
     {
-#if ANDROID
         categoryService = IPlatformApplication.Current.Services.GetService<ICategoryService>();
         logger = IPlatformApplication.Current.Services.GetService<ILoggerService<IdToCategoryConverter>>();
-#endif
     }
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-#if ANDROID
         if (int.TryParse(value.ToString(), out int ID))
         {
             // try to get category from dictionary
@@ -48,7 +43,6 @@ public class IdToCategoryConverter : IValueConverter
                 }
             }
         }
-#endif
 
         return "";
     }

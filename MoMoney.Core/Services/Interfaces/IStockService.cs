@@ -1,7 +1,7 @@
 ﻿using MoMoney.Core.Models;
 using MoMoney.Core.Exceptions;
 
-namespace MoMoney.Core.Services;
+namespace MoMoney.Core.Services.Interfaces;
 
 public interface IStockService
 {
@@ -9,11 +9,6 @@ public interface IStockService
     /// Cached dictionary of Stocks
     /// </summary>
     Dictionary<string, Stock> Stocks { get; }
-
-    /// <summary>
-    /// Calls db Init.
-    /// </summary>
-    Task Init();
 
     /// <summary>
     /// Creates new Stock object and inserts into Stocks table.

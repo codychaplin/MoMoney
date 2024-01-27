@@ -1,9 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MoMoney.Core.Models;
-using MoMoney.Core.Services;
 using MoMoney.Core.Exceptions;
+using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
@@ -13,7 +12,7 @@ public partial class AddCategoryViewModel : ObservableObject
     readonly ILoggerService<AddCategoryViewModel> logger;
 
     [ObservableProperty]
-    public ObservableCollection<Category> parents = new(); // list of categories
+    public ObservableCollection<string> parents = new(); // list of categories
 
     [ObservableProperty]
     public string name; // category name
@@ -36,6 +35,11 @@ public partial class AddCategoryViewModel : ObservableObject
         try
         {
             await categoryService.AddCategory(Name, Parent);
+
+            // if parent category, notify the user that it won't show up until a subcategory is added
+            if (string.IsNullOrEmpty(Parent))
+                _ = Shell.Current.DisplayAlert("Note", "Parent categories will only appear in this list once a subcategory has been added.", "OK");
+
             await Shell.Current.GoToAsync("..");
         }
         catch (DuplicateCategoryException ex)
@@ -52,7 +56,7 @@ public partial class AddCategoryViewModel : ObservableObject
     {
         var categories = await categoryService.GetParentCategories();
         Parents.Clear();
-        foreach (var cat in categories)
+        foreach (var cat in categories.Select(c => c.CategoryName))
             Parents.Add(cat);
     }
 }

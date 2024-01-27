@@ -4,8 +4,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Syncfusion.Maui.ListView;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
-using MoMoney.Core.Services;
 using MoMoney.Core.Exceptions;
+using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 

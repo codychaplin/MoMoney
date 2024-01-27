@@ -1,12 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using SQLite;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
-using MoMoney.Core.Services;
 using MoMoney.Core.Exceptions;
+using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
@@ -75,11 +74,18 @@ public partial class AddTransactionViewModel : ObservableObject
     {
         try
         {
+            // cache selected Subcategory
+            var subcategory = Subcategory;
+
             var income = await categoryService.GetCategory(Constants.INCOME_ID);
             Categories.Clear();
             Subcategories.Clear();
             Categories.Add(income);
             Category = income;
+
+            // re-add selected Subcategory if not null
+            if (subcategory is not null)
+                Subcategory = subcategory;
         }
         catch (CategoryNotFoundException ex)
         {
@@ -115,11 +121,21 @@ public partial class AddTransactionViewModel : ObservableObject
     [RelayCommand]
     async Task GetExpenseCategories()
     {
+        // cache selected Category and Subcategory
+        var savedCategory = Category;
+        var savedSubcategory = Subcategory;
+
         var categories = await categoryService.GetExpenseCategories();
         Categories.Clear();
         foreach (var cat in categories)
             Categories.Add(cat);
         Subcategories.Clear();
+
+        // re-add selected Category and Subcategory if not null
+        if (savedCategory is not null)
+            Category = savedCategory;
+        if (savedSubcategory is not null)
+            Subcategory = savedSubcategory;
     }
 
     /// <summary>
@@ -145,9 +161,11 @@ public partial class AddTransactionViewModel : ObservableObject
 
     public async void CategoryChanged(object sender, EventArgs e)
     {
-        // check if Category is null, update subcategories, if transfer, auto-select "Debit"
+        // check if Category is null, update subcategories
         if (Category is null) return;
         await GetSubcategories(Category);
+
+        // if transfer, auto-select "Debit"
         if (Category.CategoryID == Constants.TRANSFER_ID && Subcategories.Count > 0)
             Subcategory = Subcategories.First();
     }
@@ -165,44 +183,31 @@ public partial class AddTransactionViewModel : ObservableObject
                 (Category?.CategoryID == Constants.TRANSFER_ID && TransferAccount is null))
                 return;
 
-            Transaction transaction = new();
-
             // add payee to Payees if not already in list
             if (!Payees.Contains(payee))
                 Payees.Add(payee);
 
             if (Category.CategoryID == Constants.INCOME_ID) // income = regular
             {
-                transaction = await transactionService.AddTransaction(Date, Account.AccountID, Amount,Category.CategoryID, Subcategory.CategoryID, payee, null);
+                await transactionService.AddTransaction(Date, Account.AccountID, Amount,Category.CategoryID, Subcategory.CategoryID, payee, null);
             }
             else if (Category.CategoryID == Constants.TRANSFER_ID) // transfer = 2 transactions
             {
-                // must cache Observable Properties because they reset after being added to db
+                // must cache observable properties because they reset after being added to db
                 var _date = Date;
                 var _accountID = Account.AccountID;
                 var _amount = Amount;
                 var _categoryID = Category.CategoryID;
                 var _transferID = TransferAccount.AccountID;
-                transaction = await transactionService.AddTransaction(_date, _accountID, -_amount, _categoryID, Constants.DEBIT_ID, "", _transferID);
-                await transactionService.AddTransaction(_date, _transferID, _amount, _categoryID, Constants.CREDIT_ID, "", _accountID);
-
-                await accountService.UpdateBalance(_transferID, _amount); // update corresponding Account balance
+                await transactionService.AddTransaction(_date, _accountID, -_amount, _categoryID, Constants.DEBIT_ID, string.Empty, _transferID);
+                await transactionService.AddTransaction(_date, _transferID, _amount, _categoryID, Constants.CREDIT_ID, string.Empty, _accountID);
             }
             else if (Category.CategoryID >= Constants.EXPENSE_ID) // expense = negative amount
             {
-                transaction = await transactionService.AddTransaction(Date, Account.AccountID, -Amount, Category.CategoryID, Subcategory.CategoryID, payee, null);
+                await transactionService.AddTransaction(Date, Account.AccountID, -Amount, Category.CategoryID, Subcategory.CategoryID, payee, null);
             }
 
-            if (transaction is null)
-                throw new InvalidTransactionException("Could not get new Transaction from database");
-
-            await accountService.UpdateBalance(transaction.AccountID, transaction.Amount); // update corresponding Account balance
-
             ClearAfterAdd();
-
-            // update TransactionsPage Transactions
-            var args = new TransactionEventArgs(transaction, TransactionEventArgs.CRUD.Create);
-            WeakReferenceMessenger.Default.Send(new RefreshTransactionsMessage(args));
         }
         catch (InvalidTransactionException ex)
         {

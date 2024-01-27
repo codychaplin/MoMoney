@@ -6,10 +6,9 @@ using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
-using MoMoney.Core.Services;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Converters;
-using CommunityToolkit.Mvvm.Messaging;
+using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings;
 
@@ -63,11 +62,9 @@ public partial class ImportExportViewModel
                 throw new InvalidAccountException(errorMessage);
             }
 
-            // add accounts to db and update accounts on AddTransactionPage
             await accountService.AddAccounts(accounts);
             string message = i == 2 ? "1 account has been added." : $"{i - 1} accounts have been added";
             await Shell.Current.DisplayAlert("Success", message, "OK");
-            WeakReferenceMessenger.Default.Send(new UpdateAccountsMessage()); // update accounts on AddTransactionPage
             await logger.LogInfo($"Imported {accounts.Count} accounts from '{result.FileName}'.");
         }
         catch (SQLiteException ex)
@@ -401,9 +398,8 @@ public partial class ImportExportViewModel
     }
 
     /// <summary>
-    /// Prompts the user to open a CSV file. Valid Categories are then added to the database.
+    /// Calculates the current balance of each account and updates the database.
     /// </summary>
-    [RelayCommand]
     async Task CalculateAccountBalances()
     {
         try

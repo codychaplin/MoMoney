@@ -33,7 +33,7 @@ public partial class TransactionsPage : ContentView
         pckCategory.SelectedIndexChanged += vm.CategoryChanged;
         pckSubcategory.SelectedIndexChanged += vm.UpdateFilter;
 
-        WeakReferenceMessenger.Default.Register<RefreshTransactionsMessage>(this, (r, m) =>
+        WeakReferenceMessenger.Default.Register<UpdateTransactionsMessage>(this, (r, m) =>
         {
             TransactionsChanged?.Invoke(r, m.Value);
         });

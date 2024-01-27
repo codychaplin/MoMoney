@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
-using MoMoney.Core.Services;
 using MoMoney.Core.Exceptions;
+using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.Converters;
 
@@ -9,22 +9,17 @@ namespace MoMoney.Core.Converters;
 /// </summary>
 public class IdToAccountConverter : IValueConverter
 {
-#if ANDROID
     readonly IAccountService accountService;
     readonly ILoggerService<IdToAccountConverter> logger;
-#endif
 
     public IdToAccountConverter()
     {
-#if ANDROID
         accountService = IPlatformApplication.Current.Services.GetService<IAccountService>();
         logger = IPlatformApplication.Current.Services.GetService<ILoggerService<IdToAccountConverter>>();
-#endif
     }
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-#if ANDROID
         if (int.TryParse(value.ToString(), out int ID))
         {
             // try to get account from dictionary
@@ -48,7 +43,6 @@ public class IdToAccountConverter : IValueConverter
                 }
             }
         }
-#endif
 
         return "";
     }

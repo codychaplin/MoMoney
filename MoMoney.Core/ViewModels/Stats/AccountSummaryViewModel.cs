@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MoMoney.Core.Helpers;
 using MoMoney.Core.Models;
-using MoMoney.Core.Services;
+using MoMoney.Core.Helpers;
+using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Stats;
 

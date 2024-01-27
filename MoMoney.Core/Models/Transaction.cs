@@ -36,9 +36,8 @@ public partial class Transaction : ObservableObject
 
     public Transaction() { }
 
-    public Transaction(int transactionID, DateTime date, int accountID, decimal amount, int categoryID, int subcategoryID, string payee, int? transferID)
+    public Transaction(DateTime date, int accountID, decimal amount, int categoryID, int subcategoryID, string payee, int? transferID)
     {
-        TransactionID = transactionID;
         Date = date;
         AccountID = accountID;
         Amount = amount;

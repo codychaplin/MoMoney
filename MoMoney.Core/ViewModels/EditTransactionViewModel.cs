@@ -4,9 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
-using MoMoney.Core.Services;
 using MoMoney.Core.Exceptions;
-using CommunityToolkit.Mvvm.Messaging;
+using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
@@ -215,41 +214,10 @@ public partial class EditTransactionViewModel : ObservableObject
     [RelayCommand]
     async Task Edit(string payee)
     {
-        if (Transaction is null || Account is null || Category is null || Subcategory is null)
-        {
-            await Shell.Current.DisplayAlert("Validation Error", "Information not valid", "OK");
-            return;
-        }
-        
         try
         {
-            // if expense or transfer debit, convert back to negative
-            if (InitialCategory.CategoryID >= Constants.EXPENSE_ID || InitialSubcategory.CategoryID == Constants.DEBIT_ID)
-                Transaction.Amount *= -1;
-
-            // if payee is not in Payees list, update
-            if (Transaction.Payee is null && !string.IsNullOrEmpty(payee))
-                Transaction.Payee = payee;
-
-            // update transaction
-            Transaction.AccountID = Account.AccountID;
-            Transaction.CategoryID = Category.CategoryID;
-            Transaction.SubcategoryID = Subcategory.CategoryID;
-            Transaction.TransferID = PayeeAccount?.AccountID;
-
-            // if nothing has changed, don't update
-            if (Transaction == InitialTransaction)
-            {
-                await Shell.Current.GoToAsync("..");
-                return;
-            }
-
-            // if account and transfer account are same, don't update
-            if (Transaction.AccountID == Transaction.TransferID)
-            {
-                await Shell.Current.DisplayAlert("Error", "Cannot transfer to and from the same Account", "OK");
-                return;
-            }
+            bool isValid = await Validation(payee);
+            if (!isValid) return;
 
             await transactionService.UpdateTransaction(Transaction);
 
@@ -258,15 +226,11 @@ public partial class EditTransactionViewModel : ObservableObject
             {
                 await accountService.UpdateBalance(Transaction.AccountID, Transaction.Amount - InitialTransaction.Amount);
             }
-            else // if account changed, updated original and new account balance
+            else // if account changed, update original and new account balance
             {
                 await accountService.UpdateBalance(InitialAccount.AccountID, -InitialTransaction.Amount);
                 await accountService.UpdateBalance(Transaction.AccountID, Transaction.Amount);
             }
-
-            // update TransactionsPage Transactions
-            var args = new TransactionEventArgs(Transaction, TransactionEventArgs.CRUD.Update);
-            WeakReferenceMessenger.Default.Send(new RefreshTransactionsMessage(args));
 
             // if transfer, update other side of transfer
             if (Transaction.CategoryID == Constants.TRANSFER_ID)
@@ -294,10 +258,6 @@ public partial class EditTransactionViewModel : ObservableObject
                     await accountService.UpdateBalance((int)InitialTransaction.TransferID, InitialTransaction.Amount);
                     await accountService.UpdateBalance(otherTrans.AccountID, -Transaction.Amount);
                 }
-
-                // update TransactionsPage Transactions
-                args.Transaction = otherTrans;
-                WeakReferenceMessenger.Default.Send(new RefreshTransactionsMessage(args));
             }
         }
         catch (SQLiteException ex)
@@ -326,35 +286,19 @@ public partial class EditTransactionViewModel : ObservableObject
     async Task Remove()
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete this transaction?", "Yes", "No");
-
-        if (!flag)
-            return;
+        if (!flag) return;
 
         try
         {
-            // remove Transaction and update corresponding Account balance
-            await transactionService.RemoveTransaction(Transaction.TransactionID);
-            decimal amount = (Transaction.CategoryID == Constants.INCOME_ID) ? -Transaction.Amount : Transaction.Amount;
-            await accountService.UpdateBalance(Transaction.AccountID, amount);
-
-            // update TransactionsPage Transactions
-            var args = new TransactionEventArgs(Transaction, TransactionEventArgs.CRUD.Delete);
-            WeakReferenceMessenger.Default.Send(new RefreshTransactionsMessage(args));
+            await transactionService.RemoveTransaction(Transaction);
 
             if (Transaction.CategoryID == Constants.TRANSFER_ID)
             {
-                // get other Transaction
+                // get and remove other Transaction
                 int transID = Transaction.TransactionID;
                 int otherTransID = (Transaction.SubcategoryID == Constants.DEBIT_ID) ? transID + 1 : transID - 1;
                 Transaction otherTrans = await transactionService.GetTransaction(otherTransID);
-
-                // remove Transaction and update corresponding Account balance
-                await transactionService.RemoveTransaction(otherTransID);
-                await accountService.UpdateBalance(otherTrans.AccountID, -amount);
-
-                // update TransactionsPage Transactions
-                args.Transaction = otherTrans;
-                WeakReferenceMessenger.Default.Send(new RefreshTransactionsMessage(args));
+                await transactionService.RemoveTransaction(otherTrans);
             }
         }
         catch (SQLiteException ex)
@@ -374,6 +318,44 @@ public partial class EditTransactionViewModel : ObservableObject
         }
 
         await Shell.Current.GoToAsync("..");
+    }
 
+    async Task<bool> Validation(string payee)
+    {
+        if (Transaction is null || Account is null || Category is null || Subcategory is null)
+        {
+            await Shell.Current.DisplayAlert("Validation Error", "Please fill out all fields", "OK");
+            return false;
+        }
+
+        // if expense or transfer debit, convert back to negative
+        if (InitialCategory.CategoryID >= Constants.EXPENSE_ID || InitialSubcategory.CategoryID == Constants.DEBIT_ID)
+            Transaction.Amount *= -1;
+
+        // if payee is not in Payees list, update
+        if (Transaction.Payee is null && !string.IsNullOrEmpty(payee))
+            Transaction.Payee = payee;
+
+        // update transaction
+        Transaction.AccountID = Account.AccountID;
+        Transaction.CategoryID = Category.CategoryID;
+        Transaction.SubcategoryID = Subcategory.CategoryID;
+        Transaction.TransferID = PayeeAccount?.AccountID;
+
+        // if nothing has changed, don't update
+        if (Transaction == InitialTransaction)
+        {
+            await Shell.Current.GoToAsync("..");
+            return false;
+        }
+
+        // if account and transfer account are same, don't update
+        if (Transaction.AccountID == Transaction.TransferID)
+        {
+            await Shell.Current.DisplayAlert("Error", "Cannot transfer to and from the same Account", "OK");
+            return false;
+        }
+
+        return true;
     }
 }

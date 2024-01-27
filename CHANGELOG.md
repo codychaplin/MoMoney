@@ -4,6 +4,7 @@
 
 * Fixed issues from .NET 8 upgrade
 * first time sqlite crash
+* Accounts and Categories are now added to lists when created or enabled
 * Amount in AddTransactionPage clears properly instead of to 0
 
 ### Changes
@@ -11,6 +12,13 @@
 * Upgraded to .NET 8
 * Fully added light mode support
 * Added empty views
+* Added Android light/dark themes
+* Added notice when user creates a parent category
+* Added more WeakReferenceMessenger classes for main models
+* Modularized service class functions and moved WeakReferenceMessenger calls
+* Moved interfaces to Services subfolder
+* Moved updating of account balances to TransactionService where possible
+* Added DisplayToast support
 
 # MoMoney v1.1.3
 

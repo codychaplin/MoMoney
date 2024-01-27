@@ -1,7 +1,7 @@
 ﻿using MoMoney.Core.Models;
 using MoMoney.Core.Exceptions;
 
-namespace MoMoney.Core.Services;
+namespace MoMoney.Core.Services.Interfaces;
 
 public interface ICategoryService
 {
@@ -9,11 +9,6 @@ public interface ICategoryService
     /// Cached dictionary of Categories
     /// </summary>
     Dictionary<int, Category> Categories { get; }
-
-    /// <summary>
-    /// Calls db Init.
-    /// </summary>
-    Task Init();
 
     /// <summary>
     /// Creates new Category object and inserts into Category table.

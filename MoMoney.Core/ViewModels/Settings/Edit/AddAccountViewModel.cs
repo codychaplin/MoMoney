@@ -1,10 +1,8 @@
 ﻿using SQLite;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MoMoney.Core.Helpers;
-using MoMoney.Core.Services;
 using MoMoney.Core.Exceptions;
+using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
@@ -37,7 +35,6 @@ public partial class AddAccountViewModel : ObservableObject
         try
         {
             await accountService.AddAccount(Name, Type, StartingBalance);
-            WeakReferenceMessenger.Default.Send(new UpdateAccountsMessage()); // update accounts on AddTransactionPage
             await Shell.Current.GoToAsync("..");
         }
         catch (SQLiteException ex)
