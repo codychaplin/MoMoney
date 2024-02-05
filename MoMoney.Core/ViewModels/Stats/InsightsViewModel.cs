@@ -101,6 +101,9 @@ public partial class InsightsViewModel : ObservableObject
                                             expenses = group.Where(t => t.CategoryID >= Constants.EXPENSE_ID && t.Amount < 0)
                                         });
 
+        if (!groupByMonth.Any())
+            return;
+
         // split grouped into income/expenses and select as IncomeExpenseData object
         IncomeData = new ObservableCollection<IncomeExpenseData>(
             groupByMonth.Select(group => 
@@ -164,6 +167,13 @@ public partial class InsightsViewModel : ObservableObject
                                             })
                                             .MaxBy(g => g.Total);
 
+            if (incomeResults is null)
+            {
+                TopIncomeSubcategoryName = "N/A";
+                TopIncomeSubcategoryAmount = 0;
+                return;
+            }
+                
             // get category name and amount
             Category incomeCategory = await categoryService.GetCategory(incomeResults.SubcategoryID);
             TopIncomeSubcategoryName = incomeCategory.CategoryName;
@@ -180,6 +190,13 @@ public partial class InsightsViewModel : ObservableObject
                                              })
                                              .MinBy(g => g.Total);
 
+            if (expenseResults is null)
+            {
+                TopExpenseCategoryName = "N/A";
+                TopExpenseCategoryAmount = 0;
+                return;
+            }
+
             // get category name and amount
             Category expenseCategory = await categoryService.GetCategory(expenseResults.CategoryID);
             TopExpenseCategoryName = expenseCategory.CategoryName;
@@ -189,6 +206,11 @@ public partial class InsightsViewModel : ObservableObject
         {
             await logger.LogError(ex.Message, ex.GetType().Name);
             await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex.Message, ex.GetType().Name);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 

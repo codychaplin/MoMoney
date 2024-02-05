@@ -63,13 +63,13 @@ public static class MauiProgram
         builder.Services.AddSingleton<SettingsPage>();
         builder.Services.AddTransient<SettingsViewModel>();
 
-        builder.Services.AddSingleton<AccountsPage>();
+        builder.Services.AddTransient<AccountsPage>();
         builder.Services.AddTransient<AccountsViewModel>();
 
-        builder.Services.AddSingleton<CategoriesPage>();
+        builder.Services.AddTransient<CategoriesPage>();
         builder.Services.AddTransient<CategoriesViewModel>();
 
-        builder.Services.AddSingleton<StocksPage>();
+        builder.Services.AddTransient<StocksPage>();
         builder.Services.AddTransient<StocksViewModel>();
 
         builder.Services.AddTransient<ImportExportPage>();

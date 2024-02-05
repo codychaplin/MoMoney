@@ -17,6 +17,10 @@ public partial class EditAccountPage : ContentPage
     {
         base.OnAppearing();
 
+        // workaround for switch thumbcolor not updating on load
+        swEnabled.IsToggled = true;
+        swEnabled.IsToggled = false;
+
         await vm.GetAccount();
     }
 

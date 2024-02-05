@@ -6,6 +6,10 @@
 * first time sqlite crash
 * Accounts and Categories are now added to lists when created or enabled
 * Amount in AddTransactionPage clears properly instead of to 0
+* Added temporary workaround for switch not updating in .NET 8
+* Fixed accounts updating on AccountPage
+* Fixed stock MarketPrice update
+* Fixed empty Insights page labels
 
 ### Changes
 
@@ -19,6 +23,7 @@
 * Moved interfaces to Services subfolder
 * Moved updating of account balances to TransactionService where possible
 * Added DisplayToast support
+* Made Accounts/Categories/StocksPage transient instead of singleton
 
 # MoMoney v1.1.3
 

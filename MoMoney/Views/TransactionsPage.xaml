@@ -22,6 +22,7 @@
     <!--  main page  -->
     <Grid RowDefinitions="Auto,*">
 
+        <!--  filters  -->
         <toolkit:Expander x:Name="ExpTitle">
 
             <!--  title  -->
@@ -270,6 +271,7 @@
         <listview:SfListView
             x:Name="listView"
             Grid.Row="1"
+            Margin="10,5,10,0"
             ItemSize="75"
             ItemSpacing="0"
             ItemTemplate="{StaticResource TransactionFrame}"

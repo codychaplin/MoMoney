@@ -18,7 +18,7 @@
                     <Entry
                         x:Name="txtSymbol"
                         Grid.Column="1"
-                        Placeholder="RBC.TO"
+                        Placeholder="RBC:TSE"
                         Text="{Binding Symbol}" />
                 </Grid>
             </Frame>

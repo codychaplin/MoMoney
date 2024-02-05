@@ -174,8 +174,8 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
             throw new InvalidStockException("Quantity must be > 0");
         if (cost <= 0)
             throw new InvalidStockException("Cost must be > 0");
-        if (marketPrice <= 0)
-            throw new InvalidStockException("Market Price must be > 0");
+        if (marketPrice < 0)
+            throw new InvalidStockException("Market Price must be >= 0");
         if (bookValue <= 0)
             throw new InvalidStockException("Book Value must be > 0");
     }

@@ -59,6 +59,7 @@
                 </Grid>
             </Frame>
             <Switch
+                x:Name="swEnabled"
                 Grid.Column="1"
                 HorizontalOptions="Start"
                 IsToggled="{Binding Account.Enabled}" />

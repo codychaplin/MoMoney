@@ -190,7 +190,12 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
             throw new InvalidTransactionException("Invalid Subcategory");
         if (categoryID != Constants.TRANSFER_ID && string.IsNullOrEmpty(payee))
             throw new InvalidTransactionException("Payee cannot be blank");
-        if (transferID != null && transferID < 1)
-            throw new InvalidTransactionException("Invalid Transfer Account");
+        if (categoryID == Constants.TRANSFER_ID)
+        {
+            if (transferID < 1)
+                throw new InvalidTransactionException("Invalid Transfer Account");
+            if (accountID == transferID)
+                throw new InvalidTransactionException("Cannot transfer to the same account.");
+        }
     }
 }

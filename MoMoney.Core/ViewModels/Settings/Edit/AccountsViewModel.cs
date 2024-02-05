@@ -43,7 +43,10 @@ public partial class AccountsViewModel : ObservableObject
     {
         var accounts = await accountService.GetAccounts();
         if (!accounts.Any())
+        {
+            Accounts.Clear();
             return;
+        }
 
         accounts = accounts.OrderByDescending(a => a.Enabled)
                            .ThenBy(a => a.AccountName);

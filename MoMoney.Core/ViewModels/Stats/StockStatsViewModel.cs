@@ -44,7 +44,7 @@ public partial class StockStatsViewModel : ObservableObject
     {
         // populate collection with cached values first
         var stocks = await stockService.GetStocks();
-        if (!stocks.Any())
+        if (stocks.Count == 0)
             return;
 
         foreach (var stock in stocks)
@@ -58,7 +58,7 @@ public partial class StockStatsViewModel : ObservableObject
         Total = totalMarket - totalBook;
         TotalPercent = (totalMarket / totalBook) - 1;
         
-        await Task.Delay(500); // allows smooth transition to page
+        await Task.Delay(250); // allows smooth transition to page
         await GetUpdatedStockPrices(cts.Token); // get updated prices via webscraping
     }
 
@@ -87,27 +87,28 @@ public partial class StockStatsViewModel : ObservableObject
                 // validate price
                 if (string.IsNullOrEmpty(price))
                     throw new InvalidStockException("Updated price not found.");
-                if (decimal.TryParse(price, out decimal marketPrice))
+                if (decimal.TryParse(price, out decimal newPrice))
                 {
-                    var difference = marketPrice - Stocks[i].MarketPrice;
+                    decimal difference = newPrice - Stocks[i].MarketPrice;
                     // if price has changed, update values
-                    if (difference != 0)
-                    {
-                        var stock = new DetailedStock(Stocks[i]) { MarketPrice = marketPrice };
-                        var marketValue = Stocks[i].MarketValue;
-                        Stocks[i] = stock;
+                    if (difference == 0)
+                        continue;
 
-                        // update in db (need to use oldStock due to casting issues)
-                        var oldStock = stockService.Stocks[Stocks[i].Symbol];
-                        oldStock.MarketPrice = Stocks[i].MarketPrice;
-                        await stockService.UpdateStock(oldStock);
+                    var stock = new DetailedStock(Stocks[i]) { MarketPrice = newPrice };
+                    var marketValue = Stocks[i].MarketValue;
+                    Stocks[i] = stock;
 
-                        // update totals
-                        totalMarket += stock.MarketValue - marketValue;
-                        MarketValue = totalMarket;
-                        Total = totalMarket - totalBook;
-                        TotalPercent = (totalMarket / totalBook) - 1;
-                    }
+                    // update in db (need to use oldStock due to casting issues)
+                    var oldStock = stockService.Stocks[Stocks[i].Symbol];
+                    oldStock.MarketPrice = Stocks[i].MarketPrice;
+                    await stockService.UpdateStock(oldStock);
+
+                    // update totals
+                    totalMarket += stock.MarketValue - marketValue;
+                    MarketValue = totalMarket;
+                    Total = totalMarket - totalBook;
+                    TotalPercent = (totalMarket / totalBook) - 1;
+
                 }
                 else
                     throw new InvalidStockException($"{price} is not a valid number");

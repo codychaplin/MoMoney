@@ -56,13 +56,13 @@ public partial class HomeViewModel : ObservableObject
 
     public async Task Refresh()
     {
+        await GetNetworth();
+
         var transactions = await transactionService.GetTransactionsFromTo(From, To, true);
         if (!transactions.Any())
             return;
-
         
         GetRecentTransactions(transactions);
-        await GetNetworth();
         Task getStats = GetStats(transactions);
         Task getChartData = GetChartData(transactions);
 

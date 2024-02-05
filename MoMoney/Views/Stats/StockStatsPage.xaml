@@ -85,10 +85,10 @@
                     <DataTemplate x:DataType="models:DetailedStock">
                         <!--  template  -->
                         <Frame
-                            Padding="5"
+                            Padding="5,5,10,5"
                             BackgroundColor="{StaticResource Gray700}"
-                            HeightRequest="45">
-                            <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
+                            HeightRequest="50">
+                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
                                 <Label
                                     Grid.RowSpan="2"
                                     Padding="5"
