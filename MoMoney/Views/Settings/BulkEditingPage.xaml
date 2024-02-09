@@ -166,13 +166,13 @@
 
         <Button
             BackgroundColor="{StaticResource Blue}"
-            Command="{Binding FindCommand}"
+            Command="{Binding BulkFindCommand}"
             Text="Find" />
 
         <Button
             Grid.Column="1"
             BackgroundColor="{StaticResource Green}"
-            Command="{Binding ReplaceCommand}"
+            Command="{Binding BulkReplaceCommand}"
             Text="Replace" />
 
         <Frame

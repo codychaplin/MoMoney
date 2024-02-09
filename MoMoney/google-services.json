@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "105348873369",
+    "project_id": "momoney-34532",
+    "storage_bucket": "momoney-34532.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:105348873369:android:dfaae1d8e956ab3ec58c08",
+        "android_client_info": {
+          "package_name": "com.pherda.momoney"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxBgddLIalecLoIKP2GcvecGgb0IuF_U0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

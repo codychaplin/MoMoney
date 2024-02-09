@@ -1,6 +1,6 @@
-﻿using SQLite;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
@@ -30,21 +30,22 @@ public partial class AddAccountViewModel : ObservableObject
     /// adds Account to database using input fields from view.
     /// </summary>
     [RelayCommand]
-    async Task Add()
+    async Task AddAccount()
     {
         try
         {
             await accountService.AddAccount(Name, Type, StartingBalance);
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_ACCOUNT, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
-        }
-        catch (SQLiteException ex)
-        {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
         catch (DuplicateAccountException ex)
         {
-            await logger.LogWarning(ex.Message, ex.GetType().Name);
+            await logger.LogWarning(nameof(AddAccount), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(AddAccount), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

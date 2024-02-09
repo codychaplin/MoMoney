@@ -24,6 +24,9 @@
 * Moved updating of account balances to TransactionService where possible
 * Added DisplayToast support
 * Made Accounts/Categories/StocksPage transient instead of singleton
+* Reorganized MauiProgram.cs
+* Added Firebase Analytics
+* Improved logging and exception handling
 
 # MoMoney v1.1.3
 

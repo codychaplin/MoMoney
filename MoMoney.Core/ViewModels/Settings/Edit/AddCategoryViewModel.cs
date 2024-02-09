@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
@@ -30,11 +31,12 @@ public partial class AddCategoryViewModel : ObservableObject
     /// adds Category to database using input fields from view.
     /// </summary>
     [RelayCommand]
-    async Task Add()
+    async Task AddCategory()
     {
         try
         {
             await categoryService.AddCategory(Name, Parent);
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_CATEGORY, FirebaseParameters.GetFirebaseParameters());
 
             // if parent category, notify the user that it won't show up until a subcategory is added
             if (string.IsNullOrEmpty(Parent))
@@ -44,7 +46,12 @@ public partial class AddCategoryViewModel : ObservableObject
         }
         catch (DuplicateCategoryException ex)
         {
-            await logger.LogWarning(ex.Message, ex.GetType().Name);
+            await logger.LogWarning(nameof(AddCategory), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(AddCategory), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -54,9 +61,17 @@ public partial class AddCategoryViewModel : ObservableObject
     /// </summary>
     public async Task GetParents()
     {
-        var categories = await categoryService.GetParentCategories();
-        Parents.Clear();
-        foreach (var cat in categories.Select(c => c.CategoryName))
-            Parents.Add(cat);
+        try
+        {
+            var categories = await categoryService.GetParentCategories();
+            Parents.Clear();
+            foreach (var cat in categories.Select(c => c.CategoryName))
+                Parents.Add(cat);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetParents), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 }

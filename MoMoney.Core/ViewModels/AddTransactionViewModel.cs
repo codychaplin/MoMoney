@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using SQLite;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
@@ -89,7 +88,12 @@ public partial class AddTransactionViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
-            await logger.LogWarning(ex.Message, ex.GetType().Name);
+            await logger.LogWarning(nameof(GetIncomeCategory), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetIncomeCategory), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -110,7 +114,12 @@ public partial class AddTransactionViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
-            await logger.LogWarning(ex.Message, ex.GetType().Name);
+            await logger.LogWarning(nameof(GetTransferCategory), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetTransferCategory), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -121,21 +130,29 @@ public partial class AddTransactionViewModel : ObservableObject
     [RelayCommand]
     async Task GetExpenseCategories()
     {
-        // cache selected Category and Subcategory
-        var savedCategory = Category;
-        var savedSubcategory = Subcategory;
+        try
+        {
+            // cache selected Category and Subcategory
+            var savedCategory = Category;
+            var savedSubcategory = Subcategory;
 
-        var categories = await categoryService.GetExpenseCategories();
-        Categories.Clear();
-        foreach (var cat in categories)
-            Categories.Add(cat);
-        Subcategories.Clear();
+            var categories = await categoryService.GetExpenseCategories();
+            Categories.Clear();
+            foreach (var cat in categories)
+                Categories.Add(cat);
+            Subcategories.Clear();
 
-        // re-add selected Category and Subcategory if not null
-        if (savedCategory is not null)
-            Category = savedCategory;
-        if (savedSubcategory is not null)
-            Subcategory = savedSubcategory;
+            // re-add selected Category and Subcategory if not null
+            if (savedCategory is not null)
+                Category = savedCategory;
+            if (savedSubcategory is not null)
+                Subcategory = savedSubcategory;
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetExpenseCategories), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -144,19 +161,35 @@ public partial class AddTransactionViewModel : ObservableObject
     /// <param name="parentCategory"></param>
     async Task GetSubcategories(Category parentCategory)
     {
-        if (parentCategory is null)
-            return;
+        try
+        {
+            if (parentCategory is null)
+                return;
 
-        var subcategories = await categoryService.GetSubcategories(parentCategory);
-        Subcategories.Clear();
-        foreach (var cat in subcategories)
-            Subcategories.Add(cat);
+            var subcategories = await categoryService.GetSubcategories(parentCategory);
+            Subcategories.Clear();
+            foreach (var cat in subcategories)
+                Subcategories.Add(cat);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetSubcategories), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     public async void GetPayees(object sender, EventArgs e)
     {
-        var payees = await transactionService.GetPayeesFromTransactions();
-        Payees = new ObservableCollection<string>(payees);
+        try
+        {
+            var payees = await transactionService.GetPayeesFromTransactions();
+            Payees = new ObservableCollection<string>(payees);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetPayees), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     public async void CategoryChanged(object sender, EventArgs e)
@@ -175,12 +208,12 @@ public partial class AddTransactionViewModel : ObservableObject
     /// </summary>
     /// <param name="payee"></param>
     [RelayCommand]
-    async Task Add(string payee)
+    async Task AddTransaction(string payee)
     {
         try
         {
             if (Account is null || Category is null || Subcategory is null || 
-                (Category?.CategoryID == Constants.TRANSFER_ID && TransferAccount is null))
+                (Category.CategoryID == Constants.TRANSFER_ID && TransferAccount is null))
                 return;
 
             // add payee to Payees if not already in list
@@ -208,20 +241,17 @@ public partial class AddTransactionViewModel : ObservableObject
             }
 
             ClearAfterAdd();
+
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_TRANSACTION, FirebaseParameters.GetFirebaseParameters());
         }
         catch (InvalidTransactionException ex)
         {
-            await logger.LogWarning(ex.Message, ex.GetType().Name);
+            await logger.LogWarning(nameof(AddTransaction), ex);
             await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
-        }
-        catch (SQLiteException ex)
-        {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(AddTransaction), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

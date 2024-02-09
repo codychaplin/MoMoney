@@ -54,7 +54,7 @@
                 x:Name="btnEnter"
                 Grid.Column="1"
                 BackgroundColor="{StaticResource Green}"
-                Command="{Binding AddCommand}"
+                Command="{Binding AddCategoryCommand}"
                 HeightRequest="45"
                 Text="Accept" />
         </Grid>

@@ -38,7 +38,12 @@ public class IdToAccountConverter : IValueConverter
                 }
                 catch (AccountNotFoundException ex)
                 {
-                    logger.LogError(ex.Message, ex.GetType().Name);
+                    logger.LogError(nameof(IdToAccountConverter), ex);
+                    return "";
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(nameof(IdToAccountConverter), ex);
                     return "";
                 }
             }

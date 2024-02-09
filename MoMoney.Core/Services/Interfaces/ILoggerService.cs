@@ -23,23 +23,30 @@ public interface ILoggerService<T>
     /// <summary>
     /// Sends warning level log to db.
     /// </summary>
-    /// <param name="message"></param>
-    /// <param name="exceptionType"></param>
-    Task LogWarning(string message, string exceptionType = "");
+    /// <param name="functionName"></param>
+    /// <param name="ex"></param>
+    Task LogWarning(string functionName, Exception ex);
 
     /// <summary>
     /// Sends error level log to db.
     /// </summary>
-    /// <param name="message"></param>
-    /// <param name="exceptionType"></param>
-    Task LogError(string message, string exceptionType = "");
+    /// <param name="functionName"></param>
+    /// <param name="ex"></param>
+    Task LogError(string functionName, Exception ex);
 
     /// <summary>
     /// Sends critical level log to db.
     /// </summary>
-    /// <param name="message"></param>
-    /// <param name="exceptionType"></param>
-    Task LogCritical(string message, string exceptionType = "");
+    /// <param name="functionName"></param>
+    /// <param name="ex"></param>
+    Task LogCritical(string functionName, Exception ex);
+
+    /// <summary>
+    /// Sends log to Firebase.
+    /// </summary>
+    /// <param name="eventName"></param>
+    /// <param name="parameters"></param>
+    void LogFirebaseEvent(string eventName, IDictionary<string, string> parameters);
 
     /// <summary>
     /// Gets an log from the Logs table using an ID.

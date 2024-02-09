@@ -19,4 +19,14 @@
 		<PackageReference Include="Syncfusion.Maui.ListView" Version="23.1.43" />
 	</ItemGroup>
 
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+	  <PackageReference Include="Xamarin.Firebase.Analytics">
+	    <Version>121.3.0.4</Version>
+	  </PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Platforms\Android\" />
+	</ItemGroup>
+
 </Project>

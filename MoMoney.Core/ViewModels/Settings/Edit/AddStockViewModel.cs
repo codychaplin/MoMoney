@@ -1,6 +1,6 @@
-﻿using SQLite;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
@@ -35,16 +35,17 @@ public partial class AddStockViewModel : ObservableObject
     /// adds Account to database using input fields from view.
     /// </summary>
     [RelayCommand]
-    async Task Add()
+    async Task AddStock()
     {
         try
         {
             await stockService.AddStock(Symbol, Quantity, Cost, MarketPrice, BookValue);
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_STOCK, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
         }
-        catch (SQLiteException ex)
+        catch (Exception ex)
         {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(AddStock), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

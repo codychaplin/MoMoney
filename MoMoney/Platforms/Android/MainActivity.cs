@@ -1,7 +1,6 @@
 ﻿using Android.OS;
 using Android.App;
 using Android.Content.PM;
-using AndroidX.AppCompat.App;
 
 namespace MoMoney;
 
@@ -12,6 +11,7 @@ public class MainActivity : MauiAppCompatActivity
     {
         base.OnCreate(savedInstanceState);
         SupportActionBar.Hide();
+        Firebase.FirebaseApp.InitializeApp(this.ApplicationContext);
         Window.SetSoftInputMode(Android.Views.SoftInput.AdjustResize);
     }
 }

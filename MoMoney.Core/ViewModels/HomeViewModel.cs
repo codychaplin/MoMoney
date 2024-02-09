@@ -52,6 +52,8 @@ public partial class HomeViewModel : ObservableObject
         // first two months, show 1 year, starting March show YTD
         From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
         To = DateTime.Today;
+
+        logger.LogFirebaseEvent(FirebaseParameters.EVENT_OPEN_APP, FirebaseParameters.GetFirebaseParameters());
     }
 
     public async Task Refresh()
@@ -151,12 +153,12 @@ public partial class HomeViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(GetStats), ex);
             await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(GetStats), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

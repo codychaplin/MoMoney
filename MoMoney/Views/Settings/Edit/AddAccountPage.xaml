@@ -69,7 +69,7 @@
                 x:Name="btnEnter"
                 Grid.Column="1"
                 BackgroundColor="{StaticResource Green}"
-                Command="{Binding AddCommand}"
+                Command="{Binding AddAccountCommand}"
                 HeightRequest="45"
                 Text="Accept" />
         </Grid>

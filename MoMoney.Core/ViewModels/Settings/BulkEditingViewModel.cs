@@ -2,8 +2,8 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using SQLite;
 using MoMoney.Core.Models;
+using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
@@ -64,12 +64,20 @@ public partial class BulkEditingViewModel : ObservableObject
 
     public async void Init(object sender, EventArgs e)
     {
-        await GetAccounts();
-        await GetCategories();
-        await GetPayees();
-        TotalTransactionCount = await transactionService.GetTransactionCount();
-        ReplacePayee = string.Empty;
-        UpdateText();
+        try
+        {
+            await GetAccounts();
+            await GetCategories();
+            await GetPayees();
+            TotalTransactionCount = await transactionService.GetTransactionCount();
+            ReplacePayee = string.Empty;
+            UpdateText();
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(Init), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -77,10 +85,18 @@ public partial class BulkEditingViewModel : ObservableObject
     /// </summary>
     public async Task GetAccounts()
     {
-        var accounts = await accountService.GetAccounts();
-        Accounts.Clear();
-        foreach (var acc in accounts)
-            Accounts.Add(acc);
+        try
+        {
+            var accounts = await accountService.GetAccounts();
+            Accounts.Clear();
+            foreach (var acc in accounts)
+                Accounts.Add(acc);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetAccounts), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -88,10 +104,18 @@ public partial class BulkEditingViewModel : ObservableObject
     /// </summary>
     public async Task GetCategories()
     {
-        var categories = await categoryService.GetParentCategories();
-        Categories.Clear();
-        foreach (var cat in categories)
-            Categories.Add(cat);
+        try
+        {
+            var categories = await categoryService.GetParentCategories();
+            Categories.Clear();
+            foreach (var cat in categories)
+                Categories.Add(cat);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetCategories), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -99,10 +123,18 @@ public partial class BulkEditingViewModel : ObservableObject
     /// </summary>
     public async Task GetPayees()
     {
-        var payees = await transactionService.GetPayeesFromTransactions();
-        Payees.Clear();
-        foreach (var payee in payees)
-            Payees.Add(payee);
+        try
+        {
+            var payees = await transactionService.GetPayeesFromTransactions();
+            Payees.Clear();
+            foreach (var payee in payees)
+                Payees.Add(payee);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetPayees), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -112,22 +144,30 @@ public partial class BulkEditingViewModel : ObservableObject
     /// <param name="e"></param>
     public async void GetFindSubcategories(object sender, EventArgs e)
     {
-        FindSubcategories.Clear();
-        FindSubcategory = null;
-
-        // event might fire before SelectedItem updates in vm
-        if (FindCategory is null)
+        try
         {
-            var pckCategories = sender as Picker;
-            var category = pckCategories.SelectedItem as Category;
-            FindCategory = category;
-            if (FindCategory is null)
-                return;
-        }
+            FindSubcategories.Clear();
+            FindSubcategory = null;
 
-        var subcategories = await categoryService.GetSubcategories(FindCategory);
-        foreach (var cat in subcategories)
-            FindSubcategories.Add(cat);
+            // event might fire before SelectedItem updates in vm
+            if (FindCategory is null)
+            {
+                var pckCategories = sender as Picker;
+                var category = pckCategories.SelectedItem as Category;
+                FindCategory = category;
+                if (FindCategory is null)
+                    return;
+            }
+
+            var subcategories = await categoryService.GetSubcategories(FindCategory);
+            foreach (var cat in subcategories)
+                FindSubcategories.Add(cat);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetFindSubcategories), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -137,22 +177,30 @@ public partial class BulkEditingViewModel : ObservableObject
     /// <param name="e"></param>
     public async void GetReplaceSubcategories(object sender, EventArgs e)
     {
-        ReplaceSubcategories.Clear();
-        ReplaceSubcategory = null;
-
-        // event might fire before SelectedItem updates in vm
-        if (ReplaceCategory is null)
+        try
         {
-            var pckCategories = sender as Picker;
-            var category = pckCategories.SelectedItem as Category;
-            ReplaceCategory = category;
-            if (ReplaceCategory is null)
-                return;
-        }
+            ReplaceSubcategories.Clear();
+            ReplaceSubcategory = null;
 
-        var subcategories = await categoryService.GetSubcategories(ReplaceCategory);
-        foreach (var cat in subcategories)
-            ReplaceSubcategories.Add(cat);
+            // event might fire before SelectedItem updates in vm
+            if (ReplaceCategory is null)
+            {
+                var pckCategories = sender as Picker;
+                var category = pckCategories.SelectedItem as Category;
+                ReplaceCategory = category;
+                if (ReplaceCategory is null)
+                    return;
+            }
+
+            var subcategories = await categoryService.GetSubcategories(ReplaceCategory);
+            foreach (var cat in subcategories)
+                ReplaceSubcategories.Add(cat);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetReplaceSubcategories), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -224,7 +272,7 @@ public partial class BulkEditingViewModel : ObservableObject
     }
 
     [RelayCommand]
-    async Task<bool> Find()
+    async Task<bool> BulkFind(bool fromCommand = true)
     {
         try
         {
@@ -237,16 +285,16 @@ public partial class BulkEditingViewModel : ObservableObject
             FoundTransactions = await transactionService.GetFilteredTransactions(FindAccount, FindCategory, FindSubcategory, FindPayee);
             FoundTransactionCount = FoundTransactions.Count;
             UpdateText(0, true, false);
+
+            // don't log if called from another method
+            if (fromCommand)
+                logger.LogFirebaseEvent(FirebaseParameters.EVENT_BULK_FIND, FirebaseParameters.GetFirebaseParameters());
+
             return true;
-        }
-        catch (SQLiteException ex)
-        {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(BulkFind), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
 
@@ -254,10 +302,10 @@ public partial class BulkEditingViewModel : ObservableObject
     }
 
     [RelayCommand]
-    async Task Replace()
+    async Task BulkReplace()
     {
         if (FoundTransactions == null || FoundTransactions.Count == 0)
-            if (await Find() == false) return;
+            if (await BulkFind(false) == false) return;
 
         bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to replace {FoundTransactionCount} transactions", "Yes", "No");
         if (!flag) return;
@@ -274,20 +322,17 @@ public partial class BulkEditingViewModel : ObservableObject
                 await transactionService.UpdateTransaction(trans);
                 i++;
             }
+
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_BULK_REPLACE, FirebaseParameters.GetFirebaseParameters());
         }
         catch (InvalidTransactionException ex)
         {
-            await logger.LogWarning(ex.Message, ex.GetType().Name);
+            await logger.LogWarning(nameof(BulkReplace), ex);
             await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
-        }
-        catch (SQLiteException ex)
-        {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(BulkReplace), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
         finally

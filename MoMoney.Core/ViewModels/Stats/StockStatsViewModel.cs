@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using HtmlAgilityPack;
 using MoMoney.Core.Models;
+using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
@@ -33,6 +34,7 @@ public partial class StockStatsViewModel : ObservableObject
     {
         stockService = _stockService;
         logger = _logger;
+        logger.LogFirebaseEvent(FirebaseParameters.EVENT_VIEW_STOCKS, FirebaseParameters.GetFirebaseParameters());
     }
 
     /// <summary>
@@ -116,12 +118,12 @@ public partial class StockStatsViewModel : ObservableObject
         }
         catch (HttpRequestException ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(GetUpdatedStockPrices), ex);
             await Shell.Current.DisplayAlert("HTTP Error", ex.Message, "OK");
         }
         catch (InvalidStockException ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(GetUpdatedStockPrices), ex);
             await Shell.Current.DisplayAlert("Parse Error", ex.Message, "OK");
         }
         catch (InvalidOperationException)
@@ -134,7 +136,7 @@ public partial class StockStatsViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(GetUpdatedStockPrices), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
         finally

@@ -61,10 +61,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="google-services.json" />
 	  <None Remove="Platforms\Android\Resources\values-night\colors.xml" />
 	  <None Remove="Platforms\Android\Resources\values-night\Styles.xml" />
 	  <None Remove="Platforms\Android\Resources\values\colors.xml" />
 	  <None Remove="Platforms\Android\Resources\values\Styles.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <GoogleServicesJson Include="google-services.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -86,7 +91,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />
+	  <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />
 	  <PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
@@ -96,6 +101,14 @@
 	  <PackageReference Include="Syncfusion.Maui.ListView" Version="23.1.43" />
 	  <PackageReference Include="Syncfusion.Maui.Sliders" Version="23.1.43" />
 	  <PackageReference Include="Syncfusion.Maui.TabView" Version="23.1.43" />
+	  <PackageReference Include="Xamarin.AndroidX.Preference" Version="1.2.1.3" />
+	  <PackageReference Include="Xamarin.Google.Android.Material" Version="1.10.0.2" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+      <PackageReference Include="Xamarin.Firebase.Analytics" Version="121.3.0.4" />
+	  <PackageReference Include="Xamarin.AndroidX.Preference" Version="1.2.1.2" />
+	  <PackageReference Include="Xamarin.Google.Android.Material" Version="1.10.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>

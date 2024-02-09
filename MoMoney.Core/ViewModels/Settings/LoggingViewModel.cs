@@ -195,12 +195,12 @@ public partial class LoggingViewModel : ObservableObject
         }
         catch (LogNotFoundException ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(OpenPopup), ex);
             await Shell.Current.DisplayAlert("Log Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(OpenPopup), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

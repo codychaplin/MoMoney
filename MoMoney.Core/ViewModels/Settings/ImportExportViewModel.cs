@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using CommunityToolkit.Mvvm.Input;
-using SQLite;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
@@ -64,27 +63,24 @@ public partial class ImportExportViewModel
 
             await accountService.AddAccounts(accounts);
             string message = i == 2 ? "1 account has been added." : $"{i - 1} accounts have been added";
-            await Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+
             await logger.LogInfo($"Imported {accounts.Count} accounts from '{result.FileName}'.");
-        }
-        catch (SQLiteException ex)
-        {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_ACCOUNTS, FirebaseParameters.GetFirebaseParameters());
         }
         catch (InvalidAccountException ex)
         {
-            await logger.LogWarning(ex.Message, ex.GetType().Name);
+            await logger.LogWarning(nameof(ImportAccountsCSV), ex);
             await Shell.Current.DisplayAlert("Warning", ex.Message, "OK");
         }
         catch (DuplicateAccountException ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(ImportAccountsCSV), ex);
             await Shell.Current.DisplayAlert("Duplicate Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(ImportAccountsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -132,27 +128,24 @@ public partial class ImportExportViewModel
 
             await categoryService.AddCategories(categories);
             string message = i == 2 ? "1 category has been added." : $"{i - 1} categories have been added";
-            await Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+
             await logger.LogInfo($"Imported {categories.Count} categories from '{result.FileName}'.");
-        }
-        catch (SQLiteException ex)
-        {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_CATEGORIES, FirebaseParameters.GetFirebaseParameters());
         }
         catch (InvalidCategoryException ex)
         {
-            await logger.LogWarning(ex.Message, ex.GetType().Name);
+            await logger.LogWarning(nameof(ImportCategoriesCSV), ex);
             await Shell.Current.DisplayAlert("Warning", ex.Message, "OK");
         }
         catch (DuplicateCategoryException ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(ImportCategoriesCSV), ex);
             await Shell.Current.DisplayAlert("Duplicate Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(ImportCategoriesCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -204,22 +197,19 @@ public partial class ImportExportViewModel
             await transactionService.AddTransactions(transactions);
             await CalculateAccountBalances();
             string message = i == 2 ? "1 transaction has been added." : $"{i - 1} transactions have been added";
-            await Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+
             await logger.LogInfo($"Imported {transactions.Count} transactions from '{result.FileName}'.");
-        }
-        catch (SQLiteException ex)
-        {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_TRANSACTIONS, FirebaseParameters.GetFirebaseParameters());
         }
         catch (InvalidTransactionException ex)
         {
-            await logger.LogWarning(ex.Message, ex.GetType().Name);
+            await logger.LogWarning(nameof(ImportTransactionsCSV), ex);
             await Shell.Current.DisplayAlert("Warning", ex.Message, "OK");
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(ImportTransactionsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -258,27 +248,24 @@ public partial class ImportExportViewModel
 
             await stockService.AddStocks(stocks);
             string message = i == 2 ? "1 stock has been added." : $"{i - 1} stocks have been added";
-            await Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+
             await logger.LogInfo($"Imported {stocks.Count} stocks from '{result.FileName}'.");
-        }
-        catch (SQLiteException ex)
-        {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_STOCKS, FirebaseParameters.GetFirebaseParameters());
         }
         catch (InvalidStockException ex)
         {
-            await logger.LogWarning(ex.Message, ex.GetType().Name);
+            await logger.LogWarning(nameof(ImportStocksCSV), ex);
             await Shell.Current.DisplayAlert("Warning", ex.Message, "OK");
         }
         catch (DuplicateStockException ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(ImportStocksCSV), ex);
             await Shell.Current.DisplayAlert("Duplicate Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(ImportStocksCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -339,13 +326,15 @@ public partial class ImportExportViewModel
 
             // log/display success message
             int count = transactions.Count();
-            await logger.LogInfo($"Exported {count} transactions to '{name}'.");
             string message = $"Successfully downloaded file with {count} " + (count == 1 ? "transaction" : "transactions") + $" to:\n'{targetFile}'";
-            await Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+
+            await logger.LogInfo($"Exported {count} transactions to '{name}'.");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_EXPORT_TRANSACTIONS, FirebaseParameters.GetFirebaseParameters());
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(ExportTransactionsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -386,13 +375,15 @@ public partial class ImportExportViewModel
 
             // log/display success message
             int count = logs.Count();
-            await logger.LogInfo($"Exported {count} logs to '{name}'.");
             string message = $"Successfully downloaded file with {count} " + (count == 1 ? "log" : "logs") + $" to:\n'{targetFile}'";
-            await Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+
+            await logger.LogInfo($"Exported {count} logs to '{name}'.");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_EXPORT_LOGS, FirebaseParameters.GetFirebaseParameters());
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(ExportLogsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -430,14 +421,9 @@ public partial class ImportExportViewModel
                 await accountService.UpdateAccount(account);
             }
         }
-        catch (SQLiteException ex)
-        {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
-        }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(CalculateAccountBalances), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

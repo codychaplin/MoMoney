@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using SQLite;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
@@ -90,24 +89,29 @@ public partial class EditTransactionViewModel : ObservableObject
             }
             catch (TransactionNotFoundException ex)
             {
-                await logger.LogError(ex.Message, ex.GetType().Name);
+                await logger.LogError(nameof(GetTransaction), ex);
                 await Shell.Current.DisplayAlert("Transaction Error", ex.Message, "OK");
             }
             catch (AccountNotFoundException ex)
             {
-                await logger.LogError(ex.Message, ex.GetType().Name);
+                await logger.LogError(nameof(GetTransaction), ex);
                 await Shell.Current.DisplayAlert("Account Error", ex.Message, "OK");
             }
             catch (CategoryNotFoundException ex)
             {
-                await logger.LogError(ex.Message, ex.GetType().Name);
+                await logger.LogError(nameof(GetTransaction), ex);
                 await Shell.Current.DisplayAlert("Category Error", ex.Message, "OK");
+            }
+            catch (Exception ex)
+            {
+                await logger.LogError(nameof(GetTransaction), ex);
+                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
             }
         }
         else
         {
             string message = $"{ID} is not a valid ID";
-            await logger.LogError(message);
+            await logger.LogError(nameof(GetTransaction), new Exception(message));
             await Shell.Current.DisplayAlert("Transaction ID Error", message, "OK");
         }
     }
@@ -118,15 +122,23 @@ public partial class EditTransactionViewModel : ObservableObject
     /// <returns></returns>
     public async Task GetAccounts()
     {
-        // TODO: if using disabled account, retrieve from db as well
-        var accounts = await accountService.GetActiveAccounts();
-        Accounts.Clear();
-        foreach (var acc in accounts)
-            Accounts.Add(acc);
+        try
+        {
+            // TODO: if using disabled account, retrieve from db as well
+            var accounts = await accountService.GetActiveAccounts();
+            Accounts.Clear();
+            foreach (var acc in accounts)
+                Accounts.Add(acc);
 
-        Account = InitialAccount;
-        if (InitialCategory.CategoryID == Constants.TRANSFER_ID)
-            PayeeAccount = InitialPayeeAccount;
+            Account = InitialAccount;
+            if (InitialCategory.CategoryID == Constants.TRANSFER_ID)
+                PayeeAccount = InitialPayeeAccount;
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetAccounts), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -144,8 +156,13 @@ public partial class EditTransactionViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(GetIncomeCategory), ex);
             await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetIncomeCategory), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 
@@ -164,8 +181,13 @@ public partial class EditTransactionViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(GetTransferCategory), ex);
             await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetTransferCategory), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 
@@ -174,12 +196,20 @@ public partial class EditTransactionViewModel : ObservableObject
     /// </summary>
     public async Task GetExpenseCategories()
     {
-        var categories = await categoryService.GetExpenseCategories();
-        Categories.Clear();
-        foreach (var cat in categories)
-            Categories.Add(cat);
-        Subcategories.Clear();
-        Category = InitialCategory;
+        try
+        {
+            var categories = await categoryService.GetExpenseCategories();
+            Categories.Clear();
+            foreach (var cat in categories)
+                Categories.Add(cat);
+            Subcategories.Clear();
+            Category = InitialCategory;
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetExpenseCategories), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -188,15 +218,23 @@ public partial class EditTransactionViewModel : ObservableObject
     /// <param name="parentCategory"></param>
     public async Task GetSubcategories(Category parentCategory)
     {
-        if (parentCategory is not null)
+        try
         {
-            var subcategories = await categoryService.GetSubcategories(parentCategory);
-            Subcategories.Clear();
-            foreach (var cat in subcategories)
-                Subcategories.Add(cat);
-        }
+            if (parentCategory is not null)
+            {
+                var subcategories = await categoryService.GetSubcategories(parentCategory);
+                Subcategories.Clear();
+                foreach (var cat in subcategories)
+                    Subcategories.Add(cat);
+            }
 
-        Subcategory = InitialSubcategory;
+            Subcategory = InitialSubcategory;
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetSubcategories), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -204,15 +242,23 @@ public partial class EditTransactionViewModel : ObservableObject
     /// </summary>
     public async Task GetPayees()
     {
-        var payees = await transactionService.GetPayeesFromTransactions();
-        Payees = new ObservableCollection<string>(payees);
+        try
+        {
+            var payees = await transactionService.GetPayeesFromTransactions();
+            Payees = new ObservableCollection<string>(payees);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetPayees), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
     /// Edits Transaction in database using input fields from view.
     /// </summary>
     [RelayCommand]
-    async Task Edit(string payee)
+    async Task EditTransaction(string payee)
     {
         try
         {
@@ -259,20 +305,17 @@ public partial class EditTransactionViewModel : ObservableObject
                     await accountService.UpdateBalance(otherTrans.AccountID, -Transaction.Amount);
                 }
             }
-        }
-        catch (SQLiteException ex)
-        {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_EDIT_TRANSACTION, FirebaseParameters.GetFirebaseParameters());
         }
         catch (TransactionNotFoundException ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(EditTransaction), ex);
             await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(EditTransaction), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
 
@@ -283,7 +326,7 @@ public partial class EditTransactionViewModel : ObservableObject
     /// Removes the Transaction from the database.
     /// </summary>
     [RelayCommand]
-    async Task Remove()
+    async Task RemoveTransaction()
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete this transaction?", "Yes", "No");
         if (!flag) return;
@@ -300,20 +343,17 @@ public partial class EditTransactionViewModel : ObservableObject
                 Transaction otherTrans = await transactionService.GetTransaction(otherTransID);
                 await transactionService.RemoveTransaction(otherTrans);
             }
-        }
-        catch (SQLiteException ex)
-        {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_DELETE_TRANSACTION, FirebaseParameters.GetFirebaseParameters());
         }
         catch (TransactionNotFoundException ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(RemoveTransaction), ex);
             await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(RemoveTransaction), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
 

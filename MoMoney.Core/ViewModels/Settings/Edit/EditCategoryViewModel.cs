@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
+using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
@@ -48,15 +49,20 @@ public partial class EditCategoryViewModel : ObservableObject
             }
             catch (CategoryNotFoundException ex)
             {
-                await logger.LogError(ex.Message, ex.GetType().Name);
+                await logger.LogError(nameof(GetCategory), ex);
                 await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+            }
+            catch (Exception ex)
+            {
+                await logger.LogError(nameof(GetCategory), ex);
+                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
             }
 
             return;
         }
 
         string message = $"{ID} is not a valid ID";
-        await logger.LogError(message);
+        await logger.LogError(nameof(GetCategory), new Exception(message));
         await Shell.Current.DisplayAlert("Category Not Found Error", message, "OK");
     }
 
@@ -65,17 +71,25 @@ public partial class EditCategoryViewModel : ObservableObject
     /// </summary>
     public async Task GetParents()
     {
-        var categories = await categoryService.GetParentCategories();
-        Parents.Clear();
-        foreach (var cat in categories)
-            Parents.Add(cat);
+        try
+        {
+            var categories = await categoryService.GetParentCategories();
+            Parents.Clear();
+            foreach (var cat in categories)
+                Parents.Add(cat);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetParents), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
     /// Edits Category in database using input fields from view.
     /// </summary>
     [RelayCommand]
-    async Task Edit()
+    async Task EditCategory()
     {
         if (Category is null || string.IsNullOrEmpty(Category.CategoryName))
         {
@@ -84,23 +98,39 @@ public partial class EditCategoryViewModel : ObservableObject
             return;
         }
 
-        Category.ParentName = Parent.CategoryName;
-        await categoryService.UpdateCategory(Category);
-        await Shell.Current.GoToAsync("..");
+        try
+        {
+            Category.ParentName = Parent.CategoryName;
+            await categoryService.UpdateCategory(Category);
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_EDIT_CATEGORY, FirebaseParameters.GetFirebaseParameters());
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(EditCategory), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
     /// Removes the Category from the database.
     /// </summary>
     [RelayCommand]
-    async Task Remove()
+    async Task RemoveCategory()
     {
         bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Category.CategoryName}\"?", "Yes", "No");
+        if (!flag) return;
 
-        if (!flag)
-            return;
-
-        await categoryService.RemoveCategory(Category.CategoryID);
-        await Shell.Current.GoToAsync("..");
+        try
+        {
+            await categoryService.RemoveCategory(Category.CategoryID);
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_DELETE_CATEGORY, FirebaseParameters.GetFirebaseParameters());
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(RemoveCategory), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 }

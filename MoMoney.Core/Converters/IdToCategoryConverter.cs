@@ -38,7 +38,12 @@ public class IdToCategoryConverter : IValueConverter
                 }
                 catch (CategoryNotFoundException ex)
                 {
-                    logger.LogError(ex.Message, ex.GetType().Name);
+                    logger.LogError(nameof(IdToCategoryConverter), ex);
+                    return "";
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(nameof(IdToCategoryConverter), ex);
                     return "";
                 }
             }

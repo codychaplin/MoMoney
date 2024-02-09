@@ -9,13 +9,15 @@ namespace MoMoney.Core.ViewModels.Settings.Edit;
 public partial class AccountsViewModel : ObservableObject
 {
     readonly IAccountService accountService;
+    readonly ILoggerService<AccountsViewModel> logger;
 
     [ObservableProperty]
     public ObservableCollection<Account> accounts = new();
 
-    public AccountsViewModel(IAccountService _accountService)
+    public AccountsViewModel(IAccountService _accountService, ILoggerService<AccountsViewModel> _logger)
     {
         accountService = _accountService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -41,17 +43,25 @@ public partial class AccountsViewModel : ObservableObject
     /// </summary>
     public async void Init(object s, EventArgs e)
     {
-        var accounts = await accountService.GetAccounts();
-        if (!accounts.Any())
+        try
         {
-            Accounts.Clear();
-            return;
-        }
+            var accounts = await accountService.GetAccounts();
+            if (!accounts.Any())
+            {
+                Accounts.Clear();
+                return;
+            }
 
-        accounts = accounts.OrderByDescending(a => a.Enabled)
-                           .ThenBy(a => a.AccountName);
-        Accounts.Clear();
-        foreach (var acc in accounts)
-            Accounts.Add(acc);
+            accounts = accounts.OrderByDescending(a => a.Enabled)
+                               .ThenBy(a => a.AccountName);
+            Accounts.Clear();
+            foreach (var acc in accounts)
+                Accounts.Add(acc);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(Init), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 }

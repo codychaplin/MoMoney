@@ -130,8 +130,13 @@ public partial class TransactionsViewModel : ObservableObject
             catch (TransactionNotFoundException ex)
             {
                 string message = $"Could not find corresponding transfer for Transaction #{e.Transaction.TransactionID}";
-                await logger.LogError(message, ex.GetType().Name);
+                await logger.LogError(nameof(Create), ex);
                 await Shell.Current.DisplayAlert("Error", message, "OK");
+            }
+            catch (Exception ex)
+            {
+                await logger.LogError(nameof(Create), ex);
+                await Shell.Current.DisplayAlert("Error", "An error occurred while trying to find corresponding transfer.", "OK");
             }
         }
         else

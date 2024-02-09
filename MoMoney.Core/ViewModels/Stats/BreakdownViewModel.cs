@@ -43,10 +43,11 @@ public partial class BreakdownViewModel : ObservableObject
 
     EventHandler<EventArgs> OnUpdate { get; set; }
 
-    public BreakdownViewModel(ITransactionService _transactionService, ICategoryService _categoryService)
+    public BreakdownViewModel(ITransactionService _transactionService, ICategoryService _categoryService, ILoggerService<BreakdownViewModel> _loggerService)
     {
         transactionService = _transactionService;
         categoryService = _categoryService;
+        _loggerService.LogFirebaseEvent(FirebaseParameters.EVENT_VIEW_BREAKDOWN, FirebaseParameters.GetFirebaseParameters());
     }
 
     public async void Init(object s, EventArgs e)

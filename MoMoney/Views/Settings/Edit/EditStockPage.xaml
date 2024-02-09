@@ -82,7 +82,7 @@
                     x:Name="btnDelete"
                     Grid.Column="0"
                     BackgroundColor="{StaticResource Red}"
-                    Command="{Binding RemoveCommand}"
+                    Command="{Binding RemoveStockCommand}"
                     HeightRequest="45"
                     Text="Delete" />
                 <Button
@@ -96,7 +96,7 @@
                     x:Name="btnEnter"
                     Grid.Column="2"
                     BackgroundColor="{StaticResource Green}"
-                    Command="{Binding EditCommand}"
+                    Command="{Binding EditStockCommand}"
                     HeightRequest="45"
                     Text="Update" />
             </Grid>

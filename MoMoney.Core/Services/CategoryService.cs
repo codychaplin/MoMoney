@@ -154,8 +154,8 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
             return cats;
 
         return await momoney.db.Table<Category>()
-                                 .Where(c => c.CategoryID >= Constants.EXPENSE_ID)
-                                 .ToListAsync();
+                               .Where(c => c.CategoryID >= Constants.EXPENSE_ID)
+                               .ToListAsync();
     }
 
     public async Task<IEnumerable<Category>> GetAllParentCategories()

@@ -46,6 +46,7 @@ public partial class InsightsViewModel : ObservableObject
         transactionService = _transactionService;
         categoryService = _categoryService;
         logger = _logger;
+        logger.LogFirebaseEvent(FirebaseParameters.EVENT_VIEW_INSIGHTS, FirebaseParameters.GetFirebaseParameters());
     }
 
     /// <summary>
@@ -204,12 +205,12 @@ public partial class InsightsViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(GetTopCategories), ex);
             await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(GetTopCategories), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

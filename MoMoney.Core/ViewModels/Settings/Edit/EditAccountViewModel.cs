@@ -1,7 +1,7 @@
-﻿using SQLite;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
+using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
@@ -37,15 +37,20 @@ public partial class EditAccountViewModel : ObservableObject
             }
             catch (AccountNotFoundException ex)
             {
-                await logger.LogError(ex.Message, ex.GetType().Name);
+                await logger.LogError(nameof(GetAccount), ex);
                 await Shell.Current.DisplayAlert("Account Not Found Error", ex.Message, "OK");
+            }
+            catch (Exception ex)
+            {
+                await logger.LogError(nameof(GetAccount), ex);
+                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
             }
 
             return;
         }
 
         string message = $"{ID} is not a valid ID";
-        await logger.LogError(message);
+        await logger.LogError(nameof(GetAccount), new Exception(message));
         await Shell.Current.DisplayAlert("Account Not Found Error", message, "OK");
     }
 
@@ -53,7 +58,7 @@ public partial class EditAccountViewModel : ObservableObject
     /// Edits Account in database using input fields from view.
     /// </summary>
     [RelayCommand]
-    async Task Edit()
+    async Task EditAccount()
     {
         if (Account is null ||
             string.IsNullOrEmpty(Account.AccountName) ||
@@ -67,12 +72,13 @@ public partial class EditAccountViewModel : ObservableObject
         try
         {
             await accountService.UpdateAccount(Account);
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_EDIT_ACCOUNT, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
         }
-        catch (SQLiteException ex)
+        catch (Exception ex)
         {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            await logger.LogError(nameof(EditAccount), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 
@@ -80,7 +86,7 @@ public partial class EditAccountViewModel : ObservableObject
     /// Removes the Account from the database.
     /// </summary>
     [RelayCommand]
-    async Task Remove()
+    async Task RemoveAccount()
     {
         bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Account.AccountName}\"?", "Yes", "No");
         if (!flag) return;
@@ -88,12 +94,13 @@ public partial class EditAccountViewModel : ObservableObject
         try
         {
             await accountService.RemoveAccount(Account.AccountID);
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_DELETE_ACCOUNT, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
         }
-        catch (SQLiteException ex)
+        catch (Exception ex)
         {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            await logger.LogError(nameof(RemoveAccount), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 }

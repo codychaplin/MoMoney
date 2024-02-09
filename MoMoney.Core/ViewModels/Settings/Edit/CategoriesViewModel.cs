@@ -52,22 +52,35 @@ public partial class CategoriesViewModel : ObservableObject
         }
         catch (CategoryNotFoundException ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(GoToEditCategoryString), ex);
             await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GoToEditCategoryString), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 
     /// <summary>
     /// Gets updated categories from database and refreshes Categories collection.
     /// </summary>
-    public async void Refresh(object s, EventArgs e)
+    public async void RefreshCategories(object s, EventArgs e)
     {
-        var categories = await categoryService.GetCategories();
-        Categories.Clear();
-        // groups categories by parent except where ParentName == ""
-        // new parent categories will not show up in the list until a subcategory is added
-        foreach (var cat in categories.GroupBy(c => c.ParentName))
-            if (!string.IsNullOrEmpty(cat.Key))
-                Categories.Add(new CategoryGroup(cat));
+        try
+        {
+            var categories = await categoryService.GetCategories();
+            Categories.Clear();
+            // groups categories by parent except where ParentName == ""
+            // new parent categories will not show up in the list until a subcategory is added
+            foreach (var cat in categories.GroupBy(c => c.ParentName))
+                if (!string.IsNullOrEmpty(cat.Key))
+                    Categories.Add(new CategoryGroup(cat));
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(RefreshCategories), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 }

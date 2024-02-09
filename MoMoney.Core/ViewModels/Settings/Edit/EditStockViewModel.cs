@@ -1,7 +1,7 @@
-﻿using SQLite;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
+using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
@@ -45,8 +45,13 @@ public partial class EditStockViewModel : ObservableObject
         }
         catch (StockNotFoundException ex)
         {
-            await logger.LogError(ex.Message, ex.GetType().Name);
+            await logger.LogError(nameof(GetStock), ex);
             await Shell.Current.DisplayAlert("Stock Not Found Error", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(GetStock), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 
@@ -54,7 +59,7 @@ public partial class EditStockViewModel : ObservableObject
     /// Edits Stock in database using input fields from view.
     /// </summary>
     [RelayCommand]
-    async Task Edit()
+    async Task EditStock()
     {
         try
         {
@@ -64,12 +69,13 @@ public partial class EditStockViewModel : ObservableObject
             else
                 await stockService.UpdateStock(Stock);
 
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_EDIT_STOCK, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
         }
-        catch (SQLiteException ex)
+        catch (Exception ex)
         {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            await logger.LogError(nameof(EditStock), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 
@@ -77,22 +83,21 @@ public partial class EditStockViewModel : ObservableObject
     /// Removes the Stock from the database.
     /// </summary>
     [RelayCommand]
-    async Task Remove()
+    async Task RemoveStock()
     {
         bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Stock.Symbol}\"?", "Yes", "No");
-
-        if (!flag)
-            return;
+        if (!flag) return;
 
         try
         {
             await stockService.RemoveStock(Stock.Symbol);
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_DELETE_STOCK, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
         }
-        catch (SQLiteException ex)
+        catch (Exception ex)
         {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            await logger.LogError(nameof(RemoveStock), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 }

@@ -9,13 +9,15 @@ namespace MoMoney.Core.ViewModels.Settings.Edit;
 public partial class StocksViewModel : ObservableObject
 {
     readonly IStockService stockService;
+    readonly ILoggerService<StocksViewModel> logger;
 
     [ObservableProperty]
     public ObservableCollection<Stock> stocks = new();
 
-    public StocksViewModel(IStockService _stockService)
+    public StocksViewModel(IStockService _stockService, ILoggerService<StocksViewModel> _logger)
     {
         stockService = _stockService;
+        logger = _logger;
     }
 
     /// <summary>
@@ -41,9 +43,17 @@ public partial class StocksViewModel : ObservableObject
     /// </summary>
     public async void Refresh(object s, EventArgs e)
     {
-        var stocks = await stockService.GetStocks();
-        Stocks.Clear();
-        foreach (var stock in stocks)
-            Stocks.Add(stock);
+        try
+        {
+            var stocks = await stockService.GetStocks();
+            Stocks.Clear();
+            foreach (var stock in stocks)
+                Stocks.Add(stock);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(Refresh), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 }

@@ -1,5 +1,5 @@
-﻿using SQLite;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
+using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings;
@@ -29,21 +29,20 @@ public partial class AdminViewModel
     async Task RemoveAllTransactions()
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Transactions?", "Yes", "No");
-
-        if (!flag)
-            return;
+        if (!flag) return;
 
         try
         {
             int count = await transactionService.GetTransactionCount();
             await transactionService.RemoveAllTransactions();
             string message = count == 1 ? "1 transaction has been deleted." : $"{count} transactions have been deleted.";
-            await Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_REMOVE_ALL_TRANSACTIONS, FirebaseParameters.GetFirebaseParameters());
         }
-        catch (SQLiteException ex)
+        catch (Exception ex)
         {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            await logger.LogError(nameof(RemoveAllTransactions), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 
@@ -54,21 +53,20 @@ public partial class AdminViewModel
     async Task RemoveAllAccounts()
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Accounts?", "Yes", "No");
-
-        if (!flag)
-            return;
+        if (!flag) return;
 
         try
         {
             int count = await accountService.GetAccountCount();
             await accountService.RemoveAllAccounts();
             string message = count == 1 ? "1 account has been deleted." : $"{count} accounts have been deleted.";
-            await Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_REMOVE_ALL_ACCOUNTS, FirebaseParameters.GetFirebaseParameters());
         }
-        catch (SQLiteException ex)
+        catch (Exception ex)
         {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            await logger.LogError(nameof(RemoveAllAccounts), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 
@@ -79,21 +77,20 @@ public partial class AdminViewModel
     async Task RemoveAllCategories()
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Categories?", "Yes", "No");
-
-        if (!flag)
-            return;
+        if (!flag) return;
 
         try
         {
             int count = await categoryService.GetCategoryCount();
             await categoryService.RemoveAllCategories();
             string message = count == 1 ? "1 category has been deleted." : $"{count} categories have been deleted.";
-            await Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_REMOVE_ALL_CATEGORIES, FirebaseParameters.GetFirebaseParameters());
         }
-        catch (SQLiteException ex)
+        catch (Exception ex)
         {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            await logger.LogError(nameof(RemoveAllCategories), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 
@@ -104,21 +101,20 @@ public partial class AdminViewModel
     async Task RemoveAllStocks()
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Stocks?", "Yes", "No");
-
-        if (!flag)
-            return;
+        if (!flag) return;
 
         try
         {
             int count = await stockService.GetStockCount();
             await stockService.RemoveStocks();
             string message = count == 1 ? "1 stock has been deleted." : $"{count} stocks have been deleted.";
-            await Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_REMOVE_ALL_STOCKS, FirebaseParameters.GetFirebaseParameters());
         }
-        catch (SQLiteException ex)
+        catch (Exception ex)
         {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            await logger.LogError(nameof(RemoveAllStocks), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 
@@ -129,21 +125,20 @@ public partial class AdminViewModel
     async Task RemoveAllLogs()
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Logs?", "Yes", "No");
-
-        if (!flag)
-            return;
+        if (!flag) return;
 
         try
         {
             int count = await logger.GetLogCount();
             await logger.RemoveLogs();
             string message = count == 1 ? "1 log has been deleted." : $"{count} logs have been deleted.";
-            await Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_REMOVE_ALL_LOGS, FirebaseParameters.GetFirebaseParameters());
         }
-        catch (SQLiteException ex)
+        catch (Exception ex)
         {
-            await logger.LogCritical(ex.Message, ex.GetType().Name);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            await logger.LogError(nameof(RemoveAllLogs), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 
