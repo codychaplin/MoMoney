@@ -167,7 +167,11 @@
         <Button
             BackgroundColor="{StaticResource Blue}"
             Command="{Binding BulkFindCommand}"
-            Text="Find" />
+            Text="Find">
+            <Button.CommandParameter>
+                <x:Boolean>True</x:Boolean>
+            </Button.CommandParameter>
+        </Button>
 
         <Button
             Grid.Column="1"
