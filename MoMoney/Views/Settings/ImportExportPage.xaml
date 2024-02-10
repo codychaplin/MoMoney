@@ -19,6 +19,9 @@
 
             <!--  export  -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Export" />
+            <components:AlignedButton Command="{Binding ExportAccountsCSVCommand}" Text="Export Accounts to CSV" />
+            <components:AlignedButton Command="{Binding ExportCategoriesCSVCommand}" Text="Export Categories to CSV" />
+            <components:AlignedButton Command="{Binding ExportStocksCSVCommand}" Text="Export Stocks to CSV" />
             <components:AlignedButton Command="{Binding ExportTransactionsCSVCommand}" Text="Export Transactions to CSV" />
             <components:AlignedButton Command="{Binding ExportLogsCSVCommand}" Text="Export Logs to CSV" />
 

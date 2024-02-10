@@ -256,7 +256,7 @@ public partial class AddTransactionViewModel : ObservableObject
         }
     }
 
-    void ClearAfterAdd()
+    public void ClearAfterAdd()
     {
         Amount = 0;
         TransferAccount = null;

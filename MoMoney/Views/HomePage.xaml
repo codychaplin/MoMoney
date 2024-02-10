@@ -235,7 +235,7 @@
             </Grid>
 
             <!--  list of transactions  -->
-            <Frame Margin="10,0" Padding="10">
+            <Frame Margin="10,0" Padding="10,0,10,10">
                 <CollectionView
                     EmptyView="No Transactions Found"
                     ItemTemplate="{StaticResource TransactionFrame}"

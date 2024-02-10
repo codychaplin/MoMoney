@@ -155,7 +155,14 @@ public partial class AddTransactionPage : ContentView
         vm.Clear();
         txtAmount.Text = "";
         entPayee.SelectedItem = null;
+        entPayee.Text = "";
         MakePayeeVisible(true);
+    }
+
+    private void btnEnter_Clicked(object sender, EventArgs e)
+    {
+        vm.ClearAfterAdd();
+        txtAmount.Text = "";
     }
 
     enum TransactionType

@@ -10,6 +10,7 @@
 * Fixed accounts updating on AccountPage
 * Fixed stock MarketPrice update
 * Fixed empty Insights page labels
+* Write storage permissions
 
 ### Changes
 
@@ -27,6 +28,7 @@
 * Reorganized MauiProgram.cs
 * Added Firebase Analytics
 * Improved logging and exception handling
+* Added exporting of accounts, categories, and stocks
 
 # MoMoney v1.1.3
 

@@ -277,7 +277,7 @@ public partial class ImportExportViewModel
 
         if (result == null)
             return null;
-        else if (result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
+        else if (!result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
             throw new FormatException("Invalid file type. Must be a CSV");
 
         return result;
@@ -287,27 +287,13 @@ public partial class ImportExportViewModel
     /// Exports Transactions from database to a CSV file.
     /// </summary>
     [RelayCommand]
-    [Obsolete]
     async Task ExportTransactionsCSV()
     {
         try
         {
-            // check if app has storage write permissions
-            var status = await Permissions.RequestAsync<Permissions.StorageWrite>();
-            if (status != PermissionStatus.Granted)
-            {
-                await Shell.Current.DisplayAlert("Permission Error", "Storage permissions are required in order to save to CSV", "OK");
-                return;
-            }
-
-            // create file in downloads folder
-#if ANDROID
-            string path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
-#else
-            string path = "";
-#endif
             string name = "transactions.csv";
-            string targetFile = Path.Combine(path, name);
+            string targetFile = await CheckPermissionsAndGetFilePath(name);
+            if (string.IsNullOrEmpty(targetFile)) return;
 
             // open writer
             var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
@@ -340,6 +326,79 @@ public partial class ImportExportViewModel
     }
 
     /// <summary>
+    /// Exports Accounts from database to a CSV file.
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    async Task ExportAccountsCSV()
+    {
+        try
+        {
+            string name = "accounts.csv";
+            string targetFile = await CheckPermissionsAndGetFilePath(name);
+            if (string.IsNullOrEmpty(targetFile)) return;
+
+            // open writer
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+            using var writer = new StreamWriter(targetFile);
+            using var csv = new CsvWriter(writer, config);
+
+            // get accounts from db and write to csv
+            var accounts = await accountService.GetAccounts();
+            csv.WriteRecords(accounts);
+
+            // log/display success message
+            int count = accounts.Count();
+            string message = $"Successfully downloaded file with {count} " + (count == 1 ? "account" : "accounts") + $" to:\n'{targetFile}'";
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+
+            await logger.LogInfo($"Exported {count} accounts to '{name}'.");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_EXPORT_ACCOUNTS, FirebaseParameters.GetFirebaseParameters());
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(ExportAccountsCSV), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+    }
+
+    /// <summary>
+    /// Exports Categories from database to a CSV file.
+    /// </summary>
+    [RelayCommand]
+    async Task ExportCategoriesCSV()
+    {
+        try
+        {
+            string name = "categories.csv";
+            string targetFile = await CheckPermissionsAndGetFilePath(name);
+            if (string.IsNullOrEmpty(targetFile)) return;
+
+            // open writer
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+            using var writer = new StreamWriter(targetFile);
+            using var csv = new CsvWriter(writer, config);
+
+            // get categories from db and write to csv
+            var categories = await categoryService.GetCategories();
+            csv.WriteRecords(categories);
+
+            // log/display success message
+            int count = categories.Count();
+            string message = $"Successfully downloaded file with {count} " + (count == 1 ? "category" : "categories") + $" to:\n'{targetFile}'";
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+
+            await logger.LogInfo($"Exported {count} categories to '{name}'.");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_EXPORT_CATEGORIES, FirebaseParameters.GetFirebaseParameters());
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(ExportCategoriesCSV), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+    }
+
+    /// <summary>
     /// Exports Logs from database to a CSV file.
     /// </summary>
     [RelayCommand]
@@ -347,29 +406,16 @@ public partial class ImportExportViewModel
     {
         try
         {
-            // check if app has storage write permissions
-            var status = await Permissions.RequestAsync<Permissions.StorageWrite>();
-            if (status != PermissionStatus.Granted)
-            {
-                await Shell.Current.DisplayAlert("Permission Error", "Storage permissions are required in order to save to CSV", "OK");
-                return;
-            }
-
-            // create file in downloads folder
-#if ANDROID
-            string path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
-#else
-            string path = "";
-#endif
             string name = "logs.csv";
-            string targetFile = Path.Combine(path, name);
+            string targetFile = await CheckPermissionsAndGetFilePath(name);
+            if (string.IsNullOrEmpty(targetFile)) return;
 
             // open writer
             var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
             using var writer = new StreamWriter(targetFile);
             using var csv = new CsvWriter(writer, config);
 
-            // get transactions from db and write to csv
+            // get logs from db and write to csv
             var logs = await logger.GetLogs();
             csv.WriteRecords(logs);
 
@@ -388,6 +434,69 @@ public partial class ImportExportViewModel
         }
     }
 
+    [RelayCommand]
+    async Task ExportStocksCSV()
+    {
+        try
+        {
+            string name = "stocks.csv";
+            string targetFile = await CheckPermissionsAndGetFilePath(name);
+            if (string.IsNullOrEmpty(targetFile)) return;
+
+            // open writer
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+            using var writer = new StreamWriter(targetFile);
+            using var csv = new CsvWriter(writer, config);
+
+            // get stocks from db and write to csv
+            var stocks = await stockService.GetStocks();
+            csv.WriteRecords(stocks);
+
+            // log/display success message
+            int count = stocks.Count;
+            string message = $"Successfully downloaded file with {count} " + (count == 1 ? "stock" : "stocks") + $" to:\n'{targetFile}'";
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+
+            await logger.LogInfo($"Exported {count} stocks to '{name}'.");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_EXPORT_STOCKS, FirebaseParameters.GetFirebaseParameters());
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(ExportStocksCSV), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+    }
+
+    /// <summary>
+    /// Checks for storage permissions and returns the path to the file.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns>file path if permission is granted, otherwise null</returns>
+    async Task<string> CheckPermissionsAndGetFilePath(string name)
+    {
+        // create file in documents folder
+        string path = "";
+#if ANDROID
+        if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Tiramisu)
+        {
+            // check if app has storage write permissions
+            if (await Permissions.CheckStatusAsync<Permissions.StorageWrite>() != PermissionStatus.Granted)
+            {
+                var status = await Permissions.RequestAsync<Permissions.StorageWrite>();
+                if (status != PermissionStatus.Granted)
+                {
+                    await Shell.Current.DisplayAlert("Permission Error", "Storage permissions are required in order to save to CSV", "OK");
+                    return null;
+                }
+            }
+        }
+
+        path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDocuments).AbsolutePath;
+#endif
+
+        return Path.Combine(path, name);
+    }
+
     /// <summary>
     /// Calculates the current balance of each account and updates the database.
     /// </summary>
@@ -399,13 +508,14 @@ public partial class ImportExportViewModel
             var accounts = await accountService.GetAccounts();
             if (!transactions.Any())
                 return;
-            
+
             if (!accounts.Any())
                 return;
 
             // group transactions by account, sum amounts, and convert to dictionary
             var currentBalances = transactions.GroupBy(t => t.AccountID)
-                                              .Select(g => new {
+                                              .Select(g => new
+                                              {
                                                   g.First().AccountID,
                                                   Balance = g.Sum(t => t.Amount)
                                               })

@@ -217,6 +217,7 @@
                     x:Name="btnEnter"
                     Grid.Column="1"
                     BackgroundColor="{StaticResource Green}"
+                    Clicked="btnEnter_Clicked"
                     Command="{Binding AddTransactionCommand}"
                     CommandParameter="{Binding Source={x:Reference entPayee}, Path=Text}"
                     HeightRequest="45"
