@@ -23,18 +23,18 @@
 		<AndroidSigningKeyStore>pherda-apps.keystore</AndroidSigningKeyStore>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android33.0|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android34.0|AnyCPU'">
 	  <AndroidKeyStore>True</AndroidKeyStore>
 	  <AndroidSigningStorePass>apps-pherda</AndroidSigningStorePass>
 	  <AndroidSigningKeyAlias>momoney-key</AndroidSigningKeyAlias>
-	  <AndroidSigningKeyPass>key-momoney</AndroidSigningKeyPass>
+	  <AndroidSigningKeyPass>apps-pherda</AndroidSigningKeyPass>
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
 	  <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
 	  <ApplicationDisplayVersion>1.1.4</ApplicationDisplayVersion>
 	  <RunAOTCompilation>True</RunAOTCompilation>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android33.0|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android34.0|AnyCPU'">
 	  <AndroidSigningStorePass></AndroidSigningStorePass>
 	  <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
 	  <ApplicationDisplayVersion>1.1.4</ApplicationDisplayVersion>
@@ -42,10 +42,10 @@
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.svg" Color="#3f9ae8" ForegroundScale="0.9" BaseSize="128,128" />
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#3f9ae8" BaseSize="128,128" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\appicon.svg" Color="#171717" BaseSize="128,128" />
+		<MauiSplashScreen Include="Resources\Splash\appicon.svg" Color="#3f9ae8" BaseSize="128,128" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
@@ -66,6 +66,8 @@
 	  <None Remove="Platforms\Android\Resources\values-night\Styles.xml" />
 	  <None Remove="Platforms\Android\Resources\values\colors.xml" />
 	  <None Remove="Platforms\Android\Resources\values\Styles.xml" />
+	  <None Remove="Resources\AppIcon\appicon.svg" />
+	  <None Remove="Resources\Splash\appicon.svg" />
 	</ItemGroup>
 
 	<ItemGroup>

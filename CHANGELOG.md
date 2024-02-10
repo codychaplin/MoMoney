@@ -11,6 +11,7 @@
 * Fixed stock MarketPrice update
 * Fixed empty Insights page labels
 * Write storage permissions
+* Fixed error when adding transfers
 
 ### Changes
 
@@ -29,6 +30,7 @@
 * Added Firebase Analytics
 * Improved logging and exception handling
 * Added exporting of accounts, categories, and stocks
+* Added adaptive icon
 
 # MoMoney v1.1.3
 

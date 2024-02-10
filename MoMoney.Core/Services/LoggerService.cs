@@ -68,7 +68,7 @@ public class LoggerService<T> : ILoggerService<T>, IFirebaseService
 
     public void LogFirebaseEvent(string eventName, IDictionary<string, string> parameters)
     {
-#if ANDROID
+#if ANDROID && RELEASE
         var firebaseAnalytics = FirebaseAnalytics.GetInstance(Platform.CurrentActivity);
 
         if (parameters == null)

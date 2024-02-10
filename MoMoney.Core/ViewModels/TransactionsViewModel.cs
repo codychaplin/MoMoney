@@ -93,7 +93,7 @@ public partial class TransactionsViewModel : ObservableObject
         switch (e.Type)
         {
             case TransactionEventArgs.CRUD.Create:
-                await Create(e);
+                Create(e);
                 break;
             case TransactionEventArgs.CRUD.Read:
                 await Read();
@@ -113,39 +113,16 @@ public partial class TransactionsViewModel : ObservableObject
     /// Adds new Transaction to [Loaded]Transactions list.
     /// </summary>
     /// <param name="e"></param>
-    async Task Create(TransactionEventArgs e)
+    void Create(TransactionEventArgs e)
     {
         Transactions.Insert(0, e.Transaction);
         LoadedTransactions.Insert(0, e.Transaction);
 
-        // if transfer, add credit side too
-        if (e.Transaction.CategoryID == Constants.TRANSFER_ID)
-        {
-            try
-            {
-                var otherTrans = await transactionService.GetTransaction(e.Transaction.TransactionID + 1);
-                Transactions.Insert(0, otherTrans);
-                LoadedTransactions.Insert(0, otherTrans);
-            }
-            catch (TransactionNotFoundException ex)
-            {
-                string message = $"Could not find corresponding transfer for Transaction #{e.Transaction.TransactionID}";
-                await logger.LogError(nameof(Create), ex);
-                await Shell.Current.DisplayAlert("Error", message, "OK");
-            }
-            catch (Exception ex)
-            {
-                await logger.LogError(nameof(Create), ex);
-                await Shell.Current.DisplayAlert("Error", "An error occurred while trying to find corresponding transfer.", "OK");
-            }
-        }
-        else
-        {
-            // if not transfer, add payee if new (transfers don't have a payee)
-            string payee = e.Transaction.Payee;
-            if (!Payees.Contains(payee))
-                Payees.Add(payee);
-        }
+        // add payee if new (transfers don't have a payee)
+        string payee = e.Transaction.Payee;
+        if (!string.IsNullOrEmpty(payee) && !Payees.Contains(payee))
+            Payees.Add(payee);
+
     }
 
     /// <summary>

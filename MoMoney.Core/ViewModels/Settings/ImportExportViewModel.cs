@@ -506,10 +506,7 @@ public partial class ImportExportViewModel
         {
             var transactions = await transactionService.GetTransactions();
             var accounts = await accountService.GetAccounts();
-            if (!transactions.Any())
-                return;
-
-            if (!accounts.Any())
+            if (!transactions.Any() || !accounts.Any())
                 return;
 
             // group transactions by account, sum amounts, and convert to dictionary
