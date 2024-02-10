@@ -1,4 +1,4 @@
-using MoMoney.ViewModels.Settings.Edit;
+using MoMoney.Core.ViewModels.Settings.Edit;
 
 namespace MoMoney.Views.Settings.Edit;
 
@@ -8,6 +8,6 @@ public partial class CategoriesPage : ContentPage
     {
         InitializeComponent();
         BindingContext = _vm;
-        NavigatedTo += _vm.Refresh;
+        NavigatedTo += _vm.RefreshCategories;
     }
 }

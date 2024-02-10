@@ -1,32 +1,35 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.Settings.Edit.AddAccountPage"
-             x:DataType="viewmodel:AddAccountViewModel"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings.Edit"
-             Title="Add Account">
+<ContentPage
+    x:Class="MoMoney.Views.Settings.Edit.AddAccountPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
+    Title="Add Account"
+    x:DataType="viewmodel:AddAccountViewModel">
 
-    <!-- main page -->
+    <!--  main page  -->
     <VerticalStackLayout Padding="0,10,0,0">
 
-        <!-- account name -->
+        <!--  account name  -->
         <Frame Style="{StaticResource TileFrame}">
             <Grid Style="{StaticResource TileGrid}">
                 <Image Source="account.svg" Style="{StaticResource imgIcon}" />
-                <Entry x:Name="txtName"
-                       Grid.Column="1"
-                       Placeholder="Account Name"
-                       Text="{Binding Name}" />
+                <Entry
+                    x:Name="txtName"
+                    Grid.Column="1"
+                    Placeholder="Account Name"
+                    Text="{Binding Name}" />
             </Grid>
         </Frame>
-        <!-- account type with predefined values -->
+        <!--  account type with predefined values  -->
         <Frame Style="{StaticResource TileFrame}">
             <Grid Style="{StaticResource TileGrid}">
                 <Image Source="piggy_bank.svg" Style="{StaticResource imgIcon}" />
-                <Picker x:Name="pckType"
-                        Grid.Column="1"
-                        Title="Select a type"
-                        SelectedItem="{Binding Type}">
+                <Picker
+                    x:Name="pckType"
+                    Title="Select a type"
+                    Grid.Column="1"
+                    SelectedItem="{Binding Type}">
                     <Picker.Items>
                         <x:String>Checkings</x:String>
                         <x:String>Savings</x:String>
@@ -36,32 +39,40 @@
                 </Picker>
             </Grid>
         </Frame>
-        <!-- starting balance -->
+        <!--  starting balance  -->
         <Frame Style="{StaticResource TileFrame}">
             <Grid Style="{StaticResource TileGrid}">
                 <Image Source="dollar_symbol.svg" Style="{StaticResource imgIcon}" />
-                <Entry x:Name="txtStartingBalance"
-                       Grid.Column="1"
-                       Keyboard="Numeric"
-                       Placeholder="Starting Balance"
-                       Text="{Binding StartingBalance}" />
+                <Entry
+                    x:Name="txtStartingBalance"
+                    Grid.Column="1"
+                    Keyboard="Numeric"
+                    Placeholder="Starting Balance"
+                    Text="{Binding StartingBalance}" />
             </Grid>
         </Frame>
-        <!-- clear/enter buttons -->
-        <Grid x:Name="grdAcceptButtons" Margin="10,0,10,10" Padding="2" ColumnDefinitions="*,*" ColumnSpacing="10">
-            <Button x:Name="btnClear"
-                    Grid.Column="0"
-                    Text="Clear"
-                    HeightRequest="45"
-                    BackgroundColor="{StaticResource Blue}"
-                    Clicked="btnClear_Clicked" />
-            <Button x:Name="btnEnter"
-                    Grid.Column="1"
-                    Text="Accept"
-                    HeightRequest="45"
-                    BackgroundColor="{StaticResource Green}"
-                    Command="{Binding AddCommand}" />
+        <!--  clear/enter buttons  -->
+        <Grid
+            x:Name="grdAcceptButtons"
+            Margin="10,0,10,10"
+            Padding="2"
+            ColumnDefinitions="*,*"
+            ColumnSpacing="10">
+            <Button
+                x:Name="btnClear"
+                Grid.Column="0"
+                BackgroundColor="{StaticResource Blue}"
+                Clicked="btnClear_Clicked"
+                HeightRequest="45"
+                Text="Clear" />
+            <Button
+                x:Name="btnEnter"
+                Grid.Column="1"
+                BackgroundColor="{StaticResource Green}"
+                Command="{Binding AddAccountCommand}"
+                HeightRequest="45"
+                Text="Accept" />
         </Grid>
-        
+
     </VerticalStackLayout>
 </ContentPage>

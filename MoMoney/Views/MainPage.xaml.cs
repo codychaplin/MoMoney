@@ -1,5 +1,6 @@
-using MoMoney.ViewModels;
 using Syncfusion.Maui.TabView;
+using MoMoney.Core.Helpers;
+using MoMoney.Core.ViewModels;
 
 namespace MoMoney.Views;
 

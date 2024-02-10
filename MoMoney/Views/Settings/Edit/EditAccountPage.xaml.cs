@@ -1,4 +1,4 @@
-using MoMoney.ViewModels.Settings.Edit;
+using MoMoney.Core.ViewModels.Settings.Edit;
 
 namespace MoMoney.Views.Settings.Edit;
 
@@ -16,6 +16,10 @@ public partial class EditAccountPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+
+        // workaround for switch thumbcolor not updating on load
+        swEnabled.IsToggled = true;
+        swEnabled.IsToggled = false;
 
         await vm.GetAccount();
     }

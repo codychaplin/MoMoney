@@ -1,4 +1,4 @@
-using MoMoney.ViewModels.Settings;
+using MoMoney.Core.ViewModels.Settings;
 
 namespace MoMoney.Views.Settings;
 
@@ -11,7 +11,11 @@ public partial class LoggingPage : ContentPage
 		Loaded += vm.Init;
 		vm.listview = listview;
 
-		pckLevels.SelectedIndexChanged += vm.UpdateFilter;
+		swTileSize.IsToggled = false;
+		swTileSize.IsToggled = true;
+
+
+        pckLevels.SelectedIndexChanged += vm.UpdateFilter;
 		pckClasses.SelectedIndexChanged += vm.UpdateFilter;
 		pckExceptions.SelectedIndexChanged += vm.UpdateFilter;
 	}

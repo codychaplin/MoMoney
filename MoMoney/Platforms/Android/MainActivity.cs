@@ -1,15 +1,17 @@
-﻿using Android.App;
+﻿using Android.OS;
+using Android.App;
 using Android.Content.PM;
-using Android.OS;
 
 namespace MoMoney;
 
-[Activity(Theme = "@style/Maui.SplashTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
+[Activity(Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
 public class MainActivity : MauiAppCompatActivity
 {
     protected override void OnCreate(Bundle savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
+        SupportActionBar.Hide();
+        Firebase.FirebaseApp.InitializeApp(this.ApplicationContext);
         Window.SetSoftInputMode(Android.Views.SoftInput.AdjustResize);
     }
 }

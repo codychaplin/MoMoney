@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style name="MainTheme" parent="Maui.MainTheme">
+		<item name="colorPrimary">@color/White</item>
+		<item name="android:actionMenuTextColor">@color/White</item>
+		<item name="alertDialogTheme">@style/MauiAlertDialogTheme</item>
+	</style>
+	
+	<style name="MauiAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+		<item name="materialAlertDialogTitleTextStyle">@style/AlertDialogTitleText</item>
+		<item name="materialAlertDialogBodyTextStyle">@style/AlertDialogBodyText</item>
+	</style>
+
+	<style name="AlertDialogTitleText" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+		<item name="android:textColor">@color/AlertDialogTextColor</item>
+		<item name="android:textStyle">bold</item>
+	</style>
+
+	<style name="AlertDialogBodyText" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
+		<item name="android:textColor">@color/AlertDialogTextColor</item>
+	</style>
+</resources>

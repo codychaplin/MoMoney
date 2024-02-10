@@ -1,4 +1,4 @@
-using MoMoney.ViewModels.Stats;
+using MoMoney.Core.ViewModels.Stats;
 
 namespace MoMoney.Views.Stats;
 

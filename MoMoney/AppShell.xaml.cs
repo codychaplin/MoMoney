@@ -1,7 +1,7 @@
 ﻿using MoMoney.Views;
+using MoMoney.Views.Stats;
 using MoMoney.Views.Settings;
 using MoMoney.Views.Settings.Edit;
-using MoMoney.Views.Stats;
 
 namespace MoMoney;
 

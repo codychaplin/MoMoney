@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.Stats.InsightsPage"
-             x:DataType="viewmodel:InsightsViewModel"
-             xmlns:converters="clr-namespace:MoMoney.Converters"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Stats"
-             xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
-             Title="Insights">
+<ContentPage
+    x:Class="MoMoney.Views.Stats.InsightsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
+    xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
+    Title="Insights"
+    x:DataType="viewmodel:InsightsViewModel">
 
     <ContentPage.Resources>
         <converters:ShowValueConverter x:Key="ShowValue" />
@@ -18,108 +19,122 @@
                 <Style TargetType="{x:Type Frame}">
                     <Setter Property="Padding" Value="10" />
                     <Setter Property="Margin" Value="10,0" />
+                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" />
+                    <Setter Property="HasShadow" Value="False" />
+                    <Setter Property="CornerRadius" Value="10" />
                 </Style>
             </VerticalStackLayout.Resources>
-        
-            <!-- year picker -->
-            <Frame HorizontalOptions="Center" Padding="5,5,10,5">
+
+            <!--  year picker  -->
+            <Frame Padding="5,5,10,5" HorizontalOptions="Center">
                 <HorizontalStackLayout>
-                    <Image Source="calendar.svg" Style="{StaticResource imgIcon}" Margin="5" />
-                    <Picker x:Name="pckDate"
-                            Title="Select a Year"
-                            HeightRequest="40"
-                            VerticalOptions="Center"
-                            HorizontalTextAlignment="Center"
-                            ItemsSource="{Binding Years}"
-                            SelectedItem="{Binding SelectedYear}" />
+                    <Image
+                        Margin="5"
+                        Source="calendar.svg"
+                        Style="{StaticResource imgIcon}" />
+                    <Picker
+                        x:Name="pckDate"
+                        Title="Select a Year"
+                        HeightRequest="40"
+                        HorizontalTextAlignment="Center"
+                        ItemsSource="{Binding Years}"
+                        SelectedItem="{Binding SelectedYear}"
+                        VerticalOptions="Center" />
                 </HorizontalStackLayout>
             </Frame>
 
-            <!-- income/expense chart -->
-            <Label Text="Income &amp; Expenses" Style="{StaticResource lblTitle}" Margin="10,0,0,0" />
+            <!--  income/expense chart  -->
+            <Label
+                Margin="10,0,0,0"
+                Style="{StaticResource lblTitle}"
+                Text="Income &amp; Expenses" />
             <Frame Padding="0">
-                <ScrollView Orientation="Horizontal">
-                
-                    <!-- chart -->
-                    <chart:SfCartesianChart HeightRequest="280"
-                                            EnableSideBySideSeriesPlacement="False"
-                                            WidthRequest="540"
-                                            Margin="5,0,5,10">
-                        <!-- X axis -->
+                <ScrollView
+                    HorizontalScrollBarVisibility="Always"
+                    Orientation="Both"
+                    VerticalScrollBarVisibility="Always">
+
+                    <!--  chart  -->
+                    <chart:SfCartesianChart
+                        Margin="5,0,5,10"
+                        EnableSideBySideSeriesPlacement="False"
+                        HeightRequest="280"
+                        WidthRequest="540">
+                        <!--  X axis  -->
                         <chart:SfCartesianChart.XAxes>
                             <chart:CategoryAxis Interval="1" ShowMajorGridLines="False">
-                                <!-- axis line -->
+                                <!--  axis line  -->
                                 <chart:CategoryAxis.AxisLineStyle>
-                                    <chart:ChartLineStyle Stroke="{StaticResource Gray500}" />
+                                    <chart:ChartLineStyle Stroke="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
                                 </chart:CategoryAxis.AxisLineStyle>
-                                <!-- tick -->
+                                <!--  tick  -->
                                 <chart:CategoryAxis.MajorTickStyle>
-                                    <chart:ChartAxisTickStyle TickSize="0"/>
+                                    <chart:ChartAxisTickStyle TickSize="0" />
                                 </chart:CategoryAxis.MajorTickStyle>
-                                <!-- label -->
+                                <!--  label  -->
                                 <chart:CategoryAxis.LabelStyle>
-                                    <chart:ChartAxisLabelStyle TextColor="White" />
+                                    <chart:ChartAxisLabelStyle TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                                 </chart:CategoryAxis.LabelStyle>
                             </chart:CategoryAxis>
                         </chart:SfCartesianChart.XAxes>
-                        <!-- Y axis -->
+                        <!--  Y axis  -->
                         <chart:SfCartesianChart.YAxes>
-                             <chart:NumericalAxis IsVisible="False">
-                                <!-- axis line -->
-                                <chart:NumericalAxis.AxisLineStyle>
-                                    <chart:ChartLineStyle Stroke="{StaticResource Gray500}" />
-                                </chart:NumericalAxis.AxisLineStyle>
-                                <!-- grid lines -->
+                            <chart:NumericalAxis IsVisible="False">
+                                <!--  grid lines  -->
                                 <chart:NumericalAxis.MajorGridLineStyle>
-                                    <chart:ChartLineStyle Stroke="{StaticResource Gray600}" />
+                                    <chart:ChartLineStyle Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
                                 </chart:NumericalAxis.MajorGridLineStyle>
-                                <!-- tick -->
+                                <!--  tick  -->
                                 <chart:NumericalAxis.MajorTickStyle>
-                                    <chart:ChartAxisTickStyle TickSize="0"/>
+                                    <chart:ChartAxisTickStyle TickSize="0" />
                                 </chart:NumericalAxis.MajorTickStyle>
                             </chart:NumericalAxis>
                         </chart:SfCartesianChart.YAxes>
-                
-                        <!-- income series -->
-                        <chart:ColumnSeries ItemsSource="{Binding IncomeData}"
-                                            Fill="{StaticResource Green}"
-                                            Spacing="0"
-                                            Width="0.9"
-                                            StrokeWidth="0"
-                                            XBindingPath="Month"
-					                        YBindingPath="Amount"
-                                            ShowDataLabels="True">
+
+                        <!--  income series  -->
+                        <chart:ColumnSeries
+                            Width="0.9"
+                            Fill="{StaticResource Green}"
+                            ItemsSource="{Binding IncomeData}"
+                            ShowDataLabels="True"
+                            Spacing="0"
+                            StrokeWidth="0"
+                            XBindingPath="Month"
+                            YBindingPath="Amount">
                             <chart:ColumnSeries.DataLabelSettings>
                                 <chart:CartesianDataLabelSettings LabelPlacement="Outer">
                                     <chart:CartesianDataLabelSettings.LabelStyle>
-                                        <chart:ChartDataLabelStyle x:Name="IncExpChartIncLbl"
-                                                                   LabelFormat="$0"
-                                                                   FontSize="10"
-                                                                   TextColor="#80e8c9"
-                                                                   Background="#00ffffff"
-                                                                   LabelPadding="0" />
+                                        <chart:ChartDataLabelStyle
+                                            x:Name="IncExpChartIncLbl"
+                                            Background="#00ffffff"
+                                            FontSize="10"
+                                            LabelFormat="$0"
+                                            LabelPadding="0"
+                                            TextColor="#80e8c9" />
                                     </chart:CartesianDataLabelSettings.LabelStyle>
                                 </chart:CartesianDataLabelSettings>
                             </chart:ColumnSeries.DataLabelSettings>
                         </chart:ColumnSeries>
-                        <!-- expense series -->
-                        <chart:ColumnSeries ItemsSource="{Binding ExpenseData}"
-                                            Fill="{StaticResource Red}"
-                                            Spacing="0"
-                                            Width="0.9"
-                                            StrokeWidth="0"
-                                            XBindingPath="Month"
-					                        YBindingPath="Amount"
-                                            ShowDataLabels="True">
+                        <!--  expense series  -->
+                        <chart:ColumnSeries
+                            Width="0.9"
+                            Fill="{StaticResource Red}"
+                            ItemsSource="{Binding ExpenseData}"
+                            ShowDataLabels="True"
+                            Spacing="0"
+                            StrokeWidth="0"
+                            XBindingPath="Month"
+                            YBindingPath="Amount">
                             <chart:ColumnSeries.DataLabelSettings>
                                 <chart:CartesianDataLabelSettings LabelPlacement="Outer">
                                     <chart:CartesianDataLabelSettings.LabelStyle>
-                                        <chart:ChartDataLabelStyle x:Name="IncExpChartExpLbl"
-                                                                   LabelFormat="$0;$0"
-                                                                   FontSize="10"
-                                                                   TextColor="{StaticResource LightRed}"
-                                                                   Background="#00ffffff"
-                                                                   LabelPadding="0" />
+                                        <chart:ChartDataLabelStyle
+                                            x:Name="IncExpChartExpLbl"
+                                            Background="#00ffffff"
+                                            FontSize="10"
+                                            LabelFormat="$0;$0"
+                                            LabelPadding="0"
+                                            TextColor="{StaticResource LightRed}" />
                                     </chart:CartesianDataLabelSettings.LabelStyle>
                                 </chart:CartesianDataLabelSettings>
                             </chart:ColumnSeries.DataLabelSettings>
@@ -128,84 +143,102 @@
                 </ScrollView>
             </Frame>
 
-            <!-- totals -->
-            <Label Text="Totals" Style="{StaticResource lblTitle}" Margin="10,0,0,0" />
+            <!--  totals  -->
+            <Label
+                Margin="10,0,0,0"
+                Style="{StaticResource lblTitle}"
+                Text="Totals" />
             <VerticalStackLayout Spacing="10">
                 <Frame Padding="5,5,10,5">
                     <Grid ColumnDefinitions="40,*,*">
-                        <Image Source="income.svg"
-                               HeightRequest="40"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center" />
-                        <Label Text="Income"
-                               Grid.Column="1"
-                               FontSize="18"
-                               Margin="5,0,0,0"
-                               VerticalOptions="Center" />
-                        <Label Text="{Binding TotalIncome, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
-                               Grid.Column="2"
-                               FontSize="18"
-                               HorizontalOptions="End"
-                               VerticalOptions="Center" />
+                        <Image
+                            HeightRequest="40"
+                            HorizontalOptions="Center"
+                            Source="income.svg"
+                            VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="1"
+                            Margin="5,0,0,0"
+                            FontSize="18"
+                            Text="Income"
+                            VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="2"
+                            FontSize="18"
+                            HorizontalOptions="End"
+                            Text="{Binding TotalIncome, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                            VerticalOptions="Center" />
                     </Grid>
                 </Frame>
                 <Frame Padding="5,5,10,5">
                     <Grid ColumnDefinitions="40,*,*">
-                        <Image Source="expense.svg"
-                               HeightRequest="40"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center" />
-                        <Label Text="Expenses"
-                               Grid.Column="1"
-                               FontSize="18"
-                               Margin="5,0,0,0"
-                               VerticalOptions="Center" />
-                        <Label Text="{Binding TotalExpense, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
-                               Grid.Column="2"
-                               FontSize="18"
-                               HorizontalOptions="End"
-                               VerticalOptions="Center" />
+                        <Image
+                            HeightRequest="40"
+                            HorizontalOptions="Center"
+                            Source="expense.svg"
+                            VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="1"
+                            Margin="5,0,0,0"
+                            FontSize="18"
+                            Text="Expenses"
+                            VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="2"
+                            FontSize="18"
+                            HorizontalOptions="End"
+                            Text="{Binding TotalExpense, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                            VerticalOptions="Center" />
                     </Grid>
                 </Frame>
             </VerticalStackLayout>
 
-            <!-- top categories -->
-            <Label Text="Top Categories" Style="{StaticResource lblTitle}" Margin="10,0,0,0" />
+            <!--  top categories  -->
+            <Label
+                Margin="10,0,0,0"
+                Style="{StaticResource lblTitle}"
+                Text="Top Categories" />
             <VerticalStackLayout Spacing="10">
                 <Frame Padding="5,5,10,5">
                     <Grid ColumnDefinitions="40,*,*">
-                        <Image Source="income.svg"
-                               HeightRequest="40"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center" />
-                        <Label Text="{Binding TopIncomeSubcategoryName}"
-                               Grid.Column="1"
-                               FontSize="18"
-                               Margin="5,0,0,0"
-                               VerticalOptions="Center" />
-                        <Label Text="{Binding TopIncomeSubcategoryAmount, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
-                               Grid.Column="2"
-                               FontSize="18"
-                               HorizontalOptions="End"
-                               VerticalOptions="Center" />
+                        <Image
+                            HeightRequest="40"
+                            HorizontalOptions="Center"
+                            Source="income.svg"
+                            VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="1"
+                            Margin="5,0,0,0"
+                            FontSize="18"
+                            Text="{Binding TopIncomeSubcategoryName}"
+                            VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="2"
+                            FontSize="18"
+                            HorizontalOptions="End"
+                            Text="{Binding TopIncomeSubcategoryAmount, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                            VerticalOptions="Center" />
                     </Grid>
                 </Frame>
                 <Frame Padding="5,5,10,5">
                     <Grid ColumnDefinitions="40,*,*">
-                        <Image Source="expense.svg"
-                               HeightRequest="40"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center" />
-                        <Label Text="{Binding TopExpenseCategoryName}"
-                               Grid.Column="1"
-                               Margin="5,0,0,0"
-                               FontSize="18"
-                               VerticalOptions="Center" />
-                        <Label Text="{Binding TopExpenseCategoryAmount, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
-                               Grid.Column="2"
-                               FontSize="18"
-                               HorizontalOptions="End"
-                               VerticalOptions="Center" />
+                        <Image
+                            HeightRequest="40"
+                            HorizontalOptions="Center"
+                            Source="expense.svg"
+                            VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="1"
+                            Margin="5,0,0,0"
+                            FontSize="18"
+                            Text="{Binding TopExpenseCategoryName}"
+                            VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="2"
+                            FontSize="18"
+                            HorizontalOptions="End"
+                            Text="{Binding TopExpenseCategoryAmount, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                            VerticalOptions="Center" />
                     </Grid>
                 </Frame>
             </VerticalStackLayout>

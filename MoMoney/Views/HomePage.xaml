@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.HomePage"
-             x:DataType="viewmodel:HomeViewModel"
-             xmlns:models="clr-namespace:MoMoney.Models"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels"
-             xmlns:converters="clr-namespace:MoMoney.Converters"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts">
+<ContentView
+    x:Class="MoMoney.Views.HomePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
+    xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
+    x:DataType="viewmodel:HomeViewModel"
+    BackgroundColor="{AppThemeBinding Light={StaticResource White},
+                                      Dark={StaticResource Gray950}}">
 
-    <!-- converters -->
+    <!--  converters  -->
     <ContentView.Resources>
         <converters:ShowValueConverter x:Key="ShowValue" />
     </ContentView.Resources>
 
-    <!-- main page -->
+    <!--  main page  -->
     <ScrollView>
         <VerticalStackLayout Padding="0,0,0,10" Spacing="10">
 
-            <!-- view all button style -->
+            <!--  view all button style  -->
             <VerticalStackLayout.Resources>
 
                 <Style TargetType="{x:Type Button}">
@@ -36,170 +39,207 @@
                 </Style>
             </VerticalStackLayout.Resources>
 
-            <!-- title -->
+            <!--  title  -->
             <toolkit:Expander x:Name="ExpTitle">
                 <toolkit:Expander.Header>
-                    <Grid HeightRequest="55" Padding="10,0" BackgroundColor="{StaticResource Green}">
-                        <Label Style="{StaticResource lblTitle}"
-                               Text="Dashboard"
-                               VerticalOptions="Center"
-                               HorizontalOptions="Start" />
-                        <Image Style="{StaticResource imgTinted}"
-                               Source="calendar.svg"
-                               HeightRequest="30"
-                               WidthRequest="30" 
-                               HorizontalOptions="End" />
+                    <Grid
+                        Padding="10,0"
+                        BackgroundColor="{StaticResource Primary}"
+                        HeightRequest="55">
+                        <Label
+                            HorizontalOptions="Start"
+                            Style="{StaticResource lblTitle}"
+                            Text="Dashboard"
+                            VerticalOptions="Center" />
+                        <Image
+                            HeightRequest="30"
+                            HorizontalOptions="End"
+                            Source="calendar.svg"
+                            Style="{StaticResource imgTinted}"
+                            WidthRequest="30" />
                     </Grid>
                 </toolkit:Expander.Header>
 
-                <!-- date range picker -->
-                <Frame x:Name="frDates"
-                       Margin="0,10,0,0"
-                       Padding="10,0"
-                       HeightRequest="50"
-                       HorizontalOptions="Center"
-                       BackgroundColor="{StaticResource Gray700}">
+                <!--  date range picker  -->
+                <Frame
+                    x:Name="frDates"
+                    Margin="0,10,0,0"
+                    Padding="10,0"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
+                                                      Dark={StaticResource Gray700}}"
+                    HeightRequest="50"
+                    HorizontalOptions="Center">
                     <HorizontalStackLayout Spacing="5">
-                        <DatePicker x:Name="dtFrom" Date="{Binding From}" HeightRequest="45" />
-                        <Label Text="to" FontSize="16" VerticalOptions="Center" FontAttributes="Bold" />
-                        <DatePicker x:Name="dtTo" Date="{Binding To}" HeightRequest="45" />
                         <Image Source="calendar.svg" Style="{StaticResource imgTinted}" />
+                        <DatePicker
+                            x:Name="dtFrom"
+                            Date="{Binding From}"
+                            HeightRequest="45" />
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            Text="to"
+                            VerticalOptions="Center" />
+                        <DatePicker
+                            x:Name="dtTo"
+                            Date="{Binding To}"
+                            HeightRequest="45" />
                     </HorizontalStackLayout>
                 </Frame>
             </toolkit:Expander>
 
-            <!-- chart title -->
-            <Label Margin="10,0" Style="{StaticResource lblTitle}" Text="Running Balance" />
+            <!--  chart title  -->
+            <Label
+                Margin="10,0"
+                Style="{StaticResource lblTitle}"
+                Text="Running Balance" />
 
-            <!-- balance over time chart -->
-            <Frame Margin="10,0"
-                   Padding="5,0,5,5"
-                   HeightRequest="220">
-                <Frame.Background>
-                    <LinearGradientBrush EndPoint="0,1">
-                        <GradientStop Color="#42ba96" Offset="0.1" />
-                        <GradientStop Color="#42ba96" Offset="0.3" />
-                        <GradientStop Color="#359477" Offset="0.8" />
-                        <GradientStop Color="#359477" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Frame.Background>
+            <!--  balance over time chart  -->
+            <Frame
+                Margin="10,0"
+                Padding="5,0,5,5"
+                BackgroundColor="{StaticResource Primary}"
+                HeightRequest="220">
                 <Grid>
-                    <chart:SfCartesianChart x:Name="chrtBalance" Title="" Margin="0">
+                    <chart:SfCartesianChart
+                        x:Name="chrtBalance"
+                        Title=""
+                        Margin="0">
 
-                        <!-- X axis -->
+                        <!--  X axis  -->
                         <chart:SfCartesianChart.XAxes>
-                            <chart:DateTimeAxis x:Name="XAxis"
-                                                Interval="1"
-                                                MinorTicksPerInterval="1"
-                                                ShowMajorGridLines="False"
-                                                ShowMinorGridLines="False"
-                                                IntervalType="Months">
-                                <!-- label -->
+                            <chart:DateTimeAxis
+                                x:Name="XAxis"
+                                Interval="1"
+                                IntervalType="Months"
+                                MinorTicksPerInterval="1"
+                                ShowMajorGridLines="False"
+                                ShowMinorGridLines="False">
+                                <!--  label  -->
                                 <chart:DateTimeAxis.LabelStyle>
-                                    <chart:ChartAxisLabelStyle TextColor="White" LabelFormat="MMM" />
+                                    <chart:ChartAxisLabelStyle LabelFormat="MMM" TextColor="White" />
                                 </chart:DateTimeAxis.LabelStyle>
-                                <!-- axis lines -->
+                                <!--  axis lines  -->
                                 <chart:DateTimeAxis.AxisLineStyle>
-                                    <chart:ChartLineStyle StrokeWidth ="0" />
+                                    <chart:ChartLineStyle StrokeWidth="0" />
                                 </chart:DateTimeAxis.AxisLineStyle>
-                                <!-- tick lines -->
+                                <!--  tick lines  -->
                                 <chart:DateTimeAxis.MajorTickStyle>
-                                    <chart:ChartAxisTickStyle StrokeWidth ="0" />
+                                    <chart:ChartAxisTickStyle StrokeWidth="0" />
                                 </chart:DateTimeAxis.MajorTickStyle>
                             </chart:DateTimeAxis>
                         </chart:SfCartesianChart.XAxes>
 
-                        <!-- Y axis -->
+                        <!--  Y axis  -->
                         <chart:SfCartesianChart.YAxes>
                             <chart:NumericalAxis ShowMajorGridLines="True" ShowMinorGridLines="False">
-                                <!-- label -->
+                                <!--  label  -->
                                 <chart:NumericalAxis.LabelStyle>
-                                    <chart:ChartAxisLabelStyle x:Name="YAxisLbl" TextColor="White" LabelFormat="$0,k" />
+                                    <chart:ChartAxisLabelStyle
+                                        x:Name="YAxisLbl"
+                                        LabelFormat="$0,k"
+                                        TextColor="White" />
                                 </chart:NumericalAxis.LabelStyle>
-                                <!-- label -->
+                                <!--  label  -->
                                 <chart:NumericalAxis.MajorGridLineStyle>
                                     <chart:ChartLineStyle Stroke="#55ffffff" />
                                 </chart:NumericalAxis.MajorGridLineStyle>
-                                <!-- axis lines -->
+                                <!--  axis lines  -->
                                 <chart:NumericalAxis.AxisLineStyle>
-                                    <chart:ChartLineStyle StrokeWidth ="1" Stroke="#55ffffff"/>
+                                    <chart:ChartLineStyle Stroke="#55ffffff" StrokeWidth="1" />
                                 </chart:NumericalAxis.AxisLineStyle>
-                                <!-- tick lines -->
+                                <!--  tick lines  -->
                                 <chart:NumericalAxis.MajorTickStyle>
-                                    <chart:ChartAxisTickStyle StrokeWidth ="0" />
+                                    <chart:ChartAxisTickStyle StrokeWidth="0" />
                                 </chart:NumericalAxis.MajorTickStyle>
                             </chart:NumericalAxis>
                         </chart:SfCartesianChart.YAxes>
 
-                        <!-- series -->
-                        <chart:SplineSeries ItemsSource="{Binding Data}"
-                                            XBindingPath="Date"
-					                        YBindingPath="Balance"
-                                            Fill="White"
-                                            StrokeWidth="2"
-                                            Type="Natural" />
+                        <!--  series  -->
+                        <chart:SplineSeries
+                            Fill="White"
+                            ItemsSource="{Binding Data}"
+                            StrokeWidth="2"
+                            Type="Natural"
+                            XBindingPath="Date"
+                            YBindingPath="Balance" />
 
                     </chart:SfCartesianChart>
                 </Grid>
             </Frame>
 
-            <!-- stats title -->
+            <!--  stats title  -->
             <Grid Margin="10,0">
                 <Label Style="{StaticResource lblTitle}" Text="Statistics" />
-                <Button x:Name="btnViewAllStats" Text="View All" Clicked="btnViewAllStats_Clicked" />
+                <Button
+                    x:Name="btnViewAllStats"
+                    Clicked="btnViewAllStats_Clicked"
+                    Text="View All" />
             </Grid>
 
             <Frame Margin="10,0" Padding="10">
-                <Grid RowDefinitions="55,45,55" ColumnDefinitions="*,*" Margin="0" RowSpacing="10">
+                <Grid
+                    Margin="0"
+                    ColumnDefinitions="*,*"
+                    RowDefinitions="55,45,55"
+                    RowSpacing="10">
                     <Grid.Resources>
                         <Style TargetType="{x:Type Label}">
                             <Setter Property="VerticalOptions" Value="Center" />
                             <Setter Property="HorizontalOptions" Value="Center" />
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                         </Style>
                     </Grid.Resources>
 
-                    <!-- net worth -->
+                    <!--  net worth  -->
                     <VerticalStackLayout Grid.ColumnSpan="2">
-                        <Label Text="Net Worth" FontSize="15" />
-                        <Label Text="{Binding Networth, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
-                               FontSize="30"
-                               FontAttributes="Bold" />
+                        <Label FontSize="15" Text="Net Worth" />
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="30"
+                            Text="{Binding Networth, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
                     </VerticalStackLayout>
 
-                    <!-- total income -->
+                    <!--  total income  -->
                     <VerticalStackLayout Grid.Row="1">
-                        <Label Text="Total Income" FontSize="15" />
-                        <Label Text="{Binding TotalIncome, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" FontSize="24" />
+                        <Label FontSize="15" Text="Total Income" />
+                        <Label FontSize="24" Text="{Binding TotalIncome, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
                     </VerticalStackLayout>
-                    <!-- total expense -->
+                    <!--  total expense  -->
                     <VerticalStackLayout Grid.Row="2">
-                        <Label Text="Total Expense" FontSize="15" />
-                        <Label Text="{Binding TotalExpenses, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" FontSize="24"/>
+                        <Label FontSize="15" Text="Total Expense" />
+                        <Label FontSize="24" Text="{Binding TotalExpenses, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
                     </VerticalStackLayout>
 
-                    <!-- top income -->
+                    <!--  top income  -->
                     <VerticalStackLayout Grid.Row="1" Grid.Column="1">
-                        <Label Text="Top Income" FontSize="15" />
-                        <Label Text="{Binding TopIncomeSubcategory}" FontSize="24" />
+                        <Label FontSize="15" Text="Top Income" />
+                        <Label FontSize="24" Text="{Binding TopIncomeSubcategory}" />
                     </VerticalStackLayout>
-                    <!-- top expense -->
+                    <!--  top expense  -->
                     <VerticalStackLayout Grid.Row="2" Grid.Column="1">
-                        <Label Text="Top Expense" FontSize="15" />
-                        <Label Text="{Binding TopExpenseCategory}" FontSize="24" />
+                        <Label FontSize="15" Text="Top Expense" />
+                        <Label FontSize="24" Text="{Binding TopExpenseCategory}" />
                     </VerticalStackLayout>
 
                 </Grid>
             </Frame>
 
-            <!-- transactions title -->
+            <!--  transactions title  -->
             <Grid Margin="10,0">
                 <Label Style="{StaticResource lblTitle}" Text="Transactions" />
-                <Button x:Name="btnViewAllTransactions" Text="View All" Clicked="btnViewAllTransactions_Clicked" />
+                <Button
+                    x:Name="btnViewAllTransactions"
+                    Clicked="btnViewAllTransactions_Clicked"
+                    Text="View All" />
             </Grid>
 
-            <!-- list of transactions -->
-            <Frame Margin="10,0" Padding="0,0,0,10">
-                <CollectionView ItemsSource="{Binding RecentTransactions}" ItemTemplate="{StaticResource TransactionFrame}" />
+            <!--  list of transactions  -->
+            <Frame Margin="10,0" Padding="10,0,10,10">
+                <CollectionView
+                    EmptyView="No Transactions Found"
+                    ItemTemplate="{StaticResource TransactionFrame}"
+                    ItemsSource="{Binding RecentTransactions}" />
             </Frame>
         </VerticalStackLayout>
     </ScrollView>

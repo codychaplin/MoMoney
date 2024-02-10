@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.Settings.Edit.StocksPage"
-             x:DataType="viewmodel:StocksViewModel"
-             xmlns:models="clr-namespace:MoMoney.Models"
-             xmlns:viewmodel="clr-namespace:MoMoney.ViewModels.Settings.Edit"
-             Title="Stocks">
+<ContentPage
+    x:Class="MoMoney.Views.Settings.Edit.StocksPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
+    Title="Stocks"
+    x:DataType="viewmodel:StocksViewModel">
 
-    <!-- main page -->
+    <!--  main page  -->
     <Grid Padding="0,10,0,0">
 
-        <!-- list of stocks -->
+        <!--  list of stocks  -->
         <CollectionView ItemsSource="{Binding Stocks}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Stock">
 
-                    <!-- template -->
+                    <!--  template  -->
                     <Frame Style="{StaticResource SmallTileFrame}">
                         <Frame.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Path=GoToEditStockCommand, Source={RelativeSource
-                                                                    AncestorType={x:Type viewmodel:StocksViewModel}}}"
-                                                  CommandParameter="{Binding Symbol}" />
+                            <TapGestureRecognizer Command="{Binding Path=GoToEditStockCommand, Source={RelativeSource AncestorType={x:Type viewmodel:StocksViewModel}}}" CommandParameter="{Binding Symbol}" />
                         </Frame.GestureRecognizers>
                         <Grid BackgroundColor="{StaticResource Gray700}">
 
-                            <!-- symbol -->
+                            <!--  symbol  -->
                             <Label Style="{StaticResource lblTile}" Text="{Binding Symbol}" />
 
-                            <!-- market price -->
-                            <Label Style="{StaticResource lblTile}"
-                                   HorizontalOptions="End"
-                                   Padding="0,0,5,0"
-                                   Text="{Binding MarketPrice, StringFormat='{0:C2}'}" />
+                            <!--  market price  -->
+                            <Label
+                                Padding="0,0,5,0"
+                                HorizontalOptions="End"
+                                Style="{StaticResource lblTile}"
+                                Text="{Binding MarketPrice, StringFormat='{0:C2}'}" />
                         </Grid>
                     </Frame>
 
@@ -39,14 +39,14 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- add account button -->
-        <ImageButton Source="add.svg"
-                     Margin="20"
-                     WidthRequest="40"
-                     HeightRequest="40"
-                     VerticalOptions="End"
-                     HorizontalOptions="End"
-                     Command="{Binding GoToAddStockCommand}">
-        </ImageButton>
+        <!--  add account button  -->
+        <ImageButton
+            Margin="20"
+            Command="{Binding GoToAddStockCommand}"
+            HeightRequest="40"
+            HorizontalOptions="End"
+            Source="add.svg"
+            VerticalOptions="End"
+            WidthRequest="40" />
     </Grid>
 </ContentPage>

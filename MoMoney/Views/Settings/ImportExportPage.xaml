@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.Settings.ImportExportPage"
-             x:DataType="viewmodels:ImportExportViewModel"
-             xmlns:components="clr-namespace:MoMoney.Components"
-             xmlns:viewmodels="clr-namespace:MoMoney.ViewModels.Settings"
-             Title="Import &amp; Export">
+<ContentPage
+    x:Class="MoMoney.Views.Settings.ImportExportPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:MoMoney.Components"
+    xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
+    Title="Import &amp; Export"
+    x:DataType="viewmodels:ImportExportViewModel">
     <ScrollView>
         <VerticalStackLayout>
-            
-            <!-- import -->
-            <Label Style="{StaticResource SettingsSubtitle}" Text="Import" />
-            <components:AlignedButton Text="Import Accounts from CSV" Command="{Binding ImportAccountsCSVCommand}" />
-            <components:AlignedButton Text="Import Categories from CSV" Command="{Binding ImportCategoriesCSVCommand}" />
-            <components:AlignedButton Text="Import Stocks from CSV" Command="{Binding ImportStocksCSVCommand}" />
-            <components:AlignedButton Text="Import Transactions from CSV" Command="{Binding ImportTransactionsCSVCommand}" />
 
-            <!-- export -->
+            <!--  import  -->
+            <Label Style="{StaticResource SettingsSubtitle}" Text="Import" />
+            <components:AlignedButton Command="{Binding ImportAccountsCSVCommand}" Text="Import Accounts from CSV" />
+            <components:AlignedButton Command="{Binding ImportCategoriesCSVCommand}" Text="Import Categories from CSV" />
+            <components:AlignedButton Command="{Binding ImportStocksCSVCommand}" Text="Import Stocks from CSV" />
+            <components:AlignedButton Command="{Binding ImportTransactionsCSVCommand}" Text="Import Transactions from CSV" />
+
+            <!--  export  -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Export" />
-            <components:AlignedButton Text="Export Transactions to CSV" Command="{Binding ExportTransactionsCSVCommand}" />
-            <components:AlignedButton Text="Export Logs to CSV" Command="{Binding ExportLogsCSVCommand}" />
-            
-        </VerticalStackLayout>  
+            <components:AlignedButton Command="{Binding ExportAccountsCSVCommand}" Text="Export Accounts to CSV" />
+            <components:AlignedButton Command="{Binding ExportCategoriesCSVCommand}" Text="Export Categories to CSV" />
+            <components:AlignedButton Command="{Binding ExportStocksCSVCommand}" Text="Export Stocks to CSV" />
+            <components:AlignedButton Command="{Binding ExportTransactionsCSVCommand}" Text="Export Transactions to CSV" />
+            <components:AlignedButton Command="{Binding ExportLogsCSVCommand}" Text="Export Logs to CSV" />
+
+        </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

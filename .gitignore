@@ -363,4 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 /MoMoney/Secret.cs
-/MoMoney/*.keystore
+*.keystore

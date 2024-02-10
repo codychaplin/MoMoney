@@ -1,10 +1,10 @@
-using MoMoney.ViewModels;
+using MoMoney.Core.ViewModels;
 
 namespace MoMoney.Views;
 
 public partial class StatsPage : ContentView
 {
-    public StatsPage( StatsViewModel _vm)
+    public StatsPage(StatsViewModel _vm)
 	{
 		InitializeComponent();
         BindingContext = _vm;

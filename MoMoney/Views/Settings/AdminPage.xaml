@@ -1,25 +1,32 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.Settings.AdminPage"
-             x:DataType="viewmodels:AdminViewModel"
-             xmlns:components="clr-namespace:MoMoney.Components"
-             xmlns:viewmodels="clr-namespace:MoMoney.ViewModels.Settings"
-             Title="Administration">
+<ContentPage
+    x:Class="MoMoney.Views.Settings.AdminPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:MoMoney.Components"
+    xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
+    Title="Administration"
+    x:DataType="viewmodels:AdminViewModel">
     <ScrollView>
         <VerticalStackLayout>
-            <!-- data removal -->
+            <!--  data removal  -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Data Removal" />
-            <components:AlignedButton Text="Remove All Accounts" Command="{Binding RemoveAllAccountsCommand}" />
-            <components:AlignedButton Text="Remove All Categories" Command="{Binding RemoveAllCategoriesCommand}" />
-            <components:AlignedButton Text="Remove All Stocks" Command="{Binding RemoveAllStocksCommand}" />
-            <components:AlignedButton Text="Remove All Transactions" Command="{Binding RemoveAllTransactionsCommand}" />
-            <components:AlignedButton Text="Remove All Logs" Command="{Binding RemoveAllLogsCommand}" />
+            <components:AlignedButton Command="{Binding RemoveAllAccountsCommand}" Text="Remove All Accounts" />
+            <components:AlignedButton Command="{Binding RemoveAllCategoriesCommand}" Text="Remove All Categories" />
+            <components:AlignedButton Command="{Binding RemoveAllStocksCommand}" Text="Remove All Stocks" />
+            <components:AlignedButton Command="{Binding RemoveAllTransactionsCommand}" Text="Remove All Transactions" />
+            <components:AlignedButton Command="{Binding RemoveAllLogsCommand}" Text="Remove All Logs" />
 
-            <!-- data maintenance -->
+            <!--  data maintenance  -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Data Maintenance" />
-            <components:AlignedButton Text="Logging" ShowArrow="True" Command="{Binding GoToLoggingCommand}" />
-            <components:AlignedButton Text="Bulk Editing" ShowArrow="True" Command="{Binding GoToBulkEditingCommand}" />
+            <components:AlignedButton
+                Command="{Binding GoToLoggingCommand}"
+                ShowArrow="True"
+                Text="Logging" />
+            <components:AlignedButton
+                Command="{Binding GoToBulkEditingCommand}"
+                ShowArrow="True"
+                Text="Bulk Editing" />
 
         </VerticalStackLayout>
     </ScrollView>

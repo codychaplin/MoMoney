@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Views.Settings.BulkEditingPage"
-             x:DataType="viewmodels:BulkEditingViewModel"
-             xmlns:models="clr-namespace:MoMoney.Models"
-             xmlns:viewmodels="clr-namespace:MoMoney.ViewModels.Settings"
-             xmlns:converters="clr-namespace:MoMoney.Converters"
-             xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
-             Title="Bulk Editing">
+<ContentPage
+    x:Class="MoMoney.Views.Settings.BulkEditingPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+    xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+    xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
+    Title="Bulk Editing"
+    x:DataType="viewmodels:BulkEditingViewModel">
 
-    <Grid Margin="10" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,*" ColumnSpacing="10" RowSpacing="10">
+    <Grid
+        Margin="10"
+        ColumnDefinitions="*,*"
+        ColumnSpacing="10"
+        RowDefinitions="Auto,Auto,*"
+        RowSpacing="10">
         <Grid.Resources>
             <Style TargetType="{x:Type Frame}">
                 <Setter Property="Padding" Value="0" />
-                <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
             </Style>
             <Style TargetType="{x:Type Grid}">
                 <Setter Property="Padding" Value="5" />
@@ -21,16 +27,19 @@
             </Style>
             <Style TargetType="{x:Type Picker}">
                 <Setter Property="HeightRequest" Value="35" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                <Setter Property="TitleColor" Value="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource White}}" />
             </Style>
             <Style TargetType="{x:Type Label}">
                 <Setter Property="Padding" Value="10" />
                 <Setter Property="FontAttributes" Value="Bold" />
                 <Setter Property="FontSize" Value="16" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
             </Style>
             <Style TargetType="{x:Type input:SfAutocomplete}">
                 <Setter Property="Grid.ColumnSpan" Value="2" />
                 <Setter Property="FontSize" Value="14" />
-                <Setter Property="TextColor" Value="#888" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                 <Setter Property="HeightRequest" Value="35" />
                 <Setter Property="VerticalOptions" Value="Center" />
                 <Setter Property="HorizontalOptions" Value="Start" />
@@ -39,11 +48,12 @@
                 <Setter Property="Placeholder" Value="Payee" />
                 <Setter Property="TextSearchMode" Value="Contains" />
                 <Setter Property="BackgroundColor" Value="Transparent" />
-                <Setter Property="Stroke" Value="{StaticResource Gray200}" />
-                <Setter Property="PlaceholderColor" Value="{StaticResource Gray200}" />
-                <Setter Property="ClearButtonIconColor" Value="{StaticResource Gray200}" />
+                <Setter Property="IsClearButtonVisible" Value="True" />
+                <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource White}}" />
+                <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}" />
+                <Setter Property="ClearButtonIconColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource Gray200}}" />
             </Style>
-            <Style TargetType="{x:Type ImageButton}" BasedOn="{StaticResource imgBtnTinted}">
+            <Style BasedOn="{StaticResource imgBtnTinted}" TargetType="{x:Type ImageButton}">
                 <Setter Property="Grid.Column" Value="1" />
                 <Setter Property="Source" Value="clear.svg" />
                 <Setter Property="WidthRequest" Value="20" />
@@ -53,110 +63,124 @@
             <Style TargetType="{x:Type Button}">
                 <Setter Property="Grid.Row" Value="1" />
                 <Setter Property="HeightRequest" Value="45" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+
             </Style>
         </Grid.Resources>
 
-        <!-- find values -->
+        <!--  find values  -->
         <Frame Grid.Row="0" Grid.Column="0">
             <VerticalStackLayout>
 
-                <!-- find title -->
+                <!--  find title  -->
                 <Label Text="Find..." />
 
-                <!-- find account picker -->
-                <Grid BackgroundColor="{StaticResource Gray600}">
-                    <Picker x:DataType="models:Account"
-                            Title="Account"
-                            ItemDisplayBinding="{Binding AccountName}"
-                            ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                            SelectedItem="{Binding Path=FindAccount, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}" />
+                <!--  find account picker  -->
+                <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray150}, Dark={StaticResource Gray600}}">
+                    <Picker
+                        Title="Account"
+                        x:DataType="models:Account"
+                        ItemDisplayBinding="{Binding AccountName}"
+                        ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
+                        SelectedItem="{Binding Path=FindAccount, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}" />
                     <ImageButton Command="{Binding ClearFindAccountCommand}" />
                 </Grid>
 
-                <!-- find category picker -->
+                <!--  find category picker  -->
                 <Grid>
-                    <Picker x:Name="pckFindCategory"
-                            x:DataType="models:Category"
-                            Title="Category"
-                            ItemDisplayBinding="{Binding CategoryName}"
-                            ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                            SelectedItem="{Binding Path=FindCategory, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}" />
+                    <Picker
+                        x:Name="pckFindCategory"
+                        Title="Category"
+                        x:DataType="models:Category"
+                        ItemDisplayBinding="{Binding CategoryName}"
+                        ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
+                        SelectedItem="{Binding Path=FindCategory, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}" />
                     <ImageButton Command="{Binding ClearFindCategoryCommand}" />
                 </Grid>
 
-                <!-- find subcategory picker -->
-                <Grid BackgroundColor="{StaticResource Gray600}">
-                    <Picker x:DataType="models:Category"
-                            Title="Subcategory"
-                            ItemDisplayBinding="{Binding CategoryName}"
-                            ItemsSource="{Binding Path=FindSubcategories, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                            SelectedItem="{Binding Path=FindSubcategory, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}" />
+                <!--  find subcategory picker  -->
+                <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray150}, Dark={StaticResource Gray600}}">
+                    <Picker
+                        Title="Subcategory"
+                        x:DataType="models:Category"
+                        ItemDisplayBinding="{Binding CategoryName}"
+                        ItemsSource="{Binding Path=FindSubcategories, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
+                        SelectedItem="{Binding Path=FindSubcategory, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}" />
                     <ImageButton Command="{Binding ClearFindSubcategoryCommand}" />
                 </Grid>
 
-                <!-- find payee search bar -->
+                <!--  find payee search bar  -->
                 <Grid>
                     <input:SfAutocomplete ItemsSource="{Binding Payees}" SelectedItem="{Binding FindPayee}" />
                 </Grid>
             </VerticalStackLayout>
         </Frame>
 
-        <!-- replace values -->
+        <!--  replace values  -->
         <Frame Grid.Row="0" Grid.Column="1">
             <VerticalStackLayout>
 
-                <!-- replace title -->
+                <!--  replace title  -->
                 <Label Text="Replace..." />
 
-                <!-- replace account picker -->
-                <Grid BackgroundColor="{StaticResource Gray600}">
-                    <Picker x:DataType="models:Account"
-                            Title="Account"
-                            ItemDisplayBinding="{Binding AccountName}"
-                            ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                            SelectedItem="{Binding Path=ReplaceAccount, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}" />
+                <!--  replace account picker  -->
+                <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray150}, Dark={StaticResource Gray600}}">
+                    <Picker
+                        Title="Account"
+                        x:DataType="models:Account"
+                        ItemDisplayBinding="{Binding AccountName}"
+                        ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
+                        SelectedItem="{Binding Path=ReplaceAccount, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}" />
                     <ImageButton Command="{Binding ClearReplaceAccountCommand}" />
                 </Grid>
 
-                <!-- replace category picker -->
+                <!--  replace category picker  -->
                 <Grid>
-                    <Picker x:Name="pckReplaceCategory"
-                            x:DataType="models:Category"
-                            Title="Category"
-                            ItemDisplayBinding="{Binding CategoryName}"
-                            ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                            SelectedItem="{Binding Path=ReplaceCategory, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}" />
+                    <Picker
+                        x:Name="pckReplaceCategory"
+                        Title="Category"
+                        x:DataType="models:Category"
+                        ItemDisplayBinding="{Binding CategoryName}"
+                        ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
+                        SelectedItem="{Binding Path=ReplaceCategory, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}" />
                     <ImageButton Command="{Binding ClearReplaceCategoryCommand}" />
                 </Grid>
 
-                <!-- replace subcategory picker -->
-                <Grid BackgroundColor="{StaticResource Gray600}">
-                    <Picker x:DataType="models:Category"
-                            Title="Subcategory"
-                            ItemDisplayBinding="{Binding CategoryName}"
-                            ItemsSource="{Binding Path=ReplaceSubcategories, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                            SelectedItem="{Binding Path=ReplaceSubcategory, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}" />
+                <!--  replace subcategory picker  -->
+                <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray150}, Dark={StaticResource Gray600}}">
+                    <Picker
+                        Title="Subcategory"
+                        x:DataType="models:Category"
+                        ItemDisplayBinding="{Binding CategoryName}"
+                        ItemsSource="{Binding Path=ReplaceSubcategories, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
+                        SelectedItem="{Binding Path=ReplaceSubcategory, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}" />
                     <ImageButton Command="{Binding ClearReplaceSubcategoryCommand}" />
                 </Grid>
 
-                <!-- replace payee entry -->
+                <!--  replace payee entry  -->
                 <Grid>
-                    <Entry x:Name="entReplacePayee" Text="{Binding ReplacePayee}" Placeholder="Payee" />
+                    <input:SfAutocomplete Placeholder="Payee" Text="{Binding ReplacePayee}" />
                 </Grid>
             </VerticalStackLayout>
         </Frame>
 
-        <Button Text="Find"
-                BackgroundColor="{StaticResource Blue}"
-                Command="{Binding FindCommand}"/>
-        
-        <Button Grid.Column="1"
-                Text="Replace"
-                BackgroundColor="{StaticResource Green}"
-                Command="{Binding ReplaceCommand}"/>
+        <Button
+            BackgroundColor="{StaticResource Blue}"
+            Command="{Binding BulkFindCommand}"
+            Text="Find" />
 
-        <Frame Grid.Row="2" Grid.ColumnSpan="2" BackgroundColor="{StaticResource Gray700}">
-            <Label Text="{Binding Info}" LineHeight="1.5" />
+        <Button
+            Grid.Column="1"
+            BackgroundColor="{StaticResource Green}"
+            Command="{Binding BulkReplaceCommand}"
+            Text="Replace" />
+
+        <Frame
+            Grid.Row="2"
+            Grid.ColumnSpan="2"
+            BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
+                                              Dark={StaticResource Gray700}}">
+            <Label LineHeight="1.5" Text="{Binding Info}" />
         </Frame>
 
     </Grid>

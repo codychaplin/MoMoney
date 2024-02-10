@@ -1,3 +1,37 @@
+# MoMoney v1.1.4
+
+### Fixes
+
+* Fixed issues from .NET 8 upgrade
+* first time sqlite crash
+* Accounts and Categories are now added to lists when created or enabled
+* Amount in AddTransactionPage clears properly instead of to 0
+* Added temporary workaround for switch not updating in .NET 8
+* Fixed accounts updating on AccountPage
+* Fixed stock MarketPrice update
+* Fixed empty Insights page labels
+* Write storage permissions
+* Fixed error when adding transfers
+
+### Changes
+
+* Upgraded to .NET 8
+* Fully added light mode support
+* Added empty views
+* Added Android light/dark themes
+* Added notice when user creates a parent category
+* Added more WeakReferenceMessenger classes for main models
+* Modularized service class functions and moved WeakReferenceMessenger calls
+* Moved interfaces to Services subfolder
+* Moved updating of account balances to TransactionService where possible
+* Added DisplayToast support
+* Made Accounts/Categories/StocksPage transient instead of singleton
+* Reorganized MauiProgram.cs
+* Added Firebase Analytics
+* Improved logging and exception handling
+* Added exporting of accounts, categories, and stocks
+* Added adaptive icon
+
 # MoMoney v1.1.3
 
 ### Fixes
