@@ -17,7 +17,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         accountService = _accountService;
     }
 
-    public async Task AddTransaction(DateTime date, int accountID, decimal amount, int categoryID,
+    public async Task<int> AddTransaction(DateTime date, int accountID, decimal amount, int categoryID,
         int subcategoryID, string payee, int? transferID)
     {
         Transaction transaction = new();
@@ -38,6 +38,8 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         // send message to update UI
         var args = new TransactionEventArgs(transaction, TransactionEventArgs.CRUD.Create);
         WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(args));
+
+        return transaction.TransactionID;
     }
 
     public async Task AddTransactions(List<Transaction> transactions)
@@ -95,6 +97,9 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
             await momoney.db.DeleteAllAsync<Transaction>();
             await momoney.db.DropTableAsync<Transaction>();
             await momoney.db.CreateTableAsync<Transaction>();
+
+            var args = new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read);
+            WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(args));
 
             return $"Removed all Transactions from db.";
         }, false);

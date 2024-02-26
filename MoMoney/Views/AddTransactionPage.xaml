@@ -166,6 +166,7 @@
                                                            Dark={StaticResource Gray200}}"
                         Stroke="{AppThemeBinding Light={StaticResource Gray600},
                                                  Dark={StaticResource White}}"
+                        Text="{Binding Payee, Mode=TwoWay}"
                         TextColor="{AppThemeBinding Light={StaticResource Black},
                                                     Dark={StaticResource White}}"
                         TextSearchMode="Contains">
@@ -203,24 +204,35 @@
             <Grid
                 x:Name="grdAcceptButtons"
                 Margin="10,0,10,10"
-                Padding="2"
-                ColumnDefinitions="*,*"
+                ColumnDefinitions="*,70,*"
                 ColumnSpacing="10">
                 <Button
                     x:Name="btnClear"
-                    Grid.Column="0"
                     BackgroundColor="{StaticResource Blue}"
                     Clicked="btnClear_Clicked"
-                    HeightRequest="45"
+                    HeightRequest="50"
                     Text="Clear" />
                 <Button
-                    x:Name="btnEnter"
+                    x:Name="btnRecord"
                     Grid.Column="1"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray200},
+                                                      Dark={StaticResource Gray700}}"
+                    BorderColor="{AppThemeBinding Light={StaticResource Gray700},
+                                                  Dark={StaticResource Gray200}}"
+                    BorderWidth="1.5"
+                    Command="{Binding RecordCommand}"
+                    CommandParameter="{x:Reference btnRecord}"
+                    FontFamily="Material"
+                    FontSize="30"
+                    HeightRequest="50"
+                    Text="&#xe029;" />
+                <Button
+                    x:Name="btnEnter"
+                    Grid.Column="2"
                     BackgroundColor="{StaticResource Green}"
                     Clicked="btnEnter_Clicked"
                     Command="{Binding AddTransactionCommand}"
-                    CommandParameter="{Binding Source={x:Reference entPayee}, Path=Text}"
-                    HeightRequest="45"
+                    HeightRequest="50"
                     Text="Accept" />
             </Grid>
 

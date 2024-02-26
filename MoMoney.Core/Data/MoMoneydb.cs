@@ -31,6 +31,8 @@ public class MoMoneydb
             await db.CreateTableAsync<Stock>();
             await db.CreateTableAsync<Account>();
             await db.CreateTableAsync<Transaction>();
+            await db.CreateTableAsync<ChatResponse>();
+            await db.CreateTableAsync<WhisperResponse>();
             await CreateCategories();
 
             initialized = true;

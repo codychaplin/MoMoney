@@ -13,5 +13,10 @@ public class MainActivity : MauiAppCompatActivity
         SupportActionBar.Hide();
         Firebase.FirebaseApp.InitializeApp(this.ApplicationContext);
         Window.SetSoftInputMode(Android.Views.SoftInput.AdjustResize);
+
+        if (CheckSelfPermission(Android.Manifest.Permission.RecordAudio) != Permission.Granted)
+        {
+            RequestPermissions(new string[] { Android.Manifest.Permission.RecordAudio }, 0);
+        }
     }
 }

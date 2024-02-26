@@ -114,19 +114,19 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
         });
     }
 
-    public async Task<Account> GetAccount(int ID)
+    public async Task<Account> GetAccount(int ID, bool tryGet = false)
     {
         await Init();
         if (Accounts.TryGetValue(ID, out var account))
             return new Account(account);
 
         var acc = await momoney.db.Table<Account>().FirstOrDefaultAsync(a => a.AccountID == ID);
-        return acc is null
+        return acc is null && !tryGet
             ? throw new AccountNotFoundException($"Could not find Account with ID '{ID}'.")
             : acc;
     }
 
-    public async Task<Account> GetAccount(string name)
+    public async Task<Account> GetAccount(string name, bool tryGet = false)
     {
         await Init();
         var accs = Accounts.Values.Where(a => a.AccountName.Equals(name, StringComparison.OrdinalIgnoreCase));
@@ -134,7 +134,8 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
             return accs.First();
 
         var acc = await momoney.db.Table<Account>().FirstOrDefaultAsync(a => a.AccountName == name);
-        return acc is null
+
+        return acc is null && !tryGet
             ? throw new AccountNotFoundException($"Could not find Account with name '{name}'.")
             : acc;
     }

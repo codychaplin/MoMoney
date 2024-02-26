@@ -22,5 +22,15 @@ public static class Constants
     // month name array alias
     public static readonly string[] MONTHS = CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedMonthNames;
 
+    // load count for infinite scroll
     public const int LOAD_COUNT = 50;
+
+    // OpenAI
+    public const string AUDIO_FILE_NAME = "recording.mp3";
+    public const string AUDIO_MODEL = "whisper-1";
+    public const decimal WHISPER_COST = 0.006m; // per minute
+    public const string CHAT_MODEL = "gpt-3.5-turbo-0125";
+    public const decimal CHAT_INPUT_COST = 0.0005m; // per 1000 tokens
+    public const decimal CHAT_OUTPUT_COST = 0.0015m; // per 1000 tokens
+    public const int MAX_TOKENS = 200;
 }

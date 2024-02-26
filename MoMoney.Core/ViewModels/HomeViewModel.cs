@@ -58,17 +58,28 @@ public partial class HomeViewModel : ObservableObject
 
     public async Task Refresh()
     {
-        await GetNetworth();
+        try
+        {
+            await GetNetworth();
 
-        var transactions = await transactionService.GetTransactionsFromTo(From, To, true);
-        if (!transactions.Any())
-            return;
-        
-        GetRecentTransactions(transactions);
-        Task getStats = GetStats(transactions);
-        Task getChartData = GetChartData(transactions);
+            var transactions = await transactionService.GetTransactionsFromTo(From, To, true);
+            if (!transactions.Any())
+            {
+                RecentTransactions?.Clear();
+                return;
+            }
 
-        await Task.WhenAll(getStats, getChartData);
+            GetRecentTransactions(transactions);
+            Task getStats = GetStats(transactions);
+            Task getChartData = GetChartData(transactions);
+
+            await Task.WhenAll(getStats, getChartData);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(Refresh), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>

@@ -15,8 +15,8 @@ public interface ITransactionService
     /// <param name="subcategoryID"></param>
     /// <param name="payee"></param>
     /// <param name="transferID"></param>
-    /// <returns>Newly created Transaction</returns>
-    Task AddTransaction(DateTime date, int accountID, decimal amount, int categoryID,
+    /// <returns>ID of new Transaction</returns>
+    Task<int> AddTransaction(DateTime date, int accountID, decimal amount, int categoryID,
         int subcategoryID, string payee, int? transferID);
 
     /// <summary>

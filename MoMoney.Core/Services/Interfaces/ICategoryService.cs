@@ -46,18 +46,20 @@ public interface ICategoryService
     /// Gets an category from the Categories table using an ID.
     /// </summary>
     /// <param name="ID"></param>
+    /// <param name="tryGet"></param>
     /// <returns>Category object</returns>
     /// <exception cref="CategoryNotFoundException"></exception>
-    Task<Category> GetCategory(int ID);
+    Task<Category> GetCategory(int ID, bool tryGet = false);
 
     /// <summary>
     /// Gets an category from the Categories table using a name and parent name.
     /// </summary>
     /// <param name="name"></param>
     /// <param name="parent"></param>
+    /// <param name="tryGet"></param>
     /// <returns>Category object</returns>
     /// <exception cref="CategoryNotFoundException"></exception>
-    Task<Category> GetCategory(string name, string parent);
+    Task<Category> GetCategory(string name, string parent, bool tryGet = false);
 
     /// <summary>
     /// Gets Category from the Categories table using name. Only works for parent categories.
@@ -75,10 +77,16 @@ public interface ICategoryService
     Task<Dictionary<string, int>> GetCategoriesAsNameDict();
 
     /// <summary>
-    /// Gets all Categories from Categories table as a list.
+    /// Gets all mutable Categories from Categories table as a list.
     /// </summary>
     /// <returns>List of Category objects</returns>
     Task<IEnumerable<Category>> GetCategories();
+
+    /// <summary>
+    /// Gets all Categories from Categories table as a list.
+    /// </summary>
+    /// <returns>List of Category objects</returns>
+    Task<IEnumerable<Category>> GetAllCategories();
 
     /// <summary>
     /// Gets all parent Categories from Categories table as a list.

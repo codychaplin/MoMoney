@@ -1,3 +1,15 @@
+# MoMoney v1.2.0
+
+### Fixes
+
+* Fixed transaction list padding
+* Recent transactions on home page now update properly
+
+### Changes
+
+* Added AI transaction transcription
+* Added option to try getting objects from db by returning null instead of throwing exception
+
 # MoMoney v1.1.4
 
 ### Fixes

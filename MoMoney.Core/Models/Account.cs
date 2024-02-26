@@ -2,6 +2,7 @@
 using CsvHelper.Configuration.Attributes;
 
 namespace MoMoney.Core.Models;
+
 public class Account
 {
     [PrimaryKey, AutoIncrement, CsvHelper.Configuration.Attributes.Ignore]

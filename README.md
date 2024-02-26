@@ -1,4 +1,4 @@
-# MoMoney v1.1.4
+# MoMoney v1.2.0
 ## About
 MoMoney is a personal finance tracker Android app made with .NET MAUI.
 Works on Android 10.0 and later.
@@ -6,6 +6,7 @@ Works on Android 10.0 and later.
 ## Features
 * Filtering and sorting of transactions
 * Add/update/remove transactions, accounts, categories, and stocks
+* Add transactions with AI
 * Check account balances and networth
 * See your balance over time
 * Group transactions by category and see monthly trends

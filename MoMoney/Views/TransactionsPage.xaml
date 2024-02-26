@@ -271,7 +271,7 @@
         <listview:SfListView
             x:Name="listView"
             Grid.Row="1"
-            Margin="10,0"
+            Margin="10,5"
             ItemSize="75"
             ItemSpacing="0"
             ItemTemplate="{StaticResource TransactionFrame}"

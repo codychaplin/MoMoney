@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using Syncfusion.Maui.Core.Hosting;
+using Plugin.Maui.Audio;
 using MoMoney.Views;
 using MoMoney.Views.Stats;
 using MoMoney.Views.Settings;
@@ -25,6 +26,10 @@ public static class MauiProgram
                .RegisterViewModels()
                .RegisterServices()
                .RegisterOther()
+               .ConfigureFonts(fonts =>
+               {
+                   fonts.AddFont("MaterialIcons-Regular.ttf", "Material");
+               })
                .UseMauiCommunityToolkit();
 
         return builder.Build();
@@ -121,6 +126,12 @@ public static class MauiProgram
 
         // logging
         builder.Services.AddTransient(typeof(ILoggerService<>), typeof(LoggerService<>));
+
+        // openai
+        builder.Services.AddSingleton<IOpenAIService, OpenAIService>();
+
+        // audio
+        builder.Services.AddSingleton(AudioManager.Current);
 
         return builder;
     }

@@ -111,3 +111,11 @@ public class TransactionExportMap : ClassMap<Transaction>
         Map(t => t.TransferID).Ignore();
     }
 }
+
+public enum TransactionType
+{
+    None,
+    Income,
+    Expense,
+    Transfer
+}

@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
+using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels;
 
@@ -163,13 +164,5 @@ public partial class AddTransactionPage : ContentView
     {
         vm.ClearAfterAdd();
         txtAmount.Text = "";
-    }
-
-    enum TransactionType
-    {
-        None,
-        Income,
-        Expense,
-        Transfer
     }
 }

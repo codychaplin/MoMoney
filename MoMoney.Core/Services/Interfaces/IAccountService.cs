@@ -47,17 +47,19 @@ public interface IAccountService
     /// Gets an account from the Accounts table using an ID.
     /// </summary>
     /// <param name="ID"></param>
+    /// <param name="tryGet"></param>
     /// <returns>Account object</returns>
     /// <exception cref="AccountNotFoundException"></exception>
-    Task<Account> GetAccount(int ID);
+    Task<Account> GetAccount(int ID, bool tryGet = false);
 
     /// <summary>
     /// Gets an account from the Accounts table using a name.
     /// </summary>
     /// <param name="name"></param>
+    /// <param name="tryGet"></param>
     /// <returns>Account object</returns>
     /// <exception cref="AccountNotFoundException"></exception>
-    Task<Account> GetAccount(string name);
+    Task<Account> GetAccount(string name, bool tryGet = false);
 
     /// <summary>
     /// Gets all Accounts from Accounts table as a list.

@@ -362,5 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-/MoMoney/Secret.cs
+/MoMoney.Core/Secret.cs
 *.keystore

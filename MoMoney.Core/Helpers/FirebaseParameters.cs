@@ -11,6 +11,7 @@ public class FirebaseParameters
     public static string EVENT_OPEN_APP => "Open_App";
     public static string EVENT_BULK_FIND => "Bulk_Find";
     public static string EVENT_BULK_REPLACE => "Bulk_Replace";
+    public static string EVENT_OPENAI_CALL => "OpenAI_Call";
 
     public static string EVENT_WARNING_LOG => "Warning_Log";
     public static string EVENT_ERROR_LOG => "Error_Log";

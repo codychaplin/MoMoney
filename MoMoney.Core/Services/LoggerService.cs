@@ -30,6 +30,11 @@ public class LoggerService<T> : ILoggerService<T>, IFirebaseService
             await momoney.Init();
             Log log = new(level, className, message, exceptionType);
             await momoney.db.InsertAsync(log);
+
+            if (string.IsNullOrEmpty(exceptionType))
+                System.Diagnostics.Debug.WriteLine($"{level}: {message}");
+            else
+                System.Diagnostics.Debug.WriteLine($"{level}: {exceptionType}: {message}");
         }
         catch (Exception) { }
     }
@@ -47,8 +52,8 @@ public class LoggerService<T> : ILoggerService<T>, IFirebaseService
 
     public async Task LogError(string functionName, Exception ex)
     {
-        // if SQLite exception, log as critical, otherwise log as error
-        if (ex is SQLite.SQLiteException)
+        // if SQLite or null reference exception, log as critical, otherwise log as error
+        if (ex is SQLite.SQLiteException || ex is NullReferenceException)
         {
             await Log(LogLevel.Critical, ex.Message, ex.GetType().Name);
             LogFirebaseEvent(FirebaseParameters.EVENT_CRITICAL_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className));

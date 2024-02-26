@@ -188,8 +188,8 @@ public partial class LoggingViewModel : ObservableObject
             sb.Append($"Date: {log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")}\n\n");
             sb.Append($"Level: {log.Level}\n\n");
             sb.Append($"Class: {log.ClassName}\n\n");
-            string exception = log.ExceptionType == "" ? "N/A" : log.ExceptionType;
-            sb.Append($"Exception: {exception}\n\n");
+            if (log.ExceptionType != "")
+                sb.Append($"Exception: {log.ExceptionType}\n\n");
             sb.Append($"Message: {log.Message}");
             await Shell.Current.DisplayAlert("Details", sb.ToString(), "OK");
         }
