@@ -3,65 +3,58 @@
     x:Class="MoMoney.Views.Settings.Edit.EditAccountPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
     Title="Edit Account"
     x:DataType="viewmodel:EditAccountViewModel">
 
     <!--  main page  -->
-    <VerticalStackLayout Padding="0,10,0,0">
+    <VerticalStackLayout Padding="10" Spacing="10">
 
         <!--  account name  -->
-        <Frame Style="{StaticResource TileFrame}">
-            <Grid Style="{StaticResource TileGrid}">
-                <Image Source="account.svg" Style="{StaticResource imgIcon}" />
-                <Entry
-                    x:Name="txtName"
-                    Grid.Column="1"
-                    Placeholder="Account Name"
-                    Text="{Binding Account.AccountName}" />
-            </Grid>
-        </Frame>
+        <material:TextField
+            x:Name="txtName"
+            Title="Account Name"
+            Icon="{FontImageSource FontFamily=MaterialRegular,
+                                   Glyph={x:Static m:MaterialRegular.Account_circle},
+                                   Color={AppThemeBinding Light={StaticResource Black},
+                                                          Dark={StaticResource White}}}"
+            Text="{Binding Account.AccountName}" />
 
         <!--  account type with predefined values  -->
-        <Frame Style="{StaticResource TileFrame}">
-            <Grid Style="{StaticResource TileGrid}">
-                <Image Source="piggy_bank.svg" Style="{StaticResource imgIcon}" />
-                <Picker
-                    x:Name="pckType"
-                    Title="Select a type"
-                    Grid.Column="1"
-                    SelectedItem="{Binding Account.AccountType}">
-                    <Picker.Items>
-                        <x:String>Checkings</x:String>
-                        <x:String>Savings</x:String>
-                        <x:String>Credit</x:String>
-                        <x:String>Investments</x:String>
-                    </Picker.Items>
-                </Picker>
-            </Grid>
-        </Frame>
+        <material:PickerField
+            x:Name="pckType"
+            Title="Select a type"
+            Icon="{FontImageSource FontFamily=MaterialRegular,
+                                   Glyph={x:Static m:MaterialRegular.Savings},
+                                   Color={AppThemeBinding Light={StaticResource Black},
+                                                          Dark={StaticResource White}}}"
+            SelectedItem="{Binding Account.AccountType}">
+            <material:PickerField.Items>
+                <x:String>Checkings</x:String>
+                <x:String>Savings</x:String>
+                <x:String>Credit</x:String>
+                <x:String>Investments</x:String>
+            </material:PickerField.Items>
+        </material:PickerField>
 
         <!--  starting balance  -->
-        <Grid ColumnDefinitions="3.5*,*">
-            <Frame Style="{StaticResource TileFrame}">
-                <Grid Style="{StaticResource TileGrid}">
-                    <Image
-                        HorizontalOptions="Start"
-                        Source="dollar_symbol.svg"
-                        Style="{StaticResource imgIcon}" />
-                    <Entry
-                        x:Name="txtStartingBalance"
-                        Grid.Column="1"
-                        Keyboard="Numeric"
-                        Placeholder="Starting Balance"
-                        Text="{Binding Account.StartingBalance}" />
-                </Grid>
-            </Frame>
+        <Grid ColumnDefinitions="*,60">
+            <material:TextField
+                x:Name="txtStartingBalance"
+                Title="Starting Balance"
+                Icon="{FontImageSource FontFamily=MaterialRegular,
+                                       Glyph={x:Static m:MaterialRegular.Paid},
+                                       Color={AppThemeBinding Light={StaticResource Black},
+                                                              Dark={StaticResource White}}}"
+                Keyboard="Numeric"
+                Text="{Binding Account.StartingBalance}" />
             <Switch
                 x:Name="swEnabled"
                 Grid.Column="1"
-                HorizontalOptions="Start"
+                HorizontalOptions="Center"
                 IsToggled="{Binding Account.Enabled}" />
         </Grid>
 
@@ -69,8 +62,7 @@
         <!--  delete/clear/enter buttons  -->
         <Grid
             x:Name="grdAcceptButtons"
-            Margin="10,0,10,10"
-            Padding="2"
+            Margin="0,5,0,0"
             ColumnDefinitions="*,*,*"
             ColumnSpacing="10">
             <Button

@@ -3,46 +3,43 @@
     x:Class="MoMoney.Views.Settings.Edit.EditCategoryPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:model="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
     Title="Edit Category"
     x:DataType="viewmodel:EditCategoryViewModel">
 
     <!--  main page  -->
-    <VerticalStackLayout Padding="0,10,0,0">
+    <VerticalStackLayout Padding="10" Spacing="10">
 
         <!--  category name  -->
-        <Frame Style="{StaticResource TileFrame}">
-            <Grid Style="{StaticResource TileGrid}">
-                <Image Source="subcategory.svg" Style="{StaticResource imgIcon}" />
-                <Entry
-                    x:Name="txtName"
-                    Grid.Column="1"
-                    Placeholder="Category Name"
-                    Text="{Binding Category.CategoryName}" />
-            </Grid>
-        </Frame>
+        <material:TextField
+            x:Name="txtName"
+            Title="Category Name"
+            Icon="{FontImageSource FontFamily=MaterialOutlined,
+                                   Glyph={x:Static m:MaterialOutlined.Category},
+                                   Color={AppThemeBinding Light={StaticResource Black},
+                                                          Dark={StaticResource White}}}"
+            Text="{Binding Category.CategoryName}" />
 
         <!--  parent category  -->
-        <Frame Style="{StaticResource TileFrame}">
-            <Grid Style="{StaticResource TileGrid}">
-                <Image Source="category.svg" Style="{StaticResource imgIcon}" />
-                <Picker
-                    x:Name="pckParent"
-                    Title="Select a Parent"
-                    Grid.Column="1"
-                    x:DataType="model:Category"
-                    ItemDisplayBinding="{Binding CategoryName}"
-                    ItemsSource="{Binding Path=Parents, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}"
-                    SelectedItem="{Binding Path=Parent, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}" />
-            </Grid>
-        </Frame>
+        <material:PickerField
+            x:Name="pckParent"
+            Title="Select a Parent"
+            x:DataType="model:Category"
+            Icon="{FontImageSource FontFamily=MaterialRegular,
+                                   Glyph={x:Static m:MaterialRound.Category},
+                                   Color={AppThemeBinding Light={StaticResource Black},
+                                                          Dark={StaticResource White}}}"
+            ItemDisplayBinding="{Binding CategoryName}"
+            ItemsSource="{Binding Path=Parents, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}"
+            SelectedItem="{Binding Path=Parent, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}" />
 
         <!--  delete/clear/enter buttons  -->
         <Grid
             x:Name="grdAcceptButtons"
-            Margin="10,0,10,10"
-            Padding="2"
+            Margin="0,5,0,0"
             ColumnDefinitions="*,*,*"
             ColumnSpacing="10">
             <Button

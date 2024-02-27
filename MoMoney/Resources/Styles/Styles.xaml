@@ -1,6 +1,31 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <?xaml-comp compile="true" ?>
-<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material">
+
+    <Style TargetType="material:TextField">
+        <Setter Property="AllowClear" Value="True" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="TitleFontSize" Value="16" />
+        <Setter Property="AccentColor" Value="{StaticResource Primary}" />
+        <Setter Property="TitleColor" Value="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray200}}" />
+        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
+        <Setter Property="InputBackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
+    </Style>
+
+    <Style TargetType="material:PickerField">
+        <Setter Property="AllowClear" Value="True" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="TitleFontSize" Value="16" />
+        <Setter Property="AccentColor" Value="{StaticResource Primary}" />
+        <Setter Property="TitleColor" Value="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray200}}" />
+        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
+        <Setter Property="InputBackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
+    </Style>
 
     <Style TargetType="ActivityIndicator">
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />

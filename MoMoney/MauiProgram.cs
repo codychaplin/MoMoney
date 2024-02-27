@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using Syncfusion.Maui.Core.Hosting;
+using UraniumUI;
 using Plugin.Maui.Audio;
 using MoMoney.Views;
 using MoMoney.Views.Stats;
@@ -20,17 +21,20 @@ public static class MauiProgram
 	public static MauiApp CreateMauiApp()
 	{
 		var builder = MauiApp.CreateBuilder();
-		builder.UseMauiApp<App>()
-			   .ConfigureSyncfusionCore()
+        builder.UseMauiApp<App>()
+               .ConfigureSyncfusionCore()
                .RegisterPages()
                .RegisterViewModels()
                .RegisterServices()
                .RegisterOther()
+               .UseUraniumUI()
+               .UseUraniumUIMaterial()
+               .UseMauiCommunityToolkit()
                .ConfigureFonts(fonts =>
                {
                    fonts.AddFont("MaterialIcons-Regular.ttf", "Material");
-               })
-               .UseMauiCommunityToolkit();
+                   fonts.AddMaterialIconFonts();
+               });
 
         return builder.Build();
 	}
