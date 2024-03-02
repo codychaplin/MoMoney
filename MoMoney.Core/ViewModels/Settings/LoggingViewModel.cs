@@ -15,33 +15,17 @@ public partial class LoggingViewModel : ObservableObject
 {
     readonly ILoggerService<LoggingViewModel> logger;
 
-    [ObservableProperty]
-    public bool isExpanded = false;
+    [ObservableProperty] bool isExpanded = false;
+    [ObservableProperty] ObservableCollection<Log> loadedLogs = [];
 
-    [ObservableProperty]
-    public ObservableCollection<Log> loadedLogs = new();
+    [ObservableProperty] ObservableCollection<LogLevel> levels;
+    [ObservableProperty] ObservableCollection<string> classes;
+    [ObservableProperty] ObservableCollection<string> exceptions;
+    [ObservableProperty] LogLevel level = LogLevel.None;
+    [ObservableProperty] string className;
+    [ObservableProperty] string exceptionType;
 
-    [ObservableProperty]
-    public ObservableCollection<LogLevel> levels;
-
-    [ObservableProperty]
-    public ObservableCollection<string> classes;
-
-    [ObservableProperty]
-    public ObservableCollection<string> exceptions;
-
-    [ObservableProperty]
-    public LogLevel level = LogLevel.None;
-
-#nullable enable
-    [ObservableProperty]
-    public string? className;
-
-    [ObservableProperty]
-    public string? exceptionType;
-#nullable disable
-
-    List<Log> Logs = new();
+    List<Log> Logs = [];
 
     public SfListView listview;
 

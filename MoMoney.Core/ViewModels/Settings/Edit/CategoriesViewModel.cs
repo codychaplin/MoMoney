@@ -12,8 +12,7 @@ public partial class CategoriesViewModel : ObservableObject
     readonly ICategoryService categoryService;
     readonly ILoggerService<CategoriesViewModel> logger;
 
-    [ObservableProperty]
-    public ObservableCollection<CategoryGroup> categories = new();
+    [ObservableProperty] ObservableCollection<CategoryGroup> categories = [];
 
     public CategoriesViewModel(ICategoryService _categoryService, ILoggerService<CategoriesViewModel> _logger)
     {

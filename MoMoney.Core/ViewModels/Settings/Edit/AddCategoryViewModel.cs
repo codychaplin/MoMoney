@@ -12,14 +12,9 @@ public partial class AddCategoryViewModel : ObservableObject
     readonly ICategoryService categoryService;
     readonly ILoggerService<AddCategoryViewModel> logger;
 
-    [ObservableProperty]
-    public ObservableCollection<string> parents = new(); // list of categories
-
-    [ObservableProperty]
-    public string name; // category name
-
-    [ObservableProperty]
-    public string parent; // category parent
+    [ObservableProperty] ObservableCollection<string> parents = []; // list of categories
+    [ObservableProperty] string name; // category name
+    [ObservableProperty] string parent; // category parent
 
     public AddCategoryViewModel(ICategoryService _categoryService, ILoggerService<AddCategoryViewModel> _logger)
     {

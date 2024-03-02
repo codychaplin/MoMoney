@@ -14,32 +14,19 @@ public partial class HomeViewModel : ObservableObject
     readonly ITransactionService transactionService;
     readonly ILoggerService<HomeViewModel> logger;
 
-    [ObservableProperty]
-    public ObservableCollection<Transaction> recentTransactions = new();
+    [ObservableProperty] ObservableCollection<Transaction> recentTransactions = [];
 
-    [ObservableProperty]
-    public decimal networth = 0;
+    [ObservableProperty] decimal networth = 0;
+    [ObservableProperty] decimal totalIncome = 0;
+    [ObservableProperty] decimal totalExpenses = 0;
 
-    [ObservableProperty]
-    public decimal totalIncome = 0;
+    [ObservableProperty] string topIncomeSubcategory = "N/A";
+    [ObservableProperty] string topExpenseCategory = "N/A";
 
-    [ObservableProperty]
-    public decimal totalExpenses = 0;
+    [ObservableProperty] static DateTime from = new();
+    [ObservableProperty] static DateTime to = new();
 
-    [ObservableProperty]
-    public string topIncomeSubcategory = "N/A";
-
-    [ObservableProperty]
-    public string topExpenseCategory = "N/A";
-
-    [ObservableProperty]
-    public static DateTime from = new();
-
-    [ObservableProperty]
-    public static DateTime to = new();
-
-    [ObservableProperty]
-    public ObservableCollection<BalanceOverTimeData> data = new();
+    [ObservableProperty] ObservableCollection<BalanceOverTimeData> data = [];
 
     public HomeViewModel(ITransactionService _transactionService, IAccountService _accountService,
         ICategoryService _categoryService, ILoggerService<HomeViewModel> _logger)

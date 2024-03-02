@@ -4,11 +4,13 @@
 
 * Fixed transaction list padding
 * Recent transactions on home page now update properly
+* Made lowercase ObservableProperties private so only generated public properties are exposed
 
 ### Changes
 
 * Added AI transaction transcription
 * Added option to try getting objects from db by returning null instead of throwing exception
+* Added UraniumUI controls
 
 # MoMoney v1.1.4
 

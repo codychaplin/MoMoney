@@ -14,17 +14,10 @@ public partial class EditCategoryViewModel : ObservableObject
     readonly ICategoryService categoryService;
     readonly ILoggerService<EditCategoryViewModel> logger;
 
-    [ObservableProperty]
-    public ObservableCollection<Category> parents = new(); // list of categories
-
-    [ObservableProperty]
-    public Category category = new(); // selected category
-
-    [ObservableProperty]
-    public Category parent; // category parent
-
-    [ObservableProperty]
-    public string name; // category name
+    [ObservableProperty] ObservableCollection<Category> parents = []; // list of categories
+    [ObservableProperty] Category category = new(); // selected category
+    [ObservableProperty] Category parent; // category parent
+    [ObservableProperty] string name; // category name
 
     public string ID { get; set; } // category ID
 

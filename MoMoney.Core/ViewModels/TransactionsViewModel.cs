@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Syncfusion.Maui.ListView;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
-using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
@@ -14,46 +13,25 @@ public partial class TransactionsViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
-    readonly ILoggerService<TransactionsViewModel> logger;
 
-    [ObservableProperty]
-    public ObservableCollection<Transaction> loadedTransactions = new();
+    [ObservableProperty] ObservableCollection<Transaction> loadedTransactions = [];
 
-    [ObservableProperty]
-    public ObservableCollection<Account> accounts = new();
+    [ObservableProperty] ObservableCollection<Account> accounts = [];
+    [ObservableProperty] ObservableCollection<Category> categories = [];
+    [ObservableProperty] ObservableCollection<Category> subcategories = [];
+    [ObservableProperty] ObservableCollection<string> payees = [];
 
-    [ObservableProperty]
-    public ObservableCollection<Category> categories = new();
+    [ObservableProperty] Account account;
 
-    [ObservableProperty]
-    public ObservableCollection<Category> subcategories = new();
+    [ObservableProperty] int amountRangeStart = 0;
+    [ObservableProperty] int amountRangeEnd = 500;
 
-    [ObservableProperty]
-    public ObservableCollection<string> payees = new();
+    [ObservableProperty] Category category;
+    [ObservableProperty] Category subcategory;
+    [ObservableProperty] string payee = "";
 
-    [ObservableProperty]
-    public Account account;
-
-    [ObservableProperty]
-    public int amountRangeStart = 0;
-
-    [ObservableProperty]
-    public int amountRangeEnd = 500;
-
-    [ObservableProperty]
-    public Category category;
-
-    [ObservableProperty]
-    public Category subcategory;
-
-    [ObservableProperty]
-    public string payee = "";
-
-    [ObservableProperty]
-    public static DateTime from = new();
-
-    [ObservableProperty]
-    public static DateTime to = new();
+    [ObservableProperty] static DateTime from = new();
+    [ObservableProperty] static DateTime to = new();
 
     List<Transaction> Transactions = new();
 
@@ -62,12 +40,11 @@ public partial class TransactionsViewModel : ObservableObject
     bool showValue = true;
 
     public TransactionsViewModel(ITransactionService _transactionService, IAccountService _accountService,
-        ICategoryService _categoryService, ILoggerService<TransactionsViewModel> _logger)
+        ICategoryService _categoryService)
     {
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
-        logger = _logger;
 
         // first two months, show 1 year, starting March show YTD
         From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);

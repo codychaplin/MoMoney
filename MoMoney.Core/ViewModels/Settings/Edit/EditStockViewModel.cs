@@ -13,8 +13,7 @@ public partial class EditStockViewModel : ObservableObject
     readonly IStockService stockService;
     readonly ILoggerService<EditStockViewModel> logger;
 
-    [ObservableProperty]
-    public Stock stock = new();
+    [ObservableProperty] Stock stock = new();
 
     Stock initalStock;
 

@@ -13,32 +13,23 @@ public partial class BreakdownViewModel : ObservableObject
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
 
-    [ObservableProperty]
-    public decimal incomeSum = 0;
-    [ObservableProperty]
-    public decimal expenseSum = 0;
+    [ObservableProperty] decimal incomeSum = 0;
+    [ObservableProperty] decimal expenseSum = 0;
 
-    [ObservableProperty]
-    public List<Brush> incomePalette = new();
-    [ObservableProperty]
-    public List<Brush> expensePalette = new();
+    [ObservableProperty] List<Brush> incomePalette = [];
+    [ObservableProperty] List<Brush> expensePalette = [];
 
-    [ObservableProperty]
-    public ObservableCollection<BreakdownData> incomeData = new();
-    [ObservableProperty]
-    public ObservableCollection<BreakdownData> expenseData = new();
+    [ObservableProperty] ObservableCollection<BreakdownData> incomeData = [];
+    [ObservableProperty] ObservableCollection<BreakdownData> expenseData = [];
 
-    [ObservableProperty]
-    public DateTime selectedTime = new();
+    [ObservableProperty] DateTime selectedTime = new();
 
-    [ObservableProperty]
-    public string type = "Month";
+    [ObservableProperty] string type = "Month";
 
     List<DateTime> Months = new();
     List<DateTime> Years = new();
 
-    [ObservableProperty]
-    public int index = 0;
+    [ObservableProperty] int index = 0;
     int timeIndex = 0;
 
     EventHandler<EventArgs> OnUpdate { get; set; }

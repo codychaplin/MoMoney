@@ -11,8 +11,7 @@ public partial class AccountsViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ILoggerService<AccountsViewModel> logger;
 
-    [ObservableProperty]
-    public ObservableCollection<Account> accounts = new();
+    [ObservableProperty] ObservableCollection<Account> accounts = [];
 
     public AccountsViewModel(IAccountService _accountService, ILoggerService<AccountsViewModel> _logger)
     {

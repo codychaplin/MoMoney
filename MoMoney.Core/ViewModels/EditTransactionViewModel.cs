@@ -18,32 +18,17 @@ public partial class EditTransactionViewModel : ObservableObject
 
     public string ID { get; set; }
 
-    [ObservableProperty]
-    public ObservableCollection<Account> accounts = new();
+    [ObservableProperty] ObservableCollection<Account> accounts = [];
+    [ObservableProperty] ObservableCollection<Category> categories = [];
+    [ObservableProperty] ObservableCollection<Category> subcategories = [];
+    [ObservableProperty] ObservableCollection<string> payees = [];
 
-    [ObservableProperty]
-    public ObservableCollection<Category> categories = new();
+    [ObservableProperty] Account account;
+    [ObservableProperty] Category category;
+    [ObservableProperty] Category subcategory;
+    [ObservableProperty] Account payeeAccount;
 
-    [ObservableProperty]
-    public ObservableCollection<Category> subcategories = new();
-
-    [ObservableProperty]
-    public ObservableCollection<string> payees = new();
-
-    [ObservableProperty]
-    public Account account;
-
-    [ObservableProperty]
-    public Category category;
-
-    [ObservableProperty]
-    public Category subcategory;
-
-    [ObservableProperty]
-    public Account payeeAccount;
-
-    [ObservableProperty]
-    public Transaction transaction;
+    [ObservableProperty] Transaction transaction;
     
     public Account InitialAccount { get; private set; }
     public Category InitialCategory { get; private set; }

@@ -13,8 +13,7 @@ public partial class EditAccountViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ILoggerService<EditAccountViewModel> logger;
 
-    [ObservableProperty]
-    public Account account = new();
+    [ObservableProperty] Account account;
 
     public string ID { get; set; } // account ID
 
@@ -33,6 +32,7 @@ public partial class EditAccountViewModel : ObservableObject
         {
             try
             {
+                await Task.Delay(100); // add delay so clear icons are visible
                 Account = await accountService.GetAccount(id);
             }
             catch (AccountNotFoundException ex)

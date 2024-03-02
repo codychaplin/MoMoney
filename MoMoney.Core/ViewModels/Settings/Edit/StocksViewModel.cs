@@ -11,8 +11,7 @@ public partial class StocksViewModel : ObservableObject
     readonly IStockService stockService;
     readonly ILoggerService<StocksViewModel> logger;
 
-    [ObservableProperty]
-    public ObservableCollection<Stock> stocks = new();
+    [ObservableProperty] ObservableCollection<Stock> stocks = [];
 
     public StocksViewModel(IStockService _stockService, ILoggerService<StocksViewModel> _logger)
     {

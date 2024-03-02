@@ -22,38 +22,18 @@ public partial class AddTransactionViewModel : ObservableObject
 
     readonly IOpenAIService openAIService;
 
-    [ObservableProperty]
-    public ObservableCollection<Account> accounts = new();
-
-    [ObservableProperty]
-    public ObservableCollection<Category> categories = new();
-
-    [ObservableProperty]
-    public ObservableCollection<Category> subcategories = new();
-
-    [ObservableProperty]
-    public ObservableCollection<string> payees = new();
-
-    [ObservableProperty]
-    public DateTime date;
-
-    [ObservableProperty]
-    public Account account = new();
-
-    [ObservableProperty]
-    public decimal amount;
-
-    [ObservableProperty]
-    public Category category = new();
-
-    [ObservableProperty]
-    public Category subcategory = new();
-
-    [ObservableProperty]
-    public string payee;
-
-    [ObservableProperty]
-    public Account transferAccount = new();
+    [ObservableProperty] ObservableCollection<Account> accounts = [];
+    [ObservableProperty] ObservableCollection<Category> categories = [];
+    [ObservableProperty] ObservableCollection<Category> subcategories = [];
+    [ObservableProperty] ObservableCollection<string> payees = [];
+    
+    [ObservableProperty] DateTime date;
+    [ObservableProperty] Account account = new();
+    [ObservableProperty] decimal amount;
+    [ObservableProperty] Category category = new();
+    [ObservableProperty] Category subcategory = new();
+    [ObservableProperty] string payee;
+    [ObservableProperty] Account transferAccount = new();
 
     TransactionType transactionType = TransactionType.None;
 

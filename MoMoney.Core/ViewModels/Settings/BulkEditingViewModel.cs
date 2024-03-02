@@ -16,40 +16,25 @@ public partial class BulkEditingViewModel : ObservableObject
     readonly ITransactionService transactionService;
     readonly ILoggerService<BulkEditingViewModel> logger;
 
-    [ObservableProperty]
-    public ObservableCollection<Account> accounts = new();
-    [ObservableProperty]
-    public Account findAccount;
-    [ObservableProperty]
-    public Account replaceAccount;
+    [ObservableProperty] ObservableCollection<Account> accounts = [];
+    [ObservableProperty] Account findAccount;
+    [ObservableProperty] Account replaceAccount;
 
-    [ObservableProperty]
-    public ObservableCollection<Category> categories = new();
-    [ObservableProperty]
-    public Category findCategory;
-    [ObservableProperty]
-    public Category replaceCategory;
+    [ObservableProperty] ObservableCollection<Category> categories = [];
+    [ObservableProperty] Category findCategory;
+    [ObservableProperty] Category replaceCategory;
 
-    [ObservableProperty]
-    public ObservableCollection<Category> findSubcategories = new();
-    [ObservableProperty]
-    public ObservableCollection<Category> replaceSubcategories = new();
-    [ObservableProperty]
-    public Category findSubcategory;
-    [ObservableProperty]
-    public Category replaceSubcategory;
+    [ObservableProperty] ObservableCollection<Category> findSubcategories = [];
+    [ObservableProperty] ObservableCollection<Category> replaceSubcategories = [];
+    [ObservableProperty] Category findSubcategory;
+    [ObservableProperty] Category replaceSubcategory;
 
-    [ObservableProperty]
-    public ObservableCollection<string> payees = new();
-    [ObservableProperty]
-    public string findPayee;
-    [ObservableProperty]
-    public string replacePayee;
+    [ObservableProperty] ObservableCollection<string> payees = [];
+    [ObservableProperty] string findPayee;
+    [ObservableProperty] string replacePayee;
+    [ObservableProperty] string info;
 
-    [ObservableProperty]
-    public string info;
-
-    List<Transaction> FoundTransactions { get; set; } = new();
+    List<Transaction> FoundTransactions { get; set; } = [];
     int TotalTransactionCount;
     int FoundTransactionCount;
 
