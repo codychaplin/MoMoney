@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using UraniumUI.Material.Controls;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -72,7 +73,7 @@ public partial class BulkEditingViewModel : ObservableObject
     {
         try
         {
-            var accounts = await accountService.GetAccounts();
+            var accounts = await accountService.GetOrderedAccounts();
             Accounts.Clear();
             foreach (var acc in accounts)
                 Accounts.Add(acc);
@@ -126,8 +127,8 @@ public partial class BulkEditingViewModel : ObservableObject
     /// Gets subcategories from database and refreshes FindSubcategories collection.
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public async void GetFindSubcategories(object sender, EventArgs e)
+    /// <param name="newValue"></param>
+    public async void GetFindSubcategories(object sender, object newValue)
     {
         try
         {
@@ -137,7 +138,7 @@ public partial class BulkEditingViewModel : ObservableObject
             // event might fire before SelectedItem updates in vm
             if (FindCategory is null)
             {
-                var pckCategories = sender as Picker;
+                var pckCategories = sender as PickerField;
                 var category = pckCategories.SelectedItem as Category;
                 FindCategory = category;
                 if (FindCategory is null)
@@ -159,8 +160,8 @@ public partial class BulkEditingViewModel : ObservableObject
     /// Gets subcategories from database and refreshes ReplaceSubcategories collection.
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public async void GetReplaceSubcategories(object sender, EventArgs e)
+    /// <param name="newValue"></param>
+    public async void GetReplaceSubcategories(object sender, object newValue)
     {
         try
         {
@@ -188,70 +189,8 @@ public partial class BulkEditingViewModel : ObservableObject
         }
     }
 
-    /// <summary>
-    /// Clears selected Find Account.
-    /// </summary>
-    [RelayCommand]
-    void ClearFindAccount()
+    public void Clear()
     {
-        FindAccount = null;
-        FoundTransactionCount = 0;
-        UpdateText();
-    }
-
-    /// <summary>
-    /// Clears selected Find Category.
-    /// </summary>
-    [RelayCommand]
-    void ClearFindCategory()
-    {
-        FindCategory = null;
-        FindSubcategory = null;
-        FoundTransactionCount = 0;
-        UpdateText();
-    }
-
-    /// <summary>
-    /// Clears selected Find Subcategory.
-    /// </summary>
-    [RelayCommand]
-    void ClearFindSubcategory()
-    {
-        FindSubcategory = null;
-        FoundTransactionCount = 0;
-        UpdateText();
-    }
-
-    /// <summary>
-    /// Clears selected Replace Account.
-    /// </summary>
-    [RelayCommand]
-    void ClearReplaceAccount()
-    {
-        ReplaceAccount = null;
-        FoundTransactionCount = 0;
-        UpdateText();
-    }
-
-    /// <summary>
-    /// Clears selected Replace Category.
-    /// </summary>
-    [RelayCommand]
-    void ClearReplaceCategory()
-    {
-        ReplaceCategory = null;
-        ReplaceSubcategory = null;
-        FoundTransactionCount = 0;
-        UpdateText();
-    }
-
-    /// <summary>
-    /// Clears selected Replace Subcategory.
-    /// </summary>
-    [RelayCommand]
-    void ClearReplaceSubcategory()
-    {
-        ReplaceSubcategory = null;
         FoundTransactionCount = 0;
         UpdateText();
     }

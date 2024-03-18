@@ -18,9 +18,7 @@
             x:Name="txtName"
             Title="Category Name"
             Icon="{FontImageSource FontFamily=MaterialOutlined,
-                                   Glyph={x:Static m:MaterialOutlined.Category},
-                                   Color={AppThemeBinding Light={StaticResource Black},
-                                                          Dark={StaticResource White}}}"
+                                   Glyph={x:Static m:MaterialOutlined.Category}}"
             Text="{Binding Name}" />
 
         <!--  parent category  -->
@@ -28,9 +26,7 @@
             x:Name="pckParent"
             Title="Select a Parent"
             Icon="{FontImageSource FontFamily=MaterialRegular,
-                                   Glyph={x:Static m:MaterialRound.Category},
-                                   Color={AppThemeBinding Light={StaticResource Black},
-                                                          Dark={StaticResource White}}}"
+                                   Glyph={x:Static m:MaterialRound.Category}}"
             ItemsSource="{Binding Parents}"
             SelectedItem="{Binding Parent}" />
 

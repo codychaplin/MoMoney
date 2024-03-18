@@ -20,9 +20,7 @@
                 Margin="0"
                 Padding="0"
                 Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Label},
-                                       Color={AppThemeBinding Light={StaticResource Black},
-                                                              Dark={StaticResource White}}}"
+                                       Glyph={x:Static m:MaterialRegular.Label}}"
                 Text="{Binding Stock.Symbol}" />
 
             <!--  quantity  -->
@@ -30,9 +28,7 @@
                 x:Name="txtQuantity"
                 Title="Quantity"
                 Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Tag},
-                                       Color={AppThemeBinding Light={StaticResource Black},
-                                                              Dark={StaticResource White}}}"
+                                       Glyph={x:Static m:MaterialRegular.Tag}}"
                 Keyboard="Numeric"
                 Text="{Binding Stock.Quantity}" />
 
@@ -41,9 +37,7 @@
                 x:Name="txtCost"
                 Title="Cost"
                 Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Shopping_cart},
-                                       Color={AppThemeBinding Light={StaticResource Black},
-                                                              Dark={StaticResource White}}}"
+                                       Glyph={x:Static m:MaterialRegular.Shopping_cart}}"
                 Keyboard="Numeric"
                 Text="{Binding Stock.Cost}" />
 
@@ -52,9 +46,7 @@
                 x:Name="txtMarketPrice"
                 Title="Market Price"
                 Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Store},
-                                       Color={AppThemeBinding Light={StaticResource Black},
-                                                              Dark={StaticResource White}}}"
+                                       Glyph={x:Static m:MaterialRegular.Store}}"
                 Keyboard="Numeric"
                 Text="{Binding Stock.MarketPrice}" />
 
@@ -63,9 +55,7 @@
                 x:Name="txtBookValue"
                 Title="Book Value"
                 Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Book},
-                                       Color={AppThemeBinding Light={StaticResource Black},
-                                                              Dark={StaticResource White}}}"
+                                       Glyph={x:Static m:MaterialRegular.Book}}"
                 Keyboard="Numeric"
                 Text="{Binding Stock.BookValue}" />
 

@@ -18,9 +18,7 @@
             x:Name="txtName"
             Title="Account Name"
             Icon="{FontImageSource FontFamily=MaterialRegular,
-                                   Glyph={x:Static m:MaterialRegular.Account_circle},
-                                   Color={AppThemeBinding Light={StaticResource Black},
-                                                          Dark={StaticResource White}}}"
+                                   Glyph={x:Static m:MaterialRegular.Account_circle}}"
             Text="{Binding Account.AccountName}" />
 
         <!--  account type with predefined values  -->
@@ -28,9 +26,7 @@
             x:Name="pckType"
             Title="Select a type"
             Icon="{FontImageSource FontFamily=MaterialRegular,
-                                   Glyph={x:Static m:MaterialRegular.Savings},
-                                   Color={AppThemeBinding Light={StaticResource Black},
-                                                          Dark={StaticResource White}}}"
+                                   Glyph={x:Static m:MaterialRegular.Savings}}"
             SelectedItem="{Binding Account.AccountType}">
             <material:PickerField.Items>
                 <x:String>Checkings</x:String>
@@ -46,9 +42,7 @@
                 x:Name="txtStartingBalance"
                 Title="Starting Balance"
                 Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Paid},
-                                       Color={AppThemeBinding Light={StaticResource Black},
-                                                              Dark={StaticResource White}}}"
+                                       Glyph={x:Static m:MaterialRegular.Paid}}"
                 Keyboard="Numeric"
                 Text="{Binding Account.StartingBalance}" />
             <Switch

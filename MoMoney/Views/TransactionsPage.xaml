@@ -6,6 +6,8 @@
     xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
     xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
     xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:slider="clr-namespace:Syncfusion.Maui.Sliders;assembly=Syncfusion.Maui.Sliders"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
@@ -23,7 +25,7 @@
     <Grid RowDefinitions="Auto,*">
 
         <!--  filters  -->
-        <toolkit:Expander x:Name="ExpTitle">
+        <toolkit:Expander>
 
             <!--  title  -->
             <toolkit:Expander.Header>
@@ -38,8 +40,8 @@
                     <Image
                         HeightRequest="30"
                         HorizontalOptions="End"
-                        Source="filter_white.svg"
-                        Style="{StaticResource imgTinted}"
+                        Source="{FontImageSource FontFamily=MaterialRegular,
+                                                 Glyph={x:Static m:MaterialRegular.Tune}}"
                         VerticalOptions="Center"
                         WidthRequest="30" />
                 </Grid>
@@ -48,48 +50,25 @@
             <!--  filters  -->
             <Grid>
                 <VerticalStackLayout Margin="0,10,0,0" Spacing="5">
-                    <VerticalStackLayout.Resources>
-                        <Style TargetType="{x:Type Frame}">
-                            <Setter Property="HeightRequest" Value="50" />
-                            <Setter Property="WidthRequest" Value="245" />
-                            <Setter Property="Padding" Value="10,5" />
-                            <Setter Property="HasShadow" Value="False" />
-                            <Setter Property="CornerRadius" Value="10" />
-                            <Setter Property="HorizontalOptions" Value="Center" />
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
-                        </Style>
-                        <Style TargetType="{x:Type Picker}">
-                            <Setter Property="HeightRequest" Value="40" />
-                            <Setter Property="WidthRequest" Value="200" />
-                            <Setter Property="TitleColor" Value="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource White}}" />
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                        </Style>
-                        <Style
-                            x:Key="imgIcon"
-                            BasedOn="{StaticResource imgTinted}"
-                            TargetType="{x:Type Image}">
-                            <Setter Property="WidthRequest" Value="20" />
-                            <Setter Property="HeightRequest" Value="20" />
-                            <Setter Property="HorizontalOptions" Value="Center" />
-                        </Style>
-                        <Style
-                            x:Key="ibtnIcon"
-                            BasedOn="{StaticResource imgBtnTinted}"
-                            TargetType="{x:Type ImageButton}">
-                            <Setter Property="Source" Value="clear.svg" />
-                            <Setter Property="WidthRequest" Value="18" />
-                            <Setter Property="HeightRequest" Value="18" />
-                            <Setter Property="HorizontalOptions" Value="Center" />
-                        </Style>
-                    </VerticalStackLayout.Resources>
 
                     <!--  date range picker  -->
-                    <Frame>
+                    <Frame
+                        Padding="0,5"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray200},
+                                                          Dark={StaticResource Gray700}}"
+                        BorderColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                      Dark={StaticResource Gray400}}"
+                        HeightRequest="50"
+                        WidthRequest="250">
                         <HorizontalStackLayout Spacing="5">
                             <Image
-                                Margin="0"
-                                Source="calendar.svg"
-                                Style="{StaticResource imgIcon}" />
+                                Margin="10,0,0,0"
+                                HeightRequest="20"
+                                Source="{FontImageSource FontFamily=MaterialRegular,
+                                                         Glyph={x:Static m:MaterialRegular.Calendar_month},
+                                                         Color={AppThemeBinding Light={StaticResource Gray600},
+                                                                                Dark={StaticResource Gray400}}}"
+                                WidthRequest="20" />
                             <DatePicker x:Name="dtFrom" Date="{Binding From}" />
                             <Label
                                 Margin="3,0"
@@ -102,49 +81,50 @@
                     </Frame>
 
                     <!--  account picker  -->
-                    <Frame ZIndex="2">
-                        <HorizontalStackLayout Spacing="5">
-                            <Image Source="accounts.svg" Style="{StaticResource imgIcon}" />
-                            <Picker
-                                x:Name="pckAccount"
-                                Title="Select an Account"
-                                x:DataType="models:Account"
-                                ItemDisplayBinding="{Binding AccountName}"
-                                ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                                SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}" />
-                            <ImageButton
-                                Margin="-32,0,0,0"
-                                Command="{Binding ClearAccountCommand}"
-                                IsVisible="{Binding Account, Converter={StaticResource NullToVisible}}"
-                                Style="{StaticResource ibtnIcon}" />
-                        </HorizontalStackLayout>
-                    </Frame>
+                    <material:PickerField
+                        Title="Account"
+                        x:DataType="models:Account"
+                        Icon="{FontImageSource FontFamily=MaterialRegular,
+                                               Glyph={x:Static m:MaterialRegular.Credit_card}}"
+                        ItemDisplayBinding="{Binding AccountName}"
+                        ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                        SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                        SelectedValueChangedCommand="{Binding Path=UpdateFilterCommand, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                        WidthRequest="250"
+                        ZIndex="2" />
 
                     <!--  amount slider frame  -->
                     <Frame
                         x:Name="frAmount"
-                        Margin="0,-40,0,0"
+                        Margin="0,-35,0,0"
                         Padding="0"
                         BackgroundColor="Transparent"
                         HeightRequest="90"
+                        WidthRequest="250"
                         ZIndex="2">
                         <Grid Margin="0">
 
                             <Frame
                                 Margin="0,40,0,0"
                                 Padding="5"
-                                WidthRequest="245">
+                                BackgroundColor="{AppThemeBinding Light={StaticResource Gray200},
+                                                                  Dark={StaticResource Gray700}}"
+                                BorderColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                              Dark={StaticResource Gray400}}">
                                 <Grid ColumnDefinitions="30,*" ColumnSpacing="0">
-                                    <Image Source="dollar_symbol.svg" Style="{StaticResource imgIcon}" />
+                                    <Image
+                                        HeightRequest="20"
+                                        Source="{FontImageSource FontFamily=MaterialRegular,
+                                                                 Glyph={x:Static m:MaterialRegular.Paid},
+                                                                 Color={AppThemeBinding Light={StaticResource Gray600},
+                                                                                        Dark={StaticResource Gray400}}}"
+                                        WidthRequest="20" />
                                 </Grid>
                             </Frame>
 
                             <!--  workaround for overlapping tooltip  -->
                             <!--  amount slider  -->
-                            <Grid
-                                Margin="25,0,0,0"
-                                Padding="0,10,0,0"
-                                WidthRequest="210">
+                            <Grid Margin="25,0,0,0" Padding="0,10,0,0">
                                 <slider:SfRangeSlider
                                     x:Name="rsAmount"
                                     BackgroundColor="Transparent"
@@ -158,7 +138,7 @@
                                     RangeStart="{Binding AmountRangeStart}"
                                     StepSize="5"
                                     VerticalOptions="Center"
-                                    WidthRequest="220">
+                                    WidthRequest="230">
                                     <slider:SfRangeSlider.TrackStyle>
                                         <slider:SliderTrackStyle
                                             ActiveFill="{StaticResource Green}"
@@ -177,92 +157,42 @@
                     </Frame>
 
                     <!--  category picker  -->
-                    <Frame x:Name="frCategories">
-                        <HorizontalStackLayout Spacing="5">
-                            <Image Source="category.svg" Style="{StaticResource imgIcon}" />
-                            <Picker
-                                x:Name="pckCategory"
-                                Title="Select a Category"
-                                x:DataType="models:Category"
-                                ItemDisplayBinding="{Binding CategoryName}"
-                                ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                                SelectedItem="{Binding Path=Category, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}" />
-                            <ImageButton
-                                Margin="-32,0,0,0"
-                                Command="{Binding ClearCategoryCommand}"
-                                IsVisible="{Binding Category, Converter={StaticResource NullToVisible}}"
-                                Style="{StaticResource ibtnIcon}" />
-                        </HorizontalStackLayout>
-                    </Frame>
+                    <material:PickerField
+                        x:Name="pckCategory"
+                        Title="Category"
+                        x:DataType="models:Category"
+                        Icon="{FontImageSource FontFamily=MaterialOutlined,
+                                               Glyph={x:Static m:MaterialOutlined.Category}}"
+                        ItemDisplayBinding="{Binding CategoryName}"
+                        ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                        SelectedItem="{Binding Path=Category, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                        SelectedValueChangedCommand="{Binding Path=CategoryChangedCommand, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                        WidthRequest="250" />
 
                     <!--  subcategory picker  -->
-                    <Frame x:Name="frSubcategories">
-                        <HorizontalStackLayout Spacing="5">
-                            <Image Source="subcategory.svg" Style="{StaticResource imgIcon}" />
-                            <Picker
-                                x:Name="pckSubcategory"
-                                Title="Select a Subcategory"
-                                x:DataType="models:Category"
-                                ItemDisplayBinding="{Binding CategoryName}"
-                                ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                                SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}" />
-                            <ImageButton
-                                Margin="-32,0,0,0"
-                                Command="{Binding ClearSubcategoryCommand}"
-                                IsVisible="{Binding Subcategory, Converter={StaticResource NullToVisible}}"
-                                Style="{StaticResource ibtnIcon}" />
-                        </HorizontalStackLayout>
-                    </Frame>
+                    <material:PickerField
+                        Title="Subcategory"
+                        x:DataType="models:Category"
+                        Icon="{FontImageSource FontFamily=MaterialRegular,
+                                               Glyph={x:Static m:MaterialRound.Category}}"
+                        ItemDisplayBinding="{Binding CategoryName}"
+                        ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                        SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                        SelectedValueChangedCommand="{Binding Path=UpdateFilterCommand, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                        WidthRequest="250" />
 
                     <!--  payee search bar  -->
-                    <Frame x:Name="frPayee" Padding="0,5,10,5">
-                        <HorizontalStackLayout Spacing="0">
-                            <!--  removes indent in SfAutocomplete  -->
-                            <Grid
-                                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
-                                                                  Dark={StaticResource Gray700}}"
-                                WidthRequest="40"
-                                ZIndex="1">
-                                <Image Source="account.svg" Style="{StaticResource imgIcon}" />
-                            </Grid>
-                            <input:SfAutocomplete
-                                x:Name="entPayee"
-                                Margin="-15,0,0,0"
-                                BackgroundColor="Transparent"
-                                ClearButtonIconColor="{AppThemeBinding Light={StaticResource Black},
-                                                                       Dark={StaticResource White}}"
-                                FontSize="14"
-                                HeightRequest="40"
-                                HorizontalOptions="Start"
-                                IsClearButtonVisible="True"
-                                ItemsSource="{Binding Payees}"
-                                MaxDropDownHeight="200"
-                                Placeholder="Payee"
-                                PlaceholderColor="{AppThemeBinding Light={StaticResource Gray600},
-                                                                   Dark={StaticResource Gray200}}"
-                                SelectionChanged="entPayee_SelectionChanged"
-                                TextColor="{AppThemeBinding Light={StaticResource Black},
-                                                            Dark={StaticResource White}}"
-                                TextSearchMode="Contains"
-                                VerticalOptions="Center"
-                                WidthRequest="210">
-                                <input:SfAutocomplete.Triggers>
-                                    <DataTrigger
-                                        Binding="{Binding IsFocused, Source={x:Reference entPayee}}"
-                                        TargetType="input:SfAutocomplete"
-                                        Value="True">
-                                        <Setter Property="Stroke" Value="{StaticResource Primary}" />
-                                    </DataTrigger>
-                                    <DataTrigger
-                                        Binding="{Binding IsFocused, Source={x:Reference entPayee}}"
-                                        TargetType="input:SfAutocomplete"
-                                        Value="False">
-                                        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}" />
-                                    </DataTrigger>
-                                </input:SfAutocomplete.Triggers>
-                            </input:SfAutocomplete>
-                        </HorizontalStackLayout>
-                    </Frame>
+                    <material:AutoCompleteTextField
+                        x:Name="entPayee"
+                        Title="Payee"
+                        Icon="{FontImageSource FontFamily=MaterialRegular,
+                                               Glyph={x:Static m:MaterialRound.Account_circle}}"
+                        ItemsSource="{Binding Payees}"
+                        Text="{Binding Payee}"
+                        TextColor="{AppThemeBinding Light={StaticResource Black},
+                                                    Dark={StaticResource White}}"
+                        WidthRequest="250" />
+
                 </VerticalStackLayout>
             </Grid>
         </toolkit:Expander>
@@ -271,7 +201,7 @@
         <listview:SfListView
             x:Name="listView"
             Grid.Row="1"
-            Margin="10,5"
+            Margin="0,5"
             ItemSize="75"
             ItemSpacing="0"
             ItemTemplate="{StaticResource TransactionFrame}"

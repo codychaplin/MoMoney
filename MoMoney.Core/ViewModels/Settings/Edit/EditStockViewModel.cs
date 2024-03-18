@@ -32,6 +32,7 @@ public partial class EditStockViewModel : ObservableObject
     {
         try
         {
+            await Task.Delay(100);
             Stock = await stockService.GetStock(Symbol);
             initalStock = new Stock
             {

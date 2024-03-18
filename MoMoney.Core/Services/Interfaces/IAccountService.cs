@@ -80,6 +80,12 @@ public interface IAccountService
     Task<IEnumerable<Account>> GetActiveAccounts();
 
     /// <summary>
+    /// Gets all Accounts from Accounts table ordered by Enabled and then AccountName.
+    /// </summary>
+    /// <returns>List of ordered Account objects</returns>
+    Task<IEnumerable<Account>> GetOrderedAccounts();
+
+    /// <summary>
     /// Gets total number of Accounts in db.
     /// </summary>
     /// <returns>Integer representing number of Accounts</returns>

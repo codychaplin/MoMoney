@@ -4,7 +4,8 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:behavior="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
-    xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
     xmlns:views="clr-namespace:MoMoney.Views"
@@ -14,46 +15,99 @@
     </ContentPage.Behaviors>
 
     <!--  tab bar  -->
-    <tabView:SfTabView
-        x:Name="TabBar"
-        BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
-                                          Dark={StaticResource Gray900}}"
-        IndicatorBackground="{StaticResource Green}"
-        SelectionChanged="TabBar_SelectionChanged"
-        TabBarHeight="55"
-        TabBarPlacement="Bottom">
+    <material:TabView
+        x:Name="MainTabView"
+        CachingStrategy="CacheOnLayout"
+        TabPlacement="Bottom">
 
-        <!--  tabs  -->
-        <tabView:SfTabView.Items>
+        <material:TabView.TabHeaderItemTemplate>
+            <DataTemplate x:DataType="material:TabItem">
+                <Grid
+                    Margin="0"
+                    Padding="0"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
+                                                      Dark={StaticResource Gray700}}"
+                    HeightRequest="50"
+                    RowDefinitions="*,4">
+                    <Grid.Triggers>
+                        <DataTrigger
+                            Binding="{Binding IsSelected}"
+                            TargetType="Grid"
+                            Value="True">
+                            <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                        </DataTrigger>
+                    </Grid.Triggers>
+                    <Button
+                        Margin="0"
+                        Padding="0"
+                        Command="{Binding Command}"
+                        CornerRadius="0"
+                        FontFamily="MaterialRegular"
+                        FontSize="28"
+                        Text="{Binding Title}">
+                        <Button.Triggers>
+                            <DataTrigger
+                                Binding="{Binding IsSelected}"
+                                TargetType="Button"
+                                Value="True">
+                                <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                                <Setter Property="FontSize" Value="30" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </Grid>
+            </DataTemplate>
+        </material:TabView.TabHeaderItemTemplate>
 
-            <!--  home page  -->
-            <tabView:SfTabItem
-                x:Name="HomePageTab"
-                ImageSource="{AppThemeBinding Light=tab_home_black.svg,
-                                              Dark=tab_home_white.svg}"
-                Scale="1.2" />
+        <!--  home page  -->
+        <material:TabItem
+            x:Name="HomePageTab"
+            Title="{x:Static m:MaterialRegular.Home}"
+            Data="0">
+            <material:TabItem.Content>
+                <views:HomePage />
+            </material:TabItem.Content>
+        </material:TabItem>
 
-            <!--  transactions page  -->
-            <tabView:SfTabItem
-                x:Name="TransactionsPageTab"
-                ImageSource="{AppThemeBinding Light=tab_transactions_black.svg,
-                                              Dark=tab_transactions_white.svg}"
-                Scale="1.1" />
+        <!--  transactions page  -->
+        <material:TabItem
+            x:Name="TransactionsPageTab"
+            Title="{x:Static m:MaterialRegular.Article}"
+            Data="1">
+            <material:TabItem.Content>
+                <views:TransactionsPage />
+            </material:TabItem.Content>
+        </material:TabItem>
 
-            <!--  add transaction page  -->
-            <tabView:SfTabItem
-                x:Name="AddTransactionPageTab"
-                ImageSource="{AppThemeBinding Light=tab_add_black.svg,
-                                              Dark=tab_add_white.svg}"
-                Scale="1.3" />
+        <!--  add transaction page  -->
+        <material:TabItem
+            x:Name="AddTransactionPageTab"
+            Title="{x:Static m:MaterialRegular.Add_circle}"
+            Data="2">
+            <material:TabItem.Content>
+                <views:AddTransactionPage />
+            </material:TabItem.Content>
+        </material:TabItem>
 
-            <!--  stats page  -->
-            <tabView:SfTabItem x:Name="StatsPageTab" ImageSource="{AppThemeBinding Light=tab_stats_black.svg, Dark=tab_stats_white.svg}" />
+        <!--  stats page  -->
+        <material:TabItem
+            x:Name="StatsPageTab"
+            Title="{x:Static m:MaterialRegular.Donut_small}"
+            Data="3">
+            <material:TabItem.Content>
+                <views:StatsPage />
+            </material:TabItem.Content>
+        </material:TabItem>
 
-            <!--  settings page  -->
-            <tabView:SfTabItem x:Name="SettingsPageTab" ImageSource="{AppThemeBinding Light=tab_settings_black.svg, Dark=tab_settings_white.svg}" />
+        <!--  settings page  -->
+        <material:TabItem
+            x:Name="SettingsPageTab"
+            Title="{x:Static m:MaterialRegular.Settings}"
+            Data="4">
+            <material:TabItem.Content>
+                <views:SettingsPage />
+            </material:TabItem.Content>
+        </material:TabItem>
 
-        </tabView:SfTabView.Items>
-
-    </tabView:SfTabView>
+    </material:TabView>
 </ContentPage>

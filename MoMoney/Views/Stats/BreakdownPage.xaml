@@ -7,6 +7,7 @@
     xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
     xmlns:data="clr-namespace:Syncfusion.Maui.DataSource;assembly=Syncfusion.Maui.DataSource"
     xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
@@ -31,7 +32,7 @@
         </data:DataSource>
 
         <!--  SfListView Item Template  -->
-        <DataTemplate x:Key="ListView">
+        <DataTemplate x:Key="ListView" x:DataType="models:BreakdownData">
             <Frame
                 Margin="5,5,5,0"
                 Padding="10,0,10,0"
@@ -81,7 +82,8 @@
                 Command="{Binding DecrementCommand}"
                 HeightRequest="30"
                 HorizontalOptions="Start"
-                Source="left_arrow.svg" />
+                Source="{FontImageSource FontFamily=MaterialRegular,
+                                         Glyph={x:Static m:MaterialRegular.Chevron_left}}" />
             <Label
                 FontAttributes="Bold"
                 FontSize="20"
@@ -98,7 +100,8 @@
                 Command="{Binding IncrementCommand}"
                 HeightRequest="30"
                 HorizontalOptions="End"
-                Source="right_arrow.svg" />
+                Source="{FontImageSource FontFamily=MaterialRegular,
+                                         Glyph={x:Static m:MaterialRegular.Chevron_right}}" />
         </Grid>
 
         <tabView:SfTabView

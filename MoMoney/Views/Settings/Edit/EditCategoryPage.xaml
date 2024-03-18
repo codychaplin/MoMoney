@@ -18,9 +18,7 @@
             x:Name="txtName"
             Title="Category Name"
             Icon="{FontImageSource FontFamily=MaterialOutlined,
-                                   Glyph={x:Static m:MaterialOutlined.Category},
-                                   Color={AppThemeBinding Light={StaticResource Black},
-                                                          Dark={StaticResource White}}}"
+                                   Glyph={x:Static m:MaterialOutlined.Category}}"
             Text="{Binding Category.CategoryName}" />
 
         <!--  parent category  -->
@@ -29,9 +27,7 @@
             Title="Select a Parent"
             x:DataType="model:Category"
             Icon="{FontImageSource FontFamily=MaterialRegular,
-                                   Glyph={x:Static m:MaterialRound.Category},
-                                   Color={AppThemeBinding Light={StaticResource Black},
-                                                          Dark={StaticResource White}}}"
+                                   Glyph={x:Static m:MaterialRound.Category}}"
             ItemDisplayBinding="{Binding CategoryName}"
             ItemsSource="{Binding Path=Parents, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}"
             SelectedItem="{Binding Path=Parent, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}" />

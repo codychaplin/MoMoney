@@ -8,6 +8,6 @@ public partial class AccountsPage : ContentPage
 	{
 		InitializeComponent();
 		BindingContext = vm;
-		NavigatedTo += vm.Init;
+		NavigatedTo += vm.RefreshAccounts;
 	}
 }

@@ -472,7 +472,9 @@ public partial class ImportExportViewModel
     /// </summary>
     /// <param name="name"></param>
     /// <returns>file path if permission is granted, otherwise null</returns>
+#pragma warning disable CS1998
     async Task<string> CheckPermissionsAndGetFilePath(string name)
+#pragma warning restore CS1998
     {
         // create file in documents folder
         string path = "";

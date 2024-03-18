@@ -3,6 +3,7 @@
     x:Class="MoMoney.Views.StatsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
     x:DataType="viewmodel:StatsViewModel"
@@ -10,14 +11,12 @@
                                       Dark={StaticResource Gray950}}">
 
     <ContentView.Resources>
-        <Style
-            x:Key="imgTileIcon"
-            BasedOn="{StaticResource imgTinted}"
-            TargetType="{x:Type Image}">
-            <Setter Property="Margin" Value="0,10,0,0" />
-            <Setter Property="WidthRequest" Value="50" />
-            <Setter Property="HeightRequest" Value="50" />
+        <Style x:Key="lblIcon" TargetType="{x:Type Label}">
+            <Setter Property="WidthRequest" Value="65" />
+            <Setter Property="HeightRequest" Value="65" />
             <Setter Property="VerticalOptions" Value="Start" />
+            <Setter Property="FontSize" Value="65" />
+            <Setter Property="FontFamily" Value="MaterialRegular" />
         </Style>
         <Style x:Key="lblTileTitle" TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="18" />
@@ -63,7 +62,7 @@
                     <TapGestureRecognizer Command="{Binding GoToAccountSummaryCommand}" />
                 </Frame.GestureRecognizers>
                 <Grid>
-                    <Image Source="accounts.svg" Style="{StaticResource imgTileIcon}" />
+                    <Label Style="{StaticResource lblIcon}" Text="{x:Static m:MaterialRegular.Account_balance}" />
                     <Label Style="{StaticResource lblTileTitle}" Text="Accounts" />
                 </Grid>
             </Frame>
@@ -77,7 +76,7 @@
                     <TapGestureRecognizer Command="{Binding GoToBreakdownCommand}" />
                 </Frame.GestureRecognizers>
                 <Grid>
-                    <Image Source="donut.svg" Style="{StaticResource imgTileIcon}" />
+                    <Label Style="{StaticResource lblIcon}" Text="{x:Static m:MaterialRegular.Donut_small}" />
                     <Label Style="{StaticResource lblTileTitle}" Text="Breakdown" />
                 </Grid>
             </Frame>
@@ -91,7 +90,7 @@
                     <TapGestureRecognizer Command="{Binding GoToStocksCommand}" />
                 </Frame.GestureRecognizers>
                 <Grid>
-                    <Image Source="stocks.svg" Style="{StaticResource imgTileIcon}" />
+                    <Label Style="{StaticResource lblIcon}" Text="{x:Static m:MaterialRegular.Candlestick_chart}" />
                     <Label Style="{StaticResource lblTileTitle}" Text="Stocks" />
                 </Grid>
             </Frame>
@@ -105,7 +104,7 @@
                     <TapGestureRecognizer Command="{Binding GoToInsightsCommand}" />
                 </Frame.GestureRecognizers>
                 <Grid>
-                    <Image Source="bar_chart.svg" Style="{StaticResource imgTileIcon}" />
+                    <Label Style="{StaticResource lblIcon}" Text="{x:Static m:MaterialRegular.Equalizer}" />
                     <Label Style="{StaticResource lblTileTitle}" Text="Insights" />
                 </Grid>
             </Frame>

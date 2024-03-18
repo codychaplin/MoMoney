@@ -4,12 +4,31 @@ namespace MoMoney.Views.Settings;
 
 public partial class BulkEditingPage : ContentPage
 {
-	public BulkEditingPage(BulkEditingViewModel vm)
+	BulkEditingViewModel vm;
+	public BulkEditingPage(BulkEditingViewModel _vm)
 	{
 		InitializeComponent();
+		vm = _vm;
 		BindingContext = vm;
 		Loaded += vm.Init;
-		pckFindCategory.SelectedIndexChanged += vm.GetFindSubcategories;
-		pckReplaceCategory.SelectedIndexChanged += vm.GetReplaceSubcategories;
+
+		PckFindAccount.SelectedValueChanged += OnClear;
+		PckFindCategory.SelectedValueChanged += OnClear;
+		FindPayee.TextChanged += OnClear;
+
+		PckReplaceAccount.SelectedValueChanged += OnClear;
+        PckReplaceCategory.SelectedValueChanged += OnClear;
+		ReplacePayee.TextChanged += OnClear;
+
+		PckFindCategory.SelectedValueChanged += vm.GetFindSubcategories;
+		PckReplaceCategory.SelectedValueChanged += vm.GetReplaceSubcategories;
+	}
+
+	void OnClear(object sender, object newValue)
+	{
+		if (newValue == null)
+		{
+			vm.Clear();
+        }
 	}
 }

@@ -143,6 +143,9 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
     public async Task<IEnumerable<Account>> GetAccounts()
     {
         await Init();
+        var accs = Accounts.Values;
+        if (accs.Count != 0)
+            return accs;
         return await momoney.db.Table<Account>().ToListAsync();
     }
 
@@ -156,6 +159,19 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
     public async Task<IEnumerable<Account>> GetActiveAccounts()
     {
         await Init();
+        var accs = Accounts.Values.Where(a => a.Enabled);
+        if (accs.Any())
+            return accs;
+        return await momoney.db.Table<Account>().Where(a => a.Enabled).ToListAsync();
+    }
+
+    public async Task<IEnumerable<Account>> GetOrderedAccounts()
+    {
+        await Init();
+        var accs = Accounts.Values.OrderByDescending(a => a.Enabled)
+                                  .ThenBy(a => a.AccountName);
+        if (accs.Any())
+            return accs;
         return await momoney.db.Table<Account>().Where(a => a.Enabled).ToListAsync();
     }
 

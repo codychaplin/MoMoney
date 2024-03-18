@@ -90,11 +90,11 @@ public static class MauiProgram
     static MauiAppBuilder RegisterViewModels(this MauiAppBuilder builder)
     {
         // tabs
-        builder.Services.AddTransient<HomeViewModel>();
-        builder.Services.AddTransient<TransactionsViewModel>();
-        builder.Services.AddTransient<AddTransactionViewModel>();
-        builder.Services.AddTransient<StatsViewModel>();
-        builder.Services.AddTransient<SettingsViewModel>();
+        builder.Services.AddSingleton<HomeViewModel>();
+        builder.Services.AddSingleton<TransactionsViewModel>();
+        builder.Services.AddSingleton<AddTransactionViewModel>();
+        builder.Services.AddSingleton<StatsViewModel>();
+        builder.Services.AddSingleton<SettingsViewModel>();
 
         // stats
         builder.Services.AddTransient<AccountSummaryViewModel>();

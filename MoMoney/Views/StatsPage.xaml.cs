@@ -4,9 +4,13 @@ namespace MoMoney.Views;
 
 public partial class StatsPage : ContentView
 {
-    public StatsPage(StatsViewModel _vm)
+    public StatsPage()
 	{
 		InitializeComponent();
-        BindingContext = _vm;
+
+        HandlerChanged += (s, e) =>
+        {
+            BindingContext = Handler.MauiContext.Services.GetService<StatsViewModel>();
+        };
     }
 }

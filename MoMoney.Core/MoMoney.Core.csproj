@@ -38,6 +38,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Reference Include="UraniumUI.Material">
+	    <HintPath>..\..\..\..\..\..\..\Nugets\uraniumui.material\2.8.0\lib\net8.0-android34.0\UraniumUI.Material.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <PackageReference Update="Microsoft.Maui.Controls" Version="8.0.7" />
 	</ItemGroup>
 

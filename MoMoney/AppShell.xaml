@@ -5,12 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:MoMoney.Views"
     Title=""
-    NavigationPage.HasNavigationBar="False"
-    Shell.FlyoutBehavior="Disabled"
-    Shell.ForegroundColor="{AppThemeBinding Light={StaticResource Black},
-                                            Dark={StaticResource White}}"
-    Shell.TitleColor="{AppThemeBinding Light={StaticResource Black},
-                                       Dark={StaticResource White}}">
+    NavigationPage.HasNavigationBar="False">
 
     <ShellContent
         Title=""

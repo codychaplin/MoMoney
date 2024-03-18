@@ -20,6 +20,32 @@ public partial class AccountsViewModel : ObservableObject
     }
 
     /// <summary>
+    /// Gets updated accounts from database, orders them, and refreshes Accounts collection.
+    /// </summary>
+    public async void RefreshAccounts(object sender, EventArgs e)
+    {
+        try
+        {
+            await Task.Delay(1);
+            var accounts = await accountService.GetOrderedAccounts();
+            if (!accounts.Any())
+            {
+                Accounts.Clear();
+                return;
+            }
+
+            Accounts.Clear();
+            foreach (var acc in accounts)
+                Accounts.Add(acc);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(RefreshAccounts), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+    }
+
+    /// <summary>
     /// Goes to AddAccountPage.xaml.
     /// </summary>
     [RelayCommand]
@@ -35,32 +61,5 @@ public partial class AccountsViewModel : ObservableObject
     async Task GoToEditAccount(int ID)
     {
         await Shell.Current.GoToAsync($"EditAccountPage?ID={ID}");
-    }
-
-    /// <summary>
-    /// Gets updated accounts from database, orders them, and refreshes Accounts collection.
-    /// </summary>
-    public async void Init(object s, EventArgs e)
-    {
-        try
-        {
-            var accounts = await accountService.GetAccounts();
-            if (!accounts.Any())
-            {
-                Accounts.Clear();
-                return;
-            }
-
-            accounts = accounts.OrderByDescending(a => a.Enabled)
-                               .ThenBy(a => a.AccountName);
-            Accounts.Clear();
-            foreach (var acc in accounts)
-                Accounts.Add(acc);
-        }
-        catch (Exception ex)
-        {
-            await logger.LogError(nameof(Init), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
-        }
     }
 }

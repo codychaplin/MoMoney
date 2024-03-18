@@ -4,6 +4,7 @@ using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
+using CommunityToolkit.Mvvm.Input;
 
 namespace MoMoney.Core.ViewModels.Stats;
 
@@ -59,7 +60,8 @@ public partial class InsightsViewModel : ObservableObject
         SelectedYear = DateTime.Today.Year;
     }
 
-    public async void Refresh(object sender, EventArgs e)
+    [RelayCommand]
+    async Task Refresh()
     {
         await Task.Delay(50);
         // gets transactions from selected year

@@ -45,13 +45,6 @@
             ItemsSource="{Binding Categories}" />
 
         <!--  add account button  -->
-        <ImageButton
-            Margin="20"
-            Command="{Binding GoToAddCategoryCommand}"
-            HeightRequest="40"
-            HorizontalOptions="End"
-            Source="add.svg"
-            VerticalOptions="End"
-            WidthRequest="40" />
+        <Button Command="{Binding GoToAddCategoryCommand}" Style="{StaticResource btnAdd}" />
     </Grid>
 </ContentPage>

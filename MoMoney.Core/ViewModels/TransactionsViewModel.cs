@@ -54,9 +54,7 @@ public partial class TransactionsViewModel : ObservableObject
     /// <summary>
     /// Loads data into filter pickers.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public async void Loaded(object sender, EventArgs e)
+    public async Task Load()
     {
         await GetAccounts();
         await GetParentCategories();
@@ -203,12 +201,19 @@ public partial class TransactionsViewModel : ObservableObject
             Categories.Add(cat);
     }
 
-    public async void CategoryChanged(object sender, EventArgs e)
+    [RelayCommand]
+    async Task CategoryChanged()
     {
         if (Category != null)
         {
             await GetSubcategories(Category);
-            UpdateFilter(sender, e);
+            UpdateFilter();
+        }
+        else
+        {
+            Subcategory = null;
+            Subcategories.Clear();
+            UpdateFilter();
         }
     }
 
@@ -218,44 +223,13 @@ public partial class TransactionsViewModel : ObservableObject
     /// <param name="parentCategory"></param>
     public async Task GetSubcategories(Category parentCategory)
     {
-        if (parentCategory is not null)
+        if (parentCategory != null)
         {
             var subcategories = await categoryService.GetSubcategories(parentCategory);
             Subcategories.Clear();
             foreach (var cat in subcategories)
                 Subcategories.Add(cat);
         }
-    }
-
-    /// <summary>
-    /// Clears selected Account.
-    /// </summary>
-    [RelayCommand]
-    void ClearAccount()
-    {
-        Account = null;
-        UpdateFilter(this, default);
-    }
-
-    /// <summary>
-    /// Clears selected Category.
-    /// </summary>
-    [RelayCommand]
-    void ClearCategory()
-    {
-        Category = null;
-        Subcategory = null;
-        UpdateFilter(this, default);
-    }
-
-    /// <summary>
-    /// Clears selected Subcategory and calls UpdateFilter().
-    /// </summary>
-    [RelayCommand]
-    void ClearSubcategory()
-    {
-        Subcategory = null;
-        UpdateFilter(this, default);
     }
 
     /// <summary>
@@ -274,7 +248,7 @@ public partial class TransactionsViewModel : ObservableObject
     [RelayCommand]
     async Task AmountDragCompleted(object obj)
     {
-        UpdateFilter(this, default);
+        UpdateFilter();
 
         var frame = obj as Frame;
         await Task.Delay(300);
@@ -284,7 +258,8 @@ public partial class TransactionsViewModel : ObservableObject
     /// <summary>
     /// Updates Transactions Filter.
     /// </summary>
-    public void UpdateFilter(object sender, EventArgs e)
+    [RelayCommand]
+    void UpdateFilter()
     {
         if (ListView.DataSource != null)
         {

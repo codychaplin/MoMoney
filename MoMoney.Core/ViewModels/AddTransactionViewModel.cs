@@ -35,7 +35,9 @@ public partial class AddTransactionViewModel : ObservableObject
     [ObservableProperty] string payee;
     [ObservableProperty] Account transferAccount = new();
 
-    TransactionType transactionType = TransactionType.None;
+    [ObservableProperty] bool isWaitingForTranscription = false; // activity indicator runs while this is true
+
+    public TransactionType transactionType = TransactionType.None;
 
     ResponseIDs responseIDs = null;
 
@@ -79,6 +81,7 @@ public partial class AddTransactionViewModel : ObservableObject
             Categories.Clear();
             Subcategories.Clear();
             Categories.Add(income);
+            Subcategory = null;
             Category = income;
 
             // re-add selected Subcategory if not null
@@ -111,6 +114,7 @@ public partial class AddTransactionViewModel : ObservableObject
             Categories.Clear();
             Subcategories.Clear();
             Categories.Add(transfer);
+            Subcategory = null;
             Category = transfer;
 
             transactionType = TransactionType.Transfer;
@@ -135,21 +139,13 @@ public partial class AddTransactionViewModel : ObservableObject
     {
         try
         {
-            // cache selected Category and Subcategory
-            var savedCategory = Category;
-            var savedSubcategory = Subcategory;
-
             var categories = await categoryService.GetExpenseCategories();
             Categories.Clear();
             foreach (var cat in categories)
                 Categories.Add(cat);
             Subcategories.Clear();
-
-            // re-add selected Category and Subcategory if not null
-            if (savedCategory is not null)
-                Category = savedCategory;
-            if (savedSubcategory is not null)
-                Subcategory = savedSubcategory;
+            Category = null;
+            Subcategory = null;
 
             transactionType = TransactionType.Expense;
         }
@@ -196,7 +192,8 @@ public partial class AddTransactionViewModel : ObservableObject
         }
     }
 
-    public async void CategoryChanged(object sender, EventArgs e)
+    [RelayCommand]
+    async Task CategoryChanged()
     {
         // check if Category is null, update subcategories
         if (Category is null) return;
@@ -223,18 +220,20 @@ public partial class AddTransactionViewModel : ObservableObject
             {
                 // stop and check if audio is valid
                 var audioSource = await recorder.StopAsync();
-                
+
                 using var stream = audioSource.GetAudioStream();
                 var audioPlayer = AudioManager.Current.CreatePlayer(stream);
                 if (audioPlayer == null || audioPlayer.Duration < 3)
                     throw new FileNotFoundException("Recording is not long enough");
 
                 FFmpegConfig.IgnoreSignal(24); // stops app from freezing
-                FFmpeg.Execute($"-y -i {filePath.Replace("mp3","wav")} -b:a 32k {filePath}");
+                FFmpeg.Execute($"-y -i {filePath.Replace("mp3", "wav")} -b:a 32k {filePath}");
 
                 var bytes = File.ReadAllBytes(filePath);
                 var audioData = new BinaryData(bytes);
 
+                ResetButtonColour(btnRecord);
+                IsWaitingForTranscription = true;
                 var transactionResponse = await openAIService.DictateTransaction(audioData, transactionType);
                 if (transactionResponse == null) return;
 
@@ -272,7 +271,7 @@ public partial class AddTransactionViewModel : ObservableObject
                 foreach (var file in filesToDelete)
                     File.Delete(file);
 
-                ResetButtonColour(btnRecord);
+                IsWaitingForTranscription = false;
             }
             else
             {

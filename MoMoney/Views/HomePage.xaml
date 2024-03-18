@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
     xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
@@ -54,8 +55,8 @@
                         <Image
                             HeightRequest="30"
                             HorizontalOptions="End"
-                            Source="calendar.svg"
-                            Style="{StaticResource imgTinted}"
+                            Source="{FontImageSource FontFamily=MaterialRegular,
+                                                     Glyph={x:Static m:MaterialRegular.Calendar_month}}"
                             WidthRequest="30" />
                     </Grid>
                 </toolkit:Expander.Header>
@@ -70,7 +71,7 @@
                     HeightRequest="50"
                     HorizontalOptions="Center">
                     <HorizontalStackLayout Spacing="5">
-                        <Image Source="calendar.svg" Style="{StaticResource imgTinted}" />
+                        <Image HeightRequest="25" Source="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRegular.Calendar_month}}" />
                         <DatePicker
                             x:Name="dtFrom"
                             Date="{Binding From}"
@@ -235,7 +236,7 @@
             </Grid>
 
             <!--  list of transactions  -->
-            <Frame Margin="10,0" Padding="10,5,10,5">
+            <Frame Margin="10,0" Padding="0,5">
                 <CollectionView
                     EmptyView="No Transactions Found"
                     ItemTemplate="{StaticResource TransactionFrame}"

@@ -5,6 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
     xmlns:local="clr-namespace:MoMoney"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:material="clr-namespace:UraniumUI.Material.Resources;assembly=UraniumUI.Material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
@@ -95,10 +97,33 @@
                 <Setter Property="VerticalOptions" Value="Center" />
             </Style>
 
+            <!--  add button  -->
+            <Style x:Key="btnAdd" TargetType="{x:Type Button}">
+                <Setter Property="Shadow">
+                    <Setter.Value>
+                        <Shadow
+                            Brush="Black"
+                            Opacity="0.8"
+                            Radius="30"
+                            Offset="10,10" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="CornerRadius" Value="25" />
+                <Setter Property="Margin" Value="20" />
+                <Setter Property="Padding" Value="-5" />
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="FontFamily" Value="MaterialRegular" />
+                <Setter Property="FontSize" Value="50" />
+                <Setter Property="VerticalOptions" Value="End" />
+                <Setter Property="HorizontalOptions" Value="End" />
+                <Setter Property="Text" Value="{x:Static m:MaterialRegular.Add_circle}" />
+                <Setter Property="TextColor" Value="{StaticResource Primary}" />
+            </Style>
+
             <!--  transaction template  -->
             <DataTemplate x:Key="TransactionFrame" x:DataType="models:Transaction">
                 <Frame
-                    Margin="0,5,0,5"
+                    Margin="10,5"
                     Padding="5,10,10,10"
                     BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
                                                       Dark={StaticResource Gray700}}"

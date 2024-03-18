@@ -26,14 +26,14 @@ public partial class EditTransactionViewModel : ObservableObject
     [ObservableProperty] Account account;
     [ObservableProperty] Category category;
     [ObservableProperty] Category subcategory;
-    [ObservableProperty] Account payeeAccount;
+    [ObservableProperty] Account transferAccount;
 
     [ObservableProperty] Transaction transaction;
     
     public Account InitialAccount { get; private set; }
     public Category InitialCategory { get; private set; }
     public Category InitialSubcategory { get; private set; }
-    public Account InitialPayeeAccount { get; private set; }
+    public Account InitialTransferAccount { get; private set; }
 
     Transaction InitialTransaction;
 
@@ -69,7 +69,7 @@ public partial class EditTransactionViewModel : ObservableObject
                     // if debit, make amount appear positive for user
                     if (InitialSubcategory.CategoryID == Constants.DEBIT_ID)
                         Transaction.Amount *= -1;
-                    InitialPayeeAccount = await accountService.GetAccount((int)Transaction.TransferID);
+                    InitialTransferAccount = await accountService.GetAccount((int)Transaction.TransferID);
                 }
             }
             catch (TransactionNotFoundException ex)
@@ -117,7 +117,7 @@ public partial class EditTransactionViewModel : ObservableObject
 
             Account = InitialAccount;
             if (InitialCategory.CategoryID == Constants.TRANSFER_ID)
-                PayeeAccount = InitialPayeeAccount;
+                TransferAccount = InitialTransferAccount;
         }
         catch (Exception ex)
         {
@@ -200,14 +200,14 @@ public partial class EditTransactionViewModel : ObservableObject
     /// <summary>
     /// Updates Subcategories based on selected parent Category.
     /// </summary>
-    /// <param name="parentCategory"></param>
-    public async Task GetSubcategories(Category parentCategory)
+    [RelayCommand]
+    public async Task GetSubcategories()
     {
         try
         {
-            if (parentCategory is not null)
+            if (Category is not null)
             {
-                var subcategories = await categoryService.GetSubcategories(parentCategory);
+                var subcategories = await categoryService.GetSubcategories(Category);
                 Subcategories.Clear();
                 foreach (var cat in subcategories)
                     Subcategories.Add(cat);
@@ -365,7 +365,7 @@ public partial class EditTransactionViewModel : ObservableObject
         Transaction.AccountID = Account.AccountID;
         Transaction.CategoryID = Category.CategoryID;
         Transaction.SubcategoryID = Subcategory.CategoryID;
-        Transaction.TransferID = PayeeAccount?.AccountID;
+        Transaction.TransferID = TransferAccount?.AccountID;
 
         // if nothing has changed, don't update
         if (Transaction == InitialTransaction)

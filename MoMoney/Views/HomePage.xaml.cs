@@ -9,21 +9,25 @@ public partial class HomePage : ContentView
 
     public static EventHandler<EventArgs> UpdatePage { get; set; }
 
-    public HomePage(HomeViewModel _vm)
+    public HomePage()
 	{
 		InitializeComponent();
-        vm = _vm;
-        BindingContext = vm;
 
-        // UpdatePage can be triggered by any page
-        UpdatePage += Refresh;
+        HandlerChanged += (s, e) =>
+        {
+            vm = Handler.MauiContext.Services.GetService<HomeViewModel>();
+            BindingContext = vm;
 
-        // Loaded is just called on start
-        Loaded += Refresh;
+            // UpdatePage can be triggered by any page
+            UpdatePage += Refresh;
 
-        // DateSelected is for DatePicker changes
-        dtFrom.DateSelected += Refresh;
-        dtTo.DateSelected += Refresh;
+            // Loaded is just called on start
+            Loaded += Refresh;
+
+            // DateSelected is for DatePicker changes
+            dtFrom.DateSelected += Refresh;
+            dtTo.DateSelected += Refresh;
+        };
     }
 
     /// <summary>
@@ -57,7 +61,7 @@ public partial class HomePage : ContentView
     /// <param name="e"></param>
     private void btnViewAllStats_Clicked(object sender, EventArgs e)
     {
-        MainPage.TabView.SelectedIndex = 3;
+        //MainPage.TabView.SelectedIndex = 3;
     }
 
     /// <summary>
@@ -67,6 +71,6 @@ public partial class HomePage : ContentView
     /// <param name="e"></param>
 	private void btnViewAllTransactions_Clicked(object sender, EventArgs e)
 	{
-		MainPage.TabView.SelectedIndex = 1;
+		//MainPage.TabView.SelectedIndex = 1;
     }
 }

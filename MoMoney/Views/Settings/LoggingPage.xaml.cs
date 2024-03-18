@@ -10,14 +10,6 @@ public partial class LoggingPage : ContentPage
 		BindingContext = vm;
 		Loaded += vm.Init;
 		vm.listview = listview;
-
-		swTileSize.IsToggled = false;
-		swTileSize.IsToggled = true;
-
-
-        pckLevels.SelectedIndexChanged += vm.UpdateFilter;
-		pckClasses.SelectedIndexChanged += vm.UpdateFilter;
-		pckExceptions.SelectedIndexChanged += vm.UpdateFilter;
 	}
 
 	/// <summary>
@@ -25,7 +17,7 @@ public partial class LoggingPage : ContentPage
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-    private void switch_Toggled(object sender, ToggledEventArgs e)
+    private void Check_Toggled(object sender, EventArgs e)
     {
 		listview.RefreshView();
     }

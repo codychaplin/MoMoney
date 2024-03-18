@@ -96,7 +96,8 @@ public partial class LoggingViewModel : ObservableObject
     /// <summary>
     /// Updates Logs Filter.
     /// </summary>
-    public void UpdateFilter(object sender, EventArgs e)
+    [RelayCommand]
+    void UpdateFilter()
     {
         if (listview.DataSource != null)
         {
@@ -139,7 +140,7 @@ public partial class LoggingViewModel : ObservableObject
     void ClearLevel()
     {
         Level = LogLevel.None;
-        UpdateFilter(this, default);
+        UpdateFilter();
     }
 
     /// <summary>
@@ -149,7 +150,7 @@ public partial class LoggingViewModel : ObservableObject
     void ClearClass()
     {
         ClassName = null;
-        UpdateFilter(this, default);
+        UpdateFilter();
     }
 
     /// <summary>
@@ -159,7 +160,7 @@ public partial class LoggingViewModel : ObservableObject
     void ClearException()
     {
         ExceptionType = null;
-        UpdateFilter(this, default);
+        UpdateFilter();
     }
 
     [RelayCommand]

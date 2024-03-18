@@ -5,10 +5,15 @@ namespace MoMoney.Views;
 
 public partial class SettingsPage : ContentView
 {
-    public SettingsPage(SettingsViewModel vm)
+    public SettingsPage()
     {
         InitializeComponent();
-        BindingContext = vm;
+
+        HandlerChanged += (s, e) =>
+        {
+            BindingContext = Handler.MauiContext.Services.GetService<SettingsViewModel>();
+        };
+
         lblVersion.Text = $"MoMoney ({AppInfo.Current.VersionString})";
         // switch toggle to avoid ThumbColor bug
         swShowValues.IsToggled = false;
