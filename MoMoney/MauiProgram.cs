@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Storage;
 using Syncfusion.Maui.Core.Hosting;
 using UraniumUI;
 using Plugin.Maui.Audio;
@@ -136,6 +137,9 @@ public static class MauiProgram
 
         // audio
         builder.Services.AddSingleton(AudioManager.Current);
+
+        // file saver
+        builder.Services.AddSingleton(FileSaver.Default);
 
         return builder;
     }

@@ -13,9 +13,8 @@ Works on Android 10.0 and later.
 * Get real-time stock prices
 * Import/Export data via CSV
 * Ability to hide sensitive values
-* Database logging
 * Bulk editing (find/replace) for transactions
-* Firebase and local logging
+* Firebase analytics and local logging
 
 ## How to Use
 * Accounts and categories are needed before transactions are added
@@ -37,3 +36,4 @@ Works on Android 10.0 and later.
 * SQLite
 * CommunityToolkit.Maui
 * Syncfusion.Maui
+* UraniumUI

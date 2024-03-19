@@ -5,6 +5,7 @@
 * Fixed transaction list padding
 * Recent transactions on home page now update properly
 * Made lowercase ObservableProperties private so only generated public properties are exposed
+* Fixed storage write permissions
 
 ### Changes
 

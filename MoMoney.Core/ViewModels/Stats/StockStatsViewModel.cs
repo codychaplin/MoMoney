@@ -40,7 +40,7 @@ public partial class StockStatsViewModel : ObservableObject
     {
         // populate collection with cached values first
         var stocks = await stockService.GetStocks();
-        if (stocks.Count == 0)
+        if (!stocks.Any())
             return;
 
         foreach (var stock in stocks)

@@ -132,7 +132,7 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
             return stk;
     }
 
-    public async Task<List<Stock>> GetStocks()
+    public async Task<IEnumerable<Stock>> GetStocks()
     {
         await Init();
         if (Stocks.Count != 0)
