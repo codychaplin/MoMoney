@@ -6,7 +6,8 @@
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
     Title="Import &amp; Export"
-    x:DataType="viewmodels:ImportExportViewModel">
+    x:DataType="viewmodels:ImportExportViewModel"
+    IsBusy="{Binding IsBusy}">
     <ScrollView>
         <VerticalStackLayout>
 

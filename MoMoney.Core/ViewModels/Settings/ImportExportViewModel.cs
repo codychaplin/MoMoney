@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Maui.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
@@ -12,7 +13,7 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings;
 
-public partial class ImportExportViewModel
+public partial class ImportExportViewModel : ObservableObject
 {
     readonly IStockService stockService;
     readonly IAccountService accountService;
@@ -33,6 +34,9 @@ public partial class ImportExportViewModel
         fileSaver = _fileSaver;
     }
 
+    [ObservableProperty]
+    bool isBusy;
+
     /// <summary>
     /// Prompts the user to open a CSV file. Valid Accounts are then added to the database.
     /// </summary>
@@ -41,6 +45,7 @@ public partial class ImportExportViewModel
     {
         try
         {
+            IsBusy = true;
             var result = await SelectFile();
             if (result == null) return;
 
@@ -87,6 +92,10 @@ public partial class ImportExportViewModel
             await logger.LogError(nameof(ImportAccountsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     /// <summary>
@@ -97,6 +106,7 @@ public partial class ImportExportViewModel
     {
         try
         {
+            IsBusy = true;
             var result = await SelectFile();
             if (result == null) return;
 
@@ -152,6 +162,10 @@ public partial class ImportExportViewModel
             await logger.LogError(nameof(ImportCategoriesCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     /// <summary>
@@ -162,6 +176,7 @@ public partial class ImportExportViewModel
     {
         try
         {
+            IsBusy = true;
             var result = await SelectFile();
             if (result == null) return;
 
@@ -216,6 +231,10 @@ public partial class ImportExportViewModel
             await logger.LogError(nameof(ImportTransactionsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     /// <summary>
@@ -226,6 +245,7 @@ public partial class ImportExportViewModel
     {
         try
         {
+            IsBusy = true;
             var result = await SelectFile();
             if (result == null) return;
 
@@ -272,6 +292,10 @@ public partial class ImportExportViewModel
             await logger.LogError(nameof(ImportStocksCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     /// <summary>
@@ -300,6 +324,7 @@ public partial class ImportExportViewModel
     {
         try
         {
+            IsBusy = true;
             var transactions = await transactionService.GetTransactions();
             await ExportData(transactions, "transactions.csv", "transaction", "transactions", FirebaseParameters.EVENT_EXPORT_TRANSACTIONS);
         }
@@ -312,6 +337,10 @@ public partial class ImportExportViewModel
             await logger.LogError(nameof(ExportTransactionsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     /// <summary>
@@ -322,6 +351,7 @@ public partial class ImportExportViewModel
     {
         try
         {
+            IsBusy = true;
             var accounts = await accountService.GetAccounts();
             await ExportData(accounts, "accounts.csv", "account", "accounts", FirebaseParameters.EVENT_EXPORT_ACCOUNTS);
         }
@@ -330,6 +360,10 @@ public partial class ImportExportViewModel
         {
             await logger.LogError(nameof(ExportAccountsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
@@ -341,6 +375,7 @@ public partial class ImportExportViewModel
     {
         try
         {
+            IsBusy = true;
             var categories = await categoryService.GetCategories();
             await ExportData(categories, "categories.csv", "category", "categories", FirebaseParameters.EVENT_EXPORT_CATEGORIES);
         }
@@ -349,6 +384,10 @@ public partial class ImportExportViewModel
         {
             await logger.LogError(nameof(ExportCategoriesCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
@@ -360,6 +399,7 @@ public partial class ImportExportViewModel
     {
         try
         {
+            IsBusy = true;
             var logs = await logger.GetLogs();
             await ExportData(logs, "logs.csv", "log", "logs", FirebaseParameters.EVENT_EXPORT_LOGS);
         }
@@ -368,6 +408,10 @@ public partial class ImportExportViewModel
         {
             await logger.LogError(nameof(ExportLogsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
@@ -379,6 +423,7 @@ public partial class ImportExportViewModel
     {
         try
         {
+            IsBusy = true;
             var stocks = await stockService.GetStocks();
             await ExportData(stocks, "stocks.csv", "stock", "stocks", FirebaseParameters.EVENT_EXPORT_STOCKS);
         }
@@ -387,6 +432,10 @@ public partial class ImportExportViewModel
         {
             await logger.LogError(nameof(ExportStocksCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
@@ -434,6 +483,8 @@ public partial class ImportExportViewModel
             csv.Context.RegisterClassMap<TransactionExportMap>();
         }
         csv.WriteRecords(records);
+        writer.Flush();
+        memoryStream.Position = 0;
 
         // save CSV file using FileSaver API
         var result = await fileSaver.SaveAsync(name, memoryStream);

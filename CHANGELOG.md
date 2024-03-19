@@ -13,6 +13,7 @@
 * Added option to try getting objects from db by returning null instead of throwing exception
 * Added UraniumUI controls and switched to UraniumUI tabs
 * Converted to Material Icons
+* Added loading icon when import/exporting data
 
 # MoMoney v1.1.4
 

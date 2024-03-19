@@ -14,7 +14,8 @@
         <Style x:Key="lblIcon" TargetType="{x:Type Label}">
             <Setter Property="WidthRequest" Value="65" />
             <Setter Property="HeightRequest" Value="65" />
-            <Setter Property="VerticalOptions" Value="Start" />
+            <Setter Property="HorizontalTextAlignment" Value="Center" />
+            <Setter Property="VerticalTextAlignment" Value="Start" />
             <Setter Property="FontSize" Value="65" />
             <Setter Property="FontFamily" Value="MaterialRegular" />
         </Style>
