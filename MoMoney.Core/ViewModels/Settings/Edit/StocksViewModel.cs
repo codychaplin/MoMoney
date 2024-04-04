@@ -1,17 +1,17 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
-public partial class StocksViewModel : ObservableObject
+public partial class StocksViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     readonly IStockService stockService;
     readonly ILoggerService<StocksViewModel> logger;
 
-    [ObservableProperty] ObservableCollection<Stock> stocks = [];
+    [ObservableProperty] ObservableRangeCollection<Stock> stocks = [];
 
     public StocksViewModel(IStockService _stockService, ILoggerService<StocksViewModel> _logger)
     {
@@ -28,9 +28,7 @@ public partial class StocksViewModel : ObservableObject
         {
             await Task.Delay(1);
             var stocks = await stockService.GetStocks();
-            Stocks.Clear();
-            foreach (var stock in stocks)
-                Stocks.Add(stock);
+            Stocks.ReplaceRange(stocks);
         }
         catch (Exception ex)
         {

@@ -1,18 +1,18 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MvvmHelpers;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
-public partial class AddCategoryViewModel : ObservableObject
+public partial class AddCategoryViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     readonly ICategoryService categoryService;
     readonly ILoggerService<AddCategoryViewModel> logger;
 
-    [ObservableProperty] ObservableCollection<string> parents = []; // list of categories
+    [ObservableProperty] ObservableRangeCollection<string> parents = []; // list of categories
     [ObservableProperty] string name; // category name
     [ObservableProperty] string parent; // category parent
 
@@ -59,9 +59,7 @@ public partial class AddCategoryViewModel : ObservableObject
         try
         {
             var categories = await categoryService.GetParentCategories();
-            Parents.Clear();
-            foreach (var cat in categories.Select(c => c.CategoryName))
-                Parents.Add(cat);
+            Parents.ReplaceRange(categories.Select(c => c.CategoryName));
         }
         catch (Exception ex)
         {

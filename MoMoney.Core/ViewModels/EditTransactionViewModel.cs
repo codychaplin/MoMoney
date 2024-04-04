@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -9,7 +10,7 @@ using MoMoney.Core.Services.Interfaces;
 namespace MoMoney.Core.ViewModels;
 
 [QueryProperty(nameof(ID), "ID")]
-public partial class EditTransactionViewModel : ObservableObject
+public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
@@ -18,10 +19,10 @@ public partial class EditTransactionViewModel : ObservableObject
 
     public string ID { get; set; }
 
-    [ObservableProperty] ObservableCollection<Account> accounts = [];
-    [ObservableProperty] ObservableCollection<Category> categories = [];
-    [ObservableProperty] ObservableCollection<Category> subcategories = [];
-    [ObservableProperty] ObservableCollection<string> payees = [];
+    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
+    [ObservableProperty] ObservableRangeCollection<Category> categories = [];
+    [ObservableProperty] ObservableRangeCollection<Category> subcategories = [];
+    [ObservableProperty] ObservableRangeCollection<string> payees = [];
 
     [ObservableProperty] Account account;
     [ObservableProperty] Category category;
@@ -111,9 +112,7 @@ public partial class EditTransactionViewModel : ObservableObject
         {
             // TODO: if using disabled account, retrieve from db as well
             var accounts = await accountService.GetActiveAccounts();
-            Accounts.Clear();
-            foreach (var acc in accounts)
-                Accounts.Add(acc);
+            Accounts.ReplaceRange(accounts);
 
             Account = InitialAccount;
             if (InitialCategory.CategoryID == Constants.TRANSFER_ID)
@@ -184,9 +183,7 @@ public partial class EditTransactionViewModel : ObservableObject
         try
         {
             var categories = await categoryService.GetExpenseCategories();
-            Categories.Clear();
-            foreach (var cat in categories)
-                Categories.Add(cat);
+            Categories.ReplaceRange(categories);
             Subcategories.Clear();
             Category = InitialCategory;
         }
@@ -208,9 +205,7 @@ public partial class EditTransactionViewModel : ObservableObject
             if (Category is not null)
             {
                 var subcategories = await categoryService.GetSubcategories(Category);
-                Subcategories.Clear();
-                foreach (var cat in subcategories)
-                    Subcategories.Add(cat);
+                Subcategories.ReplaceRange(subcategories);
             }
 
             Subcategory = InitialSubcategory;
@@ -230,7 +225,7 @@ public partial class EditTransactionViewModel : ObservableObject
         try
         {
             var payees = await transactionService.GetPayeesFromTransactions();
-            Payees = new ObservableCollection<string>(payees);
+            Payees.ReplaceRange(payees);
         }
         catch (Exception ex)
         {

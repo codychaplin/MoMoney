@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+﻿using MvvmHelpers;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Syncfusion.Maui.ListView;
@@ -8,18 +8,18 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
-public partial class TransactionsViewModel : ObservableObject
+public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
 
-    [ObservableProperty] ObservableCollection<Transaction> loadedTransactions = [];
+    [ObservableProperty] ObservableRangeCollection<Transaction> loadedTransactions = [];
 
-    [ObservableProperty] ObservableCollection<Account> accounts = [];
-    [ObservableProperty] ObservableCollection<Category> categories = [];
-    [ObservableProperty] ObservableCollection<Category> subcategories = [];
-    [ObservableProperty] ObservableCollection<string> payees = [];
+    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
+    [ObservableProperty] ObservableRangeCollection<Category> categories = [];
+    [ObservableProperty] ObservableRangeCollection<Category> subcategories = [];
+    [ObservableProperty] ObservableRangeCollection<string> payees = [];
 
     [ObservableProperty] Account account;
 
@@ -58,12 +58,13 @@ public partial class TransactionsViewModel : ObservableObject
     {
         await GetAccounts();
         await GetParentCategories();
+        await Refresh(new(null, TransactionEventArgs.CRUD.Read));
     }
 
     /// <summary>
     /// Depending on CRUD operation, update Transactions collection.
     /// </summary>
-    public async void Refresh(object sender, TransactionEventArgs e)
+    public async Task Refresh(TransactionEventArgs e)
     {
         switch (e.Type)
         {
@@ -114,8 +115,7 @@ public partial class TransactionsViewModel : ObservableObject
             Transactions.Clear();
             Transactions = new(transactions);
 
-            Payees.Clear();
-            Payees = new ObservableCollection<string>(transactions.Select(t => t.Payee).Distinct());
+            Payees.ReplaceRange(transactions.Select(t => t.Payee).Distinct());
         }
         if (showValue != Utilities.ShowValue)
         {
@@ -185,9 +185,7 @@ public partial class TransactionsViewModel : ObservableObject
     public async Task GetAccounts()
     {
         var accounts = await accountService.GetActiveAccounts();
-        Accounts.Clear();
-        foreach (var acc in accounts)
-            Accounts.Add(acc);
+        Accounts.ReplaceRange(accounts);
     }
 
     /// <summary>
@@ -196,9 +194,7 @@ public partial class TransactionsViewModel : ObservableObject
     public async Task GetParentCategories()
     {
         var categories = await categoryService.GetAllParentCategories();
-        Categories.Clear();
-        foreach (var cat in categories)
-            Categories.Add(cat);
+        Categories.ReplaceRange(categories);
     }
 
     [RelayCommand]
@@ -226,9 +222,7 @@ public partial class TransactionsViewModel : ObservableObject
         if (parentCategory != null)
         {
             var subcategories = await categoryService.GetSubcategories(parentCategory);
-            Subcategories.Clear();
-            foreach (var cat in subcategories)
-                Subcategories.Add(cat);
+            Subcategories.ReplaceRange(subcategories);
         }
     }
 
@@ -327,7 +321,6 @@ public partial class TransactionsViewModel : ObservableObject
     /// <param name="count"></param>
     void AddTransactions(int index, int count)
     {
-        for (int i = index; i < index + count && i < Transactions.Count; i++)
-            LoadedTransactions.Add(Transactions[i]);
+        LoadedTransactions.AddRange(Transactions.Skip(index).Take(count));
     }
 }

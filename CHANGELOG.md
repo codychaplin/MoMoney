@@ -6,6 +6,7 @@
 * Recent transactions on home page now update properly
 * Made lowercase ObservableProperties private so only generated public properties are exposed
 * Fixed storage write permissions
+* Fixed account export format error
 
 ### Changes
 
@@ -14,6 +15,10 @@
 * Added UraniumUI controls and switched to UraniumUI tabs
 * Converted to Material Icons
 * Added loading icon when import/exporting data
+* Made a reusable component for StatsPage buttons
+* Replaced stats section on home page with account information
+* Switched to ObservableRangeCollections WeakReferenceMessenger where possible
+* Optimized BreakdownViewModel
 
 # MoMoney v1.1.4
 

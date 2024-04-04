@@ -34,14 +34,18 @@
 		<PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.13" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-		<PackageReference Include="CsvHelper" Version="31.0.0" />
-		<PackageReference Include="HtmlAgilityPack" Version="1.11.59" />
+		<PackageReference Include="CsvHelper" Version="31.0.2" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.60" />
 		<PackageReference Include="Laerdal.FFmpeg.Audio" Version="4.4.27" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Plugin.Maui.Audio" Version="2.1.0" />
-		<PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+		<PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
+		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.8" />
-		<PackageReference Include="Syncfusion.Maui.ListView" Version="23.1.43" />
+		<PackageReference Include="Syncfusion.Maui.ListView" Version="25.1.37" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.14" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.14" />
+		<PackageReference Include="UraniumUI.Material" Version="2.8.1" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
@@ -54,14 +58,6 @@
 	  <Reference Include="UraniumUI.Material">
 	    <HintPath>..\..\..\..\..\..\..\Nugets\uraniumui.material\2.8.0\lib\net8.0-android34.0\UraniumUI.Material.dll</HintPath>
 	  </Reference>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Update="Microsoft.Maui.Controls" Version="8.0.7" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Update="Microsoft.Maui.Controls.Compatibility" Version="8.0.7" />
 	</ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using MoMoney.Core.Data;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using MoMoney.Core.Data;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -44,6 +45,8 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
 
             return $"Added Account #{account.AccountID} to db.";
         });
+
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task AddAccounts(List<Account> accounts)
@@ -64,6 +67,8 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
 
             return $"Added {accounts.Count} Accounts to db.";
         });
+
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task UpdateAccount(Account updatedAccount)
@@ -75,6 +80,8 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
 
             return $"Updated Account #{updatedAccount.AccountID} in db.";
         });
+
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task UpdateBalance(int ID, decimal amount)
@@ -99,6 +106,8 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
 
             return $"Removed Account #{ID} from db.";
         });
+
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task RemoveAllAccounts()
@@ -112,6 +121,8 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
 
             return $"Removed all Accounts from db.";
         });
+
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task<Account> GetAccount(int ID, bool tryGet = false)

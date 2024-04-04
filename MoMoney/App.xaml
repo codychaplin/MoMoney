@@ -105,19 +105,21 @@
                             Brush="Black"
                             Opacity="0.8"
                             Radius="30"
-                            Offset="10,10" />
+                            Offset="5,5" />
                     </Setter.Value>
                 </Setter>
                 <Setter Property="CornerRadius" Value="25" />
+                <Setter Property="HeightRequest" Value="50" />
+                <Setter Property="WidthRequest" Value="50" />
                 <Setter Property="Margin" Value="20" />
-                <Setter Property="Padding" Value="-5" />
-                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
                 <Setter Property="FontFamily" Value="MaterialRegular" />
-                <Setter Property="FontSize" Value="50" />
+                <Setter Property="FontSize" Value="40" />
                 <Setter Property="VerticalOptions" Value="End" />
                 <Setter Property="HorizontalOptions" Value="End" />
-                <Setter Property="Text" Value="{x:Static m:MaterialRegular.Add_circle}" />
-                <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                <Setter Property="Text" Value="{x:Static m:MaterialRegular.Add}" />
+                <Setter Property="TextColor" Value="White" />
             </Style>
 
             <!--  transaction template  -->

@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.Messaging;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels;
 
@@ -5,72 +6,23 @@ namespace MoMoney.Views;
 
 public partial class HomePage : ContentView
 {
-    HomeViewModel vm;
-
-    public static EventHandler<EventArgs> UpdatePage { get; set; }
-
     public HomePage()
 	{
 		InitializeComponent();
 
-        HandlerChanged += (s, e) =>
+        HandlerChanged += async (s, e) =>
         {
-            vm = Handler.MauiContext.Services.GetService<HomeViewModel>();
+            HomeViewModel vm = Handler.MauiContext.Services.GetService<HomeViewModel>();
             BindingContext = vm;
 
-            // UpdatePage can be triggered by any page
-            UpdatePage += Refresh;
+            Shell.Current.IsBusy = true;
+            await vm.Refresh();
+            Shell.Current.IsBusy = false;
 
-            // Loaded is just called on start
-            Loaded += Refresh;
-
-            // DateSelected is for DatePicker changes
-            dtFrom.DateSelected += Refresh;
-            dtTo.DateSelected += Refresh;
+            // refresh when dates change, or when it is triggered by UpdateHomePageMessage
+            WeakReferenceMessenger.Default.Register<UpdateHomePageMessage>(this, async (r, m) => await vm.Refresh());
+            dtFrom.DateSelected += (s, e) => WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
+            dtTo.DateSelected += (s, e) => WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
         };
-    }
-
-    /// <summary>
-    /// Refreshes data on page. 
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    async void Refresh(object sender, EventArgs e)
-    {
-        // if triggered by tab bar (on MainPage), update dates
-        if (sender is ContentPage)
-        {
-            dtFrom.Date = vm.From;
-            dtTo.Date = vm.To;
-        }
-
-        // show/hide YAxis label amount
-        if (Utilities.ShowValue)
-            YAxisLbl.LabelFormat = "$0,k";
-        else
-            YAxisLbl.LabelFormat = "$?";
-
-
-        await vm.Refresh();
-    }
-
-    /// <summary>
-    /// On click, change to StatsPage tab.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void btnViewAllStats_Clicked(object sender, EventArgs e)
-    {
-        //MainPage.TabView.SelectedIndex = 3;
-    }
-
-    /// <summary>
-    /// On click, change to TransactionsPage tab.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-	private void btnViewAllTransactions_Clicked(object sender, EventArgs e)
-	{
-		//MainPage.TabView.SelectedIndex = 1;
     }
 }

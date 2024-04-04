@@ -1,8 +1,8 @@
-﻿using MoMoney.Core.Data;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using MoMoney.Core.Data;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
-using CommunityToolkit.Mvvm.Messaging;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.Services;
@@ -38,6 +38,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         // send message to update UI
         var args = new TransactionEventArgs(transaction, TransactionEventArgs.CRUD.Create);
         WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(args));
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
 
         return transaction.TransactionID;
     }
@@ -50,6 +51,8 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
 
             return $"Added {transactions.Count} Transactions to db.";
         }, false);
+
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task UpdateTransaction(Transaction updatedTransaction)
@@ -68,6 +71,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         // send message to update UI
         var args = new TransactionEventArgs(updatedTransaction, TransactionEventArgs.CRUD.Update);
         WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(args));
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task RemoveTransaction(Transaction transaction)
@@ -88,6 +92,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         // send message to update UI
         var args = new TransactionEventArgs(transaction, TransactionEventArgs.CRUD.Delete);
         WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(args));
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task RemoveAllTransactions()
@@ -98,11 +103,12 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
             await momoney.db.DropTableAsync<Transaction>();
             await momoney.db.CreateTableAsync<Transaction>();
 
-            var args = new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read);
-            WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(args));
-
             return $"Removed all Transactions from db.";
         }, false);
+
+        var args = new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read);
+        WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(args));
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task<Transaction> GetTransaction(int ID)
@@ -146,7 +152,6 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         await momoney.Init();
         if (reverse)
         {
-            
             return await momoney.db.Table<Transaction>().Where(t => t.Date >= from && t.Date <= to)
                                                         .OrderByDescending(t => t.Date)
                                                         .ToListAsync();

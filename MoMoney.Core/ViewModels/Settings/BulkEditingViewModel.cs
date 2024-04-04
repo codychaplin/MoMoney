@@ -7,30 +7,31 @@ using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
+using MvvmHelpers;
 
 namespace MoMoney.Core.ViewModels.Settings;
 
-public partial class BulkEditingViewModel : ObservableObject
+public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
     readonly ILoggerService<BulkEditingViewModel> logger;
 
-    [ObservableProperty] ObservableCollection<Account> accounts = [];
+    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
     [ObservableProperty] Account findAccount;
     [ObservableProperty] Account replaceAccount;
 
-    [ObservableProperty] ObservableCollection<Category> categories = [];
+    [ObservableProperty] ObservableRangeCollection<Category> categories = [];
     [ObservableProperty] Category findCategory;
     [ObservableProperty] Category replaceCategory;
 
-    [ObservableProperty] ObservableCollection<Category> findSubcategories = [];
-    [ObservableProperty] ObservableCollection<Category> replaceSubcategories = [];
+    [ObservableProperty] ObservableRangeCollection<Category> findSubcategories = [];
+    [ObservableProperty] ObservableRangeCollection<Category> replaceSubcategories = [];
     [ObservableProperty] Category findSubcategory;
     [ObservableProperty] Category replaceSubcategory;
 
-    [ObservableProperty] ObservableCollection<string> payees = [];
+    [ObservableProperty] ObservableRangeCollection<string> payees = [];
     [ObservableProperty] string findPayee;
     [ObservableProperty] string replacePayee;
     [ObservableProperty] string info;
@@ -74,9 +75,7 @@ public partial class BulkEditingViewModel : ObservableObject
         try
         {
             var accounts = await accountService.GetOrderedAccounts();
-            Accounts.Clear();
-            foreach (var acc in accounts)
-                Accounts.Add(acc);
+            Accounts.ReplaceRange(accounts);
         }
         catch (Exception ex)
         {
@@ -93,9 +92,7 @@ public partial class BulkEditingViewModel : ObservableObject
         try
         {
             var categories = await categoryService.GetParentCategories();
-            Categories.Clear();
-            foreach (var cat in categories)
-                Categories.Add(cat);
+            Categories.ReplaceRange(categories);
         }
         catch (Exception ex)
         {
@@ -112,9 +109,7 @@ public partial class BulkEditingViewModel : ObservableObject
         try
         {
             var payees = await transactionService.GetPayeesFromTransactions();
-            Payees.Clear();
-            foreach (var payee in payees)
-                Payees.Add(payee);
+            Payees.ReplaceRange(payees);
         }
         catch (Exception ex)
         {
@@ -146,8 +141,7 @@ public partial class BulkEditingViewModel : ObservableObject
             }
 
             var subcategories = await categoryService.GetSubcategories(FindCategory);
-            foreach (var cat in subcategories)
-                FindSubcategories.Add(cat);
+            FindSubcategories.AddRange(subcategories);
         }
         catch (Exception ex)
         {
@@ -179,8 +173,7 @@ public partial class BulkEditingViewModel : ObservableObject
             }
 
             var subcategories = await categoryService.GetSubcategories(ReplaceCategory);
-            foreach (var cat in subcategories)
-                ReplaceSubcategories.Add(cat);
+            ReplaceSubcategories.AddRange(subcategories);
         }
         catch (Exception ex)
         {

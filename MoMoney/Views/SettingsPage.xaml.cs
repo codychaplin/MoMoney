@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.Messaging;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels;
 
@@ -15,6 +16,7 @@ public partial class SettingsPage : ContentView
         };
 
         lblVersion.Text = $"MoMoney ({AppInfo.Current.VersionString})";
+
         // switch toggle to avoid ThumbColor bug
         swShowValues.IsToggled = false;
         swShowValues.IsToggled = true;
@@ -28,5 +30,6 @@ public partial class SettingsPage : ContentView
     private void swShowValues_Toggled(object sender, ToggledEventArgs e)
     {
         Utilities.ShowValue = swShowValues.IsToggled;
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 }

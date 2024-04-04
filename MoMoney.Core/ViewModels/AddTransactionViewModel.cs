@@ -1,6 +1,6 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MvvmHelpers;
 using Laerdal.FFmpeg;
 using Plugin.Maui.Audio;
 using MoMoney.Core.Models;
@@ -10,7 +10,7 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
-public partial class AddTransactionViewModel : ObservableObject
+public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
@@ -22,10 +22,10 @@ public partial class AddTransactionViewModel : ObservableObject
 
     readonly IOpenAIService openAIService;
 
-    [ObservableProperty] ObservableCollection<Account> accounts = [];
-    [ObservableProperty] ObservableCollection<Category> categories = [];
-    [ObservableProperty] ObservableCollection<Category> subcategories = [];
-    [ObservableProperty] ObservableCollection<string> payees = [];
+    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
+    [ObservableProperty] ObservableRangeCollection<Category> categories = [];
+    [ObservableProperty] ObservableRangeCollection<Category> subcategories = [];
+    [ObservableProperty] ObservableRangeCollection<string> payees = [];
     
     [ObservableProperty] DateTime date;
     [ObservableProperty] Account account = new();
@@ -61,9 +61,7 @@ public partial class AddTransactionViewModel : ObservableObject
     public async void GetAccounts(object sender, EventArgs e)
     {
         var accounts = await accountService.GetActiveAccounts();
-        Accounts.Clear();
-        foreach (var acc in accounts)
-            Accounts.Add(acc);
+        Accounts.ReplaceRange(accounts);
     }
 
     /// <summary>
@@ -140,9 +138,7 @@ public partial class AddTransactionViewModel : ObservableObject
         try
         {
             var categories = await categoryService.GetExpenseCategories();
-            Categories.Clear();
-            foreach (var cat in categories)
-                Categories.Add(cat);
+            Categories.ReplaceRange(categories);
             Subcategories.Clear();
             Category = null;
             Subcategory = null;
@@ -167,9 +163,7 @@ public partial class AddTransactionViewModel : ObservableObject
             if (parentCategory is null) return;
 
             var subcategories = await categoryService.GetSubcategories(parentCategory);
-            Subcategories.Clear();
-            foreach (var cat in subcategories)
-                Subcategories.Add(cat);
+            Subcategories.ReplaceRange(subcategories);
         }
         catch (Exception ex)
         {
@@ -183,7 +177,7 @@ public partial class AddTransactionViewModel : ObservableObject
         try
         {
             var payees = await transactionService.GetPayeesFromTransactions();
-            Payees = new ObservableCollection<string>(payees);
+            Payees.ReplaceRange(payees);
         }
         catch (Exception ex)
         {
