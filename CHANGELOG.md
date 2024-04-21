@@ -19,6 +19,10 @@
 * Replaced stats section on home page with account information
 * Switched to ObservableRangeCollections WeakReferenceMessenger where possible
 * Optimized BreakdownViewModel
+* Added importing of logs
+* Added reset db button
+* Stopped using x:type to comply with Microsoft.Maui.Controls 8.0.20
+* Removed FFMpeg
 
 # MoMoney v1.1.4
 

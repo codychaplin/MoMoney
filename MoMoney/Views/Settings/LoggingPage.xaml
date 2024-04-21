@@ -30,7 +30,7 @@
                                                   Dark={StaticResource Gray700}}"
                 RowDefinitions="*,*">
                 <Grid.Resources>
-                    <Style TargetType="{x:Type Label}">
+                    <Style TargetType="Label">
                         <Setter Property="FontSize" Value="12" />
                         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
                     </Style>
@@ -66,7 +66,7 @@
                     <TapGestureRecognizer Command="{Binding Path=OpenPopupCommand, Source={RelativeSource AncestorType={x:Type viewmodel:LoggingViewModel}}}" CommandParameter="{Binding LogId}" />
                 </Grid.GestureRecognizers>
                 <Grid.Resources>
-                    <Style TargetType="{x:Type Label}">
+                    <Style TargetType="Label">
                         <Setter Property="FontSize" Value="12" />
                         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
                     </Style>

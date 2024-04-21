@@ -1,6 +1,5 @@
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels;
-using UraniumUI.Material.Controls;
 
 namespace MoMoney.Views;
 

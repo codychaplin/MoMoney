@@ -43,6 +43,25 @@ public class MoMoneydb
         }
     }
 
+    /// <summary>
+    /// Drops all tables, closes and nullifies database connection, and re-initializes the database.
+    /// </summary>
+    /// <returns></returns>
+    public async Task ResetDb()
+    {
+        await db.DropTableAsync<Log>();
+        await db.DropTableAsync<Stock>();
+        await db.DropTableAsync<Account>();
+        await db.DropTableAsync<Category>();
+        await db.DropTableAsync<Transaction>();
+        await db.DropTableAsync<ChatResponse>();
+        await db.DropTableAsync<WhisperResponse>();
+        await db.CloseAsync();
+        db = null;
+        initialized = false;
+        await Init();
+    }
+
     public async Task CreateCategories()
     {
         var category = await db.CreateTableAsync<Category>();

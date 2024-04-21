@@ -1,18 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using MoMoney.Core.Models;
+﻿using MoMoney.Core.Models;
 using MoMoney.Core.Exceptions;
 
 namespace MoMoney.Core.Services.Interfaces;
 public interface ILoggerService<T>
 {
-    /// <summary>
-    /// Sends log to db.
-    /// </summary>
-    /// <param name="level"></param>
-    /// <param name="message"></param>
-    /// <param name="exceptionType"></param>
-    Task Log(LogLevel level, string message, string exceptionType);
-
     /// <summary>
     /// Sends info level log to db.
     /// </summary>
@@ -47,6 +38,12 @@ public interface ILoggerService<T>
     /// <param name="eventName"></param>
     /// <param name="parameters"></param>
     void LogFirebaseEvent(string eventName, IDictionary<string, string> parameters);
+
+    /// <summary>
+    /// Adds a list of logs to the db.
+    /// </summary>
+    /// <param name="logs"></param>
+    Task AddLogs(IEnumerable<Log> logs);
 
     /// <summary>
     /// Gets an log from the Logs table using an ID.

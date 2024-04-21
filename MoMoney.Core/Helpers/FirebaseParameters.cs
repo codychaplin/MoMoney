@@ -50,8 +50,11 @@ public class FirebaseParameters
     public static string EVENT_EXPORT_STOCKS => "Export_Stocks";
     public static string EVENT_REMOVE_ALL_STOCKS => "Remove_All_Stocks";
 
+    public static string EVENT_IMPORT_LOGS => "Import_Logs";
     public static string EVENT_EXPORT_LOGS => "Export_Logs";
     public static string EVENT_REMOVE_ALL_LOGS => "Remove_All_Logs";
+
+    public static string EVENT_REMOVE_ALL_DATA => "Remove_All_Data";
 
     public static Dictionary<string, string> GetFirebaseParameters(Exception ex = null, string functionName = null, string className = null)
     {
@@ -69,5 +72,4 @@ public class FirebaseParameters
 
         return parameters;
     }
-
 }

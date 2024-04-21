@@ -24,7 +24,7 @@ public partial class HomeViewModel : CommunityToolkit.Mvvm.ComponentModel.Observ
     [ObservableProperty] static DateTime from = new();
     [ObservableProperty] static DateTime to = new();
 
-    [ObservableProperty] ObservableCollection<BalanceOverTimeData> data = [];
+    [ObservableProperty] ObservableRangeCollection<BalanceOverTimeData> data = [];
 
     [ObservableProperty] string showValue = "$0,k";
 
@@ -50,7 +50,7 @@ public partial class HomeViewModel : CommunityToolkit.Mvvm.ComponentModel.Observ
             ShowValue = Utilities.ShowValue ? "$0,k" : "$?";
             var accounts = await accountService.GetActiveAccounts();
             GetNetworth(accounts);
-            Task getAccountBalances = GetAccountBalances(accounts);
+            await GetAccountBalances(accounts);
 
             var transactions = await transactionService.GetTransactionsFromTo(From, To, true);
             if (!transactions.Any())
@@ -60,9 +60,7 @@ public partial class HomeViewModel : CommunityToolkit.Mvvm.ComponentModel.Observ
             }
 
             GetRecentTransactions(transactions);
-            Task getChartData = GetChartData(transactions);
-
-            await Task.WhenAll(getAccountBalances, getChartData);
+            GetChartData(transactions);
         }
         catch (Exception ex)
         {
@@ -117,37 +115,46 @@ public partial class HomeViewModel : CommunityToolkit.Mvvm.ComponentModel.Observ
     /// <summary>
     /// Gets data for running balance chart.
     /// </summary>
-    async Task GetChartData(IEnumerable<Transaction> transactions)
+    void GetChartData(IEnumerable<Transaction> transactions)
     {
         // if the date range is > 1 year, group results by Month, if < 1 year, group by day
         // get non-transfer transactions, group by date, and select date and sum of amounts on each date
         bool isLong = (To - From).TotalDays > 365;
         decimal runningTotal = Networth;
+
         if (isLong)
         {
-            Data = new ObservableCollection<BalanceOverTimeData>(
-                await Task.Run(() =>
-                    transactions.OrderByDescending(trans => trans.Date)
-                       .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
-                       .GroupBy(trans => trans.Date.Month)
-                       .Select(group => new BalanceOverTimeData
-                       {
-                           Date = group.FirstOrDefault().Date,
-                           Balance = runningTotal -= group.Sum(t => t.Amount)
-                       })));
+            var data = transactions
+                .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
+                .GroupBy(trans => trans.Date.Month)
+                .Select(group =>
+                {
+                    var balanceData = new BalanceOverTimeData
+                    {
+                        Date = group.FirstOrDefault().Date,
+                        Balance = runningTotal
+                    };
+                    runningTotal -= group.Sum(t => t.Amount);
+                    return balanceData;
+                });
+            Data.ReplaceRange(data);
         }
         else
         {
-            Data = new ObservableCollection<BalanceOverTimeData>(
-                await Task.Run(() =>
-                    transactions.OrderByDescending(trans => trans.Date)
-                       .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
-                       .GroupBy(trans => trans.Date)
-                       .Select(group => new BalanceOverTimeData
-                       {
-                           Date = group.FirstOrDefault().Date,
-                           Balance = runningTotal -= group.Sum(t => t.Amount)
-                       })));
+            var data = transactions
+                .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
+                .GroupBy(trans => trans.Date)
+                .Select(group =>
+                {
+                    var balanceData = new BalanceOverTimeData
+                    {
+                        Date = group.Key,
+                        Balance = runningTotal
+                    };
+                    runningTotal -= group.Sum(t => t.Amount);
+                    return balanceData;
+                });
+            Data.ReplaceRange(data);
         }
     }
 

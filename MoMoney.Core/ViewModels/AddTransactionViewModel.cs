@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmHelpers;
-using Laerdal.FFmpeg;
 using Plugin.Maui.Audio;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
@@ -212,17 +211,8 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
             string filePath = $"{FileSystem.Current.CacheDirectory}/{Constants.AUDIO_FILE_NAME}";
             if (recorder.IsRecording)
             {
-                // stop and check if audio is valid
-                var audioSource = await recorder.StopAsync();
-
-                using var stream = audioSource.GetAudioStream();
-                var audioPlayer = AudioManager.Current.CreatePlayer(stream);
-                if (audioPlayer == null || audioPlayer.Duration < 3)
-                    throw new FileNotFoundException("Recording is not long enough");
-
-                FFmpegConfig.IgnoreSignal(24); // stops app from freezing
-                FFmpeg.Execute($"-y -i {filePath.Replace("mp3", "wav")} -b:a 32k {filePath}");
-
+                // stop and get audio data
+                await recorder.StopAsync();
                 var bytes = File.ReadAllBytes(filePath);
                 var audioData = new BinaryData(bytes);
 
@@ -260,7 +250,6 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
 
                 // delete audio files in cache
                 File.Delete(filePath);
-                File.Delete(filePath.Replace("mp3", "wav"));
                 string[] filesToDelete = Directory.GetFiles(FileSystem.Current.CacheDirectory, "*.tmp");
                 foreach (var file in filesToDelete)
                     File.Delete(file);

@@ -18,18 +18,18 @@
         RowDefinitions="Auto,Auto,*"
         RowSpacing="10">
         <Grid.Resources>
-            <Style TargetType="{x:Type Frame}">
+            <Style TargetType="Frame">
                 <Setter Property="Padding" Value="0" />
                 <Setter Property="CornerRadius" Value="10" />
                 <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
             </Style>
-            <Style TargetType="{x:Type VerticalStackLayout}">
+            <Style TargetType="VerticalStackLayout">
                 <Setter Property="Spacing" Value="5" />
             </Style>
-            <Style x:Key="OddPicker" TargetType="{x:Type material:PickerField}">
+            <Style x:Key="OddPicker" TargetType="material:PickerField">
                 <Setter Property="InputBackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray150}, Dark={StaticResource Gray600}}" />
             </Style>
-            <Style x:Key="EvenPicker" TargetType="{x:Type material:PickerField}">
+            <Style x:Key="EvenPicker" TargetType="material:PickerField">
                 <Setter Property="InputBackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
             </Style>
         </Grid.Resources>

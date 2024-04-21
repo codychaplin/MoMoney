@@ -1,8 +1,8 @@
 using CommunityToolkit.Mvvm.Messaging;
+using UraniumUI.Material.Controls;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels;
-using UraniumUI.Material.Controls;
 
 namespace MoMoney.Views;
 

@@ -18,7 +18,7 @@
     <ScrollView Padding="0,10,0,0">
         <VerticalStackLayout Spacing="10">
             <VerticalStackLayout.Resources>
-                <Style TargetType="{x:Type Frame}">
+                <Style TargetType="Frame">
                     <Setter Property="Padding" Value="10" />
                     <Setter Property="Margin" Value="10,0" />
                     <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" />

@@ -38,7 +38,7 @@
                 HeightRequest="46">
                 <Grid x:Name="grdTransactionTypeButtons" ColumnDefinitions="*,*,*">
                     <Grid.Resources>
-                        <Style TargetType="{x:Type Button}">
+                        <Style TargetType="Button">
                             <Setter Property="HeightRequest" Value="45" />
                             <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray900}}" />
                             <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />

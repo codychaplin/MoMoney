@@ -49,7 +49,7 @@ public partial class ImportExportViewModel : ObservableObject
             var result = await SelectFile();
             if (result == null) return;
 
-            List<Account> accounts = new();
+            List<Account> accounts = [];
             int i = 1;
 
             // read CSV and add each element to above list
@@ -110,7 +110,7 @@ public partial class ImportExportViewModel : ObservableObject
             var result = await SelectFile();
             if (result == null) return;
 
-            List<Category> categories = new();
+            List<Category> categories = [];
             int i = 1;
 
             // read CSV and add each element to above list
@@ -181,7 +181,7 @@ public partial class ImportExportViewModel : ObservableObject
             if (result == null) return;
 
             // initial list and counter
-            List<Transaction> transactions = new();
+            List<Transaction> transactions = [];
             int i = 1;
 
             // read CSV and add each element to above list
@@ -249,7 +249,7 @@ public partial class ImportExportViewModel : ObservableObject
             var result = await SelectFile();
             if (result == null) return;
 
-            List<Stock> stocks = new();
+            List<Stock> stocks = [];
             int i = 1;
 
             // read CSV and add each element to above list
@@ -290,6 +290,57 @@ public partial class ImportExportViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(ImportStocksCSV), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Prompts the user to open a CSV file. Logs are then added to the database.
+    /// </summary>
+    [RelayCommand]
+    async Task ImportLogsCSV()
+    {
+        try
+        {
+            IsBusy = true;
+            var result = await SelectFile();
+            if (result == null) return;
+
+            List<Log> logs = [];
+            int i = 1;
+
+            // read CSV and add each element to above list
+            try
+            {
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+                using var sr = new StreamReader(result.FullPath);
+                using var csv = new CsvReader(sr, config);
+                await foreach (var log in csv.GetRecordsAsync<Log>())
+                {
+                    logs.Add(log);
+                    i++;
+                }
+            }
+            catch (TypeConverterException ex)
+            {
+                string errorMessage = $"Log {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
+                throw new InvalidStockException(errorMessage);
+            }
+
+            await logger.AddLogs(logs);
+            string message = i == 2 ? "1 log has been added." : $"{i - 1} logs have been added";
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+
+            await logger.LogInfo($"Imported {logs.Count} logs from '{result.FileName}'.");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_LOGS, FirebaseParameters.GetFirebaseParameters());
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(ImportLogsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
         finally

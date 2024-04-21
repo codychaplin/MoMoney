@@ -23,7 +23,7 @@ public class LoggerService<T> : ILoggerService<T>, IFirebaseService
         className = typeof(T).Name;
     }
 
-    public async Task Log(LogLevel level, string message, string exceptionType)
+    async Task Log(LogLevel level, string message, string exceptionType)
     {
         try
         {
@@ -90,6 +90,12 @@ public class LoggerService<T> : ILoggerService<T>, IFirebaseService
 
         firebaseAnalytics.LogEvent(eventName, bundle);
 #endif
+    }
+
+    public async Task AddLogs(IEnumerable<Log> logs)
+    {
+        await momoney.Init();
+        await momoney.db.InsertAllAsync(logs);
     }
 
     public async Task<Log> GetLog(int ID)

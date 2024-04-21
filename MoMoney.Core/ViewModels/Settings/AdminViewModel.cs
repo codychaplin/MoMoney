@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using MoMoney.Core.Data;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
 
@@ -6,15 +7,17 @@ namespace MoMoney.Core.ViewModels.Settings;
 
 public partial class AdminViewModel
 {
+    readonly MoMoneydb momoney;
     readonly IStockService stockService;
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
     readonly ILoggerService<AdminViewModel> logger;
 
-    public AdminViewModel(ITransactionService _transactionService, IAccountService _accountService,
+    public AdminViewModel(MoMoneydb _momoney, ITransactionService _transactionService, IAccountService _accountService,
         ICategoryService _categoryService, IStockService _stockService, ILoggerService<AdminViewModel> _logger)
     {
+        momoney = _momoney;
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
@@ -134,6 +137,28 @@ public partial class AdminViewModel
             string message = count == 1 ? "1 log has been deleted." : $"{count} logs have been deleted.";
             _ = Shell.Current.DisplayAlert("Success", message, "OK");
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_REMOVE_ALL_LOGS, FirebaseParameters.GetFirebaseParameters());
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(RemoveAllLogs), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+    }
+
+    /// <summary>
+    /// Removes all data from database.
+    /// </summary>
+    [RelayCommand]
+    async Task RemoveAllData()
+    {
+        bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL data?", "Yes", "No");
+        if (!flag) return;
+
+        try
+        {
+            await momoney.ResetDb();
+            _ = Shell.Current.DisplayAlert("Success", "All data has been deleted.", "OK");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_REMOVE_ALL_DATA, FirebaseParameters.GetFirebaseParameters());
         }
         catch (Exception ex)
         {
