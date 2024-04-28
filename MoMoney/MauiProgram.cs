@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui;
+﻿using Microsoft.Maui.LifecycleEvents;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
 using Syncfusion.Maui.Core.Hosting;
 using UraniumUI;
@@ -28,6 +29,7 @@ public static class MauiProgram
                .RegisterViewModels()
                .RegisterServices()
                .RegisterOther()
+               .RegisterFirebase()
                .UseUraniumUI()
                .UseUraniumUIMaterial()
                .UseMauiCommunityToolkit()
@@ -138,6 +140,21 @@ public static class MauiProgram
 
         // file saver
         builder.Services.AddSingleton(FileSaver.Default);
+
+        return builder;
+    }
+
+    static MauiAppBuilder RegisterFirebase(this MauiAppBuilder builder)
+    {
+        builder.ConfigureLifecycleEvents(events =>
+        {
+#if ANDROID
+            events.AddAndroid(android => android.OnCreate((activity, bundle) =>
+            {
+                Firebase.FirebaseApp.InitializeApp(activity);
+            }));
+#endif
+        });
 
         return builder;
     }

@@ -72,7 +72,7 @@ public class LoggerService<T> : ILoggerService<T>
 
     public void LogFirebaseEvent(string eventName, IDictionary<string, string> parameters, Exception exception = null)
     {
-#if ANDROID
+#if ANDROID && RELEASE
         var firebaseAnalytics = FirebaseAnalytics.GetInstance(Platform.CurrentActivity);
 
         if (parameters == null)
@@ -90,11 +90,7 @@ public class LoggerService<T> : ILoggerService<T>
         firebaseAnalytics.LogEvent(eventName, bundle);
 
         if (exception != null)
-        {
-            var crashlytics = Firebase.Crashlytics.FirebaseCrashlytics.Instance;
-            var throwable = Java.Lang.Throwable.FromException(exception);
-            crashlytics.RecordException(throwable);
-        }
+            Firebase.Crashlytics.FirebaseCrashlytics.Instance.RecordException(Java.Lang.Throwable.FromException(exception));
 #endif
     }
 

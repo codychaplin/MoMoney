@@ -11,7 +11,6 @@ public class MainActivity : MauiAppCompatActivity
     {
         base.OnCreate(savedInstanceState);
         SupportActionBar.Hide();
-        Firebase.FirebaseApp.InitializeApp(ApplicationContext);
         Window.SetSoftInputMode(Android.Views.SoftInput.AdjustResize);
     }
 }
