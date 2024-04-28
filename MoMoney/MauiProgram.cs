@@ -2,7 +2,6 @@
 using CommunityToolkit.Maui.Storage;
 using Syncfusion.Maui.Core.Hosting;
 using UraniumUI;
-using Plugin.Maui.Audio;
 using MoMoney.Views;
 using MoMoney.Views.Stats;
 using MoMoney.Views.Settings;
@@ -10,6 +9,7 @@ using MoMoney.Views.Settings.Edit;
 using MoMoney.Core.Data;
 using MoMoney.Core.Services;
 using MoMoney.Core.Services.Interfaces;
+using MoMoney.Core.Platforms.Android;
 using MoMoney.Core.ViewModels;
 using MoMoney.Core.ViewModels.Stats;
 using MoMoney.Core.ViewModels.Settings;
@@ -46,6 +46,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<ICategoryService, CategoryService>();
         builder.Services.AddSingleton<IStockService, StockService>();
         builder.Services.AddSingleton<ITransactionService, TransactionService>();
+        builder.Services.AddSingleton<IRecordAudioService, RecordAudioService>();
 
         return builder;
     }
@@ -134,9 +135,6 @@ public static class MauiProgram
 
         // openai
         builder.Services.AddSingleton<IOpenAIService, OpenAIService>();
-
-        // audio
-        builder.Services.AddSingleton(AudioManager.Current);
 
         // file saver
         builder.Services.AddSingleton(FileSaver.Default);

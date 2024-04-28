@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmHelpers;
-using Plugin.Maui.Audio;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -16,10 +15,9 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
     readonly ITransactionService transactionService;
     readonly ILoggerService<AddTransactionViewModel> logger;
 
-    readonly IAudioManager audioManager;
-    readonly IAudioRecorder recorder;
-
     readonly IOpenAIService openAIService;
+
+    readonly IRecordAudioService recorder;
 
     [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
     [ObservableProperty] ObservableRangeCollection<Category> categories = [];
@@ -41,7 +39,7 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
     ResponseIDs responseIDs = null;
 
     public AddTransactionViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService,
-        ILoggerService<AddTransactionViewModel> _logger, IOpenAIService _openAIService, IAudioManager _audioManager)
+        ILoggerService<AddTransactionViewModel> _logger, IOpenAIService _openAIService, IRecordAudioService _recordAudioService)
     {
         transactionService = _transactionService;
         accountService = _accountService;
@@ -50,8 +48,7 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
 
         openAIService = _openAIService;
 
-        audioManager = _audioManager;
-        recorder = audioManager.CreateRecorder();
+        recorder = _recordAudioService;
     }
 
     /// <summary>
@@ -208,11 +205,21 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
                 return;
             }
 
+            var status = await Permissions.CheckStatusAsync<Permissions.Microphone>();
+            if (status != PermissionStatus.Granted)
+            {
+                status = await Permissions.RequestAsync<Permissions.Microphone>();
+                if (status != PermissionStatus.Granted)
+                {
+                    await Utilities.DisplayToast("Please allow audio recording permissions");
+                }
+            }
+
             string filePath = $"{FileSystem.Current.CacheDirectory}/{Constants.AUDIO_FILE_NAME}";
             if (recorder.IsRecording)
             {
                 // stop and get audio data
-                await recorder.StopAsync();
+                recorder.StopRecord();
                 var bytes = File.ReadAllBytes(filePath);
                 var audioData = new BinaryData(bytes);
 
@@ -258,7 +265,7 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
             }
             else
             {
-                await recorder.StartAsync(filePath.Replace("mp3", "wav"));
+                recorder.StartRecord();
 
                 btnRecord.TextColor = Colors.Red;
                 btnRecord.BorderColor = Colors.Red;
@@ -370,6 +377,6 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
         responseIDs = null;
 
         if (recorder.IsRecording)
-            recorder.StopAsync();
+            recorder.StopRecord();
     }
 }

@@ -26,7 +26,7 @@ public static class Constants
     public const int LOAD_COUNT = 50;
 
     // OpenAI
-    public const string AUDIO_FILE_NAME = "recording.wav";
+    public const string AUDIO_FILE_NAME = "recording.ogg";
     public const string AUDIO_MODEL = "whisper-1";
     public const decimal WHISPER_COST = 0.006m; // per minute
     public const string CHAT_MODEL = "gpt-3.5-turbo-0125";

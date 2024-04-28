@@ -12,7 +12,7 @@ using Firebase.Analytics;
 namespace MoMoney.Core.Services;
 
 /// <inheritdoc />
-public class LoggerService<T> : ILoggerService<T>, IFirebaseService
+public class LoggerService<T> : ILoggerService<T>
 {
     readonly MoMoneydb momoney;
     readonly string className;
@@ -47,7 +47,7 @@ public class LoggerService<T> : ILoggerService<T>, IFirebaseService
     public async Task LogWarning(string functionName, Exception ex)
     {
         await Log(LogLevel.Warning, ex.Message, ex.GetType().Name);
-        LogFirebaseEvent(FirebaseParameters.EVENT_WARNING_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className));
+        LogFirebaseEvent(FirebaseParameters.EVENT_WARNING_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className), ex);
     }
 
     public async Task LogError(string functionName, Exception ex)
@@ -55,25 +55,24 @@ public class LoggerService<T> : ILoggerService<T>, IFirebaseService
         // if SQLite or null reference exception, log as critical, otherwise log as error
         if (ex is SQLite.SQLiteException || ex is NullReferenceException)
         {
-            await Log(LogLevel.Critical, ex.Message, ex.GetType().Name);
-            LogFirebaseEvent(FirebaseParameters.EVENT_CRITICAL_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className));
+            await LogCritical(functionName, ex);
         }
         else
         {
             await Log(LogLevel.Error, ex.Message, ex.GetType().Name);
-            LogFirebaseEvent(FirebaseParameters.EVENT_ERROR_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className));
+            LogFirebaseEvent(FirebaseParameters.EVENT_ERROR_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className), ex);
         }
     }
 
     public async Task LogCritical(string functionName, Exception ex)
     {
         await Log(LogLevel.Critical, ex.Message, ex.GetType().Name);
-        LogFirebaseEvent(FirebaseParameters.EVENT_CRITICAL_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className));
+        LogFirebaseEvent(FirebaseParameters.EVENT_CRITICAL_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className), ex);
     }
 
-    public void LogFirebaseEvent(string eventName, IDictionary<string, string> parameters)
+    public void LogFirebaseEvent(string eventName, IDictionary<string, string> parameters, Exception exception = null)
     {
-#if ANDROID && RELEASE
+#if ANDROID
         var firebaseAnalytics = FirebaseAnalytics.GetInstance(Platform.CurrentActivity);
 
         if (parameters == null)
@@ -85,10 +84,17 @@ public class LoggerService<T> : ILoggerService<T>, IFirebaseService
         var bundle = new Bundle();
         foreach (var param in parameters)
         {
-            bundle.PutString(param.Key, param.Value);
+            bundle.PutString(param.Key, param.Value.ToString());
         }
 
         firebaseAnalytics.LogEvent(eventName, bundle);
+
+        if (exception != null)
+        {
+            var crashlytics = Firebase.Crashlytics.FirebaseCrashlytics.Instance;
+            var throwable = Java.Lang.Throwable.FromException(exception);
+            crashlytics.RecordException(throwable);
+        }
 #endif
     }
 
