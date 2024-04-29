@@ -14,7 +14,7 @@ public partial class BulkEditingPage : ContentPage
 
 		PckFindAccount.SelectedValueChanged += OnClear;
 		PckFindCategory.SelectedValueChanged += OnClear;
-		FindPayee.TextChanged += OnClear;
+		FindPayee.SelectionChanged += OnClear;
 
 		PckReplaceAccount.SelectedValueChanged += OnClear;
         PckReplaceCategory.SelectedValueChanged += OnClear;

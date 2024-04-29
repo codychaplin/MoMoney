@@ -174,6 +174,33 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         return await momoney.db.Table<Transaction>().CountAsync();
     }
 
+    public async Task CalculateAccountBalances()
+    {
+        var transactions = await GetTransactions();
+        var accounts = await accountService.GetAccounts();
+        if (!transactions.Any() || !accounts.Any())
+            return;
+
+        // group transactions by account, sum amounts, and convert to dictionary
+        var currentBalances = transactions.GroupBy(t => t.AccountID)
+                                          .Select(g => new
+                                          {
+                                              g.First().AccountID,
+                                              Balance = g.Sum(t => t.Amount)
+                                          })
+                                          .ToDictionary(a => a.AccountID, a => a.Balance);
+
+        // get accounts that only exist in currentBalances
+        var matchingAccounts = accounts.Where(a => currentBalances.ContainsKey(a.AccountID));
+
+        // update current balance in db
+        foreach (var account in matchingAccounts)
+        {
+            account.CurrentBalance = account.StartingBalance + currentBalances[account.AccountID];
+            await accountService.UpdateAccount(account);
+        }
+    }
+
     /// <summary>
     /// Validates input fields for Transactions.
     /// </summary>

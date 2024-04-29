@@ -88,4 +88,9 @@ public interface ITransactionService
     /// </summary>
     /// <returns>Integer representing number of Transactions</returns>
     Task<int> GetTransactionCount();
+
+    /// <summary>
+    /// Calculates the account balances for all accounts in the database.
+    /// </summary>
+    Task CalculateAccountBalances();
 }

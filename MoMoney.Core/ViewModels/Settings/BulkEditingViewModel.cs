@@ -1,13 +1,12 @@
 ﻿using System.Text;
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MvvmHelpers;
 using UraniumUI.Material.Controls;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
-using MvvmHelpers;
 
 namespace MoMoney.Core.ViewModels.Settings;
 
@@ -109,7 +108,8 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
         try
         {
             var payees = await transactionService.GetPayeesFromTransactions();
-            Payees.ReplaceRange(payees);
+            Payees = new(payees);
+            //Payees.ReplaceRange(payees);
         }
         catch (Exception ex)
         {

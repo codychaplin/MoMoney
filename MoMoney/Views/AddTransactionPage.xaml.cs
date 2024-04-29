@@ -14,16 +14,16 @@ public partial class AddTransactionPage : ContentView
     {
         InitializeComponent();
 
-        HandlerChanged += (s, e) =>
+        HandlerChanged += async (s, e) =>
         {
             vm = Handler.MauiContext.Services.GetService<AddTransactionViewModel>();
             BindingContext = vm;
 
-            Loaded += vm.GetPayees;
-            Loaded += vm.GetAccounts;
+            await vm.GetPayees();
+            await vm.GetAccounts();
 
             // register to receive messages when accounts and categories are updated
-            WeakReferenceMessenger.Default.Register<UpdateAccountsMessage>(this, (r, m) => { vm.GetAccounts(r, default); });
+            WeakReferenceMessenger.Default.Register<UpdateAccountsMessage>(this, async (r, m) => { await vm.GetAccounts(); });
             WeakReferenceMessenger.Default.Register<UpdateCategoriesMessage>(this, (r, m) =>
             {
                 if (vm.transactionType == TransactionType.Income)
@@ -131,13 +131,13 @@ public partial class AddTransactionPage : ContentView
         txtAmount.IsEnabled = other;
         pckCategory.IsEnabled = category;
         pckSubcategory.IsEnabled = subcategory;
-        entPayee.IsEnabled = other;
+        entPayeeParent.IsEnabled = other;
         pckTransferAccount.IsEnabled = other;
     }
 
     void MakePayeeVisible(bool payee)
     {
-        entPayee.IsVisible = payee;
+        entPayeeParent.IsVisible = payee;
         pckTransferAccount.IsVisible = !payee;
     }
 
@@ -160,7 +160,7 @@ public partial class AddTransactionPage : ContentView
     {
         vm.Clear();
         txtAmount.ClearValue();
-        entPayee.SelectedText = null;
+        entPayee.SelectedItem = null;
         entPayee.Text = "";
         MakePayeeVisible(true);
     }

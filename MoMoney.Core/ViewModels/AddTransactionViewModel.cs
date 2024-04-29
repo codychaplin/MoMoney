@@ -54,7 +54,7 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
     /// <summary>
     /// Gets accounts from database and refreshes Accounts collection.
     /// </summary>
-    public async void GetAccounts(object sender, EventArgs e)
+    public async Task GetAccounts()
     {
         var accounts = await accountService.GetActiveAccounts();
         Accounts.ReplaceRange(accounts);
@@ -168,12 +168,13 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
         }
     }
 
-    public async void GetPayees(object sender, EventArgs e)
+    public async Task GetPayees()
     {
         try
         {
             var payees = await transactionService.GetPayeesFromTransactions();
-            Payees.ReplaceRange(payees);
+            Payees = new(payees);
+            //Payees.ReplaceRange(payees);
         }
         catch (Exception ex)
         {
@@ -254,12 +255,6 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
                     var transferAccount = Accounts.FirstOrDefault(a => a.AccountName == transactionResponse.TransferAccount);
                     TransferAccount = transferAccount;
                 }
-
-                // delete audio files in cache
-                File.Delete(filePath);
-                string[] filesToDelete = Directory.GetFiles(FileSystem.Current.CacheDirectory, "*.tmp");
-                foreach (var file in filesToDelete)
-                    File.Delete(file);
 
                 IsWaitingForTranscription = false;
             }

@@ -168,6 +168,23 @@ public partial class AdminViewModel
     }
 
     /// <summary>
+    /// Calculates the current balance of each account and updates the database.
+    /// </summary>
+    [RelayCommand]
+    async Task CalculateAccountBalances()
+    {
+        try
+        {
+            await transactionService.CalculateAccountBalances();
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(CalculateAccountBalances), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+    }
+
+    /// <summary>
     /// Goes to LoggingPage.xaml.
     /// </summary>
     [RelayCommand]

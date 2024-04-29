@@ -16,6 +16,7 @@
             <components:AlignedButton Command="{Binding RemoveAllStocksCommand}" Text="Remove All Stocks" />
             <components:AlignedButton Command="{Binding RemoveAllTransactionsCommand}" Text="Remove All Transactions" />
             <components:AlignedButton Command="{Binding RemoveAllLogsCommand}" Text="Remove All Logs" />
+            <components:AlignedButton Command="{Binding RemoveAllDataCommand}" Text="Remove Everything" />
 
             <!--  data maintenance  -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Data Maintenance" />
@@ -27,6 +28,7 @@
                 Command="{Binding GoToBulkEditingCommand}"
                 ShowArrow="True"
                 Text="Bulk Editing" />
+            <components:AlignedButton Command="{Binding CalculateAccountBalancesCommand}" Text="Recalculate Account Balances" />
 
         </VerticalStackLayout>
     </ScrollView>

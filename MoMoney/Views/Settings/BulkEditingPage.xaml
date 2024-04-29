@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
@@ -80,12 +81,36 @@
                 SelectedItem="{Binding Path=FindSubcategory, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
                 Style="{StaticResource OddPicker}" />
 
-            <!--  find payee search bar  -->
+            <material:InputField x:Name="entPayeeParent">
+                <input:SfAutocomplete
+                    x:Name="FindPayee"
+                    Margin="10,5,0,0"
+                    BackgroundColor="Transparent"
+                    ClearButtonIconColor="{AppThemeBinding Light={StaticResource Black},
+                                                           Dark={StaticResource White}}"
+                    DropDownBackground="{AppThemeBinding Light={StaticResource White},
+                                                         Dark={StaticResource Gray950}}"
+                    DropDownItemTextColor="{AppThemeBinding Light={StaticResource Black},
+                                                            Dark={StaticResource White}}"
+                    IsClearButtonVisible="{Binding FindPayee.Length}"
+                    ItemsSource="{Binding Payees}"
+                    MaxDropDownHeight="250"
+                    Placeholder="Payee"
+                    PlaceholderColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                       Dark={StaticResource Gray200}}"
+                    SelectedItem="{Binding FindPayee}"
+                    SelectionTextHighlightColor="#7742ba96"
+                    Stroke="Transparent"
+                    TextColor="{AppThemeBinding Light={StaticResource Black},
+                                                Dark={StaticResource White}}"
+                    TextSearchMode="Contains" />
+            </material:InputField>
+            <!--  find payee search bar
             <material:AutoCompleteTextField
                 x:Name="FindPayee"
                 Title="Payee"
                 ItemsSource="{Binding Payees}"
-                SelectedText="{Binding FindPayee}" />
+                SelectedText="{Binding FindPayee}" />-->
         </VerticalStackLayout>
 
         <!--  replace values  -->

@@ -68,7 +68,37 @@
                 ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
                 SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}" />
 
-            <!--  Payee  -->
+            <material:InputField x:Name="entPayeeParent">
+                <Grid
+                    Margin="11,3,0,0"
+                    ColumnDefinitions="20,*"
+                    ColumnSpacing="2">
+                    <Image Source="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Account_circle}, Color={AppThemeBinding Light={StaticResource Black}, Dark={StaticResource Gray400}}}" />
+                    <input:SfAutocomplete
+                        x:Name="entPayee"
+                        Grid.Column="1"
+                        BackgroundColor="Transparent"
+                        ClearButtonIconColor="{AppThemeBinding Light={StaticResource Black},
+                                                               Dark={StaticResource White}}"
+                        DropDownBackground="{AppThemeBinding Light={StaticResource White},
+                                                             Dark={StaticResource Gray950}}"
+                        DropDownItemTextColor="{AppThemeBinding Light={StaticResource Black},
+                                                                Dark={StaticResource White}}"
+                        IsClearButtonVisible="{Binding Transaction.Payee.Length}"
+                        ItemsSource="{Binding Payees}"
+                        MaxDropDownHeight="250"
+                        Placeholder="Payee"
+                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                           Dark={StaticResource Gray200}}"
+                        SelectionTextHighlightColor="#7742ba96"
+                        Stroke="Transparent"
+                        Text="{Binding Transaction.Payee, Mode=TwoWay}"
+                        TextColor="{AppThemeBinding Light={StaticResource Black},
+                                                    Dark={StaticResource White}}"
+                        TextSearchMode="Contains" />
+                </Grid>
+            </material:InputField>
+            <!--  Payee
             <material:AutoCompleteTextField
                 x:Name="entPayee"
                 Title="Payee"
@@ -77,7 +107,7 @@
                 ItemsSource="{Binding Payees}"
                 Text="{Binding Transaction.Payee}"
                 TextColor="{AppThemeBinding Light={StaticResource Black},
-                                            Dark={StaticResource White}}" />
+                                            Dark={StaticResource White}}" />-->
 
             <!--  Transfer Payee Account  -->
             <material:PickerField

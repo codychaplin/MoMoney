@@ -14,25 +14,25 @@ public partial class Transaction : ObservableObject
     public int TransactionID { get; set; }
 
     [ObservableProperty]
-    public DateTime date;
+    DateTime date;
 
     [ObservableProperty]
-    public int accountID;
+    int accountID;
 
     [ObservableProperty]
-    public decimal amount;
+    decimal amount;
 
     [ObservableProperty]
-    public int categoryID;
+    int categoryID;
 
     [ObservableProperty]
-    public int subcategoryID;
+    int subcategoryID;
 
     [ObservableProperty]
-    public string payee;
+    string payee;
 
     [ObservableProperty]
-    public int? transferID;
+    int? transferID;
 
     public Transaction() { }
 

@@ -13,7 +13,6 @@
 * Added AI transaction transcription
 * Added option to try getting objects from db by returning null instead of throwing exception
 * Added UraniumUI controls and switched to UraniumUI tabs
-* Converted to Material Icons
 * Added loading icon when import/exporting data
 * Made a reusable component for StatsPage buttons
 * Replaced stats section on home page with account information
@@ -23,6 +22,8 @@
 * Added reset db button
 * Stopped using x:type to comply with Microsoft.Maui.Controls 8.0.20
 * Removed FFMpeg
+* Reverted back to Syncfusion AutoComplete control
+* Moved CalculateAccountBalances() to TransactionService
 
 # MoMoney v1.1.4
 

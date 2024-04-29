@@ -25,7 +25,8 @@
             x:Name="pckType"
             Title="Select a type"
             Icon="{FontImageSource FontFamily=MaterialRegular,
-                                   Glyph={x:Static m:MaterialRegular.Savings}}">
+                                   Glyph={x:Static m:MaterialRegular.Savings}}"
+            SelectedItem="{Binding Type}">
             <material:PickerField.Items>
                 <x:String>Checkings</x:String>
                 <x:String>Savings</x:String>

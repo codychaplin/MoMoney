@@ -224,7 +224,8 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
         try
         {
             var payees = await transactionService.GetPayeesFromTransactions();
-            Payees.ReplaceRange(payees);
+            Payees = new(payees);
+            //Payees.ReplaceRange(payees);
         }
         catch (Exception ex)
         {
