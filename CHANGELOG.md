@@ -1,3 +1,9 @@
+# MoMoney v1.2.1
+
+### Fixes
+
+* Fixed transaction slider filter and wrapped date filter in an InputField
+
 # MoMoney v1.2.0
 
 ### Fixes
