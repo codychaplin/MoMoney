@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Maui.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
@@ -11,7 +13,7 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings;
 
-public partial class ImportExportViewModel
+public partial class ImportExportViewModel : ObservableObject
 {
     readonly IStockService stockService;
     readonly IAccountService accountService;
@@ -19,15 +21,21 @@ public partial class ImportExportViewModel
     readonly ITransactionService transactionService;
     readonly ILoggerService<ImportExportViewModel> logger;
 
-    public ImportExportViewModel(ITransactionService _transactionService, IAccountService _accountService,
-        ICategoryService _categoryService, IStockService _stockService, ILoggerService<ImportExportViewModel> _logger)
+    readonly IFileSaver fileSaver;
+
+    public ImportExportViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService,
+        IStockService _stockService, ILoggerService<ImportExportViewModel> _logger, IFileSaver _fileSaver)
     {
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
         stockService = _stockService;
         logger = _logger;
+        fileSaver = _fileSaver;
     }
+
+    [ObservableProperty]
+    bool isBusy;
 
     /// <summary>
     /// Prompts the user to open a CSV file. Valid Accounts are then added to the database.
@@ -37,10 +45,11 @@ public partial class ImportExportViewModel
     {
         try
         {
+            IsBusy = true;
             var result = await SelectFile();
             if (result == null) return;
 
-            List<Account> accounts = new();
+            List<Account> accounts = [];
             int i = 1;
 
             // read CSV and add each element to above list
@@ -83,6 +92,10 @@ public partial class ImportExportViewModel
             await logger.LogError(nameof(ImportAccountsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     /// <summary>
@@ -93,10 +106,11 @@ public partial class ImportExportViewModel
     {
         try
         {
+            IsBusy = true;
             var result = await SelectFile();
             if (result == null) return;
 
-            List<Category> categories = new();
+            List<Category> categories = [];
             int i = 1;
 
             // read CSV and add each element to above list
@@ -148,6 +162,10 @@ public partial class ImportExportViewModel
             await logger.LogError(nameof(ImportCategoriesCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     /// <summary>
@@ -158,11 +176,12 @@ public partial class ImportExportViewModel
     {
         try
         {
+            IsBusy = true;
             var result = await SelectFile();
             if (result == null) return;
 
             // initial list and counter
-            List<Transaction> transactions = new();
+            List<Transaction> transactions = [];
             int i = 1;
 
             // read CSV and add each element to above list
@@ -212,6 +231,10 @@ public partial class ImportExportViewModel
             await logger.LogError(nameof(ImportTransactionsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     /// <summary>
@@ -222,10 +245,11 @@ public partial class ImportExportViewModel
     {
         try
         {
+            IsBusy = true;
             var result = await SelectFile();
             if (result == null) return;
 
-            List<Stock> stocks = new();
+            List<Stock> stocks = [];
             int i = 1;
 
             // read CSV and add each element to above list
@@ -268,9 +292,69 @@ public partial class ImportExportViewModel
             await logger.LogError(nameof(ImportStocksCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
-    async Task<FileResult> SelectFile()
+    /// <summary>
+    /// Prompts the user to open a CSV file. Logs are then added to the database.
+    /// </summary>
+    [RelayCommand]
+    async Task ImportLogsCSV()
+    {
+        try
+        {
+            IsBusy = true;
+            var result = await SelectFile();
+            if (result == null) return;
+
+            List<Log> logs = [];
+            int i = 1;
+
+            // read CSV and add each element to above list
+            try
+            {
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+                using var sr = new StreamReader(result.FullPath);
+                using var csv = new CsvReader(sr, config);
+                await foreach (var log in csv.GetRecordsAsync<Log>())
+                {
+                    logs.Add(log);
+                    i++;
+                }
+            }
+            catch (TypeConverterException ex)
+            {
+                string errorMessage = $"Log {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
+                throw new InvalidStockException(errorMessage);
+            }
+
+            await logger.AddLogs(logs);
+            string message = i == 2 ? "1 log has been added." : $"{i - 1} logs have been added";
+            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+
+            await logger.LogInfo($"Imported {logs.Count} logs from '{result.FileName}'.");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_LOGS, FirebaseParameters.GetFirebaseParameters());
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(ImportLogsCSV), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Prompts user to select a CSV file and returns the result.
+    /// </summary>
+    /// <returns>FileResult</returns>
+    /// <exception cref="FormatException"></exception>
+    async static Task<FileResult> SelectFile()
     {
         var options = new PickOptions { PickerTitle = "Select a .CSV file" };
         var result = await FilePicker.Default.PickAsync(options);
@@ -291,74 +375,46 @@ public partial class ImportExportViewModel
     {
         try
         {
-            string name = "transactions.csv";
-            string targetFile = await CheckPermissionsAndGetFilePath(name);
-            if (string.IsNullOrEmpty(targetFile)) return;
-
-            // open writer
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
-            using var writer = new StreamWriter(targetFile);
-            using var csv = new CsvWriter(writer, config);
-
-            // configure converter and map
-            TransactionExportConverter.accounts = accountService.Accounts;
-            TransactionExportConverter.categories = categoryService.Categories;
-            csv.Context.TypeConverterCache.AddConverter<Transaction>(new TransactionExportConverter());
-            csv.Context.RegisterClassMap<TransactionExportMap>();
-
-            // get transactions from db and write to csv
+            IsBusy = true;
             var transactions = await transactionService.GetTransactions();
-            csv.WriteRecords(transactions);
-
-            // log/display success message
-            int count = transactions.Count();
-            string message = $"Successfully downloaded file with {count} " + (count == 1 ? "transaction" : "transactions") + $" to:\n'{targetFile}'";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
-
-            await logger.LogInfo($"Exported {count} transactions to '{name}'.");
-            logger.LogFirebaseEvent(FirebaseParameters.EVENT_EXPORT_TRANSACTIONS, FirebaseParameters.GetFirebaseParameters());
+            await ExportData(transactions, "transactions.csv", "transaction", "transactions", FirebaseParameters.EVENT_EXPORT_TRANSACTIONS);
+        }
+        catch (TaskCanceledException)
+        {
+            // user backed out of file picker, do nothing
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(ExportTransactionsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     /// <summary>
     /// Exports Accounts from database to a CSV file.
     /// </summary>
-    /// <returns></returns>
     [RelayCommand]
     async Task ExportAccountsCSV()
     {
         try
         {
-            string name = "accounts.csv";
-            string targetFile = await CheckPermissionsAndGetFilePath(name);
-            if (string.IsNullOrEmpty(targetFile)) return;
-
-            // open writer
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
-            using var writer = new StreamWriter(targetFile);
-            using var csv = new CsvWriter(writer, config);
-
-            // get accounts from db and write to csv
+            IsBusy = true;
             var accounts = await accountService.GetAccounts();
-            csv.WriteRecords(accounts);
-
-            // log/display success message
-            int count = accounts.Count();
-            string message = $"Successfully downloaded file with {count} " + (count == 1 ? "account" : "accounts") + $" to:\n'{targetFile}'";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
-
-            await logger.LogInfo($"Exported {count} accounts to '{name}'.");
-            logger.LogFirebaseEvent(FirebaseParameters.EVENT_EXPORT_ACCOUNTS, FirebaseParameters.GetFirebaseParameters());
+            await ExportData(accounts, "accounts.csv", "account", "accounts", FirebaseParameters.EVENT_EXPORT_ACCOUNTS);
         }
+        catch (TaskCanceledException) { }
         catch (Exception ex)
         {
             await logger.LogError(nameof(ExportAccountsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
@@ -370,31 +426,19 @@ public partial class ImportExportViewModel
     {
         try
         {
-            string name = "categories.csv";
-            string targetFile = await CheckPermissionsAndGetFilePath(name);
-            if (string.IsNullOrEmpty(targetFile)) return;
-
-            // open writer
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
-            using var writer = new StreamWriter(targetFile);
-            using var csv = new CsvWriter(writer, config);
-
-            // get categories from db and write to csv
+            IsBusy = true;
             var categories = await categoryService.GetCategories();
-            csv.WriteRecords(categories);
-
-            // log/display success message
-            int count = categories.Count();
-            string message = $"Successfully downloaded file with {count} " + (count == 1 ? "category" : "categories") + $" to:\n'{targetFile}'";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
-
-            await logger.LogInfo($"Exported {count} categories to '{name}'.");
-            logger.LogFirebaseEvent(FirebaseParameters.EVENT_EXPORT_CATEGORIES, FirebaseParameters.GetFirebaseParameters());
+            await ExportData(categories, "categories.csv", "category", "categories", FirebaseParameters.EVENT_EXPORT_CATEGORIES);
         }
+        catch (TaskCanceledException) { }
         catch (Exception ex)
         {
             await logger.LogError(nameof(ExportCategoriesCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
@@ -406,76 +450,58 @@ public partial class ImportExportViewModel
     {
         try
         {
-            string name = "logs.csv";
-            string targetFile = await CheckPermissionsAndGetFilePath(name);
-            if (string.IsNullOrEmpty(targetFile)) return;
-
-            // open writer
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
-            using var writer = new StreamWriter(targetFile);
-            using var csv = new CsvWriter(writer, config);
-
-            // get logs from db and write to csv
+            IsBusy = true;
             var logs = await logger.GetLogs();
-            csv.WriteRecords(logs);
-
-            // log/display success message
-            int count = logs.Count();
-            string message = $"Successfully downloaded file with {count} " + (count == 1 ? "log" : "logs") + $" to:\n'{targetFile}'";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
-
-            await logger.LogInfo($"Exported {count} logs to '{name}'.");
-            logger.LogFirebaseEvent(FirebaseParameters.EVENT_EXPORT_LOGS, FirebaseParameters.GetFirebaseParameters());
+            await ExportData(logs, "logs.csv", "log", "logs", FirebaseParameters.EVENT_EXPORT_LOGS);
         }
+        catch (TaskCanceledException) { }
         catch (Exception ex)
         {
             await logger.LogError(nameof(ExportLogsCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
+    /// <summary>
+    /// Exports Stocks from database to a CSV file.
+    /// </summary>
     [RelayCommand]
     async Task ExportStocksCSV()
     {
         try
         {
-            string name = "stocks.csv";
-            string targetFile = await CheckPermissionsAndGetFilePath(name);
-            if (string.IsNullOrEmpty(targetFile)) return;
-
-            // open writer
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
-            using var writer = new StreamWriter(targetFile);
-            using var csv = new CsvWriter(writer, config);
-
-            // get stocks from db and write to csv
+            IsBusy = true;
             var stocks = await stockService.GetStocks();
-            csv.WriteRecords(stocks);
-
-            // log/display success message
-            int count = stocks.Count;
-            string message = $"Successfully downloaded file with {count} " + (count == 1 ? "stock" : "stocks") + $" to:\n'{targetFile}'";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
-
-            await logger.LogInfo($"Exported {count} stocks to '{name}'.");
-            logger.LogFirebaseEvent(FirebaseParameters.EVENT_EXPORT_STOCKS, FirebaseParameters.GetFirebaseParameters());
+            await ExportData(stocks, "stocks.csv", "stock", "stocks", FirebaseParameters.EVENT_EXPORT_STOCKS);
         }
+        catch (TaskCanceledException) { }
         catch (Exception ex)
         {
             await logger.LogError(nameof(ExportStocksCSV), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     /// <summary>
-    /// Checks for storage permissions and returns the path to the file.
+    /// Unified logic for exporting data to a CSV file.
     /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="records"></param>
     /// <param name="name"></param>
-    /// <returns>file path if permission is granted, otherwise null</returns>
-    async Task<string> CheckPermissionsAndGetFilePath(string name)
+    /// <param name="typeSingular"></param>
+    /// <param name="typePlural"></param>
+    /// <param name="firebaseEvent"></param>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "What are you gonna do about it")]
+    async Task ExportData<T>(IEnumerable<T> records, string name, string typeSingular, string typePlural, string firebaseEvent)
     {
-        // create file in documents folder
-        string path = "";
 #if ANDROID
         if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Tiramisu)
         {
@@ -485,48 +511,54 @@ public partial class ImportExportViewModel
                 var status = await Permissions.RequestAsync<Permissions.StorageWrite>();
                 if (status != PermissionStatus.Granted)
                 {
-                    await Shell.Current.DisplayAlert("Permission Error", "Storage permissions are required in order to save to CSV", "OK");
-                    return null;
+                    await Shell.Current.DisplayAlert("Error", "Storage permissions are required in order to save to CSV", "OK");
+                    return;
                 }
             }
         }
-
-        path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDocuments).AbsolutePath;
 #endif
 
-        return Path.Combine(path, name);
+        // setup CSV writer
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+        using var memoryStream = new MemoryStream();
+        using var writer = new StreamWriter(memoryStream);
+        using var csv = new CsvWriter(writer, config);
+
+        // write records to CSV
+        if (typeof(T) == typeof(Transaction))
+        {
+            // if exporting transactions, add converters and mappings
+            TransactionExportConverter.accounts = accountService.Accounts;
+            TransactionExportConverter.categories = categoryService.Categories;
+            csv.Context.TypeConverterCache.AddConverter<Transaction>(new TransactionExportConverter());
+            csv.Context.RegisterClassMap<TransactionExportMap>();
+        }
+        csv.WriteRecords(records);
+        writer.Flush();
+        memoryStream.Position = 0;
+
+        // save CSV file using FileSaver API
+        var result = await fileSaver.SaveAsync(name, memoryStream);
+        result.EnsureSuccess();
+
+        // log/display success message
+        int count = records.Count();
+        string message = $"Successfully downloaded file with {count} " + (count == 1 ? typeSingular : typePlural) + $" to:\n'{result.FilePath}'";
+        _ = Shell.Current.DisplayAlert("Success", message, "OK");
+
+        await logger.LogInfo($"Exported {count} {typePlural} to '{name}'.");
+        logger.LogFirebaseEvent(firebaseEvent, FirebaseParameters.GetFirebaseParameters());
     }
 
     /// <summary>
     /// Calculates the current balance of each account and updates the database.
     /// </summary>
+    [RelayCommand]
     async Task CalculateAccountBalances()
     {
         try
         {
-            var transactions = await transactionService.GetTransactions();
-            var accounts = await accountService.GetAccounts();
-            if (!transactions.Any() || !accounts.Any())
-                return;
-
-            // group transactions by account, sum amounts, and convert to dictionary
-            var currentBalances = transactions.GroupBy(t => t.AccountID)
-                                              .Select(g => new
-                                              {
-                                                  g.First().AccountID,
-                                                  Balance = g.Sum(t => t.Amount)
-                                              })
-                                              .ToDictionary(a => a.AccountID, a => a.Balance);
-
-            // get accounts that only exist in currentBalances
-            var matchingAccounts = accounts.Where(a => currentBalances.ContainsKey(a.AccountID));
-
-            // update current balance in db
-            foreach (var account in matchingAccounts)
-            {
-                account.CurrentBalance = account.StartingBalance + currentBalances[account.AccountID];
-                await accountService.UpdateAccount(account);
-            }
+            await transactionService.CalculateAccountBalances();
         }
         catch (Exception ex)
         {

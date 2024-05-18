@@ -10,20 +10,11 @@ public partial class AddStockViewModel : ObservableObject
     readonly IStockService stockService;
     readonly ILoggerService<AddStockViewModel> logger;
 
-    [ObservableProperty]
-    public string symbol; // stock symbol
-
-    [ObservableProperty]
-    public int quantity; // quantity owned
-
-    [ObservableProperty]
-    public decimal cost; // purchase price per share
-
-    [ObservableProperty]
-    public decimal marketPrice; // current price
-
-    [ObservableProperty]
-    public decimal bookValue; // total price paid
+    [ObservableProperty] string symbol; // stock symbol
+    [ObservableProperty] int quantity; // quantity owned
+    [ObservableProperty] decimal cost; // purchase price per share
+    [ObservableProperty] decimal marketPrice; // current price
+    [ObservableProperty] decimal bookValue; // total price paid
 
     public AddStockViewModel(IStockService _stockService, ILoggerService<AddStockViewModel> _logger)
     {

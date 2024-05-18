@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
     xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
@@ -24,7 +25,7 @@
             <!--  view all button style  -->
             <VerticalStackLayout.Resources>
 
-                <Style TargetType="{x:Type Button}">
+                <Style TargetType="Button">
                     <Setter Property="FontSize" Value="12" />
                     <Setter Property="Margin" Value="0,5" />
                     <Setter Property="Padding" Value="5,0" />
@@ -54,8 +55,8 @@
                         <Image
                             HeightRequest="30"
                             HorizontalOptions="End"
-                            Source="calendar.svg"
-                            Style="{StaticResource imgTinted}"
+                            Source="{FontImageSource FontFamily=MaterialRegular,
+                                                     Glyph={x:Static m:MaterialRegular.Calendar_month}}"
                             WidthRequest="30" />
                     </Grid>
                 </toolkit:Expander.Header>
@@ -70,7 +71,7 @@
                     HeightRequest="50"
                     HorizontalOptions="Center">
                     <HorizontalStackLayout Spacing="5">
-                        <Image Source="calendar.svg" Style="{StaticResource imgTinted}" />
+                        <Image HeightRequest="25" Source="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRegular.Calendar_month}}" />
                         <DatePicker
                             x:Name="dtFrom"
                             Date="{Binding From}"
@@ -135,10 +136,7 @@
                             <chart:NumericalAxis ShowMajorGridLines="True" ShowMinorGridLines="False">
                                 <!--  label  -->
                                 <chart:NumericalAxis.LabelStyle>
-                                    <chart:ChartAxisLabelStyle
-                                        x:Name="YAxisLbl"
-                                        LabelFormat="$0,k"
-                                        TextColor="White" />
+                                    <chart:ChartAxisLabelStyle LabelFormat="{Binding ShowValue}" TextColor="White" />
                                 </chart:NumericalAxis.LabelStyle>
                                 <!--  label  -->
                                 <chart:NumericalAxis.MajorGridLineStyle>
@@ -160,7 +158,7 @@
                             Fill="White"
                             ItemsSource="{Binding Data}"
                             StrokeWidth="2"
-                            Type="Natural"
+                            Type="Cardinal"
                             XBindingPath="Date"
                             YBindingPath="Balance" />
 
@@ -171,71 +169,59 @@
             <!--  stats title  -->
             <Grid Margin="10,0">
                 <Label Style="{StaticResource lblTitle}" Text="Statistics" />
-                <Button
-                    x:Name="btnViewAllStats"
-                    Clicked="btnViewAllStats_Clicked"
-                    Text="View All" />
+                <Button Command="{Binding ViewAllStatsCommand}" Text="View All" />
             </Grid>
 
             <Frame Margin="10,0" Padding="10">
-                <Grid
-                    Margin="0"
-                    ColumnDefinitions="*,*"
-                    RowDefinitions="55,45,55"
-                    RowSpacing="10">
-                    <Grid.Resources>
-                        <Style TargetType="{x:Type Label}">
-                            <Setter Property="VerticalOptions" Value="Center" />
-                            <Setter Property="HorizontalOptions" Value="Center" />
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                        </Style>
-                    </Grid.Resources>
-
-                    <!--  net worth  -->
-                    <VerticalStackLayout Grid.ColumnSpan="2">
-                        <Label FontSize="15" Text="Net Worth" />
-                        <Label
-                            FontAttributes="Bold"
-                            FontSize="30"
-                            Text="{Binding Networth, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
-                    </VerticalStackLayout>
-
-                    <!--  total income  -->
-                    <VerticalStackLayout Grid.Row="1">
-                        <Label FontSize="15" Text="Total Income" />
-                        <Label FontSize="24" Text="{Binding TotalIncome, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
-                    </VerticalStackLayout>
-                    <!--  total expense  -->
-                    <VerticalStackLayout Grid.Row="2">
-                        <Label FontSize="15" Text="Total Expense" />
-                        <Label FontSize="24" Text="{Binding TotalExpenses, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
-                    </VerticalStackLayout>
-
-                    <!--  top income  -->
-                    <VerticalStackLayout Grid.Row="1" Grid.Column="1">
-                        <Label FontSize="15" Text="Top Income" />
-                        <Label FontSize="24" Text="{Binding TopIncomeSubcategory}" />
-                    </VerticalStackLayout>
-                    <!--  top expense  -->
-                    <VerticalStackLayout Grid.Row="2" Grid.Column="1">
-                        <Label FontSize="15" Text="Top Expense" />
-                        <Label FontSize="24" Text="{Binding TopExpenseCategory}" />
-                    </VerticalStackLayout>
-
-                </Grid>
+                <VerticalStackLayout>
+                    <Label
+                        FontSize="16"
+                        HorizontalTextAlignment="Center"
+                        Text="Net Worth"
+                        TextColor="{AppThemeBinding Light={StaticResource Gray700},
+                                                    Dark={StaticResource Gray200}}" />
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="30"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding Networth, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
+                    <ListView
+                        ItemsSource="{Binding AccountTotals}"
+                        RowHeight="35"
+                        SelectionMode="None"
+                        SeparatorColor="{StaticResource Gray500}"
+                        SeparatorVisibility="Default"
+                        VerticalScrollBarVisibility="Never">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:AccountTotalModel">
+                                <ViewCell>
+                                    <Grid Padding="5,0" ColumnDefinitions="*,*">
+                                        <Label
+                                            FontSize="16"
+                                            Text="{Binding AccountType}"
+                                            VerticalTextAlignment="Center" />
+                                        <Label
+                                            Grid.Column="1"
+                                            FontSize="16"
+                                            HorizontalTextAlignment="End"
+                                            Text="{Binding Total, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                                            VerticalTextAlignment="Center" />
+                                    </Grid>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </VerticalStackLayout>
             </Frame>
 
             <!--  transactions title  -->
             <Grid Margin="10,0">
                 <Label Style="{StaticResource lblTitle}" Text="Transactions" />
-                <Button
-                    x:Name="btnViewAllTransactions"
-                    Clicked="btnViewAllTransactions_Clicked"
-                    Text="View All" />
+                <Button Command="{Binding ViewAllTransactionsCommand}" Text="View All" />
             </Grid>
 
             <!--  list of transactions  -->
-            <Frame Margin="10,0" Padding="10,0,10,10">
+            <Frame Margin="10,0" Padding="0,5">
                 <CollectionView
                     EmptyView="No Transactions Found"
                     ItemTemplate="{StaticResource TransactionFrame}"

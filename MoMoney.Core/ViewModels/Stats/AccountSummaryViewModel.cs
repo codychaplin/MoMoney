@@ -10,32 +10,16 @@ public partial class AccountSummaryViewModel : ObservableObject
 {
     readonly IAccountService accountService;
 
-    [ObservableProperty]
-    public ObservableCollection<Account> checkingsAccounts = new();
+    [ObservableProperty] ObservableCollection<Account> checkingsAccounts = [];
+    [ObservableProperty] ObservableCollection<Account> savingsAccounts = [];
+    [ObservableProperty] ObservableCollection<Account> creditAccounts = [];
+    [ObservableProperty] ObservableCollection<Account> investmentAccounts = [];
 
-    [ObservableProperty]
-    public ObservableCollection<Account> savingsAccounts = new();
-
-    [ObservableProperty]
-    public ObservableCollection<Account> creditAccounts = new();
-
-    [ObservableProperty]
-    public ObservableCollection<Account> investmentAccounts = new();
-
-    [ObservableProperty]
-    public decimal checkingsSum = 0;
-
-    [ObservableProperty]
-    public decimal savingsSum = 0;
-
-    [ObservableProperty]
-    public decimal creditSum = 0;
-
-    [ObservableProperty]
-    public decimal investmentSum = 0;
-
-    [ObservableProperty]
-    public decimal networth = 0;
+    [ObservableProperty] decimal checkingsSum = 0;
+    [ObservableProperty] decimal savingsSum = 0;
+    [ObservableProperty] decimal creditSum = 0;
+    [ObservableProperty] decimal investmentSum = 0;
+    [ObservableProperty] decimal networth = 0;
 
     public AccountSummaryViewModel(IAccountService _accountService, ILoggerService<AccountSummaryViewModel> _loggerService)
     {

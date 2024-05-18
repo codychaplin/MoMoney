@@ -11,6 +11,7 @@ public class FirebaseParameters
     public static string EVENT_OPEN_APP => "Open_App";
     public static string EVENT_BULK_FIND => "Bulk_Find";
     public static string EVENT_BULK_REPLACE => "Bulk_Replace";
+    public static string EVENT_OPENAI_CALL => "OpenAI_Call";
 
     public static string EVENT_WARNING_LOG => "Warning_Log";
     public static string EVENT_ERROR_LOG => "Error_Log";
@@ -49,8 +50,11 @@ public class FirebaseParameters
     public static string EVENT_EXPORT_STOCKS => "Export_Stocks";
     public static string EVENT_REMOVE_ALL_STOCKS => "Remove_All_Stocks";
 
+    public static string EVENT_IMPORT_LOGS => "Import_Logs";
     public static string EVENT_EXPORT_LOGS => "Export_Logs";
     public static string EVENT_REMOVE_ALL_LOGS => "Remove_All_Logs";
+
+    public static string EVENT_REMOVE_ALL_DATA => "Remove_All_Data";
 
     public static Dictionary<string, string> GetFirebaseParameters(Exception ex = null, string functionName = null, string className = null)
     {
@@ -68,5 +72,4 @@ public class FirebaseParameters
 
         return parameters;
     }
-
 }

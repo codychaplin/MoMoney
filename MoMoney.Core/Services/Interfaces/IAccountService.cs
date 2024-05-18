@@ -47,17 +47,19 @@ public interface IAccountService
     /// Gets an account from the Accounts table using an ID.
     /// </summary>
     /// <param name="ID"></param>
+    /// <param name="tryGet"></param>
     /// <returns>Account object</returns>
     /// <exception cref="AccountNotFoundException"></exception>
-    Task<Account> GetAccount(int ID);
+    Task<Account> GetAccount(int ID, bool tryGet = false);
 
     /// <summary>
     /// Gets an account from the Accounts table using a name.
     /// </summary>
     /// <param name="name"></param>
+    /// <param name="tryGet"></param>
     /// <returns>Account object</returns>
     /// <exception cref="AccountNotFoundException"></exception>
-    Task<Account> GetAccount(string name);
+    Task<Account> GetAccount(string name, bool tryGet = false);
 
     /// <summary>
     /// Gets all Accounts from Accounts table as a list.
@@ -76,6 +78,12 @@ public interface IAccountService
     /// </summary>
     /// <returns>List of active Account objects</returns>
     Task<IEnumerable<Account>> GetActiveAccounts();
+
+    /// <summary>
+    /// Gets all Accounts from Accounts table ordered by Enabled and then AccountName.
+    /// </summary>
+    /// <returns>List of ordered Account objects</returns>
+    Task<IEnumerable<Account>> GetOrderedAccounts();
 
     /// <summary>
     /// Gets total number of Accounts in db.

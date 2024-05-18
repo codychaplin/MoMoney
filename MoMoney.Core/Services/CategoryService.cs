@@ -100,19 +100,19 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
         });
     }
 
-    public async Task<Category> GetCategory(int ID)
+    public async Task<Category> GetCategory(int ID, bool tryGet = false)
     {
         await Init();
         if (Categories.TryGetValue(ID, out var category))
             return new Category(category);
 
         var cat = await momoney.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryID == ID);
-        return cat is null
+        return cat is null && !tryGet
             ? throw new CategoryNotFoundException($"Could not find Category with ID '{ID}'.")
             : cat;
     }
 
-    public async Task<Category> GetCategory(string name, string parent)
+    public async Task<Category> GetCategory(string name, string parent, bool tryGet = false)
     {
         await Init();
         var cats = Categories.Values.Where(a => a.CategoryName.Equals(name, StringComparison.OrdinalIgnoreCase) &&
@@ -121,7 +121,7 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
             return cats.First();
 
         var cat = await momoney.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryName == name && c.ParentName == parent);
-        return cat is null
+        return cat is null && !tryGet
             ? throw new CategoryNotFoundException($"Could not find Category with name '{name}'.")
             : cat;
     }
@@ -156,6 +156,16 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
         return await momoney.db.Table<Category>()
                                .Where(c => c.CategoryID >= Constants.EXPENSE_ID)
                                .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Category>> GetAllCategories()
+    {
+        await Init();
+        var cats = Categories.Select(pair => pair.Value);
+        if (cats.Any())
+            return cats;
+
+        return await momoney.db.Table<Category>().ToListAsync();
     }
 
     public async Task<IEnumerable<Category>> GetAllParentCategories()

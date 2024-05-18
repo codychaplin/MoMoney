@@ -2,6 +2,7 @@
 using CsvHelper.Configuration.Attributes;
 
 namespace MoMoney.Core.Models;
+
 public class Account
 {
     [PrimaryKey, AutoIncrement, CsvHelper.Configuration.Attributes.Ignore]
@@ -12,7 +13,7 @@ public class Account
     public string AccountType { get; set; }
     [Index(2)]
     public decimal StartingBalance { get; set; }
-    [Index(2)]
+    [CsvHelper.Configuration.Attributes.Ignore]
     public decimal CurrentBalance { get; set; }
     [Index(3)]
     public bool Enabled { get; set; }
@@ -46,4 +47,10 @@ public enum AccountType // account types
     Savings,
     Credit,
     Investments
+}
+
+public class AccountTotalModel
+{
+    public string AccountType { get; set; }
+    public decimal Total { get; set; }
 }

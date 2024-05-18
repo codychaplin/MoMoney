@@ -1,45 +1,32 @@
 ﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
-using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
-public partial class HomeViewModel : ObservableObject
+public partial class HomeViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
     readonly ILoggerService<HomeViewModel> logger;
 
-    [ObservableProperty]
-    public ObservableCollection<Transaction> recentTransactions = new();
+    [ObservableProperty] ObservableRangeCollection<Transaction> recentTransactions = [];
 
-    [ObservableProperty]
-    public decimal networth = 0;
+    [ObservableProperty] decimal networth = 0;
+    [ObservableProperty] ObservableRangeCollection<AccountTotalModel> accountTotals = [];
 
-    [ObservableProperty]
-    public decimal totalIncome = 0;
+    [ObservableProperty] static DateTime from = new();
+    [ObservableProperty] static DateTime to = new();
 
-    [ObservableProperty]
-    public decimal totalExpenses = 0;
+    [ObservableProperty] ObservableRangeCollection<BalanceOverTimeData> data = [];
 
-    [ObservableProperty]
-    public string topIncomeSubcategory = "N/A";
-
-    [ObservableProperty]
-    public string topExpenseCategory = "N/A";
-
-    [ObservableProperty]
-    public static DateTime from = new();
-
-    [ObservableProperty]
-    public static DateTime to = new();
-
-    [ObservableProperty]
-    public ObservableCollection<BalanceOverTimeData> data = new();
+    [ObservableProperty] string showValue = "$0,k";
 
     public HomeViewModel(ITransactionService _transactionService, IAccountService _accountService,
         ICategoryService _categoryService, ILoggerService<HomeViewModel> _logger)
@@ -58,23 +45,34 @@ public partial class HomeViewModel : ObservableObject
 
     public async Task Refresh()
     {
-        await GetNetworth();
+        try
+        {
+            ShowValue = Utilities.ShowValue ? "$0,k" : "$?";
+            var accounts = await accountService.GetActiveAccounts();
+            GetNetworth(accounts);
+            await GetAccountBalances(accounts);
 
-        var transactions = await transactionService.GetTransactionsFromTo(From, To, true);
-        if (!transactions.Any())
-            return;
-        
-        GetRecentTransactions(transactions);
-        Task getStats = GetStats(transactions);
-        Task getChartData = GetChartData(transactions);
+            var transactions = await transactionService.GetTransactionsFromTo(From, To, true);
+            if (!transactions.Any())
+            {
+                RecentTransactions.Clear();
+                return;
+            }
 
-        await Task.WhenAll(getStats, getChartData);
+            GetRecentTransactions(transactions);
+            GetChartData(transactions);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(Refresh), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
     /// Gets updated total balance of all accounts combined.
     /// </summary>
-    async Task GetNetworth()
+    void GetNetworth(IEnumerable<Account> accounts)
     {
         if (Utilities.ShowValue == false)
         {
@@ -82,12 +80,7 @@ public partial class HomeViewModel : ObservableObject
             return;
         }
 
-        decimal total = 0;
-        var accounts = await accountService.GetActiveAccounts();
-        if (accounts.Any())
-            foreach (var acc in accounts)
-                total += acc.CurrentBalance;
-        Networth = total;
+        Networth = accounts.Sum(acc => acc.CurrentBalance);
     }
 
     /// <summary>
@@ -96,69 +89,25 @@ public partial class HomeViewModel : ObservableObject
     void GetRecentTransactions(IEnumerable<Transaction> transactions)
     {
         transactions = transactions.Take(5);
-        RecentTransactions.Clear();
-        foreach (var trans in transactions)
-            RecentTransactions.Add(trans);
+        RecentTransactions.ReplaceRange(transactions);
     }
 
-    async Task GetStats(IEnumerable<Transaction> transactions)
+    async Task GetAccountBalances(IEnumerable<Account> accounts)
     {
         try
         {
-            // update income/expense totals
-            if (Utilities.ShowValue)
-            {
-                TotalIncome = transactions.Where(t => t.CategoryID == Constants.INCOME_ID).Sum(t => t.Amount);
-                TotalExpenses = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID).Sum(t => t.Amount);
-            }
-            else
-            {
-                TotalIncome = 0;
-                TotalExpenses = 0;
-            }
-
-            // update top income subcategory
-            var incomeTransactions = transactions.Where(t => t.CategoryID == Constants.INCOME_ID);
-            if (incomeTransactions.Any())
-            {
-                var subcategoryID = incomeTransactions.GroupBy(t => t.SubcategoryID)
-                                                      .Select(group => new
-                                                      {
-                                                          Total = group.Sum(t => t.Amount),
-                                                          group.FirstOrDefault().SubcategoryID
-                                                      })
-                                                      .MaxBy(g => g.Total)
-                                                      .SubcategoryID;
-
-                Category subcategory = await categoryService.GetCategory(subcategoryID);
-                TopIncomeSubcategory = subcategory.CategoryName;
-            }
-
-            // update top expense category
-            var expenseTransactions = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID);
-            if (expenseTransactions.Any())
-            {
-
-                var categoryID = expenseTransactions.GroupBy(t => t.CategoryID)
-                                                    .Select(group => new
-                                                    {
-                                                        Total = group.Sum(t => t.Amount),
-                                                        group.FirstOrDefault().CategoryID
-                                                    })
-                                                    .MinBy(g => g.Total)
-                                                    .CategoryID;
-                Category category = await categoryService.GetCategory(categoryID);
-                TopExpenseCategory = category.CategoryName;
-            }
-        }
-        catch (CategoryNotFoundException ex)
-        {
-            await logger.LogError(nameof(GetStats), ex);
-            await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+            var groupedAccounts = accounts.GroupBy(acc => acc.AccountType)
+                                          .Select(group => new AccountTotalModel
+                                          {
+                                              AccountType = group.Key.ToString(),
+                                              Total = Utilities.ShowValue ? group.Sum(acc => acc.CurrentBalance) : 0
+                                          });
+            
+            AccountTotals.ReplaceRange(groupedAccounts.Where(acc => acc != null));
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(GetStats), ex);
+            await logger.LogError(nameof(GetAccountBalances), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -166,37 +115,52 @@ public partial class HomeViewModel : ObservableObject
     /// <summary>
     /// Gets data for running balance chart.
     /// </summary>
-    async Task GetChartData(IEnumerable<Transaction> transactions)
+    void GetChartData(IEnumerable<Transaction> transactions)
     {
         // if the date range is > 1 year, group results by Month, if < 1 year, group by day
         // get non-transfer transactions, group by date, and select date and sum of amounts on each date
         bool isLong = (To - From).TotalDays > 365;
         decimal runningTotal = Networth;
+
         if (isLong)
         {
-            Data = new ObservableCollection<BalanceOverTimeData>(
-                await Task.Run(() =>
-                    transactions.OrderByDescending(trans => trans.Date)
-                       .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
-                       .GroupBy(trans => trans.Date.Month)
-                       .Select(group => new BalanceOverTimeData
-                       {
-                           Date = group.FirstOrDefault().Date,
-                           Balance = runningTotal -= group.Sum(t => t.Amount)
-                       })));
+            var data = transactions
+                .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
+                .GroupBy(trans => trans.Date.Month)
+                .Select(group =>
+                {
+                    var balanceData = new BalanceOverTimeData
+                    {
+                        Date = group.FirstOrDefault().Date,
+                        Balance = runningTotal
+                    };
+                    runningTotal -= group.Sum(t => t.Amount);
+                    return balanceData;
+                });
+            Data.ReplaceRange(data);
         }
         else
         {
-            Data = new ObservableCollection<BalanceOverTimeData>(
-                await Task.Run(() =>
-                    transactions.OrderByDescending(trans => trans.Date)
-                       .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
-                       .GroupBy(trans => trans.Date)
-                       .Select(group => new BalanceOverTimeData
-                       {
-                           Date = group.FirstOrDefault().Date,
-                           Balance = runningTotal -= group.Sum(t => t.Amount)
-                       })));
+            var data = transactions
+                .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
+                .GroupBy(trans => trans.Date)
+                .Select(group =>
+                {
+                    var balanceData = new BalanceOverTimeData
+                    {
+                        Date = group.Key,
+                        Balance = runningTotal
+                    };
+                    runningTotal -= group.Sum(t => t.Amount);
+                    return balanceData;
+                });
+            Data.ReplaceRange(data);
         }
     }
+
+    [RelayCommand]
+    public void ViewAllStats() => WeakReferenceMessenger.Default.Send(new ChangeTabMessage(3));
+
+    [RelayCommand]
+    public void ViewAllTransactions() => WeakReferenceMessenger.Default.Send(new ChangeTabMessage(1));
 }

@@ -51,23 +51,12 @@ public partial class EditTransactionPage : ContentPage
         }
         else if (vm.InitialCategory.CategoryID == Constants.TRANSFER_ID)
         {
-            pckPayeeAccount.SelectedIndex = pckPayeeAccount.Items.IndexOf(vm.InitialPayeeAccount.AccountName);
+            pckTransferAccount.SelectedIndex = pckTransferAccount.Items.IndexOf(vm.InitialTransferAccount.AccountName);
             pckCategory.IsEnabled = false;
             pckSubcategory.IsEnabled = false;
-            frPayee.IsVisible = false;
-            frPayeeAccount.IsVisible = true;
+            entPayee.IsVisible = false;
+            pckTransferAccount.IsVisible = true;
         }
-    }
-
-    /// <summary>
-    /// Updates Subcategories for Subcategory picker.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private async void pckCategory_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        if (vm.Category != null)
-            await vm.GetSubcategories(vm.Category);
     }
 
     /// <summary>
@@ -110,8 +99,8 @@ public partial class EditTransactionPage : ContentPage
         // reset payee in order to clear text in Payee SfAutocomplete
         vm.Transaction.Payee = "";
         vm.Transaction = new();
-        dtDate.Date = DateTime.Now;
+        dtpDate.Date = DateTime.Now;
         pckAccount.SelectedIndex = -1;
-        pckPayeeAccount.SelectedIndex = -1;
+        pckTransferAccount.SelectedIndex = -1;
     }
 }

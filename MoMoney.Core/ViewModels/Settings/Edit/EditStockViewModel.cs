@@ -13,8 +13,7 @@ public partial class EditStockViewModel : ObservableObject
     readonly IStockService stockService;
     readonly ILoggerService<EditStockViewModel> logger;
 
-    [ObservableProperty]
-    public Stock stock = new();
+    [ObservableProperty] Stock stock = new();
 
     Stock initalStock;
 
@@ -33,6 +32,7 @@ public partial class EditStockViewModel : ObservableObject
     {
         try
         {
+            await Task.Delay(100);
             Stock = await stockService.GetStock(Symbol);
             initalStock = new Stock
             {

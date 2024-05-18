@@ -13,17 +13,11 @@ public partial class StockStatsViewModel : ObservableObject
     readonly IStockService stockService;
     readonly ILoggerService<StockStatsViewModel> logger;
 
-    [ObservableProperty]
-    public ObservableCollection<DetailedStock> stocks = new();
+    [ObservableProperty] ObservableCollection<DetailedStock> stocks = [];
 
-    [ObservableProperty]
-    public decimal total = 0;
-
-    [ObservableProperty]
-    public decimal totalPercent = 0;
-
-    [ObservableProperty]
-    public decimal marketValue = 0;
+    [ObservableProperty] decimal total = 0;
+    [ObservableProperty] decimal totalPercent = 0;
+    [ObservableProperty] decimal marketValue = 0;
 
     decimal totalBook = 0;
     decimal totalMarket = 0;
@@ -46,7 +40,7 @@ public partial class StockStatsViewModel : ObservableObject
     {
         // populate collection with cached values first
         var stocks = await stockService.GetStocks();
-        if (stocks.Count == 0)
+        if (!stocks.Any())
             return;
 
         foreach (var stock in stocks)

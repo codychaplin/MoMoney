@@ -1,55 +1,50 @@
-using Syncfusion.Maui.TabView;
+using CommunityToolkit.Mvvm.Messaging;
 using MoMoney.Core.Helpers;
-using MoMoney.Core.ViewModels;
 
 namespace MoMoney.Views;
 
 public partial class MainPage : ContentPage
 {
-	public static SfTabView TabView { get; private set; }
-
-    public MainPage(HomeViewModel homeViewModel, TransactionsViewModel transactionsViewModel, AddTransactionViewModel addTransactionViewModel,
-		StatsViewModel statsViewModel, SettingsViewModel settingsViewModel)
+	public MainPage()
 	{
 		InitializeComponent();
 
-		HomePageTab.Content = new HomePage(homeViewModel);
-        TransactionsPageTab.Content = new TransactionsPage(transactionsViewModel);
-        AddTransactionPageTab.Content = new AddTransactionPage(addTransactionViewModel);
-        StatsPageTab.Content = new StatsPage(statsViewModel);
-        SettingsPageTab.Content = new SettingsPage(settingsViewModel);
-
-		TabView = TabBar;
-		TabBar.SelectedIndex = 0;
-    }
-
-	private void TabBar_SelectionChanged(object sender, TabSelectionChangedEventArgs e)
-	{
-		// change colour of selected tab icon
-        var previousItem = e.OldIndex >= 0 ? TabBar.Items[(int)e.OldIndex] : null;
-        var currentItem = e.NewIndex >= 0 ? TabBar.Items[(int)e.NewIndex] : null;
-        string colour = (AppInfo.Current.RequestedTheme == AppTheme.Dark) ? "white" : "black";
-        if (previousItem != null)
+		MainTabView.SelectedTabChanged += (s, e) =>
 		{
-			var imageSource = (FileImageSource)previousItem.ImageSource;
-			string name = imageSource.File.Replace("green", colour);
-			previousItem.ImageSource = name;
-		}
-        if (currentItem != null)
-        {
-            var imageSource = (FileImageSource)currentItem.ImageSource;
-            string name = imageSource.File.Replace(colour, "green");
-            currentItem.ImageSource = name;
-        }
+			if (e.Data.ToString() == "1")
+			{
+				var args = new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read);
+				WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(args));
+			}
+		};
 
-        if (TabBar.SelectedIndex == 0) // Home Page
+		// Initialize the tabs so they load faster when navigated to for the first time
+		TransactionsPageTab.Command.Execute(null);
+		SettingsPageTab.Command.Execute(null);
+		StatsPageTab.Command.Execute(null);
+		AddTransactionPageTab.Command.Execute(null);
+		HomePageTab.Command.Execute(null);
+
+		WeakReferenceMessenger.Default.Register<ChangeTabMessage>(this, (r, m) =>
 		{
-			HomePage.UpdatePage?.Invoke(this, new EventArgs());
-		}
-		else if (TabBar.SelectedIndex == 1) // TransactionPage
-		{
-			var args = new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read);
-			TransactionsPage.TransactionsChanged?.Invoke(this, args);
-		}
+			switch (m.Value)
+			{
+				case 0:
+					HomePageTab.Command.Execute(null);
+					break;
+				case 1:
+					TransactionsPageTab.Command.Execute(null);
+					break;
+				case 2:
+					AddTransactionPageTab.Command.Execute(null);
+					break;
+				case 3:
+					StatsPageTab.Command.Execute(null);
+					break;
+				case 4:
+					SettingsPageTab.Command.Execute(null);
+					break;
+			}
+		});
 	}
 }

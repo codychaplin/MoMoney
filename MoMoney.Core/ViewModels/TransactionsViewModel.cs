@@ -1,59 +1,37 @@
-﻿using System.Collections.ObjectModel;
+﻿using MvvmHelpers;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Syncfusion.Maui.ListView;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
-using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
-public partial class TransactionsViewModel : ObservableObject
+public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
-    readonly ILoggerService<TransactionsViewModel> logger;
 
-    [ObservableProperty]
-    public ObservableCollection<Transaction> loadedTransactions = new();
+    [ObservableProperty] ObservableRangeCollection<Transaction> loadedTransactions = [];
 
-    [ObservableProperty]
-    public ObservableCollection<Account> accounts = new();
+    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
+    [ObservableProperty] ObservableRangeCollection<Category> categories = [];
+    [ObservableProperty] ObservableRangeCollection<Category> subcategories = [];
+    [ObservableProperty] ObservableRangeCollection<string> payees = [];
 
-    [ObservableProperty]
-    public ObservableCollection<Category> categories = new();
+    [ObservableProperty] Account account;
 
-    [ObservableProperty]
-    public ObservableCollection<Category> subcategories = new();
+    [ObservableProperty] int amountRangeStart = 0;
+    [ObservableProperty] int amountRangeEnd = 500;
 
-    [ObservableProperty]
-    public ObservableCollection<string> payees = new();
+    [ObservableProperty] Category category;
+    [ObservableProperty] Category subcategory;
+    [ObservableProperty] string payee = "";
 
-    [ObservableProperty]
-    public Account account;
-
-    [ObservableProperty]
-    public int amountRangeStart = 0;
-
-    [ObservableProperty]
-    public int amountRangeEnd = 500;
-
-    [ObservableProperty]
-    public Category category;
-
-    [ObservableProperty]
-    public Category subcategory;
-
-    [ObservableProperty]
-    public string payee = "";
-
-    [ObservableProperty]
-    public static DateTime from = new();
-
-    [ObservableProperty]
-    public static DateTime to = new();
+    [ObservableProperty] static DateTime from = new();
+    [ObservableProperty] static DateTime to = new();
 
     List<Transaction> Transactions = new();
 
@@ -62,12 +40,11 @@ public partial class TransactionsViewModel : ObservableObject
     bool showValue = true;
 
     public TransactionsViewModel(ITransactionService _transactionService, IAccountService _accountService,
-        ICategoryService _categoryService, ILoggerService<TransactionsViewModel> _logger)
+        ICategoryService _categoryService)
     {
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
-        logger = _logger;
 
         // first two months, show 1 year, starting March show YTD
         From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
@@ -77,18 +54,17 @@ public partial class TransactionsViewModel : ObservableObject
     /// <summary>
     /// Loads data into filter pickers.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public async void Loaded(object sender, EventArgs e)
+    public async Task Load()
     {
         await GetAccounts();
         await GetParentCategories();
+        await Refresh(new(null, TransactionEventArgs.CRUD.Read));
     }
 
     /// <summary>
     /// Depending on CRUD operation, update Transactions collection.
     /// </summary>
-    public async void Refresh(object sender, TransactionEventArgs e)
+    public async Task Refresh(TransactionEventArgs e)
     {
         switch (e.Type)
         {
@@ -139,8 +115,7 @@ public partial class TransactionsViewModel : ObservableObject
             Transactions.Clear();
             Transactions = new(transactions);
 
-            Payees.Clear();
-            Payees = new ObservableCollection<string>(transactions.Select(t => t.Payee).Distinct());
+            Payees.ReplaceRange(transactions.Select(t => t.Payee).Distinct());
         }
         if (showValue != Utilities.ShowValue)
         {
@@ -210,9 +185,7 @@ public partial class TransactionsViewModel : ObservableObject
     public async Task GetAccounts()
     {
         var accounts = await accountService.GetActiveAccounts();
-        Accounts.Clear();
-        foreach (var acc in accounts)
-            Accounts.Add(acc);
+        Accounts.ReplaceRange(accounts);
     }
 
     /// <summary>
@@ -221,17 +194,22 @@ public partial class TransactionsViewModel : ObservableObject
     public async Task GetParentCategories()
     {
         var categories = await categoryService.GetAllParentCategories();
-        Categories.Clear();
-        foreach (var cat in categories)
-            Categories.Add(cat);
+        Categories.ReplaceRange(categories);
     }
 
-    public async void CategoryChanged(object sender, EventArgs e)
+    [RelayCommand]
+    async Task CategoryChanged()
     {
         if (Category != null)
         {
             await GetSubcategories(Category);
-            UpdateFilter(sender, e);
+            UpdateFilter();
+        }
+        else
+        {
+            Subcategory = null;
+            Subcategories.Clear();
+            UpdateFilter();
         }
     }
 
@@ -241,44 +219,11 @@ public partial class TransactionsViewModel : ObservableObject
     /// <param name="parentCategory"></param>
     public async Task GetSubcategories(Category parentCategory)
     {
-        if (parentCategory is not null)
+        if (parentCategory != null)
         {
             var subcategories = await categoryService.GetSubcategories(parentCategory);
-            Subcategories.Clear();
-            foreach (var cat in subcategories)
-                Subcategories.Add(cat);
+            Subcategories.ReplaceRange(subcategories);
         }
-    }
-
-    /// <summary>
-    /// Clears selected Account.
-    /// </summary>
-    [RelayCommand]
-    void ClearAccount()
-    {
-        Account = null;
-        UpdateFilter(this, default);
-    }
-
-    /// <summary>
-    /// Clears selected Category.
-    /// </summary>
-    [RelayCommand]
-    void ClearCategory()
-    {
-        Category = null;
-        Subcategory = null;
-        UpdateFilter(this, default);
-    }
-
-    /// <summary>
-    /// Clears selected Subcategory and calls UpdateFilter().
-    /// </summary>
-    [RelayCommand]
-    void ClearSubcategory()
-    {
-        Subcategory = null;
-        UpdateFilter(this, default);
     }
 
     /// <summary>
@@ -297,7 +242,7 @@ public partial class TransactionsViewModel : ObservableObject
     [RelayCommand]
     async Task AmountDragCompleted(object obj)
     {
-        UpdateFilter(this, default);
+        UpdateFilter();
 
         var frame = obj as Frame;
         await Task.Delay(300);
@@ -307,7 +252,8 @@ public partial class TransactionsViewModel : ObservableObject
     /// <summary>
     /// Updates Transactions Filter.
     /// </summary>
-    public void UpdateFilter(object sender, EventArgs e)
+    [RelayCommand]
+    void UpdateFilter()
     {
         if (ListView.DataSource != null)
         {
@@ -375,7 +321,6 @@ public partial class TransactionsViewModel : ObservableObject
     /// <param name="count"></param>
     void AddTransactions(int index, int count)
     {
-        for (int i = index; i < index + count && i < Transactions.Count; i++)
-            LoadedTransactions.Add(Transactions[i]);
+        LoadedTransactions.AddRange(Transactions.Skip(index).Take(count));
     }
 }

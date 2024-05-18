@@ -3,34 +3,13 @@
     x:Class="MoMoney.Views.StatsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:MoMoney.Components"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
     x:DataType="viewmodel:StatsViewModel"
     BackgroundColor="{AppThemeBinding Light={StaticResource White},
                                       Dark={StaticResource Gray950}}">
-
-    <ContentView.Resources>
-        <Style
-            x:Key="imgTileIcon"
-            BasedOn="{StaticResource imgTinted}"
-            TargetType="{x:Type Image}">
-            <Setter Property="Margin" Value="0,10,0,0" />
-            <Setter Property="WidthRequest" Value="50" />
-            <Setter Property="HeightRequest" Value="50" />
-            <Setter Property="VerticalOptions" Value="Start" />
-        </Style>
-        <Style x:Key="lblTileTitle" TargetType="{x:Type Label}">
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="FontAttributes" Value="Bold" />
-            <Setter Property="HorizontalOptions" Value="Center" />
-            <Setter Property="VerticalOptions" Value="End" />
-        </Style>
-        <Style TargetType="{x:Type Frame}">
-            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
-            <Setter Property="CornerRadius" Value="10" />
-            <Setter Property="HasShadow" Value="False" />
-        </Style>
-    </ContentView.Resources>
 
     <!--  main page  -->
     <VerticalStackLayout>
@@ -55,77 +34,35 @@
             RowSpacing="10">
 
             <!--  accounts  -->
-            <Frame
-                Grid.Row="0"
-                Grid.Column="0"
-                Padding="10">
-                <Frame.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding GoToAccountSummaryCommand}" />
-                </Frame.GestureRecognizers>
-                <Grid>
-                    <Image Source="accounts.svg" Style="{StaticResource imgTileIcon}" />
-                    <Label Style="{StaticResource lblTileTitle}" Text="Accounts" />
-                </Grid>
-            </Frame>
+            <components:StatsButton
+                Title="Accounts"
+                Command="{Binding GoToAccountSummaryCommand}"
+                Icon="{x:Static m:MaterialRegular.Account_balance}" />
 
             <!--  breakdown  -->
-            <Frame
+            <components:StatsButton
+                Title="Breakdown"
                 Grid.Row="0"
                 Grid.Column="1"
-                Padding="10">
-                <Frame.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding GoToBreakdownCommand}" />
-                </Frame.GestureRecognizers>
-                <Grid>
-                    <Image Source="donut.svg" Style="{StaticResource imgTileIcon}" />
-                    <Label Style="{StaticResource lblTileTitle}" Text="Breakdown" />
-                </Grid>
-            </Frame>
+                Command="{Binding GoToBreakdownCommand}"
+                Icon="{x:Static m:MaterialRegular.Donut_small}" />
 
             <!--  stocks  -->
-            <Frame
+            <components:StatsButton
+                Title="Stocks"
                 Grid.Row="1"
                 Grid.Column="0"
-                Padding="10">
-                <Frame.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding GoToStocksCommand}" />
-                </Frame.GestureRecognizers>
-                <Grid>
-                    <Image Source="stocks.svg" Style="{StaticResource imgTileIcon}" />
-                    <Label Style="{StaticResource lblTileTitle}" Text="Stocks" />
-                </Grid>
-            </Frame>
+                Command="{Binding GoToStocksCommand}"
+                Icon="{x:Static m:MaterialRegular.Candlestick_chart}" />
 
             <!--  insights  -->
-            <Frame
+            <components:StatsButton
+                Title="Insights"
                 Grid.Row="1"
                 Grid.Column="1"
-                Padding="10">
-                <Frame.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding GoToInsightsCommand}" />
-                </Frame.GestureRecognizers>
-                <Grid>
-                    <Image Source="bar_chart.svg" Style="{StaticResource imgTileIcon}" />
-                    <Label Style="{StaticResource lblTileTitle}" Text="Insights" />
-                </Grid>
-            </Frame>
+                Command="{Binding GoToInsightsCommand}"
+                Icon="{x:Static m:MaterialRegular.Equalizer}" />
 
-            <!--
-        <Frame Grid.Column="0" Grid.Row="3" Padding="10">
-
-        </Frame>
-
-        <Frame Grid.Column="1" Grid.Row="3">
-
-        </Frame>
-
-        <Frame Grid.Column="0" Grid.Row="4">
-
-        </Frame>
-
-        <Frame Grid.Column="1" Grid.Row="4">
-
-        </Frame>-->
         </Grid>
 
     </VerticalStackLayout>

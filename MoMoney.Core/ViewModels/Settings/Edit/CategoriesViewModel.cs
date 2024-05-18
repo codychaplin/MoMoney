@@ -1,24 +1,46 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
-public partial class CategoriesViewModel : ObservableObject
+public partial class CategoriesViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     readonly ICategoryService categoryService;
     readonly ILoggerService<CategoriesViewModel> logger;
 
-    [ObservableProperty]
-    public ObservableCollection<CategoryGroup> categories = new();
+    [ObservableProperty] ObservableRangeCollection<CategoryGroup> categories = [];
 
     public CategoriesViewModel(ICategoryService _categoryService, ILoggerService<CategoriesViewModel> _logger)
     {
         categoryService = _categoryService;
         logger = _logger;
+    }
+
+    /// <summary>
+    /// Gets updated categories from database and refreshes Categories collection.
+    /// </summary>
+    public async void RefreshCategories(object s, EventArgs e)
+    {
+        try
+        {
+            await Task.Delay(1);
+            var categories = await categoryService.GetCategories();
+
+            // groups categories by parent except where ParentName == ""
+            // new parent categories will not show up in the list until a subcategory is added
+            Categories.ReplaceRange(categories.GroupBy(c => c.ParentName)
+                .Where(cat => !string.IsNullOrEmpty(cat.Key))
+                .Select(cat => new CategoryGroup(cat)));
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(RefreshCategories), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -58,28 +80,6 @@ public partial class CategoriesViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GoToEditCategoryString), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
-        }
-    }
-
-    /// <summary>
-    /// Gets updated categories from database and refreshes Categories collection.
-    /// </summary>
-    public async void RefreshCategories(object s, EventArgs e)
-    {
-        try
-        {
-            var categories = await categoryService.GetCategories();
-            Categories.Clear();
-            // groups categories by parent except where ParentName == ""
-            // new parent categories will not show up in the list until a subcategory is added
-            foreach (var cat in categories.GroupBy(c => c.ParentName))
-                if (!string.IsNullOrEmpty(cat.Key))
-                    Categories.Add(new CategoryGroup(cat));
-        }
-        catch (Exception ex)
-        {
-            await logger.LogError(nameof(RefreshCategories), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

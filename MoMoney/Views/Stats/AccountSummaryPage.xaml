@@ -18,14 +18,14 @@
         <Style
             x:Key="lblGroupTitle"
             BasedOn="{StaticResource lblTitle}"
-            TargetType="{x:Type Label}">
+            TargetType="Label">
             <Setter Property="Margin" Value="10,0,0,5" />
             <Setter Property="HorizontalOptions" Value="Start" />
         </Style>
         <Style
             x:Key="lblAccountName"
             BasedOn="{StaticResource lblTitle}"
-            TargetType="{x:Type Label}">
+            TargetType="Label">
             <Setter Property="Margin" Value="10,0,20,5" />
             <Setter Property="HorizontalOptions" Value="End" />
         </Style>
@@ -35,7 +35,7 @@
             <DataTemplate x:Key="Account" x:DataType="models:Account">
                 <Grid Margin="0,5,0,5" ColumnDefinitions="*,*">
                     <Grid.Resources>
-                        <Style BasedOn="{StaticResource lblTile}" TargetType="{x:Type Label}">
+                        <Style BasedOn="{StaticResource lblTile}" TargetType="Label">
                             <Setter Property="FontSize" Value="16" />
                             <Setter Property="FontAttributes" Value="None" />
                             <Setter Property="VerticalOptions" Value="Center" />
@@ -61,14 +61,14 @@
     <ScrollView Padding="0,10,0,0">
         <VerticalStackLayout>
             <VerticalStackLayout.Resources>
-                <Style TargetType="{x:Type Frame}">
+                <Style TargetType="Frame">
                     <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
                     <Setter Property="Padding" Value="5,5,10,5" />
                     <Setter Property="Margin" Value="10,0,10,20" />
                     <Setter Property="CornerRadius" Value="10" />
                     <Setter Property="HasShadow" Value="False" />
                 </Style>
-                <Style TargetType="{x:Type CollectionView}">
+                <Style TargetType="CollectionView">
                     <Setter Property="ItemTemplate" Value="{StaticResource Account}" />
                 </Style>
             </VerticalStackLayout.Resources>

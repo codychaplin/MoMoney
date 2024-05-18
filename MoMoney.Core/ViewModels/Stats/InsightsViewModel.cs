@@ -4,6 +4,7 @@ using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
+using CommunityToolkit.Mvvm.Input;
 
 namespace MoMoney.Core.ViewModels.Stats;
 
@@ -13,33 +14,21 @@ public partial class InsightsViewModel : ObservableObject
     readonly ITransactionService transactionService;
     readonly ILoggerService<InsightsViewModel> logger;
 
-    [ObservableProperty]
-    public int selectedYear;
+    [ObservableProperty] int selectedYear;
 
-    [ObservableProperty]
-    public ObservableCollection<int> years = new();
+    [ObservableProperty] ObservableCollection<int> years = [];
 
-    [ObservableProperty]
-    public ObservableCollection<IncomeExpenseData> incomeData = new();
+    [ObservableProperty] ObservableCollection<IncomeExpenseData> incomeData = [];
+    [ObservableProperty] ObservableCollection<IncomeExpenseData> expenseData = [];
 
-    [ObservableProperty]
-    public ObservableCollection<IncomeExpenseData> expenseData = new();
+    [ObservableProperty] decimal totalIncome = 0;
+    [ObservableProperty] decimal totalExpense = 0;
 
-    [ObservableProperty]
-    public decimal totalIncome = 0;
+    [ObservableProperty] string topIncomeSubcategoryName = "";
+    [ObservableProperty] decimal topIncomeSubcategoryAmount = 0;
 
-    [ObservableProperty]
-    public decimal totalExpense = 0;
-
-    [ObservableProperty]
-    public string topIncomeSubcategoryName = "";
-    [ObservableProperty]
-    public decimal topIncomeSubcategoryAmount = 0;
-
-    [ObservableProperty]
-    public string topExpenseCategoryName = "";
-    [ObservableProperty]
-    public decimal topExpenseCategoryAmount = 0;
+    [ObservableProperty] string topExpenseCategoryName = "";
+    [ObservableProperty] decimal topExpenseCategoryAmount = 0;
 
     public InsightsViewModel(ITransactionService _transactionService, ICategoryService _categoryService, ILoggerService<InsightsViewModel> _logger)
     {
@@ -71,7 +60,8 @@ public partial class InsightsViewModel : ObservableObject
         SelectedYear = DateTime.Today.Year;
     }
 
-    public async void Refresh(object sender, EventArgs e)
+    [RelayCommand]
+    async Task Refresh()
     {
         await Task.Delay(50);
         // gets transactions from selected year

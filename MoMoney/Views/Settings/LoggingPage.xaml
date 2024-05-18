@@ -4,6 +4,8 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:selectors="clr-namespace:MoMoney.Selectors"
     xmlns:sf="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
@@ -12,7 +14,7 @@
     Title="Logs"
     x:DataType="viewmodel:LoggingViewModel">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding ToggleExpandCommand}" IconImageSource="{AppThemeBinding Light='filter_black.svg', Dark='filter_white.svg'}" />
+        <ToolbarItem Command="{Binding ToggleExpandCommand}" IconImageSource="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRegular.Tune}}" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Resources>
@@ -28,7 +30,7 @@
                                                   Dark={StaticResource Gray700}}"
                 RowDefinitions="*,*">
                 <Grid.Resources>
-                    <Style TargetType="{x:Type Label}">
+                    <Style TargetType="Label">
                         <Setter Property="FontSize" Value="12" />
                         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
                     </Style>
@@ -64,7 +66,7 @@
                     <TapGestureRecognizer Command="{Binding Path=OpenPopupCommand, Source={RelativeSource AncestorType={x:Type viewmodel:LoggingViewModel}}}" CommandParameter="{Binding LogId}" />
                 </Grid.GestureRecognizers>
                 <Grid.Resources>
-                    <Style TargetType="{x:Type Label}">
+                    <Style TargetType="Label">
                         <Setter Property="FontSize" Value="12" />
                         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
                     </Style>
@@ -100,105 +102,59 @@
 
         <selectors:LogDataTemplateSelector
             x:Key="LogDataTemplateSelector"
+            CheckBox="{x:Reference ChkTileSize}"
             LargeTemplate="{StaticResource Large}"
             ListView="{x:Reference listview}"
-            SmallTemplate="{StaticResource Small}"
-            Switch="{x:Reference swTileSize}" />
+            SmallTemplate="{StaticResource Small}" />
 
     </ContentPage.Resources>
 
     <!--  content  -->
     <Grid Margin="10,5,10,10" RowDefinitions="Auto,*">
+
+        <!--  filters  -->
         <toolkit:Expander IsExpanded="{Binding IsExpanded}">
             <VerticalStackLayout Padding="0,5" Spacing="5">
-                <VerticalStackLayout.Resources>
-                    <Style TargetType="{Type Frame}">
-                        <Setter Property="Padding" Value="10,2" />
-                        <Setter Property="HeightRequest" Value="45" />
-                        <Setter Property="HasShadow" Value="False" />
-                        <Setter Property="CornerRadius" Value="10" />
-                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
-                    </Style>
-                    <Style TargetType="{Type Grid}">
-                        <Setter Property="ColumnDefinitions" Value="80,*,20" />
-                    </Style>
-                    <Style TargetType="{Type Label}">
-                        <Setter Property="Grid.Column" Value="0" />
-                        <Setter Property="FontAttributes" Value="Bold" />
-                        <Setter Property="VerticalOptions" Value="Center" />
-                    </Style>
-                    <Style TargetType="{Type Picker}">
-                        <Setter Property="Grid.Column" Value="1" />
-                        <Setter Property="FontSize" Value="13" />
-                    </Style>
-                    <Style
-                        x:Key="ibtnIcon"
-                        BasedOn="{StaticResource imgBtnTinted}"
-                        TargetType="{x:Type ImageButton}">
-                        <Setter Property="Grid.Column" Value="2" />
-                        <Setter Property="Source" Value="clear.svg" />
-                        <Setter Property="WidthRequest" Value="20" />
-                        <Setter Property="HeightRequest" Value="20" />
-                        <Setter Property="HorizontalOptions" Value="Center" />
-                    </Style>
-                </VerticalStackLayout.Resources>
 
-                <Frame Padding="10,0">
-                    <Grid ColumnDefinitions="Auto,*">
-                        <!--  tile switch  -->
-                        <Label Text="Large Tiles" />
-                        <Switch
-                            x:Name="swTileSize"
-                            Grid.Column="1"
-                            HorizontalOptions="Start"
-                            IsToggled="True"
-                            Toggled="switch_Toggled" />
-                    </Grid>
+                <Frame
+                    Padding="15,0,0,0"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
+                                                      Dark={StaticResource Gray700}}"
+                    HeightRequest="50"
+                    WidthRequest="250">
+                    <material:CheckBox
+                        x:Name="ChkTileSize"
+                        CheckChanged="Check_Toggled"
+                        HorizontalOptions="Start"
+                        IsChecked="True"
+                        LabelPosition="Before"
+                        Text="Large Tiles" />
                 </Frame>
 
                 <!--  filters  -->
-                <Frame>
-                    <Grid>
-                        <Label Text="Log Levels" />
-                        <Picker
-                            x:Name="pckLevels"
-                            Title="Levels"
-                            ItemsSource="{Binding Levels}"
-                            SelectedItem="{Binding Level}" />
-                        <ImageButton
-                            Command="{Binding ClearLevelCommand}"
-                            IsVisible="{Binding Level, Converter={StaticResource NoneToVisible}}"
-                            Style="{StaticResource ibtnIcon}" />
-                    </Grid>
-                </Frame>
-                <Frame>
-                    <Grid>
-                        <Label Text="Classes" />
-                        <Picker
-                            x:Name="pckClasses"
-                            Title="Classes"
-                            ItemsSource="{Binding Classes}"
-                            SelectedItem="{Binding ClassName}" />
-                        <ImageButton
-                            Command="{Binding ClearClassCommand}"
-                            IsVisible="{Binding ClassName, Converter={StaticResource NullToVisible}}"
-                            Style="{StaticResource ibtnIcon}" />
-                    </Grid>
-                </Frame>
-                <Frame>
-                    <Grid>
-                        <Label Text="Exceptions" />
-                        <Picker
-                            x:Name="pckExceptions"
-                            Title="Exceptions"
-                            ItemsSource="{Binding Exceptions}"
-                            SelectedItem="{Binding ExceptionType}" />
-                        <ImageButton
-                            Command="{Binding ClearExceptionCommand}"
-                            IsVisible="{Binding ExceptionType, Converter={StaticResource NullToVisible}}"
-                            Style="{StaticResource ibtnIcon}" />
-                    </Grid>
-                </Frame>
+                <material:PickerField
+                    x:Name="pckLevels"
+                    Title="Log Levels"
+                    ItemsSource="{Binding Levels}"
+                    SelectedItem="{Binding Level}"
+                    SelectedValueChangedCommand="{Binding UpdateFilterCommand}"
+                    WidthRequest="250" />
+
+                <material:PickerField
+                    x:Name="pckClasses"
+                    Title="Classes"
+                    ItemsSource="{Binding Classes}"
+                    SelectedItem="{Binding ClassName}"
+                    SelectedValueChangedCommand="{Binding UpdateFilterCommand}"
+                    WidthRequest="250" />
+
+                <material:PickerField
+                    x:Name="pckExceptions"
+                    Title="Exceptions"
+                    ItemsSource="{Binding Exceptions}"
+                    SelectedItem="{Binding ExceptionType}"
+                    SelectedValueChangedCommand="{Binding UpdateFilterCommand}"
+                    WidthRequest="250" />
 
             </VerticalStackLayout>
         </toolkit:Expander>

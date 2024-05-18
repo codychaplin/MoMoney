@@ -3,59 +3,51 @@
     x:Class="MoMoney.Views.Settings.Edit.AddAccountPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
     Title="Add Account"
     x:DataType="viewmodel:AddAccountViewModel">
 
     <!--  main page  -->
-    <VerticalStackLayout Padding="0,10,0,0">
+    <VerticalStackLayout Padding="10" Spacing="10">
 
         <!--  account name  -->
-        <Frame Style="{StaticResource TileFrame}">
-            <Grid Style="{StaticResource TileGrid}">
-                <Image Source="account.svg" Style="{StaticResource imgIcon}" />
-                <Entry
-                    x:Name="txtName"
-                    Grid.Column="1"
-                    Placeholder="Account Name"
-                    Text="{Binding Name}" />
-            </Grid>
-        </Frame>
+        <material:TextField
+            x:Name="txtName"
+            Title="Account Name"
+            Icon="{FontImageSource FontFamily=MaterialRegular,
+                                   Glyph={x:Static m:MaterialRegular.Account_circle}}"
+            Text="{Binding Name}" />
+
         <!--  account type with predefined values  -->
-        <Frame Style="{StaticResource TileFrame}">
-            <Grid Style="{StaticResource TileGrid}">
-                <Image Source="piggy_bank.svg" Style="{StaticResource imgIcon}" />
-                <Picker
-                    x:Name="pckType"
-                    Title="Select a type"
-                    Grid.Column="1"
-                    SelectedItem="{Binding Type}">
-                    <Picker.Items>
-                        <x:String>Checkings</x:String>
-                        <x:String>Savings</x:String>
-                        <x:String>Credit</x:String>
-                        <x:String>Investments</x:String>
-                    </Picker.Items>
-                </Picker>
-            </Grid>
-        </Frame>
+        <material:PickerField
+            x:Name="pckType"
+            Title="Select a type"
+            Icon="{FontImageSource FontFamily=MaterialRegular,
+                                   Glyph={x:Static m:MaterialRegular.Savings}}"
+            SelectedItem="{Binding Type}">
+            <material:PickerField.Items>
+                <x:String>Checkings</x:String>
+                <x:String>Savings</x:String>
+                <x:String>Credit</x:String>
+                <x:String>Investments</x:String>
+            </material:PickerField.Items>
+        </material:PickerField>
+
         <!--  starting balance  -->
-        <Frame Style="{StaticResource TileFrame}">
-            <Grid Style="{StaticResource TileGrid}">
-                <Image Source="dollar_symbol.svg" Style="{StaticResource imgIcon}" />
-                <Entry
-                    x:Name="txtStartingBalance"
-                    Grid.Column="1"
-                    Keyboard="Numeric"
-                    Placeholder="Starting Balance"
-                    Text="{Binding StartingBalance}" />
-            </Grid>
-        </Frame>
+        <material:TextField
+            x:Name="txtStartingBalance"
+            Title="Starting Balance"
+            Icon="{FontImageSource FontFamily=MaterialRegular,
+                                   Glyph={x:Static m:MaterialRegular.Paid}}"
+            Keyboard="Numeric"
+            Text="{Binding StartingBalance}" />
+
         <!--  clear/enter buttons  -->
         <Grid
             x:Name="grdAcceptButtons"
-            Margin="10,0,10,10"
-            Padding="2"
+            Margin="0,5,0,0"
             ColumnDefinitions="*,*"
             ColumnSpacing="10">
             <Button

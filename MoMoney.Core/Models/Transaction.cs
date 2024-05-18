@@ -14,25 +14,25 @@ public partial class Transaction : ObservableObject
     public int TransactionID { get; set; }
 
     [ObservableProperty]
-    public DateTime date;
+    DateTime date;
 
     [ObservableProperty]
-    public int accountID;
+    int accountID;
 
     [ObservableProperty]
-    public decimal amount;
+    decimal amount;
 
     [ObservableProperty]
-    public int categoryID;
+    int categoryID;
 
     [ObservableProperty]
-    public int subcategoryID;
+    int subcategoryID;
 
     [ObservableProperty]
-    public string payee;
+    string payee;
 
     [ObservableProperty]
-    public int? transferID;
+    int? transferID;
 
     public Transaction() { }
 
@@ -110,4 +110,12 @@ public class TransactionExportMap : ClassMap<Transaction>
         Map(t => t.Payee).Index(5);
         Map(t => t.TransferID).Ignore();
     }
+}
+
+public enum TransactionType
+{
+    None,
+    Income,
+    Expense,
+    Transfer
 }

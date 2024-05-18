@@ -1,3 +1,30 @@
+# MoMoney v1.2.0
+
+### Fixes
+
+* Fixed transaction list padding
+* Recent transactions on home page now update properly
+* Made lowercase ObservableProperties private so only generated public properties are exposed
+* Fixed storage write permissions
+* Fixed account export format error
+
+### Changes
+
+* Added AI transaction transcription
+* Added option to try getting objects from db by returning null instead of throwing exception
+* Added UraniumUI controls and switched to UraniumUI tabs
+* Added loading icon when import/exporting data
+* Made a reusable component for StatsPage buttons
+* Replaced stats section on home page with account information
+* Switched to ObservableRangeCollections WeakReferenceMessenger where possible
+* Optimized BreakdownViewModel
+* Added importing of logs
+* Added reset db button
+* Stopped using x:type to comply with Microsoft.Maui.Controls 8.0.20
+* Removed FFMpeg
+* Reverted back to Syncfusion AutoComplete control
+* Moved CalculateAccountBalances() to TransactionService
+
 # MoMoney v1.1.4
 
 ### Fixes

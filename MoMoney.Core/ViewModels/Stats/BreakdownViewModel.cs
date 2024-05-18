@@ -1,86 +1,97 @@
-﻿using System.Collections.ObjectModel;
-using Color = Microsoft.Maui.Graphics.Color;
+﻿using Color = Microsoft.Maui.Graphics.Color;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Stats;
 
-public partial class BreakdownViewModel : ObservableObject
+public partial class BreakdownViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
+    readonly ILoggerService<BreakdownViewModel> logger;
 
-    [ObservableProperty]
-    public decimal incomeSum = 0;
-    [ObservableProperty]
-    public decimal expenseSum = 0;
+    [ObservableProperty] decimal incomeSum = 0;
+    [ObservableProperty] decimal expenseSum = 0;
 
-    [ObservableProperty]
-    public List<Brush> incomePalette = new();
-    [ObservableProperty]
-    public List<Brush> expensePalette = new();
+    [ObservableProperty] List<Brush> incomePalette = [];
+    [ObservableProperty] List<Brush> expensePalette = [];
 
-    [ObservableProperty]
-    public ObservableCollection<BreakdownData> incomeData = new();
-    [ObservableProperty]
-    public ObservableCollection<BreakdownData> expenseData = new();
+    [ObservableProperty] ObservableRangeCollection<BreakdownData> incomeData = [];
+    [ObservableProperty] ObservableRangeCollection<BreakdownData> expenseData = [];
 
-    [ObservableProperty]
-    public DateTime selectedTime = new();
+    [ObservableProperty] DateTime selectedTime = new();
 
-    [ObservableProperty]
-    public string type = "Month";
+    [ObservableProperty] string type = "Month";
 
-    List<DateTime> Months = new();
-    List<DateTime> Years = new();
+    [ObservableProperty] string showValue = "$0";
 
-    [ObservableProperty]
-    public int index = 0;
+    [ObservableProperty] int index = 0;
+    partial void OnIndexChanged(int value) => _ = UpdateBreakdown();
+    
     int timeIndex = 0;
 
-    EventHandler<EventArgs> OnUpdate { get; set; }
+    List<DateTime> Months = [];
+    List<DateTime> Years = [];
+
+    DateTime cachedFrom;
+    DateTime cachedTo;
+    IEnumerable<Transaction> cachedTransactions = [];
 
     public BreakdownViewModel(ITransactionService _transactionService, ICategoryService _categoryService, ILoggerService<BreakdownViewModel> _loggerService)
     {
         transactionService = _transactionService;
         categoryService = _categoryService;
-        _loggerService.LogFirebaseEvent(FirebaseParameters.EVENT_VIEW_BREAKDOWN, FirebaseParameters.GetFirebaseParameters());
+        logger = _loggerService;
+        logger.LogFirebaseEvent(FirebaseParameters.EVENT_VIEW_BREAKDOWN, FirebaseParameters.GetFirebaseParameters());
+        ShowValue = Utilities.ShowValue ? "$0" : "$?";
     }
 
     public async void Init(object s, EventArgs e)
     {
-        InitPalettes();
-
-        var first = await transactionService.GetFirstTransaction();
-        if (first is null)
+        try
         {
-            Months.Add(DateTime.Today);
-            Years.Add(DateTime.Today);
-            SelectedTime = Months[0];
-            return;
-        }
+            InitPalettes();
 
-        // get date of first transaction, today's date, and add each month to collection
-        DateTime start = new(first.Date.Year, first.Date.Month, 1);
-        DateTime end = new(DateTime.Today.Year, DateTime.Today.Month, 1);
-        while (start <= end)
+            var first = await transactionService.GetFirstTransaction();
+            if (first is null)
+            {
+                Months.Add(DateTime.Today);
+                Years.Add(DateTime.Today);
+                SelectedTime = Months[0];
+                return;
+            }
+
+            // get date of first transaction, today's date, and add each month to collection
+            DateTime start = new(first.Date.Year, first.Date.Month, 1);
+            DateTime end = new(DateTime.Today.Year, DateTime.Today.Month, 1);
+            while (start <= end)
+            {
+                Months.Add(start);
+                start = start.AddMonths(1);
+            }
+
+            // create list of years
+            for (int i = first.Date.Year; i <= DateTime.Today.Year; i++)
+                Years.Add(new DateTime(i, 1, 1));
+
+            // set index, set SelectedMonth, and call UpdateBreakdown
+            timeIndex = Months.Count - 1;
+            SelectedTime = Months[timeIndex];
+
+            cachedFrom = new(DateTime.Today.Year, 1, 1);
+            cachedTo = new(DateTime.Today.Year, 12, 31);
+            cachedTransactions = await transactionService.GetTransactionsFromTo(cachedFrom, cachedTo, false);
+            await UpdateBreakdown();
+        }
+        catch (Exception ex)
         {
-            Months.Add(start);
-            start = start.AddMonths(1);
+            await logger.LogError(nameof(Init), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
-
-        // create list of years
-        for (int i = first.Date.Year; i <= DateTime.Today.Year; i++)
-            Years.Add(new DateTime(i, 1, 1));
-
-        // set index, set SelectedMonth, subscribe Update to EventHandler, then invoke EventHandler
-        timeIndex = Months.Count - 1;
-        SelectedTime = Months[timeIndex];
-        OnUpdate += Update;
-        OnUpdate?.Invoke(this, new EventArgs());
     }
 
     void InitPalettes()
@@ -108,7 +119,7 @@ public partial class BreakdownViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void ChangeType()
+    async Task ChangeType()
     {
         if (Type == "Month")
         {
@@ -123,90 +134,112 @@ public partial class BreakdownViewModel : ObservableObject
             SelectedTime = Months[timeIndex];
         }
 
-        OnUpdate?.Invoke(this, new EventArgs());
+        await UpdateBreakdown();
     }
 
     [RelayCommand]
-    public void Decrement()
+    async Task Decrement()
     {
         var timeType = (Type == "Month") ? Months : Years;
         if (timeIndex > 0)
             SelectedTime = timeType[--timeIndex];
 
-        OnUpdate?.Invoke(this, new EventArgs());
+        await UpdateBreakdown();
     }
 
     [RelayCommand]
-    public void Increment()
+    async Task Increment()
     {
         var timeType = (Type == "Month") ? Months : Years;
         if (timeIndex < timeType.Count - 1)
             SelectedTime = timeType[++timeIndex];
 
-        OnUpdate?.Invoke(this, new EventArgs());
+        await UpdateBreakdown();
     }
 
-    public async void Update(object s, EventArgs e)
+    [RelayCommand]
+    async Task UpdateBreakdown()
     {
-        // gets start/end dates then gets transactions between those dates
-        DateTime from;
-        DateTime to;
-        if (Type == "Month")
+        try
         {
-            from = new(SelectedTime.Year, SelectedTime.Month, 1);
-            to = new(SelectedTime.Year, SelectedTime.Month, SelectedTime.AddMonths(1).AddDays(-1).Day);
-        }
-        else
-        {
-            from = new(SelectedTime.Year, 1, 1);
-            to = new(SelectedTime.Year, 12, 31);
-        }
-        var transactions = await transactionService.GetTransactionsFromTo(from, to, false);
-        if (!transactions.Any())
-        {
-            ExpenseSum = 0;
-            IncomeSum = 0;
-            ExpenseData.Clear();
-            IncomeData.Clear();
-            return;
-        }
-        
-        // calculates sums for tab headers
-        // absolute value for expenses just to make it look cleaner
-        ExpenseSum = Math.Abs(transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
-                                          .Select(t => t.Amount).Sum());
-        IncomeSum = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
-                                .Select(t => t.Amount).Sum();
+            // gets start/end dates then gets transactions between those dates
+            DateTime from;
+            DateTime to;
+            IEnumerable<Transaction> transactions = [];
+            if (Type == "Month")
+            {
+                from = new(SelectedTime.Year, SelectedTime.Month, 1);
+                to = new(SelectedTime.Year, SelectedTime.Month, SelectedTime.AddMonths(1).AddDays(-1).Day);
+            }
+            else
+            {
+                from = new(SelectedTime.Year, 1, 1);
+                to = new(SelectedTime.Year, 12, 31);
+            }
 
-        // first tab = expenses, second tab = income
-        if (Index == 0)
-            await UpdateExpenses(transactions);
-        else
-            await UpdateIncome(transactions);
+            // if the selected time is outside of the cached range, update cached data
+            if (from < cachedFrom || to > cachedTo)
+            {
+                cachedFrom = new(SelectedTime.Year, 1, 1);
+                cachedTo = new(SelectedTime.Year, 12, 31);
+                cachedTransactions = await transactionService.GetTransactionsFromTo(cachedFrom, cachedTo, false);
+            }
+
+            transactions = cachedTransactions.Where(t => t.Date >= from && t.Date <= to);
+            if (!transactions.Any())
+            {
+                ExpenseSum = 0;
+                IncomeSum = 0;
+                ExpenseData.Clear();
+                IncomeData.Clear();
+                return;
+            }
+
+            // calculates sums for tab headers
+            // absolute value for expenses just to make it look cleaner
+            ExpenseSum = Math.Abs(transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
+                                              .Select(t => t.Amount).Sum());
+            IncomeSum = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
+                                    .Select(t => t.Amount).Sum();
+
+            // first tab = expenses, second tab = income
+            if (Index == 0)
+                UpdateExpenses(transactions);
+            else
+                UpdateIncome(transactions);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(UpdateBreakdown), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
     /// Updates data for ExpenseData
     /// </summary>
     /// <param name="transactions"></param>
-    async Task UpdateExpenses(IEnumerable<Transaction> transactions)
+    void UpdateExpenses(IEnumerable<Transaction> transactions)
     {
         // group transactions by Category, sum amounts, get Category name from ID, assign colour from palette
         int i = 0;
-        ExpenseData = new ObservableCollection<BreakdownData>(
-            await Task.Run(() =>
-                transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
-                            .GroupBy(t => t.CategoryID)
-                            .Select(group => {
-                            var amount = Math.Abs(group.Sum(t => t.Amount));
-                                return new BreakdownData
-                                {
-                                    Amount = amount,
-                                    ActualAmount = amount,
-                                    Category = categoryService.Categories[group.FirstOrDefault().CategoryID].CategoryName,
-                                    Color = ExpensePalette[i++]
-                                };
-                            })));
+        var expenseData = transactions
+            .Where(t => t.CategoryID >= Constants.EXPENSE_ID)
+            .GroupBy(t => t.CategoryID)
+            .Select(group =>
+            {
+                var amount = Math.Abs(group.Sum(t => t.Amount));
+                return new BreakdownData
+                {
+                    Amount = amount,
+                    ActualAmount = amount,
+                    Category = categoryService.Categories[group.Key].CategoryName,
+                    Color = ExpensePalette[i++]
+                };
+            })
+            .OrderByDescending(g => g.ActualAmount);
+
+        ExpenseData.ReplaceRange(expenseData);
 
         // calculate size of slice as percentage
         decimal total = ExpenseData.Sum(d => d.Amount);
@@ -218,24 +251,27 @@ public partial class BreakdownViewModel : ObservableObject
     /// Updates data for IncomeData
     /// </summary>
     /// <param name="transactions"></param>
-    async Task UpdateIncome(IEnumerable<Transaction> transactions)
+    void UpdateIncome(IEnumerable<Transaction> transactions)
     {
         // group transactions by Subcategory, sum amounts, get Subcategory name from ID, assign colour from palette
         int i = 0;
-        IncomeData = new ObservableCollection<BreakdownData>(
-            await Task.Run(() =>
-                transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
-                            .GroupBy(t => t.SubcategoryID)
-                            .Select(group => {
-                                var amount = group.Sum(t => t.Amount);
-                                return new BreakdownData
-                                {
-                                    ActualAmount = amount,
-                                    Amount = (amount > 0) ? amount : 0,
-                                    Category = categoryService.Categories[group.FirstOrDefault().SubcategoryID].CategoryName,
-                                    Color = IncomePalette[i++]
-                                };
-                            })));
+        var incomeData = transactions
+            .Where(t => t.CategoryID == Constants.INCOME_ID)
+            .GroupBy(t => t.SubcategoryID)
+            .Select(group =>
+            {
+                var amount = group.Sum(t => t.Amount);
+                return new BreakdownData
+                {
+                    ActualAmount = amount,
+                    Amount = (amount > 0) ? amount : 0,
+                    Category = categoryService.Categories[group.Key].CategoryName,
+                    Color = IncomePalette[i++]
+                };
+            })
+            .OrderByDescending(g => g.ActualAmount);
+
+        IncomeData.ReplaceRange(incomeData);
 
         // calculate size of slice as percentage
         decimal total = IncomeData.Sum(d => d.Amount);

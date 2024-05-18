@@ -15,33 +15,17 @@ public partial class LoggingViewModel : ObservableObject
 {
     readonly ILoggerService<LoggingViewModel> logger;
 
-    [ObservableProperty]
-    public bool isExpanded = false;
+    [ObservableProperty] bool isExpanded = false;
+    [ObservableProperty] ObservableCollection<Log> loadedLogs = [];
 
-    [ObservableProperty]
-    public ObservableCollection<Log> loadedLogs = new();
+    [ObservableProperty] ObservableCollection<LogLevel> levels;
+    [ObservableProperty] ObservableCollection<string> classes;
+    [ObservableProperty] ObservableCollection<string> exceptions;
+    [ObservableProperty] LogLevel level = LogLevel.None;
+    [ObservableProperty] string className;
+    [ObservableProperty] string exceptionType;
 
-    [ObservableProperty]
-    public ObservableCollection<LogLevel> levels;
-
-    [ObservableProperty]
-    public ObservableCollection<string> classes;
-
-    [ObservableProperty]
-    public ObservableCollection<string> exceptions;
-
-    [ObservableProperty]
-    public LogLevel level = LogLevel.None;
-
-#nullable enable
-    [ObservableProperty]
-    public string? className;
-
-    [ObservableProperty]
-    public string? exceptionType;
-#nullable disable
-
-    List<Log> Logs = new();
+    List<Log> Logs = [];
 
     public SfListView listview;
 
@@ -112,7 +96,8 @@ public partial class LoggingViewModel : ObservableObject
     /// <summary>
     /// Updates Logs Filter.
     /// </summary>
-    public void UpdateFilter(object sender, EventArgs e)
+    [RelayCommand]
+    void UpdateFilter()
     {
         if (listview.DataSource != null)
         {
@@ -155,7 +140,7 @@ public partial class LoggingViewModel : ObservableObject
     void ClearLevel()
     {
         Level = LogLevel.None;
-        UpdateFilter(this, default);
+        UpdateFilter();
     }
 
     /// <summary>
@@ -165,7 +150,7 @@ public partial class LoggingViewModel : ObservableObject
     void ClearClass()
     {
         ClassName = null;
-        UpdateFilter(this, default);
+        UpdateFilter();
     }
 
     /// <summary>
@@ -175,7 +160,7 @@ public partial class LoggingViewModel : ObservableObject
     void ClearException()
     {
         ExceptionType = null;
-        UpdateFilter(this, default);
+        UpdateFilter();
     }
 
     [RelayCommand]
@@ -188,8 +173,8 @@ public partial class LoggingViewModel : ObservableObject
             sb.Append($"Date: {log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")}\n\n");
             sb.Append($"Level: {log.Level}\n\n");
             sb.Append($"Class: {log.ClassName}\n\n");
-            string exception = log.ExceptionType == "" ? "N/A" : log.ExceptionType;
-            sb.Append($"Exception: {exception}\n\n");
+            if (log.ExceptionType != "")
+                sb.Append($"Exception: {log.ExceptionType}\n\n");
             sb.Append($"Message: {log.Message}");
             await Shell.Current.DisplayAlert("Details", sb.ToString(), "OK");
         }

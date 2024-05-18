@@ -1,6 +1,6 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -9,7 +9,7 @@ using MoMoney.Core.Services.Interfaces;
 namespace MoMoney.Core.ViewModels;
 
 [QueryProperty(nameof(ID), "ID")]
-public partial class EditTransactionViewModel : ObservableObject
+public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
@@ -18,37 +18,22 @@ public partial class EditTransactionViewModel : ObservableObject
 
     public string ID { get; set; }
 
-    [ObservableProperty]
-    public ObservableCollection<Account> accounts = new();
+    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
+    [ObservableProperty] ObservableRangeCollection<Category> categories = [];
+    [ObservableProperty] ObservableRangeCollection<Category> subcategories = [];
+    [ObservableProperty] ObservableRangeCollection<string> payees = [];
 
-    [ObservableProperty]
-    public ObservableCollection<Category> categories = new();
+    [ObservableProperty] Account account;
+    [ObservableProperty] Category category;
+    [ObservableProperty] Category subcategory;
+    [ObservableProperty] Account transferAccount;
 
-    [ObservableProperty]
-    public ObservableCollection<Category> subcategories = new();
-
-    [ObservableProperty]
-    public ObservableCollection<string> payees = new();
-
-    [ObservableProperty]
-    public Account account;
-
-    [ObservableProperty]
-    public Category category;
-
-    [ObservableProperty]
-    public Category subcategory;
-
-    [ObservableProperty]
-    public Account payeeAccount;
-
-    [ObservableProperty]
-    public Transaction transaction;
+    [ObservableProperty] Transaction transaction;
     
     public Account InitialAccount { get; private set; }
     public Category InitialCategory { get; private set; }
     public Category InitialSubcategory { get; private set; }
-    public Account InitialPayeeAccount { get; private set; }
+    public Account InitialTransferAccount { get; private set; }
 
     Transaction InitialTransaction;
 
@@ -84,7 +69,7 @@ public partial class EditTransactionViewModel : ObservableObject
                     // if debit, make amount appear positive for user
                     if (InitialSubcategory.CategoryID == Constants.DEBIT_ID)
                         Transaction.Amount *= -1;
-                    InitialPayeeAccount = await accountService.GetAccount((int)Transaction.TransferID);
+                    InitialTransferAccount = await accountService.GetAccount((int)Transaction.TransferID);
                 }
             }
             catch (TransactionNotFoundException ex)
@@ -126,13 +111,11 @@ public partial class EditTransactionViewModel : ObservableObject
         {
             // TODO: if using disabled account, retrieve from db as well
             var accounts = await accountService.GetActiveAccounts();
-            Accounts.Clear();
-            foreach (var acc in accounts)
-                Accounts.Add(acc);
+            Accounts.ReplaceRange(accounts);
 
             Account = InitialAccount;
             if (InitialCategory.CategoryID == Constants.TRANSFER_ID)
-                PayeeAccount = InitialPayeeAccount;
+                TransferAccount = InitialTransferAccount;
         }
         catch (Exception ex)
         {
@@ -199,9 +182,7 @@ public partial class EditTransactionViewModel : ObservableObject
         try
         {
             var categories = await categoryService.GetExpenseCategories();
-            Categories.Clear();
-            foreach (var cat in categories)
-                Categories.Add(cat);
+            Categories.ReplaceRange(categories);
             Subcategories.Clear();
             Category = InitialCategory;
         }
@@ -215,17 +196,15 @@ public partial class EditTransactionViewModel : ObservableObject
     /// <summary>
     /// Updates Subcategories based on selected parent Category.
     /// </summary>
-    /// <param name="parentCategory"></param>
-    public async Task GetSubcategories(Category parentCategory)
+    [RelayCommand]
+    public async Task GetSubcategories()
     {
         try
         {
-            if (parentCategory is not null)
+            if (Category is not null)
             {
-                var subcategories = await categoryService.GetSubcategories(parentCategory);
-                Subcategories.Clear();
-                foreach (var cat in subcategories)
-                    Subcategories.Add(cat);
+                var subcategories = await categoryService.GetSubcategories(Category);
+                Subcategories.ReplaceRange(subcategories);
             }
 
             Subcategory = InitialSubcategory;
@@ -245,7 +224,8 @@ public partial class EditTransactionViewModel : ObservableObject
         try
         {
             var payees = await transactionService.GetPayeesFromTransactions();
-            Payees = new ObservableCollection<string>(payees);
+            Payees = new(payees);
+            //Payees.ReplaceRange(payees);
         }
         catch (Exception ex)
         {
@@ -380,7 +360,7 @@ public partial class EditTransactionViewModel : ObservableObject
         Transaction.AccountID = Account.AccountID;
         Transaction.CategoryID = Category.CategoryID;
         Transaction.SubcategoryID = Subcategory.CategoryID;
-        Transaction.TransferID = PayeeAccount?.AccountID;
+        Transaction.TransferID = TransferAccount?.AccountID;
 
         // if nothing has changed, don't update
         if (Transaction == InitialTransaction)

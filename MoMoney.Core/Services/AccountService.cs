@@ -1,4 +1,5 @@
-﻿using MoMoney.Core.Data;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using MoMoney.Core.Data;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -44,6 +45,8 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
 
             return $"Added Account #{account.AccountID} to db.";
         });
+
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task AddAccounts(List<Account> accounts)
@@ -64,6 +67,8 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
 
             return $"Added {accounts.Count} Accounts to db.";
         });
+
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task UpdateAccount(Account updatedAccount)
@@ -75,6 +80,8 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
 
             return $"Updated Account #{updatedAccount.AccountID} in db.";
         });
+
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task UpdateBalance(int ID, decimal amount)
@@ -99,6 +106,8 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
 
             return $"Removed Account #{ID} from db.";
         });
+
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task RemoveAllAccounts()
@@ -112,21 +121,23 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
 
             return $"Removed all Accounts from db.";
         });
+
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
-    public async Task<Account> GetAccount(int ID)
+    public async Task<Account> GetAccount(int ID, bool tryGet = false)
     {
         await Init();
         if (Accounts.TryGetValue(ID, out var account))
             return new Account(account);
 
         var acc = await momoney.db.Table<Account>().FirstOrDefaultAsync(a => a.AccountID == ID);
-        return acc is null
+        return acc is null && !tryGet
             ? throw new AccountNotFoundException($"Could not find Account with ID '{ID}'.")
             : acc;
     }
 
-    public async Task<Account> GetAccount(string name)
+    public async Task<Account> GetAccount(string name, bool tryGet = false)
     {
         await Init();
         var accs = Accounts.Values.Where(a => a.AccountName.Equals(name, StringComparison.OrdinalIgnoreCase));
@@ -134,7 +145,8 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
             return accs.First();
 
         var acc = await momoney.db.Table<Account>().FirstOrDefaultAsync(a => a.AccountName == name);
-        return acc is null
+
+        return acc is null && !tryGet
             ? throw new AccountNotFoundException($"Could not find Account with name '{name}'.")
             : acc;
     }
@@ -142,6 +154,9 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
     public async Task<IEnumerable<Account>> GetAccounts()
     {
         await Init();
+        var accs = Accounts.Values;
+        if (accs.Count != 0)
+            return accs;
         return await momoney.db.Table<Account>().ToListAsync();
     }
 
@@ -155,6 +170,19 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
     public async Task<IEnumerable<Account>> GetActiveAccounts()
     {
         await Init();
+        var accs = Accounts.Values.Where(a => a.Enabled);
+        if (accs.Any())
+            return accs;
+        return await momoney.db.Table<Account>().Where(a => a.Enabled).ToListAsync();
+    }
+
+    public async Task<IEnumerable<Account>> GetOrderedAccounts()
+    {
+        await Init();
+        var accs = Accounts.Values.OrderByDescending(a => a.Enabled)
+                                  .ThenBy(a => a.AccountName);
+        if (accs.Any())
+            return accs;
         return await momoney.db.Table<Account>().Where(a => a.Enabled).ToListAsync();
     }
 

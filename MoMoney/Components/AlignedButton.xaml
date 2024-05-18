@@ -3,8 +3,11 @@
     x:Class="MoMoney.Components.AlignedButton"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:MoMoney.Components"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    x:Name="this">
+    x:Name="this"
+    x:DataType="components:AlignedButton">
     <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" BindingContext="{x:Reference this}">
         <Button
             BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
@@ -24,10 +27,9 @@
             Margin="10,0"
             HorizontalOptions="End"
             IsVisible="{Binding ShowArrow, FallbackValue=false}"
-            Source="right_arrow.svg">
-            <Image.Behaviors>
-                <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource Gray100}}" />
-            </Image.Behaviors>
-        </Image>
+            Source="{FontImageSource FontFamily=MaterialRegular,
+                                     Glyph={x:Static m:MaterialRegular.Chevron_right},
+                                     Color={AppThemeBinding Light={StaticResource Gray700},
+                                                            Dark={StaticResource Gray200}}}" />
     </Grid>
 </ContentView>

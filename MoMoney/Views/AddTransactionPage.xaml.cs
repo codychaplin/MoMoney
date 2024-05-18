@@ -1,4 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
+using UraniumUI.Material.Controls;
+using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels;
 
@@ -7,35 +9,39 @@ namespace MoMoney.Views;
 public partial class AddTransactionPage : ContentView
 {
     AddTransactionViewModel vm;
-    TransactionType transactionType;
 
-    public AddTransactionPage(AddTransactionViewModel _vm)
+    public AddTransactionPage()
     {
         InitializeComponent();
-        vm = _vm;
-        BindingContext = vm;
 
-        // initialize fields
-        dtpDate.Date = DateTime.Today;
-        txtAmount.Text = "";
-        EnableEntries(false, false, false); // disable fields on start
-        transactionType = TransactionType.None;
-
-        Loaded += vm.GetPayees;
-        Loaded += vm.GetAccounts;
-        pckCategory.SelectedIndexChanged += vm.CategoryChanged;
-
-        // register to receive messages when accounts and categories are updated
-        WeakReferenceMessenger.Default.Register<UpdateAccountsMessage>(this, (r, m) => { vm.GetAccounts(r, default); });
-        WeakReferenceMessenger.Default.Register<UpdateCategoriesMessage>(this, (r, m) =>
+        HandlerChanged += async (s, e) =>
         {
-            if (transactionType == TransactionType.Income)
-                vm.GetIncomeCategoryCommand.Execute(r);
-            else if (transactionType == TransactionType.Expense)
-                vm.GetExpenseCategoriesCommand.Execute(r);
-            else if (transactionType == TransactionType.Transfer)
-                vm.GetTransferCategoryCommand.Execute(r);
-        });
+            vm = Handler.MauiContext.Services.GetService<AddTransactionViewModel>();
+            BindingContext = vm;
+
+            await vm.GetPayees();
+            await vm.GetAccounts();
+
+            // register to receive messages when accounts and categories are updated
+            WeakReferenceMessenger.Default.Register<UpdateAccountsMessage>(this, async (r, m) => { await vm.GetAccounts(); });
+            WeakReferenceMessenger.Default.Register<UpdateCategoriesMessage>(this, (r, m) =>
+            {
+                if (vm.transactionType == TransactionType.Income)
+                    vm.GetIncomeCategoryCommand.Execute(r);
+                else if (vm.transactionType == TransactionType.Expense)
+                    vm.GetExpenseCategoriesCommand.Execute(r);
+                else if (vm.transactionType == TransactionType.Transfer)
+                    vm.GetTransferCategoryCommand.Execute(r);
+            });
+
+            // initialize fields
+            dtpDate.Date = DateTime.Today;
+            txtAmount.ClearValue(TextField.TextProperty);
+            pckCategory.ClearValue(PickerField.SelectedItemProperty);
+            pckSubcategory.ClearValue(PickerField.SelectedItemProperty);
+            EnableEntries(false, false, false); // disable fields on start
+            vm.transactionType = TransactionType.None;
+        };
     }
 
     /// <summary>
@@ -45,8 +51,8 @@ public partial class AddTransactionPage : ContentView
     /// <param name="e"></param>
     private void btnIncome_Clicked(object sender, EventArgs e)
     {
-        transactionType = TransactionType.Income;
         ChangeButtonColour(sender as Button);
+        pckSubcategory.ClearValue(PickerField.SelectedItemProperty);
         EnableEntries(false, true, true);
         MakePayeeVisible(true);
     }
@@ -58,8 +64,9 @@ public partial class AddTransactionPage : ContentView
     /// <param name="e"></param>
     private void btnExpense_Clicked(object sender, EventArgs e)
     {
-        transactionType = TransactionType.Expense;
         ChangeButtonColour(sender as Button);
+        pckCategory.ClearValue(PickerField.SelectedItemProperty);
+        pckSubcategory.ClearValue(PickerField.SelectedItemProperty);
         EnableEntries(true, true, true);
         MakePayeeVisible(true);
     }
@@ -71,7 +78,6 @@ public partial class AddTransactionPage : ContentView
     /// <param name="e"></param>
     private void btnTransfer_Clicked(object sender, EventArgs e)
     {
-        transactionType = TransactionType.Transfer;
         ChangeButtonColour(sender as Button);
         EnableEntries(false, false, true);
         MakePayeeVisible(false);
@@ -125,14 +131,14 @@ public partial class AddTransactionPage : ContentView
         txtAmount.IsEnabled = other;
         pckCategory.IsEnabled = category;
         pckSubcategory.IsEnabled = subcategory;
-        entPayee.IsEnabled = other;
+        entPayeeParent.IsEnabled = other;
         pckTransferAccount.IsEnabled = other;
     }
 
     void MakePayeeVisible(bool payee)
     {
-        frPayee.IsVisible = payee;
-        frTransferAccount.IsVisible = !payee;
+        entPayeeParent.IsVisible = payee;
+        pckTransferAccount.IsVisible = !payee;
     }
 
     /// <summary>
@@ -153,7 +159,7 @@ public partial class AddTransactionPage : ContentView
     void Clear()
     {
         vm.Clear();
-        txtAmount.Text = "";
+        txtAmount.ClearValue();
         entPayee.SelectedItem = null;
         entPayee.Text = "";
         MakePayeeVisible(true);
@@ -163,13 +169,5 @@ public partial class AddTransactionPage : ContentView
     {
         vm.ClearAfterAdd();
         txtAmount.Text = "";
-    }
-
-    enum TransactionType
-    {
-        None,
-        Income,
-        Expense,
-        Transfer
     }
 }

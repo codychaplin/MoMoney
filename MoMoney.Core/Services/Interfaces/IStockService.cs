@@ -62,7 +62,7 @@ public interface IStockService
     /// Gets all Stocks from Stocks table as a list.
     /// </summary>
     /// <returns>List of Stock objects</returns>
-    Task<List<Stock>> GetStocks();
+    Task<IEnumerable<Stock>> GetStocks();
 
     /// <summary>
     /// Gets total number of Stocks in db.

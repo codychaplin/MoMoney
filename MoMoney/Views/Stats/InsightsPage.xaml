@@ -5,6 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
     xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
     Title="Insights"
     x:DataType="viewmodel:InsightsViewModel">
@@ -16,7 +18,7 @@
     <ScrollView Padding="0,10,0,0">
         <VerticalStackLayout Spacing="10">
             <VerticalStackLayout.Resources>
-                <Style TargetType="{x:Type Frame}">
+                <Style TargetType="Frame">
                     <Setter Property="Padding" Value="10" />
                     <Setter Property="Margin" Value="10,0" />
                     <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" />
@@ -26,22 +28,15 @@
             </VerticalStackLayout.Resources>
 
             <!--  year picker  -->
-            <Frame Padding="5,5,10,5" HorizontalOptions="Center">
-                <HorizontalStackLayout>
-                    <Image
-                        Margin="5"
-                        Source="calendar.svg"
-                        Style="{StaticResource imgIcon}" />
-                    <Picker
-                        x:Name="pckDate"
-                        Title="Select a Year"
-                        HeightRequest="40"
-                        HorizontalTextAlignment="Center"
-                        ItemsSource="{Binding Years}"
-                        SelectedItem="{Binding SelectedYear}"
-                        VerticalOptions="Center" />
-                </HorizontalStackLayout>
-            </Frame>
+            <material:PickerField
+                Title="Select a Year"
+                AllowClear="False"
+                Icon="{FontImageSource FontFamily=MaterialRegular,
+                                       Glyph={x:Static m:MaterialRegular.Calendar_month}}"
+                ItemsSource="{Binding Years}"
+                SelectedItem="{Binding SelectedYear}"
+                SelectedValueChangedCommand="{Binding RefreshCommand}"
+                WidthRequest="120" />
 
             <!--  income/expense chart  -->
             <Label
@@ -52,13 +47,13 @@
                 <ScrollView
                     HorizontalScrollBarVisibility="Always"
                     Orientation="Both"
-                    VerticalScrollBarVisibility="Always">
+                    VerticalScrollBarVisibility="Never">
 
                     <!--  chart  -->
                     <chart:SfCartesianChart
                         Margin="5,0,5,10"
                         EnableSideBySideSeriesPlacement="False"
-                        HeightRequest="280"
+                        HeightRequest="300"
                         WidthRequest="540">
                         <!--  X axis  -->
                         <chart:SfCartesianChart.XAxes>
@@ -154,7 +149,9 @@
                         <Image
                             HeightRequest="40"
                             HorizontalOptions="Center"
-                            Source="income.svg"
+                            Source="{FontImageSource FontFamily=MaterialRegular,
+                                                     Glyph={x:Static m:MaterialRegular.Trending_up},
+                                                     Color={StaticResource Green}}"
                             VerticalOptions="Center" />
                         <Label
                             Grid.Column="1"
@@ -175,7 +172,9 @@
                         <Image
                             HeightRequest="40"
                             HorizontalOptions="Center"
-                            Source="expense.svg"
+                            Source="{FontImageSource FontFamily=MaterialRegular,
+                                                     Glyph={x:Static m:MaterialRegular.Trending_down},
+                                                     Color={StaticResource Red}}"
                             VerticalOptions="Center" />
                         <Label
                             Grid.Column="1"
@@ -204,7 +203,9 @@
                         <Image
                             HeightRequest="40"
                             HorizontalOptions="Center"
-                            Source="income.svg"
+                            Source="{FontImageSource FontFamily=MaterialRegular,
+                                                     Glyph={x:Static m:MaterialRegular.Trending_up},
+                                                     Color={StaticResource Green}}"
                             VerticalOptions="Center" />
                         <Label
                             Grid.Column="1"
@@ -225,7 +226,9 @@
                         <Image
                             HeightRequest="40"
                             HorizontalOptions="Center"
-                            Source="expense.svg"
+                            Source="{FontImageSource FontFamily=MaterialRegular,
+                                                     Glyph={x:Static m:MaterialRegular.Trending_down},
+                                                     Color={StaticResource Red}}"
                             VerticalOptions="Center" />
                         <Label
                             Grid.Column="1"

@@ -31,6 +31,8 @@ public class MoMoneydb
             await db.CreateTableAsync<Stock>();
             await db.CreateTableAsync<Account>();
             await db.CreateTableAsync<Transaction>();
+            await db.CreateTableAsync<ChatResponse>();
+            await db.CreateTableAsync<WhisperResponse>();
             await CreateCategories();
 
             initialized = true;
@@ -39,6 +41,25 @@ public class MoMoneydb
         {
             await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
         }
+    }
+
+    /// <summary>
+    /// Drops all tables, closes and nullifies database connection, and re-initializes the database.
+    /// </summary>
+    /// <returns></returns>
+    public async Task ResetDb()
+    {
+        await db.DropTableAsync<Log>();
+        await db.DropTableAsync<Stock>();
+        await db.DropTableAsync<Account>();
+        await db.DropTableAsync<Category>();
+        await db.DropTableAsync<Transaction>();
+        await db.DropTableAsync<ChatResponse>();
+        await db.DropTableAsync<WhisperResponse>();
+        await db.CloseAsync();
+        db = null;
+        initialized = false;
+        await Init();
     }
 
     public async Task CreateCategories()

@@ -7,6 +7,7 @@
     xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
     xmlns:data="clr-namespace:Syncfusion.Maui.DataSource;assembly=Syncfusion.Maui.DataSource"
     xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
@@ -23,26 +24,19 @@
         <converters:ShowValueConverter x:Key="ShowValue" />
         <converters:DateConverter x:Key="DateConverter" />
 
-        <!--  SfListView Data Source  -->
-        <data:DataSource x:Key="DataSource">
-            <data:DataSource.SortDescriptors>
-                <data:SortDescriptor Direction="Descending" PropertyName="Amount" />
-            </data:DataSource.SortDescriptors>
-        </data:DataSource>
-
         <!--  SfListView Item Template  -->
-        <DataTemplate x:Key="ListView">
-            <Frame
-                Margin="5,5,5,0"
-                Padding="10,0,10,0"
-                BackgroundColor="{StaticResource Gray700}"
-                HeightRequest="40">
-                <Grid ColumnDefinitions="40,100,*" ColumnSpacing="10">
+        <DataTemplate x:Key="ListView" x:DataType="models:BreakdownData">
+            <ViewCell>
+                <Grid
+                    Padding="10,0"
+                    ColumnDefinitions="45,*,*"
+                    ColumnSpacing="10">
                     <Frame
                         Margin="0"
                         Padding="0"
                         Background="{Binding Color}"
-                        HeightRequest="30">
+                        HeightRequest="30"
+                        WidthRequest="45">
                         <Label
                             HorizontalOptions="Center"
                             Text="{Binding Percentage, StringFormat='{0:P0}'}"
@@ -60,7 +54,7 @@
                         Text="{Binding ActualAmount, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
                         VerticalOptions="Center" />
                 </Grid>
-            </Frame>
+            </ViewCell>
         </DataTemplate>
 
     </ContentPage.Resources>
@@ -70,7 +64,7 @@
         <!--  title  -->
         <Grid>
             <Grid.Resources>
-                <Style BasedOn="{StaticResource imgBtnTinted}" TargetType="{x:Type ImageButton}">
+                <Style BasedOn="{StaticResource imgBtnTinted}" TargetType="ImageButton">
                     <Setter Property="WidthRequest" Value="50" />
                     <Setter Property="HeightRequest" Value="50" />
                     <Setter Property="Padding" Value="5" />
@@ -81,7 +75,8 @@
                 Command="{Binding DecrementCommand}"
                 HeightRequest="30"
                 HorizontalOptions="Start"
-                Source="left_arrow.svg" />
+                Source="{FontImageSource FontFamily=MaterialRegular,
+                                         Glyph={x:Static m:MaterialRegular.Chevron_left}}" />
             <Label
                 FontAttributes="Bold"
                 FontSize="20"
@@ -98,7 +93,8 @@
                 Command="{Binding IncrementCommand}"
                 HeightRequest="30"
                 HorizontalOptions="End"
-                Source="right_arrow.svg" />
+                Source="{FontImageSource FontFamily=MaterialRegular,
+                                         Glyph={x:Static m:MaterialRegular.Chevron_right}}" />
         </Grid>
 
         <tabView:SfTabView
@@ -153,9 +149,8 @@
                                         UseSeriesPalette="True">
                                         <chart:CircularDataLabelSettings.LabelStyle>
                                             <chart:ChartDataLabelStyle
-                                                x:Name="IncChartLbl"
                                                 FontSize="11"
-                                                LabelFormat="$0"
+                                                LabelFormat="{Binding ShowValue}"
                                                 TextColor="White" />
                                         </chart:CircularDataLabelSettings.LabelStyle>
                                     </chart:CircularDataLabelSettings>
@@ -167,13 +162,14 @@
                     <!--  collection  -->
                     <Frame
                         Grid.Row="1"
-                        Margin="0,10,0,10"
-                        Padding="2">
-                        <listview:SfListView
-                            DataSource="{StaticResource DataSource}"
-                            ItemSpacing="-2"
+                        Margin="0,10"
+                        Padding="0">
+                        <ListView
                             ItemTemplate="{StaticResource ListView}"
-                            ItemsSource="{Binding ExpenseData}" />
+                            ItemsSource="{Binding ExpenseData}"
+                            RowHeight="45"
+                            SelectionMode="None"
+                            SeparatorVisibility="Default" />
                     </Frame>
                 </Grid>
             </tabView:SfTabItem>
@@ -183,7 +179,7 @@
                 <!--  doughnut chart  -->
                 <Grid RowDefinitions="*,*">
                     <Frame Margin="0" Padding="0">
-                        <chart:SfCircularChart HeightRequest="200" VerticalOptions="Center">
+                        <chart:SfCircularChart VerticalOptions="Center">
                             <chart:DoughnutSeries
                                 InnerRadius="0.6"
                                 ItemsSource="{Binding IncomeData}"
@@ -199,9 +195,8 @@
                                         UseSeriesPalette="True">
                                         <chart:CircularDataLabelSettings.LabelStyle>
                                             <chart:ChartDataLabelStyle
-                                                x:Name="ExpChartLbl"
                                                 FontSize="11"
-                                                LabelFormat="$0"
+                                                LabelFormat="{Binding ShowValue}"
                                                 TextColor="White" />
                                         </chart:CircularDataLabelSettings.LabelStyle>
                                     </chart:CircularDataLabelSettings>
@@ -213,13 +208,14 @@
                     <!--  collection  -->
                     <Frame
                         Grid.Row="1"
-                        Margin="0,10,0,10"
-                        Padding="2">
-                        <listview:SfListView
-                            DataSource="{StaticResource DataSource}"
-                            ItemSpacing="-2"
+                        Margin="0,10"
+                        Padding="0">
+                        <ListView
                             ItemTemplate="{StaticResource ListView}"
-                            ItemsSource="{Binding IncomeData}" />
+                            ItemsSource="{Binding IncomeData}"
+                            RowHeight="45"
+                            SelectionMode="None"
+                            SeparatorVisibility="Default" />
                     </Frame>
                 </Grid>
             </tabView:SfTabItem>

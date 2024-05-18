@@ -1,7 +1,8 @@
 ﻿using System.Text;
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MvvmHelpers;
+using UraniumUI.Material.Controls;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -9,47 +10,32 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings;
 
-public partial class BulkEditingViewModel : ObservableObject
+public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
     readonly ILoggerService<BulkEditingViewModel> logger;
 
-    [ObservableProperty]
-    public ObservableCollection<Account> accounts = new();
-    [ObservableProperty]
-    public Account findAccount;
-    [ObservableProperty]
-    public Account replaceAccount;
+    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
+    [ObservableProperty] Account findAccount;
+    [ObservableProperty] Account replaceAccount;
 
-    [ObservableProperty]
-    public ObservableCollection<Category> categories = new();
-    [ObservableProperty]
-    public Category findCategory;
-    [ObservableProperty]
-    public Category replaceCategory;
+    [ObservableProperty] ObservableRangeCollection<Category> categories = [];
+    [ObservableProperty] Category findCategory;
+    [ObservableProperty] Category replaceCategory;
 
-    [ObservableProperty]
-    public ObservableCollection<Category> findSubcategories = new();
-    [ObservableProperty]
-    public ObservableCollection<Category> replaceSubcategories = new();
-    [ObservableProperty]
-    public Category findSubcategory;
-    [ObservableProperty]
-    public Category replaceSubcategory;
+    [ObservableProperty] ObservableRangeCollection<Category> findSubcategories = [];
+    [ObservableProperty] ObservableRangeCollection<Category> replaceSubcategories = [];
+    [ObservableProperty] Category findSubcategory;
+    [ObservableProperty] Category replaceSubcategory;
 
-    [ObservableProperty]
-    public ObservableCollection<string> payees = new();
-    [ObservableProperty]
-    public string findPayee;
-    [ObservableProperty]
-    public string replacePayee;
+    [ObservableProperty] ObservableRangeCollection<string> payees = [];
+    [ObservableProperty] string findPayee;
+    [ObservableProperty] string replacePayee;
+    [ObservableProperty] string info;
 
-    [ObservableProperty]
-    public string info;
-
-    List<Transaction> FoundTransactions { get; set; } = new();
+    List<Transaction> FoundTransactions { get; set; } = [];
     int TotalTransactionCount;
     int FoundTransactionCount;
 
@@ -87,10 +73,8 @@ public partial class BulkEditingViewModel : ObservableObject
     {
         try
         {
-            var accounts = await accountService.GetAccounts();
-            Accounts.Clear();
-            foreach (var acc in accounts)
-                Accounts.Add(acc);
+            var accounts = await accountService.GetOrderedAccounts();
+            Accounts.ReplaceRange(accounts);
         }
         catch (Exception ex)
         {
@@ -107,9 +91,7 @@ public partial class BulkEditingViewModel : ObservableObject
         try
         {
             var categories = await categoryService.GetParentCategories();
-            Categories.Clear();
-            foreach (var cat in categories)
-                Categories.Add(cat);
+            Categories.ReplaceRange(categories);
         }
         catch (Exception ex)
         {
@@ -126,9 +108,8 @@ public partial class BulkEditingViewModel : ObservableObject
         try
         {
             var payees = await transactionService.GetPayeesFromTransactions();
-            Payees.Clear();
-            foreach (var payee in payees)
-                Payees.Add(payee);
+            Payees = new(payees);
+            //Payees.ReplaceRange(payees);
         }
         catch (Exception ex)
         {
@@ -141,8 +122,8 @@ public partial class BulkEditingViewModel : ObservableObject
     /// Gets subcategories from database and refreshes FindSubcategories collection.
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public async void GetFindSubcategories(object sender, EventArgs e)
+    /// <param name="newValue"></param>
+    public async void GetFindSubcategories(object sender, object newValue)
     {
         try
         {
@@ -152,7 +133,7 @@ public partial class BulkEditingViewModel : ObservableObject
             // event might fire before SelectedItem updates in vm
             if (FindCategory is null)
             {
-                var pckCategories = sender as Picker;
+                var pckCategories = sender as PickerField;
                 var category = pckCategories.SelectedItem as Category;
                 FindCategory = category;
                 if (FindCategory is null)
@@ -160,8 +141,7 @@ public partial class BulkEditingViewModel : ObservableObject
             }
 
             var subcategories = await categoryService.GetSubcategories(FindCategory);
-            foreach (var cat in subcategories)
-                FindSubcategories.Add(cat);
+            FindSubcategories.AddRange(subcategories);
         }
         catch (Exception ex)
         {
@@ -174,8 +154,8 @@ public partial class BulkEditingViewModel : ObservableObject
     /// Gets subcategories from database and refreshes ReplaceSubcategories collection.
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public async void GetReplaceSubcategories(object sender, EventArgs e)
+    /// <param name="newValue"></param>
+    public async void GetReplaceSubcategories(object sender, object newValue)
     {
         try
         {
@@ -193,8 +173,7 @@ public partial class BulkEditingViewModel : ObservableObject
             }
 
             var subcategories = await categoryService.GetSubcategories(ReplaceCategory);
-            foreach (var cat in subcategories)
-                ReplaceSubcategories.Add(cat);
+            ReplaceSubcategories.AddRange(subcategories);
         }
         catch (Exception ex)
         {
@@ -203,70 +182,8 @@ public partial class BulkEditingViewModel : ObservableObject
         }
     }
 
-    /// <summary>
-    /// Clears selected Find Account.
-    /// </summary>
-    [RelayCommand]
-    void ClearFindAccount()
+    public void Clear()
     {
-        FindAccount = null;
-        FoundTransactionCount = 0;
-        UpdateText();
-    }
-
-    /// <summary>
-    /// Clears selected Find Category.
-    /// </summary>
-    [RelayCommand]
-    void ClearFindCategory()
-    {
-        FindCategory = null;
-        FindSubcategory = null;
-        FoundTransactionCount = 0;
-        UpdateText();
-    }
-
-    /// <summary>
-    /// Clears selected Find Subcategory.
-    /// </summary>
-    [RelayCommand]
-    void ClearFindSubcategory()
-    {
-        FindSubcategory = null;
-        FoundTransactionCount = 0;
-        UpdateText();
-    }
-
-    /// <summary>
-    /// Clears selected Replace Account.
-    /// </summary>
-    [RelayCommand]
-    void ClearReplaceAccount()
-    {
-        ReplaceAccount = null;
-        FoundTransactionCount = 0;
-        UpdateText();
-    }
-
-    /// <summary>
-    /// Clears selected Replace Category.
-    /// </summary>
-    [RelayCommand]
-    void ClearReplaceCategory()
-    {
-        ReplaceCategory = null;
-        ReplaceSubcategory = null;
-        FoundTransactionCount = 0;
-        UpdateText();
-    }
-
-    /// <summary>
-    /// Clears selected Replace Subcategory.
-    /// </summary>
-    [RelayCommand]
-    void ClearReplaceSubcategory()
-    {
-        ReplaceSubcategory = null;
         FoundTransactionCount = 0;
         UpdateText();
     }

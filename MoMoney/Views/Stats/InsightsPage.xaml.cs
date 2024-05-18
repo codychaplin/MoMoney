@@ -10,7 +10,6 @@ public partial class InsightsPage : ContentPage
 		InitializeComponent();
 		BindingContext = _vm;
 		Loaded += _vm.Init;
-		pckDate.SelectedIndexChanged += _vm.Refresh;
 
 		if (Utilities.ShowValue)
 		{

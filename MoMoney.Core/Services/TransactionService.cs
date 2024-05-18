@@ -1,8 +1,8 @@
-﻿using MoMoney.Core.Data;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using MoMoney.Core.Data;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
-using CommunityToolkit.Mvvm.Messaging;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.Services;
@@ -17,7 +17,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         accountService = _accountService;
     }
 
-    public async Task AddTransaction(DateTime date, int accountID, decimal amount, int categoryID,
+    public async Task<int> AddTransaction(DateTime date, int accountID, decimal amount, int categoryID,
         int subcategoryID, string payee, int? transferID)
     {
         Transaction transaction = new();
@@ -38,6 +38,9 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         // send message to update UI
         var args = new TransactionEventArgs(transaction, TransactionEventArgs.CRUD.Create);
         WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(args));
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
+
+        return transaction.TransactionID;
     }
 
     public async Task AddTransactions(List<Transaction> transactions)
@@ -48,6 +51,8 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
 
             return $"Added {transactions.Count} Transactions to db.";
         }, false);
+
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task UpdateTransaction(Transaction updatedTransaction)
@@ -66,6 +71,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         // send message to update UI
         var args = new TransactionEventArgs(updatedTransaction, TransactionEventArgs.CRUD.Update);
         WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(args));
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task RemoveTransaction(Transaction transaction)
@@ -86,6 +92,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         // send message to update UI
         var args = new TransactionEventArgs(transaction, TransactionEventArgs.CRUD.Delete);
         WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(args));
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task RemoveAllTransactions()
@@ -98,6 +105,10 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
 
             return $"Removed all Transactions from db.";
         }, false);
+
+        var args = new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read);
+        WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(args));
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
     }
 
     public async Task<Transaction> GetTransaction(int ID)
@@ -141,7 +152,6 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         await momoney.Init();
         if (reverse)
         {
-            
             return await momoney.db.Table<Transaction>().Where(t => t.Date >= from && t.Date <= to)
                                                         .OrderByDescending(t => t.Date)
                                                         .ToListAsync();
@@ -162,6 +172,33 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
     {
         await momoney.Init();
         return await momoney.db.Table<Transaction>().CountAsync();
+    }
+
+    public async Task CalculateAccountBalances()
+    {
+        var transactions = await GetTransactions();
+        var accounts = await accountService.GetAccounts();
+        if (!transactions.Any() || !accounts.Any())
+            return;
+
+        // group transactions by account, sum amounts, and convert to dictionary
+        var currentBalances = transactions.GroupBy(t => t.AccountID)
+                                          .Select(g => new
+                                          {
+                                              g.First().AccountID,
+                                              Balance = g.Sum(t => t.Amount)
+                                          })
+                                          .ToDictionary(a => a.AccountID, a => a.Balance);
+
+        // get accounts that only exist in currentBalances
+        var matchingAccounts = accounts.Where(a => currentBalances.ContainsKey(a.AccountID));
+
+        // update current balance in db
+        foreach (var account in matchingAccounts)
+        {
+            account.CurrentBalance = account.StartingBalance + currentBalances[account.AccountID];
+            await accountService.UpdateAccount(account);
+        }
     }
 
     /// <summary>

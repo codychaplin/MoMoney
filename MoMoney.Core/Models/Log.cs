@@ -6,7 +6,7 @@ namespace MoMoney.Core.Models;
 
 public class Log
 {
-    [PrimaryKey, AutoIncrement]
+    [PrimaryKey, AutoIncrement, CsvHelper.Configuration.Attributes.Ignore]
     public int LogId { get; set; }
     [Index(0)]
     public DateTime Timestamp { get; set; }

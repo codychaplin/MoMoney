@@ -12,7 +12,7 @@ using Firebase.Analytics;
 namespace MoMoney.Core.Services;
 
 /// <inheritdoc />
-public class LoggerService<T> : ILoggerService<T>, IFirebaseService
+public class LoggerService<T> : ILoggerService<T>
 {
     readonly MoMoneydb momoney;
     readonly string className;
@@ -23,13 +23,18 @@ public class LoggerService<T> : ILoggerService<T>, IFirebaseService
         className = typeof(T).Name;
     }
 
-    public async Task Log(LogLevel level, string message, string exceptionType)
+    async Task Log(LogLevel level, string message, string exceptionType)
     {
         try
         {
             await momoney.Init();
             Log log = new(level, className, message, exceptionType);
             await momoney.db.InsertAsync(log);
+
+            if (string.IsNullOrEmpty(exceptionType))
+                System.Diagnostics.Debug.WriteLine($"{level}: {message}");
+            else
+                System.Diagnostics.Debug.WriteLine($"{level}: {exceptionType}: {message}");
         }
         catch (Exception) { }
     }
@@ -42,31 +47,30 @@ public class LoggerService<T> : ILoggerService<T>, IFirebaseService
     public async Task LogWarning(string functionName, Exception ex)
     {
         await Log(LogLevel.Warning, ex.Message, ex.GetType().Name);
-        LogFirebaseEvent(FirebaseParameters.EVENT_WARNING_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className));
+        LogFirebaseEvent(FirebaseParameters.EVENT_WARNING_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className), ex);
     }
 
     public async Task LogError(string functionName, Exception ex)
     {
-        // if SQLite exception, log as critical, otherwise log as error
-        if (ex is SQLite.SQLiteException)
+        // if SQLite or null reference exception, log as critical, otherwise log as error
+        if (ex is SQLite.SQLiteException || ex is NullReferenceException)
         {
-            await Log(LogLevel.Critical, ex.Message, ex.GetType().Name);
-            LogFirebaseEvent(FirebaseParameters.EVENT_CRITICAL_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className));
+            await LogCritical(functionName, ex);
         }
         else
         {
             await Log(LogLevel.Error, ex.Message, ex.GetType().Name);
-            LogFirebaseEvent(FirebaseParameters.EVENT_ERROR_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className));
+            LogFirebaseEvent(FirebaseParameters.EVENT_ERROR_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className), ex);
         }
     }
 
     public async Task LogCritical(string functionName, Exception ex)
     {
         await Log(LogLevel.Critical, ex.Message, ex.GetType().Name);
-        LogFirebaseEvent(FirebaseParameters.EVENT_CRITICAL_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className));
+        LogFirebaseEvent(FirebaseParameters.EVENT_CRITICAL_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className), ex);
     }
 
-    public void LogFirebaseEvent(string eventName, IDictionary<string, string> parameters)
+    public void LogFirebaseEvent(string eventName, IDictionary<string, string> parameters, Exception exception = null)
     {
 #if ANDROID && RELEASE
         var firebaseAnalytics = FirebaseAnalytics.GetInstance(Platform.CurrentActivity);
@@ -80,11 +84,20 @@ public class LoggerService<T> : ILoggerService<T>, IFirebaseService
         var bundle = new Bundle();
         foreach (var param in parameters)
         {
-            bundle.PutString(param.Key, param.Value);
+            bundle.PutString(param.Key, param.Value.ToString());
         }
 
         firebaseAnalytics.LogEvent(eventName, bundle);
+
+        if (exception != null)
+            Firebase.Crashlytics.FirebaseCrashlytics.Instance.RecordException(Java.Lang.Throwable.FromException(exception));
 #endif
+    }
+
+    public async Task AddLogs(IEnumerable<Log> logs)
+    {
+        await momoney.Init();
+        await momoney.db.InsertAllAsync(logs);
     }
 
     public async Task<Log> GetLog(int ID)
