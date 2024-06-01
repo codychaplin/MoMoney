@@ -41,24 +41,6 @@
                 Keyboard="Numeric"
                 Text="{Binding Stock.Cost}" />
 
-            <!--  market price  -->
-            <material:TextField
-                x:Name="txtMarketPrice"
-                Title="Market Price"
-                Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Store}}"
-                Keyboard="Numeric"
-                Text="{Binding Stock.MarketPrice}" />
-
-            <!--  book value  -->
-            <material:TextField
-                x:Name="txtBookValue"
-                Title="Book Value"
-                Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Book}}"
-                Keyboard="Numeric"
-                Text="{Binding Stock.BookValue}" />
-
             <!--  delete/clear/enter buttons  -->
             <Grid
                 x:Name="grdAcceptButtons"

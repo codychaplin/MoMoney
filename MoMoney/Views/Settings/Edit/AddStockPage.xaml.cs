@@ -26,7 +26,5 @@ public partial class AddStockPage : ContentPage
         txtSymbol.Text = "";
         txtQuantity.Text = "";
         txtCost.Text = "";
-        txtMarketPrice.Text = "";
-        txtBookValue.Text = "";
     }
 }

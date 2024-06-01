@@ -14,7 +14,6 @@ public partial class AddStockViewModel : ObservableObject
     [ObservableProperty] int quantity; // quantity owned
     [ObservableProperty] decimal cost; // purchase price per share
     [ObservableProperty] decimal marketPrice; // current price
-    [ObservableProperty] decimal bookValue; // total price paid
 
     public AddStockViewModel(IStockService _stockService, ILoggerService<AddStockViewModel> _logger)
     {
@@ -30,7 +29,7 @@ public partial class AddStockViewModel : ObservableObject
     {
         try
         {
-            await stockService.AddStock(Symbol, Quantity, Cost, MarketPrice, BookValue);
+            await stockService.AddStock(Symbol, Quantity, Cost, MarketPrice);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_STOCK, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
         }

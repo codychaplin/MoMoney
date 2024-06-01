@@ -40,9 +40,7 @@ public partial class LoggingViewModel : ObservableObject
     /// <summary>
     /// Gets logs from db.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public async void Init(object sender, EventArgs e)
+    public async Task Init()
     {
         Shell.Current.IsBusy = true;
 

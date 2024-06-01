@@ -20,11 +20,11 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
             Stocks = await GetStocksAsDict();
     }
 
-    public async Task AddStock(string symbol, int quantity, decimal cost, decimal marketprice, decimal bookvalue)
+    public async Task AddStock(string symbol, int quantity, decimal cost, decimal marketprice)
     {
         await DbOperation(async () =>
         {
-            ValidateStock(symbol, quantity, cost, marketprice, bookvalue);
+            ValidateStock(symbol, quantity, cost, marketprice);
 
             var count = await momoney.db.Table<Stock>().CountAsync(s => s.Symbol == symbol);
             if (count > 0)
@@ -35,8 +35,7 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
                 Symbol = symbol,
                 Quantity = quantity,
                 Cost = cost,
-                MarketPrice = marketprice,
-                BookValue = bookvalue
+                MarketPrice = marketprice
             };
 
             await momoney.db.InsertAsync(stock);
@@ -70,7 +69,7 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
     {
         await DbOperation(async () =>
         {
-            ValidateStock(updatedStock.Symbol, updatedStock.Quantity, updatedStock.Cost, updatedStock.MarketPrice, updatedStock.BookValue);
+            ValidateStock(updatedStock.Symbol, updatedStock.Quantity, updatedStock.Cost, updatedStock.MarketPrice);
 
             await momoney.db.UpdateAsync(updatedStock);
             Stocks[updatedStock.Symbol] = updatedStock;
@@ -83,7 +82,7 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
     {
         await DbOperation(async () =>
         {
-            ValidateStock(updatedStock.Symbol, updatedStock.Quantity, updatedStock.Cost, updatedStock.MarketPrice, updatedStock.BookValue);
+            ValidateStock(updatedStock.Symbol, updatedStock.Quantity, updatedStock.Cost, updatedStock.MarketPrice);
 
             await momoney.db.DeleteAsync(oldStock);
             await momoney.db.InsertAsync(updatedStock);
@@ -164,9 +163,8 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
     /// <param name="quantity"></param>
     /// <param name="cost"></param>
     /// <param name="marketPrice"></param>
-    /// <param name="bookValue"></param>
     /// <exception cref="InvalidStockException"></exception>
-    static void ValidateStock(string symbol, int quantity, decimal cost, decimal marketPrice, decimal bookValue)
+    static void ValidateStock(string symbol, decimal quantity, decimal cost, decimal marketPrice)
     {
         if (symbol == "")
             throw new InvalidStockException("Invalid symbol");
@@ -176,7 +174,5 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
             throw new InvalidStockException("Cost must be > 0");
         if (marketPrice < 0)
             throw new InvalidStockException("Market Price must be >= 0");
-        if (bookValue <= 0)
-            throw new InvalidStockException("Book Value must be > 0");
     }
 }

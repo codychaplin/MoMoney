@@ -39,8 +39,7 @@ public partial class EditStockViewModel : ObservableObject
                 Symbol = Stock.Symbol,
                 Quantity = Stock.Quantity,
                 Cost = Stock.Cost,
-                MarketPrice = Stock.MarketPrice,
-                BookValue = Stock.BookValue
+                MarketPrice = Stock.MarketPrice
             };
         }
         catch (StockNotFoundException ex)

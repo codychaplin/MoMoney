@@ -5,6 +5,11 @@
 * Fixed transaction slider filter and wrapped date filter in an InputField
 * Fixed checkbox style on LoggingPage and filter logic
 
+### Changes
+
+* Added chart to Stocks page
+* Changed stock quantity from int to decimal to allow fractional shares
+
 # MoMoney v1.2.0
 
 ### Fixes

@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MvvmHelpers;
 using HtmlAgilityPack;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
@@ -8,16 +9,19 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Stats;
 
-public partial class StockStatsViewModel : ObservableObject
+public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     readonly IStockService stockService;
     readonly ILoggerService<StockStatsViewModel> logger;
 
     [ObservableProperty] ObservableCollection<DetailedStock> stocks = [];
+    [ObservableProperty] ObservableRangeCollection<StockData> stockData = [];
 
     [ObservableProperty] decimal total = 0;
     [ObservableProperty] decimal totalPercent = 0;
     [ObservableProperty] decimal marketValue = 0;
+
+    [ObservableProperty] string showValue = "$0";
 
     decimal totalBook = 0;
     decimal totalMarket = 0;
@@ -29,14 +33,13 @@ public partial class StockStatsViewModel : ObservableObject
         stockService = _stockService;
         logger = _logger;
         logger.LogFirebaseEvent(FirebaseParameters.EVENT_VIEW_STOCKS, FirebaseParameters.GetFirebaseParameters());
+        ShowValue = Utilities.ShowValue ? "$0" : "$?";
     }
 
     /// <summary>
     /// Initializes data for StocksPage
     /// </summary>
-    /// <param name="s"></param>
-    /// <param name="e"></param>
-    public async void Init(object s, EventArgs e)
+    public async Task Init()
     {
         // populate collection with cached values first
         var stocks = await stockService.GetStocks();
@@ -53,15 +56,29 @@ public partial class StockStatsViewModel : ObservableObject
         MarketValue = totalMarket;
         Total = totalMarket - totalBook;
         TotalPercent = (totalMarket / totalBook) - 1;
-        
-        await Task.Delay(250); // allows smooth transition to page
+
+        UpdateChart();
         await GetUpdatedStockPrices(cts.Token); // get updated prices via webscraping
+    }
+
+    void UpdateChart()
+    {
+        var stockData = Stocks.Select(ds =>
+        {
+            return new StockData
+            {
+                Symbol = ds.Symbol,
+                Price = ds.MarketValue
+            };
+        })
+        .OrderByDescending(sd => sd.Price);
+        StockData.ReplaceRange(stockData);
     }
 
     /// <summary>
     /// Uses an API to fetch a list of stocks' prices.
     /// </summary>
-    public async Task GetUpdatedStockPrices(CancellationToken token)
+    async Task GetUpdatedStockPrices(CancellationToken token)
     {
         try
         {
