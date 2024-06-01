@@ -118,42 +118,39 @@
 
                 <Frame
                     Padding="15,0,0,0"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray500},
                                                       Dark={StaticResource Gray700}}"
+                    BorderColor="{AppThemeBinding Light={StaticResource Gray100},
+                                                  Dark={StaticResource Gray400}}"
                     HeightRequest="50"
                     WidthRequest="250">
                     <material:CheckBox
                         x:Name="ChkTileSize"
-                        CheckChanged="Check_Toggled"
+                        CheckChangedCommand="{Binding CheckChangedCommand}"
                         HorizontalOptions="Start"
-                        IsChecked="True"
+                        IsChecked="{Binding IsChecked}"
                         LabelPosition="Before"
-                        Text="Large Tiles" />
+                        Text="Large Tiles"
+                        Color="{StaticResource Primary}" />
                 </Frame>
 
                 <!--  filters  -->
                 <material:PickerField
-                    x:Name="pckLevels"
+                    x:Name="PckLevels"
                     Title="Log Levels"
                     ItemsSource="{Binding Levels}"
-                    SelectedItem="{Binding Level}"
-                    SelectedValueChangedCommand="{Binding UpdateFilterCommand}"
                     WidthRequest="250" />
 
                 <material:PickerField
-                    x:Name="pckClasses"
+                    x:Name="PckClasses"
                     Title="Classes"
                     ItemsSource="{Binding Classes}"
-                    SelectedItem="{Binding ClassName}"
-                    SelectedValueChangedCommand="{Binding UpdateFilterCommand}"
                     WidthRequest="250" />
 
                 <material:PickerField
-                    x:Name="pckExceptions"
+                    x:Name="PckExceptions"
                     Title="Exceptions"
                     ItemsSource="{Binding Exceptions}"
-                    SelectedItem="{Binding ExceptionType}"
-                    SelectedValueChangedCommand="{Binding UpdateFilterCommand}"
                     WidthRequest="250" />
 
             </VerticalStackLayout>

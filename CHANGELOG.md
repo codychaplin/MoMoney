@@ -3,6 +3,7 @@
 ### Fixes
 
 * Fixed transaction slider filter and wrapped date filter in an InputField
+* Fixed checkbox style on LoggingPage and filter logic
 
 # MoMoney v1.2.0
 
