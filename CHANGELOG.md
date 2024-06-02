@@ -4,6 +4,8 @@
 
 * Fixed transaction slider filter and wrapped date filter in an InputField
 * Fixed checkbox style on LoggingPage and filter logic
+* Fixed BreakdownPage colour coordination
+* Suppressed webscraping error
 
 ### Changes
 

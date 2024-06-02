@@ -12,8 +12,8 @@
     xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
     x:Name="MoMoneyApp">
     <Application.Resources>
-
         <ResourceDictionary>
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
@@ -190,6 +190,5 @@
             </DataTemplate>
 
         </ResourceDictionary>
-
     </Application.Resources>
 </Application>

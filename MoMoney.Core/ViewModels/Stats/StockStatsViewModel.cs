@@ -94,10 +94,11 @@ public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.
                 // parse content to html, find element using xpath
                 HtmlDocument document = new();
                 document.LoadHtml(htmlContent);
-                HtmlNode priceElement = document.DocumentNode.SelectSingleNode("//div[@class='YMlKec fxKbKc']");
-                string price = priceElement.InnerHtml[1..];
+                HtmlNode priceElement = document.DocumentNode.SelectSingleNode("//div[@class='YMlKec fxKbKc']") 
+                   ?? throw new StockNotFoundException($"Could not find '{Stocks[i].Symbol}'. Please ensure the name and market are spelled correctly");
 
                 // validate price
+                string price = priceElement.InnerHtml[1..];
                 if (string.IsNullOrEmpty(price))
                     throw new InvalidStockException("Updated price not found.");
                 if (decimal.TryParse(price, out decimal newPrice))
@@ -136,6 +137,12 @@ public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.
         {
             await logger.LogError(nameof(GetUpdatedStockPrices), ex);
             await Shell.Current.DisplayAlert("Parse Error", ex.Message, "OK");
+        }
+
+        catch (StockNotFoundException ex)
+        {
+            await logger.LogError(nameof(GetUpdatedStockPrices), ex);
+            await Shell.Current.DisplayAlert("Stock not found", ex.Message, "OK");
         }
         catch (InvalidOperationException)
         {

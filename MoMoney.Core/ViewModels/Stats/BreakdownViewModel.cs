@@ -226,6 +226,7 @@ public partial class BreakdownViewModel : CommunityToolkit.Mvvm.ComponentModel.O
         var expenseData = transactions
             .Where(t => t.CategoryID >= Constants.EXPENSE_ID)
             .GroupBy(t => t.CategoryID)
+            .OrderByDescending(g => Math.Abs(g.Sum(t => t.Amount)))
             .Select(group =>
             {
                 var amount = Math.Abs(group.Sum(t => t.Amount));
@@ -236,8 +237,7 @@ public partial class BreakdownViewModel : CommunityToolkit.Mvvm.ComponentModel.O
                     Category = categoryService.Categories[group.Key].CategoryName,
                     Color = ExpensePalette[i++]
                 };
-            })
-            .OrderByDescending(g => g.ActualAmount);
+            });
 
         ExpenseData.ReplaceRange(expenseData);
 
@@ -258,6 +258,7 @@ public partial class BreakdownViewModel : CommunityToolkit.Mvvm.ComponentModel.O
         var incomeData = transactions
             .Where(t => t.CategoryID == Constants.INCOME_ID)
             .GroupBy(t => t.SubcategoryID)
+            .OrderByDescending(g => g.Sum(t => t.Amount))
             .Select(group =>
             {
                 var amount = group.Sum(t => t.Amount);
@@ -268,8 +269,7 @@ public partial class BreakdownViewModel : CommunityToolkit.Mvvm.ComponentModel.O
                     Category = categoryService.Categories[group.Key].CategoryName,
                     Color = IncomePalette[i++]
                 };
-            })
-            .OrderByDescending(g => g.ActualAmount);
+            });
 
         IncomeData.ReplaceRange(incomeData);
 
