@@ -1,16 +1,14 @@
 ﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
-using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
-using CommunityToolkit.Mvvm.Input;
 
 namespace MoMoney.Core.ViewModels.Stats;
 
 public partial class InsightsViewModel : ObservableObject
 {
-    readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
     readonly ILoggerService<InsightsViewModel> logger;
 
@@ -24,16 +22,9 @@ public partial class InsightsViewModel : ObservableObject
     [ObservableProperty] decimal totalIncome = 0;
     [ObservableProperty] decimal totalExpense = 0;
 
-    [ObservableProperty] string topIncomeSubcategoryName = "";
-    [ObservableProperty] decimal topIncomeSubcategoryAmount = 0;
-
-    [ObservableProperty] string topExpenseCategoryName = "";
-    [ObservableProperty] decimal topExpenseCategoryAmount = 0;
-
-    public InsightsViewModel(ITransactionService _transactionService, ICategoryService _categoryService, ILoggerService<InsightsViewModel> _logger)
+    public InsightsViewModel(ITransactionService _transactionService, ILoggerService<InsightsViewModel> _logger)
     {
         transactionService = _transactionService;
-        categoryService = _categoryService;
         logger = _logger;
         logger.LogFirebaseEvent(FirebaseParameters.EVENT_VIEW_INSIGHTS, FirebaseParameters.GetFirebaseParameters());
     }
@@ -41,9 +32,7 @@ public partial class InsightsViewModel : ObservableObject
     /// <summary>
     /// Initializes year range
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public async void Init(object sender, EventArgs e)
+    public async Task Init()
     {
         var first = await transactionService.GetFirstTransaction();
         if (first is null)
@@ -73,7 +62,6 @@ public partial class InsightsViewModel : ObservableObject
 
         GetTotals(transactions);
         GetIncomeExpenseData(transactions);
-        await GetTopCategories(transactions);
     }
 
     /// <summary>
@@ -99,7 +87,7 @@ public partial class InsightsViewModel : ObservableObject
         IncomeData = new ObservableCollection<IncomeExpenseData>(
             groupByMonth.Select(group => 
             {
-                var amount = group.income.Sum(t => t.Amount);
+                decimal amount = group.income.Sum(t => t.Amount);
                 return new IncomeExpenseData
                 {
                     Month = group.Month,
@@ -109,11 +97,11 @@ public partial class InsightsViewModel : ObservableObject
         ExpenseData = new ObservableCollection<IncomeExpenseData>(
             groupByMonth.Select(group =>
             {
-                var amount = group.expenses.Sum(t => t.Amount);
+                decimal amount = Math.Abs(group.expenses.Sum(t => t.Amount));
                 return new IncomeExpenseData
                 {
                     Month = group.Month,
-                    Amount = amount < 0 ? amount : 0
+                    Amount = amount
                 };
             }));
 
@@ -126,82 +114,6 @@ public partial class InsightsViewModel : ObservableObject
                     Month = Constants.MONTHS[i],
                     Amount = 0
                 });
-        }
-
-        if (IncomeData.Count < 12)
-        {
-            for (int i = IncomeData.Count; i < 12; i++)
-                IncomeData.Add(new IncomeExpenseData
-                {
-                    Month = Constants.MONTHS[i],
-                    Amount = 0
-                });
-        }
-    }
-
-    /// <summary>
-    /// Updates top income/expense subcategory/category.
-    /// </summary>
-    /// <param name="transactions"></param>
-    async Task GetTopCategories(IEnumerable<Transaction> transactions)
-    {
-        try
-        {
-            // get income transactions, group by subcategory,
-            // select sum of Amounts and subcategory ID, then get max value
-            var incomeResults = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
-                                            .GroupBy(t => t.SubcategoryID)
-                                            .Select(group => new
-                                            {
-                                                Total = group.Sum(t => t.Amount),
-                                                group.FirstOrDefault().SubcategoryID
-                                            })
-                                            .MaxBy(g => g.Total);
-
-            if (incomeResults is null)
-            {
-                TopIncomeSubcategoryName = "N/A";
-                TopIncomeSubcategoryAmount = 0;
-                return;
-            }
-                
-            // get category name and amount
-            Category incomeCategory = await categoryService.GetCategory(incomeResults.SubcategoryID);
-            TopIncomeSubcategoryName = incomeCategory.CategoryName;
-            TopIncomeSubcategoryAmount = incomeResults.Total;
-
-            // get expense transactions, group by category,
-            // select sum of Amounts and category ID, then get min value (expenses are negative so Min is used)
-            var expenseResults = transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
-                                             .GroupBy(t => t.CategoryID)
-                                             .Select(group => new
-                                             {
-                                                 Total = group.Sum(t => t.Amount),
-                                                 group.FirstOrDefault().CategoryID
-                                             })
-                                             .MinBy(g => g.Total);
-
-            if (expenseResults is null)
-            {
-                TopExpenseCategoryName = "N/A";
-                TopExpenseCategoryAmount = 0;
-                return;
-            }
-
-            // get category name and amount
-            Category expenseCategory = await categoryService.GetCategory(expenseResults.CategoryID);
-            TopExpenseCategoryName = expenseCategory.CategoryName;
-            TopExpenseCategoryAmount = Math.Abs(expenseResults.Total);
-        }
-        catch (CategoryNotFoundException ex)
-        {
-            await logger.LogError(nameof(GetTopCategories), ex);
-            await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
-        }
-        catch (Exception ex)
-        {
-            await logger.LogError(nameof(GetTopCategories), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 

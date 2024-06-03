@@ -5,21 +5,21 @@ namespace MoMoney.Views.Stats;
 
 public partial class InsightsPage : ContentPage
 {
-	public InsightsPage(InsightsViewModel _vm)
+	public InsightsPage(InsightsViewModel vm)
 	{
 		InitializeComponent();
-		BindingContext = _vm;
-		Loaded += _vm.Init;
+		BindingContext = vm;
+		Loaded += async (s, e) => await vm.Init();
 
 		if (Utilities.ShowValue)
 		{
             IncExpChartIncLbl.LabelFormat = "$0";
-            IncExpChartExpLbl.LabelFormat = "$0;$0";
+            IncExpChartExpLbl.LabelFormat = "$0";
         }
 		else
 		{
             IncExpChartIncLbl.LabelFormat = "$?";
-            IncExpChartExpLbl.LabelFormat = "$?;$?";
+            IncExpChartExpLbl.LabelFormat = "$?";
             
         }
 	}
