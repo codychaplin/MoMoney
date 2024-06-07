@@ -17,6 +17,7 @@
         <converters:ShowValueConverter x:Key="ShowValue" />
         <converters:ShowValuePercentConverter x:Key="ShowValuePercent" />
         <converters:PositiveNegativeColourConverter x:Key="PosNegColour" />
+        <converters:StockDataLabelConverter x:Key="StockDataLabel" />
     </ContentPage.Resources>
 
     <ScrollView>
@@ -134,17 +135,16 @@
                         XBindingPath="Symbol"
                         YBindingPath="Price" />
                     <chart:SfCircularChart.Resources>
-                        <DataTemplate x:Key="labelTemplate">
-                            <VerticalStackLayout Spacing="0">
+                        <DataTemplate x:Key="labelTemplate" x:DataType="chart:ChartDataLabel">
+                            <Frame
+                                Padding="5"
+                                BackgroundColor="#66212121"
+                                CornerRadius="10">
                                 <Label
-                                    FontSize="13"
-                                    Text="{Binding Item.Symbol}"
+                                    FontSize="12"
+                                    Text="{Binding Item, Converter={StaticResource StockDataLabel}}"
                                     TextColor="White" />
-                                <Label
-                                    FontSize="13"
-                                    Text="{Binding Item.Price, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
-                                    TextColor="White" />
-                            </VerticalStackLayout>
+                            </Frame>
                         </DataTemplate>
                     </chart:SfCircularChart.Resources>
                 </chart:SfCircularChart>
