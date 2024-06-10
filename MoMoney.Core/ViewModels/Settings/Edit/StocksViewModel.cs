@@ -38,20 +38,20 @@ public partial class StocksViewModel : CommunityToolkit.Mvvm.ComponentModel.Obse
     }
 
     /// <summary>
-    /// Goes to AddStockPage.xaml.
+    /// Goes to the add version of EditStockPage.xaml.
     /// </summary>
     [RelayCommand]
     async Task GoToAddStock()
     {
-        await Shell.Current.GoToAsync("AddStockPage");
+        await Shell.Current.GoToAsync($"EditStockPage", new ShellNavigationQueryParameters() { { "Stock", null } });
     }
 
     /// <summary>
-    /// Goes to EditStockPage.xaml with a Symbol as a parameter.
+    /// Goes to EditStockPage.xaml with a Stock as a parameter.
     /// </summary>
     [RelayCommand]
-    async Task GoToEditStock(string symbol)
+    async Task GoToEditStock(Stock stock)
     {
-        await Shell.Current.GoToAsync($"EditStockPage?Symbol={symbol}");
+        await Shell.Current.GoToAsync($"EditStockPage", new ShellNavigationQueryParameters() { { "Stock", stock } });
     }
 }

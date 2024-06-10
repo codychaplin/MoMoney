@@ -79,13 +79,10 @@ public static class MauiProgram
         // models
         builder.Services.AddTransient<EditTransactionPage>();
         builder.Services.AddTransient<AccountsPage>();
-        builder.Services.AddTransient<AddAccountPage>();
         builder.Services.AddTransient<EditAccountPage>();
         builder.Services.AddTransient<CategoriesPage>();
-        builder.Services.AddTransient<AddCategoryPage>();
         builder.Services.AddTransient<EditCategoryPage>();
         builder.Services.AddTransient<StocksPage>();
-        builder.Services.AddTransient<AddStockPage>();
         builder.Services.AddTransient<EditStockPage>();
 
         return builder;
@@ -115,13 +112,10 @@ public static class MauiProgram
         // models
         builder.Services.AddTransient<EditTransactionViewModel>();
         builder.Services.AddTransient<AccountsViewModel>();
-        builder.Services.AddTransient<AddAccountViewModel>();
         builder.Services.AddTransient<EditAccountViewModel>();
         builder.Services.AddTransient<CategoriesViewModel>();
-        builder.Services.AddTransient<AddCategoryViewModel>();
         builder.Services.AddTransient<EditCategoryViewModel>();
         builder.Services.AddTransient<StocksViewModel>();
-        builder.Services.AddTransient<AddStockViewModel>();
         builder.Services.AddTransient<EditStockViewModel>();
 
         return builder;

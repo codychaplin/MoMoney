@@ -16,9 +16,8 @@ public interface IStockService
     /// <param name="symbol"></param>
     /// <param name="quantity"></param>
     /// <param name="cost"></param>
-    /// <param name="marketprice"></param>
     /// <exception cref="DuplicateStockException"></exception>
-    Task AddStock(string symbol, int quantity, decimal cost, decimal marketprice);
+    Task AddStock(string symbol, decimal quantity, decimal cost);
 
     /// <summary>
     /// Inserts multiple Stock objects into Stocks table.

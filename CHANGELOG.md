@@ -12,6 +12,8 @@
 * Added chart to Stocks page
 * Changed stock quantity from int to decimal to allow fractional shares
 * Updated look of Insights page
+* Condensed Add/Edit pages, made base viewmodel
+* Added component for CRUD buttons
 
 # MoMoney v1.2.0
 

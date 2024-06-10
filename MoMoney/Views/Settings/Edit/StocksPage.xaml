@@ -19,7 +19,7 @@
                     <!--  template  -->
                     <Frame Style="{StaticResource SmallTileFrame}">
                         <Frame.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Path=GoToEditStockCommand, Source={RelativeSource AncestorType={x:Type viewmodel:StocksViewModel}}}" CommandParameter="{Binding Symbol}" />
+                            <TapGestureRecognizer Command="{Binding Path=GoToEditStockCommand, Source={RelativeSource AncestorType={x:Type viewmodel:StocksViewModel}}}" CommandParameter="{Binding .}" />
                         </Frame.GestureRecognizers>
                         <Grid BackgroundColor="{StaticResource Gray700}">
 

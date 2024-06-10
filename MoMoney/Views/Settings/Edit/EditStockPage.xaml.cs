@@ -8,10 +8,15 @@ public partial class EditStockPage : ContentPage
     {
         InitializeComponent();
         BindingContext = vm;
-        Loaded += async (s, e) => await vm.GetStock();
+        Clear();
     }
 
-    private void btnClear_Clicked(object sender, EventArgs e)
+    private void BtnClear_Clicked(object sender, EventArgs e)
+    {
+        Clear();
+    }
+
+    void Clear()
     {
         txtSymbol.Text = "";
         txtQuantity.Text = "";

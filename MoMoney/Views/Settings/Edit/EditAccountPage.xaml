@@ -3,6 +3,7 @@
     x:Class="MoMoney.Views.Settings.Edit.EditAccountPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
@@ -54,33 +55,12 @@
 
 
         <!--  delete/clear/enter buttons  -->
-        <Grid
-            x:Name="grdAcceptButtons"
-            Margin="0,5,0,0"
-            ColumnDefinitions="*,*,*"
-            ColumnSpacing="10">
-            <Button
-                x:Name="btnDelete"
-                Grid.Column="0"
-                BackgroundColor="{StaticResource Red}"
-                Command="{Binding RemoveAccountCommand}"
-                HeightRequest="45"
-                Text="Delete" />
-            <Button
-                x:Name="btnClear"
-                Grid.Column="1"
-                BackgroundColor="{StaticResource Blue}"
-                Clicked="btnClear_Clicked"
-                HeightRequest="45"
-                Text="Clear" />
-            <Button
-                x:Name="btnEnter"
-                Grid.Column="2"
-                BackgroundColor="{StaticResource Green}"
-                Command="{Binding EditAccountCommand}"
-                HeightRequest="45"
-                Text="Update" />
-        </Grid>
+        <components:ActionButtons
+            AddCommand="{Binding AddCommand}"
+            ClearClicked="BtnClear_Clicked"
+            EditCommand="{Binding EditCommand}"
+            IsEditMode="{Binding IsEditMode}"
+            RemoveCommand="{Binding RemoveCommand}" />
 
     </VerticalStackLayout>
 </ContentPage>

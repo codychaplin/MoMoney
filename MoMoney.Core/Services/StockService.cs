@@ -20,11 +20,11 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
             Stocks = await GetStocksAsDict();
     }
 
-    public async Task AddStock(string symbol, int quantity, decimal cost, decimal marketprice)
+    public async Task AddStock(string symbol, decimal quantity, decimal cost)
     {
         await DbOperation(async () =>
         {
-            ValidateStock(symbol, quantity, cost, marketprice);
+            ValidateStock(symbol, quantity, cost, 0);
 
             var count = await momoney.db.Table<Stock>().CountAsync(s => s.Symbol == symbol);
             if (count > 0)
@@ -35,7 +35,7 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
                 Symbol = symbol,
                 Quantity = quantity,
                 Cost = cost,
-                MarketPrice = marketprice
+                MarketPrice = cost
             };
 
             await momoney.db.InsertAsync(stock);
