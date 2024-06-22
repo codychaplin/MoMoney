@@ -82,7 +82,7 @@
                         </ContentView>
                     </listview:SfListView.EmptyView>
                     <listview:SfListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:DetailedStock">
+                        <DataTemplate x:DataType="models:Stock">
                             <Frame
                                 Padding="10,5"
                                 BackgroundColor="{AppThemeBinding Light={StaticResource Gray150},

@@ -15,6 +15,12 @@ public partial class Stock : ObservableObject
     [ObservableProperty]
     public decimal marketPrice;
 
+    public string FullName => $"{Symbol}:{Market}";
+    public decimal MarketValue => MarketPrice * Quantity;
+    public decimal BookValue => Quantity * Cost;
+    public decimal Change => MarketValue - BookValue;
+    public decimal ChangePercent => (MarketValue / BookValue) - 1;
+
     public Stock() { }
 
     public Stock(string symbol, string market, decimal quantity, decimal cost, decimal marketPrice)
@@ -28,6 +34,7 @@ public partial class Stock : ObservableObject
 
     public Stock (Stock stock)
     {
+        StockID = stock.StockID;
         Symbol = stock.Symbol;
         Market = stock.Market;
         Quantity = stock.Quantity;

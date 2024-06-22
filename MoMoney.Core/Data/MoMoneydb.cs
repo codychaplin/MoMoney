@@ -14,17 +14,17 @@ public class MoMoneydb
     /// </summary>
     public async Task Init()
     {
+        if (db is not null)
+        {
+            while (!initialized)
+            {
+                await Task.Delay(100);
+            }
+            return;
+        }
+
         try
         {
-            if (db is not null)
-            {
-                while (!initialized)
-                {
-                    await Task.Delay(100);
-                }
-                return;
-            }
-
             db = new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
 
             await db.CreateTableAsync<Log>();

@@ -37,6 +37,10 @@ public static class MauiProgram
                {
                    fonts.AddFont("MaterialIcons-Regular.ttf", "Material");
                    fonts.AddMaterialIconFonts();
+               })
+               .ConfigureEssentials(essentials =>
+               {
+                   essentials.UseVersionTracking();
                });
 
         return builder.Build();

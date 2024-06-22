@@ -14,7 +14,7 @@ public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.
     readonly IStockService stockService;
     readonly ILoggerService<StockStatsViewModel> logger;
 
-    [ObservableProperty] ObservableCollection<DetailedStock> stocks = [];
+    [ObservableProperty] ObservableCollection<Stock> stocks = [];
     [ObservableProperty] ObservableRangeCollection<StockData> stockData = [];
 
     [ObservableProperty] decimal total = 0;
@@ -48,10 +48,9 @@ public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.
 
         foreach (var stock in stocks)
         {
-            DetailedStock dStock = new(stock);
-            Stocks.Add(dStock);
-            totalBook += dStock.BookValue;
-            totalMarket += dStock.MarketValue;
+            Stocks.Add(stock);
+            totalBook += stock.BookValue;
+            totalMarket += stock.MarketValue;
         }
         MarketValue = totalMarket;
         Total = totalMarket - totalBook;
@@ -95,7 +94,7 @@ public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.
                 HtmlDocument document = new();
                 document.LoadHtml(htmlContent);
                 HtmlNode priceElement = document.DocumentNode.SelectSingleNode("//div[@class='YMlKec fxKbKc']") 
-                   ?? throw new StockNotFoundException($"Could not find '{Stocks[i].FullName}'. Please ensure the name and market are spelled correctly");
+                   ?? throw new StockNotFoundException($"Could not find '{Stocks[i].FullName}'. Please ensure the name and market are correct");
 
                 // validate price
                 string price = priceElement.InnerHtml[1..];
@@ -103,29 +102,26 @@ public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.
                     throw new InvalidStockException("Updated price not found.");
                 if (decimal.TryParse(price, out decimal newPrice))
                 {
-                    decimal difference = newPrice - Stocks[i].MarketPrice;
                     // if price has changed, update values
+                    decimal difference = newPrice - Stocks[i].MarketPrice;
                     if (difference == 0)
                         continue;
 
-                    var stock = new DetailedStock(Stocks[i]) { MarketPrice = newPrice };
+                    var stock = new Stock(Stocks[i]) { MarketPrice = newPrice };
                     var marketValue = Stocks[i].MarketValue;
                     Stocks[i] = stock;
-
-                    // update in db (need to use oldStock due to casting issues)
-                    var oldStock = stockService.Stocks[Stocks[i].StockID];
-                    oldStock.MarketPrice = Stocks[i].MarketPrice;
-                    await stockService.UpdateStock(oldStock);
+                    await stockService.UpdateStock(stock);
 
                     // update totals
                     totalMarket += stock.MarketValue - marketValue;
                     MarketValue = totalMarket;
                     Total = totalMarket - totalBook;
                     TotalPercent = (totalMarket / totalBook) - 1;
-
                 }
                 else
+                {
                     throw new InvalidStockException($"{price} is not a valid number");
+                }
             }
         }
         catch (HttpRequestException ex)
