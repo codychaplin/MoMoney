@@ -10,6 +10,20 @@
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
     Title="Edit Account"
     x:DataType="viewmodel:EditAccountViewModel">
+    <ContentPage.Triggers>
+        <DataTrigger
+            Binding="{Binding IsEditMode}"
+            TargetType="ContentPage"
+            Value="True">
+            <Setter Property="Title" Value="Edit Account" />
+        </DataTrigger>
+        <DataTrigger
+            Binding="{Binding IsEditMode}"
+            TargetType="ContentPage"
+            Value="False">
+            <Setter Property="Title" Value="Add Account" />
+        </DataTrigger>
+    </ContentPage.Triggers>
 
     <!--  main page  -->
     <VerticalStackLayout Padding="10" Spacing="10">

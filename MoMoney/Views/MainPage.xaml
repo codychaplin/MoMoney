@@ -32,7 +32,7 @@
                             Binding="{Binding IsSelected}"
                             TargetType="Grid"
                             Value="True">
-                            <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
                         </DataTrigger>
                         <DataTrigger
                             Binding="{Binding IsSelected}"
@@ -53,7 +53,7 @@
                                 Binding="{Binding IsSelected}"
                                 TargetType="Button"
                                 Value="True">
-                                <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
                                 <Setter Property="FontSize" Value="30" />
                             </DataTrigger>
                             <DataTrigger

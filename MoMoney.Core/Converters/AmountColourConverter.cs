@@ -15,7 +15,7 @@ public class AmountColourConverter : IValueConverter
             return ID switch
             {
                 Constants.INCOME_ID => Color.Parse("#42ba96"), // income = green
-                Constants.TRANSFER_ID => Color.Parse("#ffffff"), // transfer = white
+                Constants.TRANSFER_ID => AppInfo.RequestedTheme == AppTheme.Dark ? Colors.White : Colors.Black, // transfer = white/black
                 _ => Color.Parse("#df4759")  // expense = red
             };
         }

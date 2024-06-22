@@ -6,6 +6,7 @@
 * Fixed checkbox style on LoggingPage and filter logic
 * Fixed BreakdownPage colour coordination
 * Suppressed webscraping error
+* Light mode and contrast issues
 
 ### Changes
 

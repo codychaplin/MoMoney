@@ -93,10 +93,20 @@ public partial class AddTransactionPage : ContentView
         {
             if (btn == button)
             {
-                if (Application.Current.Resources.TryGetValue("Primary", out var primary))
-                    btn.Background = (Color)primary;
+                if (Application.Current.RequestedTheme == AppTheme.Light)
+                {
+                    if (Application.Current.Resources.TryGetValue("Primary", out var primary))
+                        btn.Background = (Color)primary;
+                    else
+                        btn.Background = Color.FromArgb("#63DBA2");
+                }
                 else
-                    btn.Background = Color.FromArgb("#42ba96");
+                {
+                    if (Application.Current.Resources.TryGetValue("PrimaryDark", out var primaryDark))
+                        btn.Background = (Color)primaryDark;
+                    else
+                        btn.Background = Color.FromArgb("#42ba96");
+                }
             }
             else
             {
@@ -109,10 +119,10 @@ public partial class AddTransactionPage : ContentView
                 }
                 else
                 {
-                    if (Application.Current.Resources.TryGetValue("Gray200", out var gray))
+                    if (Application.Current.Resources.TryGetValue("Gray100", out var gray))
                         btn.Background = (Color)gray;
                     else
-                        btn.Background = Color.FromArgb("#C8C8C8");
+                        btn.Background = Color.FromArgb("#F1F1F1");
                 }
             }
         }

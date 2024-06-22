@@ -10,14 +10,16 @@
     <Button
         x:Name="btnClear"
         Grid.Column="0"
-        BackgroundColor="{StaticResource Blue}"
+        BackgroundColor="{AppThemeBinding Light={StaticResource LightBlue},
+                                          Dark={StaticResource Blue}}"
         Clicked="BtnClear_Clicked"
         HeightRequest="45"
         Text="Clear" />
     <Button
         x:Name="btnDelete"
         Grid.Column="1"
-        BackgroundColor="{StaticResource Red}"
+        BackgroundColor="{AppThemeBinding Light={StaticResource LightRed},
+                                          Dark={StaticResource Red}}"
         Command="{Binding Source={x:Reference this}, Path=RemoveCommand}"
         HeightRequest="45"
         IsVisible="{Binding Source={x:Reference this}, Path=IsEditMode}"
@@ -26,7 +28,8 @@
     <Button
         x:Name="btnEnter"
         Grid.Column="2"
-        BackgroundColor="{StaticResource Green}"
+        BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                          Dark={StaticResource PrimaryDark}}"
         HeightRequest="45">
         <Button.Triggers>
             <DataTrigger

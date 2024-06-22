@@ -91,7 +91,8 @@
                 <!--  income series  -->
                 <chart:ColumnSeries
                     Width="0.8"
-                    Fill="{StaticResource Green}"
+                    Fill="{AppThemeBinding Light={StaticResource Primary},
+                                           Dark={StaticResource PrimaryDark}}"
                     ItemsSource="{Binding IncomeData}"
                     ShowDataLabels="True"
                     XBindingPath="Month"
@@ -104,7 +105,8 @@
                                     Background="#00ffffff"
                                     FontSize="11"
                                     LabelFormat="$0"
-                                    TextColor="#80e8c9" />
+                                    TextColor="{AppThemeBinding Light={StaticResource Primary},
+                                                                Dark={StaticResource PrimaryDark}}" />
                             </chart:CartesianDataLabelSettings.LabelStyle>
                         </chart:CartesianDataLabelSettings>
                     </chart:ColumnSeries.DataLabelSettings>
@@ -126,7 +128,7 @@
                                     FontSize="11"
                                     LabelFormat="$0"
                                     LabelPadding="5"
-                                    TextColor="{StaticResource LightRed}" />
+                                    TextColor="{StaticResource SubtleRed}" />
                             </chart:CartesianDataLabelSettings.LabelStyle>
                         </chart:CartesianDataLabelSettings>
                     </chart:ColumnSeries.DataLabelSettings>
@@ -149,7 +151,8 @@
                         HorizontalOptions="Center"
                         Source="{FontImageSource FontFamily=MaterialRegular,
                                                  Glyph={x:Static m:MaterialRegular.Trending_up},
-                                                 Color={StaticResource Green}}"
+                                                 Color={AppThemeBinding Light={StaticResource Primary},
+                                                                        Dark={StaticResource PrimaryDark}}}"
                         VerticalOptions="Center" />
                     <Label
                         Grid.Column="1"

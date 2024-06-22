@@ -85,7 +85,8 @@
                         <DataTemplate x:DataType="models:DetailedStock">
                             <Frame
                                 Padding="10,5"
-                                BackgroundColor="{StaticResource Gray700}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource Gray150},
+                                                                  Dark={StaticResource Gray700}}"
                                 HeightRequest="55">
                                 <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
                                     <Label

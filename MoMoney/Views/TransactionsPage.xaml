@@ -30,7 +30,8 @@
             <toolkit:Expander.Header>
                 <Grid
                     Padding="10,0"
-                    BackgroundColor="{StaticResource Primary}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                      Dark={StaticResource PrimaryDark}}"
                     HeightRequest="55">
                     <Label
                         Style="{StaticResource lblTitle}"
@@ -40,6 +41,8 @@
                         HeightRequest="30"
                         HorizontalOptions="End"
                         Source="{FontImageSource FontFamily=MaterialRegular,
+                                                 Color={AppThemeBinding Light={StaticResource Black},
+                                                                        Dark={StaticResource White}},
                                                  Glyph={x:Static m:MaterialRegular.Tune}}"
                         VerticalOptions="Center"
                         WidthRequest="30" />
@@ -91,8 +94,6 @@
                     <material:InputField
                         Title="Amount"
                         HasValue="True"
-                        Icon="{FontImageSource FontFamily=MaterialRegular,
-                                               Glyph={x:Static m:MaterialRegular.Paid}}"
                         VerticalOptions="Center"
                         WidthRequest="250">
                         <Grid Padding="0,0,5,0" ColumnDefinitions="30,35,*,35">
@@ -127,12 +128,13 @@
                                 StepSize="5">
                                 <slider:SfRangeSlider.TrackStyle>
                                     <slider:SliderTrackStyle
-                                        ActiveFill="{StaticResource Green}"
+                                        ActiveFill="{AppThemeBinding Light={StaticResource Primary},
+                                                                     Dark={StaticResource PrimaryDark}}"
                                         ActiveSize="3"
                                         InactiveFill="{StaticResource Gray500}" />
                                 </slider:SfRangeSlider.TrackStyle>
                                 <slider:SfRangeSlider.ThumbStyle>
-                                    <slider:SliderThumbStyle Fill="{StaticResource Primary}" Radius="7" />
+                                    <slider:SliderThumbStyle Fill="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Radius="7" />
                                 </slider:SfRangeSlider.ThumbStyle>
                             </slider:SfRangeSlider>
                             <Label
@@ -205,7 +207,8 @@
                         IsRunning="{Binding IsLazyLoading, Source={x:Reference Name=listView}}"
                         IsVisible="{Binding IsLazyLoading, Source={x:Reference Name=listView}}"
                         WidthRequest="30"
-                        Color="{StaticResource Green}" />
+                        Color="{AppThemeBinding Light={StaticResource Primary},
+                                                Dark={StaticResource PrimaryDark}}" />
                 </DataTemplate>
             </listview:SfListView.LoadMoreTemplate>
             <listview:SfListView.EmptyView>
