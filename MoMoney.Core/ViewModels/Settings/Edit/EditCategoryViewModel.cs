@@ -13,7 +13,6 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
     [ObservableProperty] ObservableRangeCollection<Category> parents = []; // list of categories
     [ObservableProperty] Category category = new(); // selected category
     [ObservableProperty] Category parent; // category parent
-    [ObservableProperty] string name; // category name
 
     public EditCategoryViewModel(ICategoryService _categoryService, ILoggerService<EditCategoryViewModel> _logger) : base(_categoryService, _logger) { }
 
@@ -24,7 +23,10 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
     public override void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         if (query["Category"] is not Category category)
+        {
+            Task.Run(GetParents);
             return;
+        }
 
         IsEditMode = true;
         Category = new(category);
@@ -76,7 +78,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
     {
         try
         {
-            await service.AddCategory(Name, Parent.CategoryName);
+            await service.AddCategory(Category.CategoryName, Parent.CategoryName);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_CATEGORY, FirebaseParameters.GetFirebaseParameters());
 
             // if parent category, notify the user that it won't show up until a subcategory is added
