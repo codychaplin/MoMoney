@@ -36,7 +36,7 @@ public partial class EditStockViewModel : BaseEditViewModel<IStockService, EditS
     {
         try
         {
-            await service.AddStock(Stock.Symbol, Stock.Quantity, Stock.Cost);
+            await service.AddStock(Stock.Symbol, Stock.Market, Stock.Quantity, Stock.Cost);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_STOCK, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
         }
@@ -55,11 +55,7 @@ public partial class EditStockViewModel : BaseEditViewModel<IStockService, EditS
     {
         try
         {
-            // if symbol (primary key) changed, 
-            if (initalStock.Symbol != Stock.Symbol)
-                await service.UpdateStock(Stock, initalStock);
-            else
-                await service.UpdateStock(Stock);
+            await service.UpdateStock(Stock);
 
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_EDIT_STOCK, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
@@ -83,7 +79,7 @@ public partial class EditStockViewModel : BaseEditViewModel<IStockService, EditS
 
         try
         {
-            await service.RemoveStock(initalStock.Symbol);
+            await service.RemoveStock(initalStock.StockID);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_DELETE_STOCK, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
         }

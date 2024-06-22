@@ -76,7 +76,7 @@ public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.
     }
 
     /// <summary>
-    /// Uses an API to fetch a list of stocks' prices.
+    /// Gets a list of stock prices via webscraping.
     /// </summary>
     async Task GetUpdatedStockPrices(CancellationToken token)
     {
@@ -86,7 +86,7 @@ public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.
             for (int i = 0; i < Stocks.Count; i++)
             {
                 // get url from stock symbol, get response, and then contents
-                string url = $"https://www.google.com/finance/quote/{Stocks[i].Symbol}";
+                string url = $"https://www.google.com/finance/quote/{Stocks[i].FullName}";
                 HttpResponseMessage response = await client.GetAsync(url, token);
                 response.EnsureSuccessStatusCode();
                 string htmlContent = await response.Content.ReadAsStringAsync(token);
@@ -95,7 +95,7 @@ public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.
                 HtmlDocument document = new();
                 document.LoadHtml(htmlContent);
                 HtmlNode priceElement = document.DocumentNode.SelectSingleNode("//div[@class='YMlKec fxKbKc']") 
-                   ?? throw new StockNotFoundException($"Could not find '{Stocks[i].Symbol}'. Please ensure the name and market are spelled correctly");
+                   ?? throw new StockNotFoundException($"Could not find '{Stocks[i].FullName}'. Please ensure the name and market are spelled correctly");
 
                 // validate price
                 string price = priceElement.InnerHtml[1..];
@@ -113,7 +113,7 @@ public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.
                     Stocks[i] = stock;
 
                     // update in db (need to use oldStock due to casting issues)
-                    var oldStock = stockService.Stocks[Stocks[i].Symbol];
+                    var oldStock = stockService.Stocks[Stocks[i].StockID];
                     oldStock.MarketPrice = Stocks[i].MarketPrice;
                     await stockService.UpdateStock(oldStock);
 

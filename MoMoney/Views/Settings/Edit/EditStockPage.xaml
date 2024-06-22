@@ -37,6 +37,20 @@
                                        Glyph={x:Static m:MaterialRegular.Label}}"
                 Text="{Binding Stock.Symbol}" />
 
+            <!--  market  -->
+            <material:PickerField
+                x:Name="txtMarket"
+                Title="Market"
+                Icon="{FontImageSource FontFamily=MaterialRegular,
+                                       Glyph={x:Static m:MaterialRegular.Storefront}}"
+                SelectedItem="{Binding Stock.Market}">
+                <material:PickerField.Items>
+                    <x:String>TSE</x:String>
+                    <x:String>NASDAQ</x:String>
+                    <x:String>NYSE</x:String>
+                </material:PickerField.Items>
+            </material:PickerField>
+
             <!--  quantity  -->
             <material:TextField
                 x:Name="txtQuantity"

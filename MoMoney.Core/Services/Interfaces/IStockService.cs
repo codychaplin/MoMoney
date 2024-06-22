@@ -8,16 +8,17 @@ public interface IStockService
     /// <summary>
     /// Cached dictionary of Stocks
     /// </summary>
-    Dictionary<string, Stock> Stocks { get; }
+    Dictionary<int, Stock> Stocks { get; }
 
     /// <summary>
     /// Creates new Stock object and inserts into Stocks table.
     /// </summary>
     /// <param name="symbol"></param>
+    /// <param name="market"></param>
     /// <param name="quantity"></param>
     /// <param name="cost"></param>
     /// <exception cref="DuplicateStockException"></exception>
-    Task AddStock(string symbol, decimal quantity, decimal cost);
+    Task AddStock(string symbol, string market, decimal quantity, decimal cost);
 
     /// <summary>
     /// Inserts multiple Stock objects into Stocks table.
@@ -33,16 +34,10 @@ public interface IStockService
     Task UpdateStock(Stock updatedStock);
 
     /// <summary>
-    /// Given a new and old Stock object, removes old and inserts new into the Stocks table.
-    /// </summary>
-    /// <param name="updatedStock"></param>
-    Task UpdateStock(Stock updatedStock, Stock oldStock);
-
-    /// <summary>
     /// Removes Stock from Stocks table.
     /// </summary>
-    /// <param name="symbol"></param>
-    Task RemoveStock(string symbol);
+    /// <param name="id"></param>
+    Task RemoveStock(int id);
 
     /// <summary>
     /// Removes ALL Stocks from Stocks table.
@@ -50,11 +45,11 @@ public interface IStockService
     Task RemoveStocks();
 
     /// <summary>
-    /// Gets a stock from the Stocks table using a symbol.
+    /// Gets a stock from the Stocks table using a stock ID.
     /// </summary>
-    /// <param name="symbol"></param>
+    /// <param name="id"></param>
     /// <returns>Stock object</returns>
-    Task<Stock> GetStock(string symbol);
+    Task<Stock> GetStock(int id);
 
     /// <summary>
     /// Gets all Stocks from Stocks table as a list.
