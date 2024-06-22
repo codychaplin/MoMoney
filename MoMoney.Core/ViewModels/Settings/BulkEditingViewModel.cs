@@ -222,10 +222,12 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
     async Task BulkReplace()
     {
         if (FoundTransactions == null || FoundTransactions.Count == 0)
-            if (await BulkFind(false) == false) return;
+            if (await BulkFind(false) == false)
+                return;
 
         bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to replace {FoundTransactionCount} transactions", "Yes", "No");
-        if (!flag) return;
+        if (!flag)
+            return;
 
         int i = 0;
         try
