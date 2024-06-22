@@ -16,14 +16,15 @@ public partial class LoggingViewModel : ObservableObject
     readonly ILoggerService<LoggingViewModel> logger;
 
     [ObservableProperty] bool isExpanded = false;
+    [ObservableProperty] bool isChecked = true;
     [ObservableProperty] ObservableCollection<Log> loadedLogs = [];
 
     [ObservableProperty] ObservableCollection<LogLevel> levels;
     [ObservableProperty] ObservableCollection<string> classes;
     [ObservableProperty] ObservableCollection<string> exceptions;
-    [ObservableProperty] LogLevel level = LogLevel.None;
-    [ObservableProperty] string className;
-    [ObservableProperty] string exceptionType;
+    LogLevel Level = LogLevel.None;
+    string ClassName;
+    string ExceptionType;
 
     List<Log> Logs = [];
 
@@ -39,10 +40,10 @@ public partial class LoggingViewModel : ObservableObject
     /// <summary>
     /// Gets logs from db.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public async void Init(object sender, EventArgs e)
+    public async Task Init()
     {
+        Shell.Current.IsBusy = true;
+
         listview.LoadMoreOption = LoadMoreOption.Auto;
         var logs = await logger.GetLogs();
         Logs.Clear();
@@ -56,6 +57,9 @@ public partial class LoggingViewModel : ObservableObject
         Levels = new(levels);
         Classes = new(classes);
         Exceptions = new(exceptions);
+
+        await Task.Delay(200);
+        Shell.Current.IsBusy = false;
     }
 
     [RelayCommand]
@@ -94,9 +98,17 @@ public partial class LoggingViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Updates Logs Filter.
+    /// Updates the DataTemplateSelector
     /// </summary>
     [RelayCommand]
+    void CheckChanged()
+    {
+        listview?.RefreshView();
+    }
+
+    /// <summary>
+    /// Updates Logs Filter.
+    /// </summary>
     void UpdateFilter()
     {
         if (listview.DataSource != null)
@@ -118,9 +130,7 @@ public partial class LoggingViewModel : ObservableObject
             return true;
 
         var log = obj as Log;
-#nullable enable
-        string? ex = ExceptionType == "None" ? "" : ExceptionType;
-#nullable disable
+        string ex = ExceptionType == "None" ? "" : ExceptionType;
 
         // if fields aren't blank and match values, show log
         if (Level != LogLevel.None && log.Level != Level)
@@ -134,32 +144,32 @@ public partial class LoggingViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Clears selected Level.
+    /// Updates selected Level and filter.
     /// </summary>
     [RelayCommand]
-    void ClearLevel()
+    void UpdateLevel(LogLevel level)
     {
-        Level = LogLevel.None;
+        Level = level;
         UpdateFilter();
     }
 
     /// <summary>
-    /// Clears selected Class.
+    /// Updates selected Class and filter.
     /// </summary>
     [RelayCommand]
-    void ClearClass()
+    void UpdateClass(string className)
     {
-        ClassName = null;
+        ClassName = className;
         UpdateFilter();
     }
 
     /// <summary>
-    /// Clears selected Exception.
+    /// Updates selected Exception and filter.
     /// </summary>
     [RelayCommand]
-    void ClearException()
+    void UpdateException(string exceptionType)
     {
-        ExceptionType = null;
+        ExceptionType = exceptionType;
         UpdateFilter();
     }
 

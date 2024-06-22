@@ -12,7 +12,7 @@
         TargetType="material:InputField">
         <Setter Property="Opacity" Value="1" />
         <Setter Property="TitleFontSize" Value="14" />
-        <Setter Property="AccentColor" Value="{StaticResource Primary}" />
+        <Setter Property="AccentColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
         <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
         <Setter Property="TitleColor" Value="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}" />
         <Setter Property="InputBackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray700}}" />
@@ -22,7 +22,7 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="Opacity" Value="0.8" />
+                            <Setter Property="Opacity" Value="0.6" />
                             <Setter Property="BorderColor" Value="{StaticResource Gray500}" />
                         </VisualState.Setters>
                     </VisualState>
@@ -57,7 +57,7 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="Opacity" Value="0.8" />
+                            <Setter Property="Opacity" Value="0.6" />
                             <Setter Property="BorderColor" Value="{StaticResource Gray500}" />
                             <Setter Property="TextColor" Value="{StaticResource Gray400}" />
                         </VisualState.Setters>
@@ -76,7 +76,7 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="Opacity" Value="0.8" />
+                            <Setter Property="Opacity" Value="0.6" />
                             <Setter Property="BorderColor" Value="{StaticResource Gray500}" />
                             <Setter Property="TextColor" Value="{StaticResource Gray400}" />
                         </VisualState.Setters>
@@ -92,7 +92,7 @@
     </Style>
 
     <Style TargetType="ActivityIndicator">
-        <Setter Property="Color" Value="{StaticResource Primary}" />
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
     </Style>
 
     <Style TargetType="IndicatorView">
@@ -321,7 +321,7 @@
                 <VisualStateGroup x:Name="CheckedStates">
                     <VisualState x:Name="Checked">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{StaticResource Green}" />
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Unchecked">
@@ -413,8 +413,8 @@
     </Style>
 
     <Style TargetType="Switch">
-        <Setter Property="OnColor" Value="{StaticResource LightGreen}" />
-        <Setter Property="ThumbColor" Value="{StaticResource Primary}" />
+        <Setter Property="OnColor" Value="{StaticResource SubtleGreen}" />
+        <Setter Property="ThumbColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -427,8 +427,8 @@
                     </VisualState>
                     <VisualState x:Name="On">
                         <VisualState.Setters>
-                            <Setter Property="OnColor" Value="{StaticResource LightGreen}" />
-                            <Setter Property="ThumbColor" Value="{StaticResource Primary}" />
+                            <Setter Property="OnColor" Value="{StaticResource SubtleGreen}" />
+                            <Setter Property="ThumbColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Off">
@@ -466,8 +466,8 @@
     </Style>
 
     <Style ApplyToDerivedTypes="True" TargetType="Shell">
-        <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Green}}" />
-        <Setter Property="Shell.ForegroundColor" Value="{OnPlatform WinUI={StaticResource Black}, Default={StaticResource White}}" />
+        <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+        <Setter Property="Shell.ForegroundColor" Value="{OnPlatform WinUI={StaticResource Black}, Default={AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}}" />
         <Setter Property="Shell.TitleColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
         <Setter Property="Shell.DisabledColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray950}}" />
         <Setter Property="Shell.UnselectedColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray200}}" />

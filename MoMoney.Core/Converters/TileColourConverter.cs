@@ -11,7 +11,12 @@ public class TileColourConverter : IValueConverter
     {
         // if enabled, light gray, else, dark gray
         if (bool.TryParse(value.ToString(), out bool enabled))
-            return (enabled) ? Color.Parse("#313131") : Color.Parse("#212121");
+        {
+            if (AppInfo.RequestedTheme == AppTheme.Dark)
+                return (enabled) ? Color.Parse("#313131") : Color.Parse("#212121");
+            else
+                return (enabled) ? Color.Parse("#F1F1F1") : Color.Parse("#C8C8C8");
+        }
 
         // return light gray by default
         return Color.Parse("#313131");

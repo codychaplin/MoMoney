@@ -243,7 +243,8 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
         try
         {
             bool isValid = await Validation(payee);
-            if (!isValid) return;
+            if (!isValid)
+                return;
 
             await transactionService.UpdateTransaction(Transaction);
 
@@ -309,7 +310,8 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
     async Task RemoveTransaction()
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete this transaction?", "Yes", "No");
-        if (!flag) return;
+        if (!flag)
+            return;
 
         try
         {

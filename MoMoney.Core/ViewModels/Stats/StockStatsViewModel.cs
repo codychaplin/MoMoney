@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MvvmHelpers;
 using HtmlAgilityPack;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
@@ -8,16 +9,19 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Stats;
 
-public partial class StockStatsViewModel : ObservableObject
+public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     readonly IStockService stockService;
     readonly ILoggerService<StockStatsViewModel> logger;
 
-    [ObservableProperty] ObservableCollection<DetailedStock> stocks = [];
+    [ObservableProperty] ObservableCollection<Stock> stocks = [];
+    [ObservableProperty] ObservableRangeCollection<StockData> stockData = [];
 
     [ObservableProperty] decimal total = 0;
     [ObservableProperty] decimal totalPercent = 0;
     [ObservableProperty] decimal marketValue = 0;
+
+    [ObservableProperty] string showValue = "$0";
 
     decimal totalBook = 0;
     decimal totalMarket = 0;
@@ -29,14 +33,13 @@ public partial class StockStatsViewModel : ObservableObject
         stockService = _stockService;
         logger = _logger;
         logger.LogFirebaseEvent(FirebaseParameters.EVENT_VIEW_STOCKS, FirebaseParameters.GetFirebaseParameters());
+        ShowValue = Utilities.ShowValue ? "$0" : "$?";
     }
 
     /// <summary>
     /// Initializes data for StocksPage
     /// </summary>
-    /// <param name="s"></param>
-    /// <param name="e"></param>
-    public async void Init(object s, EventArgs e)
+    public async Task Init()
     {
         // populate collection with cached values first
         var stocks = await stockService.GetStocks();
@@ -45,23 +48,36 @@ public partial class StockStatsViewModel : ObservableObject
 
         foreach (var stock in stocks)
         {
-            DetailedStock dStock = new(stock);
-            Stocks.Add(dStock);
-            totalBook += dStock.BookValue;
-            totalMarket += dStock.MarketValue;
+            Stocks.Add(stock);
+            totalBook += stock.BookValue;
+            totalMarket += stock.MarketValue;
         }
         MarketValue = totalMarket;
         Total = totalMarket - totalBook;
         TotalPercent = (totalMarket / totalBook) - 1;
-        
-        await Task.Delay(250); // allows smooth transition to page
+
+        UpdateChart();
         await GetUpdatedStockPrices(cts.Token); // get updated prices via webscraping
     }
 
+    void UpdateChart()
+    {
+        var stockData = Stocks.Select(ds =>
+        {
+            return new StockData
+            {
+                Symbol = ds.Symbol,
+                Price = ds.MarketValue
+            };
+        })
+        .OrderByDescending(sd => sd.Price);
+        StockData.ReplaceRange(stockData);
+    }
+
     /// <summary>
-    /// Uses an API to fetch a list of stocks' prices.
+    /// Gets a list of stock prices via webscraping.
     /// </summary>
-    public async Task GetUpdatedStockPrices(CancellationToken token)
+    async Task GetUpdatedStockPrices(CancellationToken token)
     {
         try
         {
@@ -69,7 +85,7 @@ public partial class StockStatsViewModel : ObservableObject
             for (int i = 0; i < Stocks.Count; i++)
             {
                 // get url from stock symbol, get response, and then contents
-                string url = $"https://www.google.com/finance/quote/{Stocks[i].Symbol}";
+                string url = $"https://www.google.com/finance/quote/{Stocks[i].FullName}";
                 HttpResponseMessage response = await client.GetAsync(url, token);
                 response.EnsureSuccessStatusCode();
                 string htmlContent = await response.Content.ReadAsStringAsync(token);
@@ -77,37 +93,35 @@ public partial class StockStatsViewModel : ObservableObject
                 // parse content to html, find element using xpath
                 HtmlDocument document = new();
                 document.LoadHtml(htmlContent);
-                HtmlNode priceElement = document.DocumentNode.SelectSingleNode("//div[@class='YMlKec fxKbKc']");
-                string price = priceElement.InnerHtml[1..];
+                HtmlNode priceElement = document.DocumentNode.SelectSingleNode("//div[@class='YMlKec fxKbKc']") 
+                   ?? throw new StockNotFoundException($"Could not find '{Stocks[i].FullName}'. Please ensure the name and market are correct");
 
                 // validate price
+                string price = priceElement.InnerHtml[1..];
                 if (string.IsNullOrEmpty(price))
                     throw new InvalidStockException("Updated price not found.");
                 if (decimal.TryParse(price, out decimal newPrice))
                 {
-                    decimal difference = newPrice - Stocks[i].MarketPrice;
                     // if price has changed, update values
+                    decimal difference = newPrice - Stocks[i].MarketPrice;
                     if (difference == 0)
                         continue;
 
-                    var stock = new DetailedStock(Stocks[i]) { MarketPrice = newPrice };
+                    var stock = new Stock(Stocks[i]) { MarketPrice = newPrice };
                     var marketValue = Stocks[i].MarketValue;
                     Stocks[i] = stock;
-
-                    // update in db (need to use oldStock due to casting issues)
-                    var oldStock = stockService.Stocks[Stocks[i].Symbol];
-                    oldStock.MarketPrice = Stocks[i].MarketPrice;
-                    await stockService.UpdateStock(oldStock);
+                    await stockService.UpdateStock(stock);
 
                     // update totals
                     totalMarket += stock.MarketValue - marketValue;
                     MarketValue = totalMarket;
                     Total = totalMarket - totalBook;
                     TotalPercent = (totalMarket / totalBook) - 1;
-
                 }
                 else
+                {
                     throw new InvalidStockException($"{price} is not a valid number");
+                }
             }
         }
         catch (HttpRequestException ex)
@@ -119,6 +133,12 @@ public partial class StockStatsViewModel : ObservableObject
         {
             await logger.LogError(nameof(GetUpdatedStockPrices), ex);
             await Shell.Current.DisplayAlert("Parse Error", ex.Message, "OK");
+        }
+
+        catch (StockNotFoundException ex)
+        {
+            await logger.LogError(nameof(GetUpdatedStockPrices), ex);
+            await Shell.Current.DisplayAlert("Stock not found", ex.Message, "OK");
         }
         catch (InvalidOperationException)
         {

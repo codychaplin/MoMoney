@@ -33,8 +33,8 @@ public partial class CategoriesViewModel : CommunityToolkit.Mvvm.ComponentModel.
             // groups categories by parent except where ParentName == ""
             // new parent categories will not show up in the list until a subcategory is added
             Categories.ReplaceRange(categories.GroupBy(c => c.ParentName)
-                .Where(cat => !string.IsNullOrEmpty(cat.Key))
-                .Select(cat => new CategoryGroup(cat)));
+                      .Where(cat => !string.IsNullOrEmpty(cat.Key))
+                      .Select(cat => new CategoryGroup(cat)));
         }
         catch (Exception ex)
         {
@@ -44,21 +44,21 @@ public partial class CategoriesViewModel : CommunityToolkit.Mvvm.ComponentModel.
     }
 
     /// <summary>
-    /// Goes to AddCategoryPage.xaml.
+    /// Goes to the add version of EditCategoryPage.xaml.
     /// </summary>
     [RelayCommand]
     async Task GoToAddCategory()
     {
-        await Shell.Current.GoToAsync("AddCategoryPage");
+        await Shell.Current.GoToAsync("EditCategoryPage", new ShellNavigationQueryParameters() { { "Category", null } });
     }
 
     /// <summary>
     /// Goes to EditCategoryPage.xaml with a Category ID as a parameter.
     /// </summary>
     [RelayCommand]
-    async Task GoToEditCategory(int ID)
+    async Task GoToEditCategory(Category category)
     {
-        await Shell.Current.GoToAsync($"EditCategoryPage?ID={ID}");
+        await Shell.Current.GoToAsync($"EditCategoryPage", new ShellNavigationQueryParameters() { { "Category", category } });
     }
 
     /// <summary>
@@ -69,8 +69,8 @@ public partial class CategoriesViewModel : CommunityToolkit.Mvvm.ComponentModel.
     {
         try
         {
-            var cat = await categoryService.GetParentCategory(name);
-            await Shell.Current.GoToAsync($"EditCategoryPage?ID={cat.CategoryID}");
+            var category = await categoryService.GetParentCategory(name);
+            await Shell.Current.GoToAsync($"EditCategoryPage", new ShellNavigationQueryParameters() { { "Category", category } });
         }
         catch (CategoryNotFoundException ex)
         {

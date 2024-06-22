@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using MoMoney.Core.ViewModels.Settings;
 
 namespace MoMoney.Views.Settings;
@@ -7,18 +8,21 @@ public partial class LoggingPage : ContentPage
 	public LoggingPage(LoggingViewModel vm)
 	{
 		InitializeComponent();
-		BindingContext = vm;
-		Loaded += vm.Init;
+        BindingContext = vm;
 		vm.listview = listview;
-	}
+		Loaded += async (s, e) => await vm.Init();
 
-	/// <summary>
-	/// Updates the DataTemplateSelector
-	/// </summary>
-	/// <param name="sender"></param>
-	/// <param name="e"></param>
-    private void Check_Toggled(object sender, EventArgs e)
-    {
-		listview.RefreshView();
+		PckLevels.SelectedValueChanged += (s, e) =>
+		{
+			vm.UpdateLevelCommand.Execute(e ?? LogLevel.None);
+        };
+		PckClasses.SelectedValueChanged += (s, e) =>
+		{
+			vm.UpdateClassCommand.Execute(e);
+        };
+		PckExceptions.SelectedValueChanged += (s, e) =>
+		{
+			vm.UpdateExceptionCommand.Execute(e);
+		};
     }
 }

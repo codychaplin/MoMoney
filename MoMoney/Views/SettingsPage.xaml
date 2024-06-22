@@ -16,7 +16,8 @@
             <!--  title  -->
             <Grid
                 Padding="10,0,0,0"
-                BackgroundColor="{StaticResource Green}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                  Dark={StaticResource PrimaryDark}}"
                 HeightRequest="55">
                 <Label
                     Style="{StaticResource lblTitle}"

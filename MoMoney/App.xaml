@@ -12,8 +12,8 @@
     xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
     x:Name="MoMoneyApp">
     <Application.Resources>
-
         <ResourceDictionary>
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
@@ -79,12 +79,12 @@
                 <Setter Property="VerticalOptions" Value="Center" />
             </Style>
 
-            <!--  setings subtitle  -->
+            <!--  settings subtitle  -->
             <Style x:Key="SettingsSubtitle" TargetType="Label">
-                <Setter Property="CharacterSpacing" Value="1" />
+                <Setter Property="FontSize" Value="16" />
                 <Setter Property="FontAttributes" Value="Bold" />
                 <Setter Property="Margin" Value="10,20,0,5" />
-                <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
             </Style>
 
             <!--  tile icon  -->
@@ -113,7 +113,7 @@
                 <Setter Property="WidthRequest" Value="50" />
                 <Setter Property="Margin" Value="20" />
                 <Setter Property="Padding" Value="0" />
-                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
                 <Setter Property="FontFamily" Value="MaterialRegular" />
                 <Setter Property="FontSize" Value="40" />
                 <Setter Property="VerticalOptions" Value="End" />
@@ -161,7 +161,8 @@
                             MinimumWidthRequest="150"
                             Style="{StaticResource lblTile}"
                             Text="{Binding AccountID, Converter={StaticResource IdToAccount}}"
-                            TextColor="{StaticResource Gray300}"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray500},
+                                                        Dark={StaticResource Gray300}}"
                             VerticalOptions="End" />
                         <!--  amount  -->
                         <Label
@@ -182,7 +183,8 @@
                             MinimumWidthRequest="100"
                             Style="{StaticResource lblTile}"
                             Text="{Binding Date, StringFormat='{0:yyyy-MM-dd}'}"
-                            TextColor="{StaticResource Gray300}"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray500},
+                                                        Dark={StaticResource Gray300}}"
                             VerticalOptions="End" />
                     </Grid>
                 </Frame>
@@ -190,6 +192,5 @@
             </DataTemplate>
 
         </ResourceDictionary>
-
     </Application.Resources>
 </Application>

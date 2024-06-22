@@ -45,7 +45,8 @@
                 <toolkit:Expander.Header>
                     <Grid
                         Padding="10,0"
-                        BackgroundColor="{StaticResource Primary}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                          Dark={StaticResource PrimaryDark}}"
                         HeightRequest="55">
                         <Label
                             HorizontalOptions="Start"
@@ -56,6 +57,8 @@
                             HeightRequest="30"
                             HorizontalOptions="End"
                             Source="{FontImageSource FontFamily=MaterialRegular,
+                                                     Color={AppThemeBinding Light={StaticResource Black},
+                                                                            Dark={StaticResource White}},
                                                      Glyph={x:Static m:MaterialRegular.Calendar_month}}"
                             WidthRequest="30" />
                     </Grid>
@@ -71,7 +74,13 @@
                     HeightRequest="50"
                     HorizontalOptions="Center">
                     <HorizontalStackLayout Spacing="5">
-                        <Image HeightRequest="25" Source="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRegular.Calendar_month}}" />
+                        <Image
+                            HeightRequest="25"
+                            Source="{FontImageSource FontFamily=MaterialRegular,
+                                                     Color={AppThemeBinding Light={StaticResource Black},
+                                                                            Dark={StaticResource White}},
+                                                     Glyph={x:Static m:MaterialRegular.Calendar_month}}"
+                            VerticalOptions="Center" />
                         <DatePicker
                             x:Name="dtFrom"
                             Date="{Binding From}"
@@ -99,7 +108,8 @@
             <Frame
                 Margin="10,0"
                 Padding="5,0,5,5"
-                BackgroundColor="{StaticResource Primary}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                  Dark={StaticResource PrimaryDark}}"
                 HeightRequest="220">
                 <Grid>
                     <chart:SfCartesianChart

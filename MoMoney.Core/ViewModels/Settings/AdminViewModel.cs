@@ -32,7 +32,8 @@ public partial class AdminViewModel
     async Task RemoveAllTransactions()
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Transactions?", "Yes", "No");
-        if (!flag) return;
+        if (!flag)
+            return;
 
         try
         {
@@ -56,7 +57,8 @@ public partial class AdminViewModel
     async Task RemoveAllAccounts()
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Accounts?", "Yes", "No");
-        if (!flag) return;
+        if (!flag)
+            return;
 
         try
         {
@@ -80,7 +82,8 @@ public partial class AdminViewModel
     async Task RemoveAllCategories()
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Categories?", "Yes", "No");
-        if (!flag) return;
+        if (!flag)
+            return;
 
         try
         {
@@ -104,7 +107,8 @@ public partial class AdminViewModel
     async Task RemoveAllStocks()
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Stocks?", "Yes", "No");
-        if (!flag) return;
+        if (!flag)
+            return;
 
         try
         {
@@ -128,7 +132,8 @@ public partial class AdminViewModel
     async Task RemoveAllLogs()
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Logs?", "Yes", "No");
-        if (!flag) return;
+        if (!flag)
+            return;
 
         try
         {
@@ -152,7 +157,8 @@ public partial class AdminViewModel
     async Task RemoveAllData()
     {
         bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL data?", "Yes", "No");
-        if (!flag) return;
+        if (!flag)
+            return;
 
         try
         {

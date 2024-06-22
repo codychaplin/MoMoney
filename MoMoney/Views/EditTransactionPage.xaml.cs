@@ -54,7 +54,7 @@ public partial class EditTransactionPage : ContentPage
             pckTransferAccount.SelectedIndex = pckTransferAccount.Items.IndexOf(vm.InitialTransferAccount.AccountName);
             pckCategory.IsEnabled = false;
             pckSubcategory.IsEnabled = false;
-            entPayee.IsVisible = false;
+            entPayeeParent.IsVisible = false;
             pckTransferAccount.IsVisible = true;
         }
     }

@@ -21,7 +21,8 @@
             <Grid
                 Margin="-10,0"
                 Padding="10,0"
-                BackgroundColor="{StaticResource Primary}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                  Dark={StaticResource PrimaryDark}}"
                 HeightRequest="55">
                 <Label
                     Style="{StaticResource lblTitle}"
@@ -33,14 +34,14 @@
             <Frame
                 Margin="0,5,0,0"
                 Padding="0"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray200},
+                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
                                                   Dark={StaticResource Gray900}}"
                 HeightRequest="46">
                 <Grid x:Name="grdTransactionTypeButtons" ColumnDefinitions="*,*,*">
                     <Grid.Resources>
                         <Style TargetType="Button">
                             <Setter Property="HeightRequest" Value="45" />
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray900}}" />
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" />
                             <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                         </Style>
                     </Grid.Resources>
@@ -123,7 +124,7 @@
                     Margin="11,3,0,0"
                     ColumnDefinitions="20,*"
                     ColumnSpacing="2">
-                    <Image Source="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Account_circle}, Color={AppThemeBinding Light={StaticResource Black}, Dark={StaticResource Gray400}}}" />
+                    <Image Source="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                     <input:SfAutocomplete
                         x:Name="entPayee"
                         Grid.Column="1"
@@ -179,16 +180,17 @@
                 ColumnSpacing="10">
                 <Button
                     x:Name="btnClear"
-                    BackgroundColor="{StaticResource Blue}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBlue},
+                                                      Dark={StaticResource Blue}}"
                     Clicked="btnClear_Clicked"
                     HeightRequest="50"
                     Text="Clear" />
                 <Button
                     x:Name="btnRecord"
                     Grid.Column="1"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray200},
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
                                                       Dark={StaticResource Gray700}}"
-                    BorderColor="{AppThemeBinding Light={StaticResource Gray700},
+                    BorderColor="{AppThemeBinding Light={StaticResource Gray400},
                                                   Dark={StaticResource Gray200}}"
                     BorderWidth="1.5"
                     Command="{Binding RecordCommand}"
@@ -208,7 +210,8 @@
                 <Button
                     x:Name="btnEnter"
                     Grid.Column="2"
-                    BackgroundColor="{StaticResource Green}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                      Dark={StaticResource PrimaryDark}}"
                     Clicked="btnEnter_Clicked"
                     Command="{Binding AddTransactionCommand}"
                     HeightRequest="50"

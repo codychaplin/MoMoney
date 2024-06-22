@@ -49,15 +49,15 @@ public partial class AccountsViewModel : CommunityToolkit.Mvvm.ComponentModel.Ob
     [RelayCommand]
     async Task GoToAddAccount()
     {
-        await Shell.Current.GoToAsync("AddAccountPage");
+        await Shell.Current.GoToAsync("EditAccountPage", new ShellNavigationQueryParameters() { { "Account", null } });
     }
 
     /// <summary>
     /// Goes to EditAccountPage.xaml with an Account ID as a parameter.
     /// </summary>
     [RelayCommand]
-    async Task GoToEditAccount(int ID)
+    async Task GoToEditAccount(Account account)
     {
-        await Shell.Current.GoToAsync($"EditAccountPage?ID={ID}");
+        await Shell.Current.GoToAsync($"EditAccountPage", new ShellNavigationQueryParameters() { { "Account", account } });
     }
 }

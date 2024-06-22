@@ -14,7 +14,7 @@
     Title="Logs"
     x:DataType="viewmodel:LoggingViewModel">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding ToggleExpandCommand}" IconImageSource="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRegular.Tune}}" />
+        <ToolbarItem Command="{Binding ToggleExpandCommand}" IconImageSource="{FontImageSource FontFamily=MaterialRegular, Color={AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}, Glyph={x:Static m:MaterialRegular.Tune}}" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Resources>
@@ -36,6 +36,7 @@
                     </Style>
                 </Grid.Resources>
                 <Label
+                    FontAttributes="Bold"
                     HorizontalOptions="Start"
                     MinimumWidthRequest="170"
                     Text="{Binding Message}"
@@ -68,7 +69,7 @@
                 <Grid.Resources>
                     <Style TargetType="Label">
                         <Setter Property="FontSize" Value="12" />
-                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
                     </Style>
                 </Grid.Resources>
                 <Label
@@ -118,42 +119,42 @@
 
                 <Frame
                     Padding="15,0,0,0"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White},
                                                       Dark={StaticResource Gray700}}"
+                    BorderColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                  Dark={StaticResource Gray400}}"
                     HeightRequest="50"
                     WidthRequest="250">
                     <material:CheckBox
                         x:Name="ChkTileSize"
-                        CheckChanged="Check_Toggled"
+                        CheckChangedCommand="{Binding CheckChangedCommand}"
                         HorizontalOptions="Start"
-                        IsChecked="True"
+                        IsChecked="{Binding IsChecked}"
                         LabelPosition="Before"
-                        Text="Large Tiles" />
+                        Text="Large Tiles"
+                        TextColor="{AppThemeBinding Light={StaticResource Black},
+                                                    Dark={StaticResource White}}"
+                        Color="{AppThemeBinding Light={StaticResource Primary},
+                                                Dark={StaticResource PrimaryDark}}" />
                 </Frame>
 
                 <!--  filters  -->
                 <material:PickerField
-                    x:Name="pckLevels"
+                    x:Name="PckLevels"
                     Title="Log Levels"
                     ItemsSource="{Binding Levels}"
-                    SelectedItem="{Binding Level}"
-                    SelectedValueChangedCommand="{Binding UpdateFilterCommand}"
                     WidthRequest="250" />
 
                 <material:PickerField
-                    x:Name="pckClasses"
+                    x:Name="PckClasses"
                     Title="Classes"
                     ItemsSource="{Binding Classes}"
-                    SelectedItem="{Binding ClassName}"
-                    SelectedValueChangedCommand="{Binding UpdateFilterCommand}"
                     WidthRequest="250" />
 
                 <material:PickerField
-                    x:Name="pckExceptions"
+                    x:Name="PckExceptions"
                     Title="Exceptions"
                     ItemsSource="{Binding Exceptions}"
-                    SelectedItem="{Binding ExceptionType}"
-                    SelectedValueChangedCommand="{Binding UpdateFilterCommand}"
                     WidthRequest="250" />
 
             </VerticalStackLayout>

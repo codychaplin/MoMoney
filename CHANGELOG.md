@@ -1,3 +1,22 @@
+# MoMoney v1.2.1
+
+### Fixes
+
+* Fixed transaction slider filter and wrapped date filter in an InputField
+* Fixed checkbox style on LoggingPage and filter logic
+* Fixed BreakdownPage colour coordination
+* Suppressed webscraping error
+* Light mode and contrast issues
+
+### Changes
+
+* Added chart to Stocks page
+* Changed stock quantity from int to decimal to allow fractional shares
+* Updated look of Insights page
+* Condensed Add/Edit pages, made base viewmodel
+* Separated Stock symbol and market
+* Added component for CRUD buttons
+
 # MoMoney v1.2.0
 
 ### Fixes

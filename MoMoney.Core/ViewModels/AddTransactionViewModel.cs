@@ -156,7 +156,8 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
     {
         try
         {
-            if (parentCategory is null) return;
+            if (parentCategory is null)
+                return;
 
             var subcategories = await categoryService.GetSubcategories(parentCategory);
             Subcategories.ReplaceRange(subcategories);
@@ -187,7 +188,8 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
     async Task CategoryChanged()
     {
         // check if Category is null, update subcategories
-        if (Category is null) return;
+        if (Category is null)
+            return;
         await GetSubcategories(Category);
 
         // if transfer, auto-select "Debit"
@@ -227,7 +229,8 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
                 ResetButtonColour(btnRecord);
                 IsWaitingForTranscription = true;
                 var transactionResponse = await openAIService.DictateTransaction(audioData, transactionType);
-                if (transactionResponse == null) return;
+                if (transactionResponse == null)
+                    return;
 
                 responseIDs = transactionResponse.ResponseIDs;
 

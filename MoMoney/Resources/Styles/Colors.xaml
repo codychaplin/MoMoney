@@ -2,7 +2,8 @@
 <?xaml-comp compile="true" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <Color x:Key="Primary">#42ba96</Color>
+    <Color x:Key="Primary">#63DBA2</Color>
+    <Color x:Key="PrimaryDark">#42ba96</Color>
     <Color x:Key="Secondary">#C7E0D9</Color>
     <Color x:Key="Tertiary">#004632</Color>
     <Color x:Key="White">White</Color>
@@ -29,11 +30,13 @@
     <Color x:Key="Blue300Accent">#A7CBF6</Color>
 
     <!--  custom colours  -->
+    <Color x:Key="LightRed">#FF6779</Color>
     <Color x:Key="Red">#df4759</Color>
-    <Color x:Key="LightRed">#FFBBBB</Color>
-    <Color x:Key="Blue">#467fd0</Color>
+    <Color x:Key="SubtleRed">#FFBBBB</Color>
+    <Color x:Key="Blue">#3B74C5</Color>
+    <Color x:Key="LightBlue">#75AEFF</Color>
     <Color x:Key="Yellow">#ffc107</Color>
     <Color x:Key="Green">#42ba96</Color>
-    <Color x:Key="LightGreen">#9942ba96</Color>
+    <Color x:Key="SubtleGreen">#9942ba96</Color>
 
 </ResourceDictionary>

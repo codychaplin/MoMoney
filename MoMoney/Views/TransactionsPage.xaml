@@ -30,7 +30,8 @@
             <toolkit:Expander.Header>
                 <Grid
                     Padding="10,0"
-                    BackgroundColor="{StaticResource Primary}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                      Dark={StaticResource PrimaryDark}}"
                     HeightRequest="55">
                     <Label
                         Style="{StaticResource lblTitle}"
@@ -40,6 +41,8 @@
                         HeightRequest="30"
                         HorizontalOptions="End"
                         Source="{FontImageSource FontFamily=MaterialRegular,
+                                                 Color={AppThemeBinding Light={StaticResource Black},
+                                                                        Dark={StaticResource White}},
                                                  Glyph={x:Static m:MaterialRegular.Tune}}"
                         VerticalOptions="Center"
                         WidthRequest="30" />
@@ -51,15 +54,11 @@
                 <VerticalStackLayout Margin="0,10,0,0" Spacing="5">
 
                     <!--  date range picker  -->
-                    <Frame
-                        Padding="0,5"
-                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray200},
-                                                          Dark={StaticResource Gray700}}"
-                        BorderColor="{AppThemeBinding Light={StaticResource Gray600},
-                                                      Dark={StaticResource Gray400}}"
-                        HeightRequest="50"
+                    <material:InputField
+                        Title="Date"
+                        HasValue="True"
                         WidthRequest="250">
-                        <HorizontalStackLayout Spacing="5">
+                        <HorizontalStackLayout Padding="0,5" Spacing="5">
                             <Image
                                 Margin="10,0,0,0"
                                 HeightRequest="20"
@@ -77,7 +76,7 @@
                                 VerticalOptions="Center" />
                             <DatePicker x:Name="dtTo" Date="{Binding To}" />
                         </HorizontalStackLayout>
-                    </Frame>
+                    </material:InputField>
 
                     <!--  account picker  -->
                     <material:PickerField
@@ -89,71 +88,61 @@
                         ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
                         SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
                         SelectedValueChangedCommand="{Binding Path=UpdateFilterCommand, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                        WidthRequest="250"
-                        ZIndex="2" />
+                        WidthRequest="250" />
 
                     <!--  amount slider frame  -->
-                    <Frame
-                        x:Name="frAmount"
-                        Margin="0,-35,0,0"
-                        Padding="0"
-                        BackgroundColor="Transparent"
-                        HeightRequest="90"
-                        WidthRequest="250"
-                        ZIndex="2">
-                        <Grid Margin="0">
-
-                            <Frame
-                                Margin="0,40,0,0"
-                                Padding="5"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource Gray200},
-                                                                  Dark={StaticResource Gray700}}"
-                                BorderColor="{AppThemeBinding Light={StaticResource Gray600},
-                                                              Dark={StaticResource Gray400}}">
-                                <Grid ColumnDefinitions="30,*" ColumnSpacing="0">
-                                    <Image
-                                        HeightRequest="20"
-                                        Source="{FontImageSource FontFamily=MaterialRegular,
-                                                                 Glyph={x:Static m:MaterialRegular.Paid},
-                                                                 Color={AppThemeBinding Light={StaticResource Gray600},
-                                                                                        Dark={StaticResource Gray400}}}"
-                                        WidthRequest="20" />
-                                </Grid>
-                            </Frame>
-
-                            <!--  workaround for overlapping tooltip  -->
-                            <!--  amount slider  -->
-                            <Grid Margin="25,0,0,0" Padding="0,10,0,0">
-                                <slider:SfRangeSlider
-                                    x:Name="rsAmount"
-                                    BackgroundColor="Transparent"
-                                    DragCompletedCommand="{Binding AmountDragCompletedCommand}"
-                                    DragCompletedCommandParameter="{x:Reference frAmount}"
-                                    DragStartedCommand="{Binding AmountDragStartedCommand}"
-                                    DragStartedCommandParameter="{x:Reference frAmount}"
-                                    Maximum="500"
-                                    Minimum="0"
-                                    RangeEnd="{Binding AmountRangeEnd}"
-                                    RangeStart="{Binding AmountRangeStart}"
-                                    StepSize="5"
-                                    VerticalOptions="Center"
-                                    WidthRequest="230">
-                                    <slider:SfRangeSlider.TrackStyle>
-                                        <slider:SliderTrackStyle
-                                            ActiveFill="{StaticResource Green}"
-                                            ActiveSize="3"
-                                            InactiveFill="{StaticResource Gray500}" />
-                                    </slider:SfRangeSlider.TrackStyle>
-                                    <slider:SfRangeSlider.ThumbStyle>
-                                        <slider:SliderThumbStyle Fill="{StaticResource Primary}" Radius="7" />
-                                    </slider:SfRangeSlider.ThumbStyle>
-                                    <slider:SfRangeSlider.Tooltip>
-                                        <slider:SliderTooltip FontSize="10" NumberFormat="$0" />
-                                    </slider:SfRangeSlider.Tooltip>
-                                </slider:SfRangeSlider>
-                            </Grid>
+                    <material:InputField
+                        Title="Amount"
+                        HasValue="True"
+                        VerticalOptions="Center"
+                        WidthRequest="250">
+                        <Grid Padding="0,0,5,0" ColumnDefinitions="30,35,*,35">
+                            <Grid.Resources>
+                                <Style TargetType="Label">
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray100}}" />
+                                    <Setter Property="VerticalTextAlignment" Value="Center" />
+                                </Style>
+                            </Grid.Resources>
+                            <Image
+                                Margin="10,0,0,0"
+                                HeightRequest="20"
+                                Source="{FontImageSource FontFamily=MaterialRegular,
+                                                         Glyph={x:Static m:MaterialRegular.Paid},
+                                                         Color={AppThemeBinding Light={StaticResource Gray600},
+                                                                                Dark={StaticResource Gray400}}}"
+                                WidthRequest="20" />
+                            <Label
+                                Grid.Column="1"
+                                HorizontalTextAlignment="End"
+                                Text="{Binding AmountRangeStart, StringFormat='{0:C0}'}" />
+                            <slider:SfRangeSlider
+                                Grid.Column="2"
+                                Margin="-5,0"
+                                BackgroundColor="Transparent"
+                                DragCompletedCommand="{Binding AmountDragCompletedCommand}"
+                                Interval="100"
+                                Maximum="500"
+                                Minimum="0"
+                                RangeEnd="{Binding AmountRangeEnd}"
+                                RangeStart="{Binding AmountRangeStart}"
+                                StepSize="5">
+                                <slider:SfRangeSlider.TrackStyle>
+                                    <slider:SliderTrackStyle
+                                        ActiveFill="{AppThemeBinding Light={StaticResource Primary},
+                                                                     Dark={StaticResource PrimaryDark}}"
+                                        ActiveSize="3"
+                                        InactiveFill="{StaticResource Gray500}" />
+                                </slider:SfRangeSlider.TrackStyle>
+                                <slider:SfRangeSlider.ThumbStyle>
+                                    <slider:SliderThumbStyle Fill="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Radius="7" />
+                                </slider:SfRangeSlider.ThumbStyle>
+                            </slider:SfRangeSlider>
+                            <Label
+                                Grid.Column="3"
+                                HorizontalTextAlignment="Start"
+                                Text="{Binding AmountRangeEnd, StringFormat='{0:C0}'}" />
                         </Grid>
-                    </Frame>
+                    </material:InputField>
 
                     <!--  category picker  -->
                     <material:PickerField
@@ -218,7 +207,8 @@
                         IsRunning="{Binding IsLazyLoading, Source={x:Reference Name=listView}}"
                         IsVisible="{Binding IsLazyLoading, Source={x:Reference Name=listView}}"
                         WidthRequest="30"
-                        Color="{StaticResource Green}" />
+                        Color="{AppThemeBinding Light={StaticResource Primary},
+                                                Dark={StaticResource PrimaryDark}}" />
                 </DataTemplate>
             </listview:SfListView.LoadMoreTemplate>
             <listview:SfListView.EmptyView>

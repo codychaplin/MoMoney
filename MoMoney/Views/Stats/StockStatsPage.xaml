@@ -3,6 +3,7 @@
     x:Class="MoMoney.Views.Stats.StockStatsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
     xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
     xmlns:data="clr-namespace:Syncfusion.Maui.DataSource;assembly=Syncfusion.Maui.DataSource"
     xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
@@ -16,105 +17,139 @@
         <converters:ShowValueConverter x:Key="ShowValue" />
         <converters:ShowValuePercentConverter x:Key="ShowValuePercent" />
         <converters:PositiveNegativeColourConverter x:Key="PosNegColour" />
+        <converters:StockDataLabelConverter x:Key="StockDataLabel" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
+    <ScrollView>
+        <VerticalStackLayout Margin="10" Spacing="10">
 
-        <!--  totals  -->
-        <Frame Margin="10,10,10,0" Padding="10">
-            <Grid ColumnDefinitions="*,*" RowDefinitions="0.5*,*,0.5*">
-                <Label
-                    FontSize="16"
-                    HorizontalOptions="Start"
-                    Text="Total"
-                    VerticalOptions="Center" />
-                <Label
-                    Grid.Row="1"
-                    Grid.ColumnSpan="2"
-                    FontSize="36"
-                    HorizontalOptions="Start"
-                    Text="{Binding MarketValue, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
-                    VerticalOptions="Center" />
-                <Label
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    FontSize="16"
-                    HorizontalOptions="Start"
-                    Text="Total Gain:"
-                    VerticalOptions="Center" />
-                <HorizontalStackLayout
-                    Grid.Row="2"
-                    Grid.ColumnSpan="2"
-                    HorizontalOptions="End">
+            <!--  totals  -->
+            <Frame Padding="10">
+                <Grid ColumnDefinitions="*,*" RowDefinitions="0.5*,*,0.5*">
                     <Label
-                        FontSize="18"
-                        HorizontalOptions="Center"
-                        Text="{Binding Total, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
-                        TextColor="{Binding Total, Converter={StaticResource PosNegColour}}"
+                        FontSize="16"
+                        HorizontalOptions="Start"
+                        Text="Total"
                         VerticalOptions="Center" />
                     <Label
-                        FontSize="18"
-                        HorizontalOptions="Center"
-                        Text="{Binding TotalPercent, Converter={StaticResource ShowValuePercent}, StringFormat=' ({0:P2})'}"
-                        TextColor="{Binding TotalPercent, Converter={StaticResource PosNegColour}}"
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        FontSize="36"
+                        HorizontalOptions="Start"
+                        Text="{Binding MarketValue, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
                         VerticalOptions="Center" />
-                </HorizontalStackLayout>
-            </Grid>
-        </Frame>
-
-        <!--  stock list  -->
-        <Frame
-            Grid.Row="1"
-            Margin="10"
-            Padding="5">
-            <listview:SfListView
-                ItemSpacing="0,0,0,5"
-                ItemsSource="{Binding Stocks}"
-                VerticalOptions="Start">
-                <listview:SfListView.EmptyView>
-                    <ContentView>
+                    <Label
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        FontSize="16"
+                        HorizontalOptions="Start"
+                        Text="Total Gain:"
+                        VerticalOptions="Center" />
+                    <HorizontalStackLayout
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2"
+                        HorizontalOptions="End">
                         <Label
-                            Margin="0,10,0,0"
-                            FontSize="16"
+                            FontSize="18"
                             HorizontalOptions="Center"
-                            Text="No stocks found"
-                            VerticalOptions="Start" />
-                    </ContentView>
-                </listview:SfListView.EmptyView>
-                <listview:SfListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:DetailedStock">
-                        <!--  template  -->
-                        <Frame
-                            Padding="5,5,10,5"
-                            BackgroundColor="{StaticResource Gray700}"
-                            HeightRequest="50">
-                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+                            Text="{Binding Total, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                            TextColor="{Binding Total, Converter={StaticResource PosNegColour}}"
+                            VerticalOptions="Center" />
+                        <Label
+                            FontSize="18"
+                            HorizontalOptions="Center"
+                            Text="{Binding TotalPercent, Converter={StaticResource ShowValuePercent}, StringFormat=' ({0:P2})'}"
+                            TextColor="{Binding TotalPercent, Converter={StaticResource PosNegColour}}"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Grid>
+            </Frame>
+
+            <!--  stock list  -->
+            <Frame Padding="5">
+                <listview:SfListView
+                    ItemSpacing="0,0,0,5"
+                    ItemsSource="{Binding Stocks}"
+                    VerticalOptions="Start">
+                    <listview:SfListView.EmptyView>
+                        <ContentView>
+                            <Label
+                                Margin="0,10,0,0"
+                                FontSize="16"
+                                HorizontalOptions="Center"
+                                Text="No stocks found"
+                                VerticalOptions="Start" />
+                        </ContentView>
+                    </listview:SfListView.EmptyView>
+                    <listview:SfListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Stock">
+                            <Frame
+                                Padding="10,5"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource Gray150},
+                                                                  Dark={StaticResource Gray700}}"
+                                HeightRequest="55">
+                                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                    <Label
+                                        FontSize="16"
+                                        HorizontalOptions="Start"
+                                        Text="{Binding Symbol}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Row="1"
+                                        HorizontalOptions="Start"
+                                        Text="{Binding MarketValue, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                                        TextColor="{AppThemeBinding Light={StaticResource Gray900},
+                                                                    Dark={StaticResource Gray200}}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Column="1"
+                                        HorizontalOptions="End"
+                                        Text="{Binding MarketPrice, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                                        VerticalOptions="Center" />
+                                    <HorizontalStackLayout
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Center">
+                                        <Label Text="{Binding Change, Converter={StaticResource ShowValue}, StringFormat='{0:C2} '}" TextColor="{Binding Change, Converter={StaticResource PosNegColour}}" />
+                                        <Label Text="{Binding ChangePercent, Converter={StaticResource ShowValuePercent}, StringFormat=' ({0:P2})'}" TextColor="{Binding ChangePercent, Converter={StaticResource PosNegColour}}" />
+                                    </HorizontalStackLayout>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </listview:SfListView.ItemTemplate>
+                </listview:SfListView>
+            </Frame>
+
+            <!--  chart  -->
+            <Frame Padding="0">
+                <chart:SfCircularChart
+                    x:Name="chart"
+                    HeightRequest="400"
+                    VerticalOptions="Center">
+                    <chart:DoughnutSeries
+                        InnerRadius="0.5"
+                        ItemsSource="{Binding StockData}"
+                        LabelTemplate="{StaticResource labelTemplate}"
+                        Radius="0.9"
+                        ShowDataLabels="True"
+                        XBindingPath="Symbol"
+                        YBindingPath="Price" />
+                    <chart:SfCircularChart.Resources>
+                        <DataTemplate x:Key="labelTemplate" x:DataType="chart:ChartDataLabel">
+                            <Frame
+                                Padding="5"
+                                BackgroundColor="#66212121"
+                                CornerRadius="10">
                                 <Label
-                                    Grid.RowSpan="2"
-                                    Padding="5"
-                                    FontSize="16"
-                                    HorizontalOptions="Start"
-                                    Text="{Binding Symbol}"
-                                    VerticalOptions="Center" />
-                                <Label
-                                    Grid.Row="0"
-                                    Grid.Column="1"
-                                    HorizontalOptions="End"
-                                    Text="{Binding MarketPrice, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
-                                    VerticalOptions="Center" />
-                                <HorizontalStackLayout
-                                    Grid.Row="1"
-                                    Grid.Column="1"
-                                    HorizontalOptions="End"
-                                    VerticalOptions="Center">
-                                    <Label Text="{Binding Change, Converter={StaticResource ShowValue}, StringFormat='{0:C2} '}" TextColor="{Binding Change, Converter={StaticResource PosNegColour}}" />
-                                    <Label Text="{Binding ChangePercent, Converter={StaticResource ShowValuePercent}, StringFormat=' ({0:P2})'}" TextColor="{Binding ChangePercent, Converter={StaticResource PosNegColour}}" />
-                                </HorizontalStackLayout>
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </listview:SfListView.ItemTemplate>
-            </listview:SfListView>
-        </Frame>
-    </Grid>
+                                    FontSize="12"
+                                    Text="{Binding Item, Converter={StaticResource StockDataLabel}}"
+                                    TextColor="White" />
+                            </Frame>
+                        </DataTemplate>
+                    </chart:SfCircularChart.Resources>
+                </chart:SfCircularChart>
+            </Frame>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

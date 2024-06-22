@@ -47,7 +47,8 @@ public partial class ImportExportViewModel : ObservableObject
         {
             IsBusy = true;
             var result = await SelectFile();
-            if (result == null) return;
+            if (result == null)
+                return;
 
             List<Account> accounts = [];
             int i = 1;
@@ -108,7 +109,8 @@ public partial class ImportExportViewModel : ObservableObject
         {
             IsBusy = true;
             var result = await SelectFile();
-            if (result == null) return;
+            if (result == null) 
+                return;
 
             List<Category> categories = [];
             int i = 1;
@@ -178,7 +180,8 @@ public partial class ImportExportViewModel : ObservableObject
         {
             IsBusy = true;
             var result = await SelectFile();
-            if (result == null) return;
+            if (result == null)
+                return;
 
             // initial list and counter
             List<Transaction> transactions = [];
@@ -247,7 +250,8 @@ public partial class ImportExportViewModel : ObservableObject
         {
             IsBusy = true;
             var result = await SelectFile();
-            if (result == null) return;
+            if (result == null)
+                return;
 
             List<Stock> stocks = [];
             int i = 1;
@@ -308,7 +312,8 @@ public partial class ImportExportViewModel : ObservableObject
         {
             IsBusy = true;
             var result = await SelectFile();
-            if (result == null) return;
+            if (result == null)
+                return;
 
             List<Log> logs = [];
             int i = 1;

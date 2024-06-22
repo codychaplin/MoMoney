@@ -17,6 +17,8 @@
             HeightRequest="65"
             HorizontalTextAlignment="Center"
             Text="{Binding Source={x:Reference this}, Path=Icon}"
+            TextColor="{AppThemeBinding Light={StaticResource Gray600},
+                                        Dark={StaticResource White}}"
             VerticalOptions="End"
             VerticalTextAlignment="Center"
             WidthRequest="65" />

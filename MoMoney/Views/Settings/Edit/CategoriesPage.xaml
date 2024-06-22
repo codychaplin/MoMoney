@@ -10,7 +10,7 @@
 
     <ContentPage.Resources>
         <DataTemplate x:Key="HeaderTemplate" x:DataType="models:CategoryGroup">
-            <Frame BackgroundColor="{StaticResource Green}" Style="{StaticResource SmallTileFrame}">
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Style="{StaticResource SmallTileFrame}">
                 <Frame.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryStringCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding CategoryName}" />
                 </Frame.GestureRecognizers>
@@ -25,7 +25,7 @@
         <DataTemplate x:Key="ItemTemplate" x:DataType="models:Category">
             <Frame Padding="10,0,0,0" Style="{StaticResource SmallTileFrame}">
                 <Frame.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding CategoryID}" />
+                    <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding .}" />
                 </Frame.GestureRecognizers>
                 <Grid>
                     <Label Style="{StaticResource lblTile}" Text="{Binding CategoryName}" />

@@ -101,7 +101,8 @@
             x:Name="sfTabView"
             Grid.Row="1"
             Margin="10,0,10,0"
-            IndicatorBackground="{StaticResource Green}"
+            IndicatorBackground="{AppThemeBinding Light={StaticResource Primary},
+                                                  Dark={StaticResource PrimaryDark}}"
             IndicatorPlacement="Bottom"
             SelectedIndex="{Binding Index}"
             TabBarHeight="40"
@@ -119,7 +120,7 @@
                                 </VisualState>
                                 <VisualState x:Name="Selected">
                                     <VisualState.Setters>
-                                        <Setter Property="TextColor" Value="{StaticResource Green}" />
+                                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>

@@ -7,58 +7,54 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
-[QueryProperty(nameof(ID), nameof(ID))]
-public partial class EditAccountViewModel : ObservableObject
+public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, EditAccountViewModel>
 {
-    readonly IAccountService accountService;
-    readonly ILoggerService<EditAccountViewModel> logger;
-
     [ObservableProperty] Account account;
 
-    public string ID { get; set; } // account ID
+    public EditAccountViewModel(IAccountService _accountService, ILoggerService<EditAccountViewModel> _logger) : base(_accountService, _logger) { }
 
-    public EditAccountViewModel(IAccountService _accountService, ILoggerService<EditAccountViewModel> _logger)
+    /// <summary>
+    /// Controls whether the view is in edit mode or not.
+    /// </summary>
+    /// <param name="query"></param>
+    public override void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        accountService = _accountService;
-        logger = _logger;
+        if (query["Account"] is not Account account)
+            return;
+
+        IsEditMode = true;
+        Account = new(account);
     }
 
     /// <summary>
-    /// Gets Account using ID.
+    /// Adds Account to database using input fields from view.
     /// </summary>
-    public async Task GetAccount()
+    [RelayCommand]
+    protected override async Task Add()
     {
-        if (int.TryParse(ID, out int id))
+        try
         {
-            try
-            {
-                await Task.Delay(100); // add delay so clear icons are visible
-                Account = await accountService.GetAccount(id);
-            }
-            catch (AccountNotFoundException ex)
-            {
-                await logger.LogError(nameof(GetAccount), ex);
-                await Shell.Current.DisplayAlert("Account Not Found Error", ex.Message, "OK");
-            }
-            catch (Exception ex)
-            {
-                await logger.LogError(nameof(GetAccount), ex);
-                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
-            }
-
-            return;
+            await service.AddAccount(Account.AccountName, Account.AccountType, Account.StartingBalance);
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_ACCOUNT, FirebaseParameters.GetFirebaseParameters());
+            await Shell.Current.GoToAsync("..");
         }
-
-        string message = $"{ID} is not a valid ID";
-        await logger.LogError(nameof(GetAccount), new Exception(message));
-        await Shell.Current.DisplayAlert("Account Not Found Error", message, "OK");
+        catch (DuplicateAccountException ex)
+        {
+            await logger.LogWarning(nameof(Add), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(Add), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
     /// Edits Account in database using input fields from view.
     /// </summary>
     [RelayCommand]
-    async Task EditAccount()
+    protected override async Task Edit()
     {
         if (Account is null ||
             string.IsNullOrEmpty(Account.AccountName) ||
@@ -71,13 +67,13 @@ public partial class EditAccountViewModel : ObservableObject
 
         try
         {
-            await accountService.UpdateAccount(Account);
+            await service.UpdateAccount(Account);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_EDIT_ACCOUNT, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(EditAccount), ex);
+            await logger.LogError(nameof(Edit), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -86,20 +82,21 @@ public partial class EditAccountViewModel : ObservableObject
     /// Removes the Account from the database.
     /// </summary>
     [RelayCommand]
-    async Task RemoveAccount()
+    protected override async Task Remove()
     {
         bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Account.AccountName}\"?", "Yes", "No");
-        if (!flag) return;
+        if (!flag)
+            return;
 
         try
         {
-            await accountService.RemoveAccount(Account.AccountID);
+            await service.RemoveAccount(Account.AccountID);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_DELETE_ACCOUNT, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(RemoveAccount), ex);
+            await logger.LogError(nameof(Remove), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

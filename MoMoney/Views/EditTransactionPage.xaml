@@ -73,7 +73,7 @@
                     Margin="11,3,0,0"
                     ColumnDefinitions="20,*"
                     ColumnSpacing="2">
-                    <Image Source="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Account_circle}, Color={AppThemeBinding Light={StaticResource Black}, Dark={StaticResource Gray400}}}" />
+                    <Image Source="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                     <input:SfAutocomplete
                         x:Name="entPayee"
                         Grid.Column="1"
@@ -127,23 +127,26 @@
                 ColumnDefinitions="*,*,*"
                 ColumnSpacing="10">
                 <Button
-                    x:Name="btnDelete"
-                    Grid.Column="0"
-                    BackgroundColor="{StaticResource Red}"
-                    Command="{Binding RemoveTransactionCommand}"
-                    HeightRequest="45"
-                    Text="Delete" />
-                <Button
                     x:Name="btnClear"
-                    Grid.Column="1"
-                    BackgroundColor="{StaticResource Blue}"
+                    Grid.Column="0"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBlue},
+                                                      Dark={StaticResource Blue}}"
                     Clicked="btnClear_Clicked"
                     HeightRequest="45"
                     Text="Clear" />
                 <Button
+                    x:Name="btnDelete"
+                    Grid.Column="1"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightRed},
+                                                      Dark={StaticResource Red}}"
+                    Command="{Binding RemoveTransactionCommand}"
+                    HeightRequest="45"
+                    Text="Delete" />
+                <Button
                     x:Name="btnEnter"
                     Grid.Column="2"
-                    BackgroundColor="{StaticResource Green}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                      Dark={StaticResource PrimaryDark}}"
                     Command="{Binding EditTransactionCommand}"
                     CommandParameter="{Binding Source={x:Reference entPayee}, Path=Text}"
                     HeightRequest="45"

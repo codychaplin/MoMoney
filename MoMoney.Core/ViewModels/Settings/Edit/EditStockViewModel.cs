@@ -2,55 +2,47 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
-using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
-[QueryProperty(nameof(Symbol), nameof(Symbol))]
-public partial class EditStockViewModel : ObservableObject
+public partial class EditStockViewModel : BaseEditViewModel<IStockService, EditStockViewModel>
 {
-    readonly IStockService stockService;
-    readonly ILoggerService<EditStockViewModel> logger;
-
     [ObservableProperty] Stock stock = new();
 
-    Stock initalStock;
+    Stock initalStock = null;
 
-    public string Symbol { get; set; } // Stock Symbol
+    public EditStockViewModel(IStockService _stockService, ILoggerService<EditStockViewModel> _logger) : base(_stockService, _logger) { }
 
-    public EditStockViewModel(IStockService _stockService, ILoggerService<EditStockViewModel> _logger)
+    /// <summary>
+    /// Controls whether the view is in edit mode or not.
+    /// </summary>
+    /// <param name="query"></param>
+    public override void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        stockService = _stockService;
-        logger = _logger;
+        if (query["Stock"] is not Stock stock)
+            return;
+
+        IsEditMode = true;
+        Stock = new(stock);
+        initalStock = new(stock);
     }
 
     /// <summary>
-    /// Gets Stock using Symbol.
+    /// adds Account to database using input fields from view.
     /// </summary>
-    public async Task GetStock()
+    [RelayCommand]
+    protected override async Task Add()
     {
         try
         {
-            await Task.Delay(100);
-            Stock = await stockService.GetStock(Symbol);
-            initalStock = new Stock
-            {
-                Symbol = Stock.Symbol,
-                Quantity = Stock.Quantity,
-                Cost = Stock.Cost,
-                MarketPrice = Stock.MarketPrice,
-                BookValue = Stock.BookValue
-            };
-        }
-        catch (StockNotFoundException ex)
-        {
-            await logger.LogError(nameof(GetStock), ex);
-            await Shell.Current.DisplayAlert("Stock Not Found Error", ex.Message, "OK");
+            await service.AddStock(Stock.Symbol, Stock.Market, Stock.Quantity, Stock.Cost);
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_STOCK, FirebaseParameters.GetFirebaseParameters());
+            await Shell.Current.GoToAsync("..");
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(GetStock), ex);
+            await logger.LogError(nameof(Add), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -59,22 +51,18 @@ public partial class EditStockViewModel : ObservableObject
     /// Edits Stock in database using input fields from view.
     /// </summary>
     [RelayCommand]
-    async Task EditStock()
+    protected override async Task Edit()
     {
         try
         {
-            // if symbol (primary key) changed, 
-            if (initalStock.Symbol != Stock.Symbol)
-                await stockService.UpdateStock(Stock, initalStock);
-            else
-                await stockService.UpdateStock(Stock);
+            await service.UpdateStock(Stock);
 
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_EDIT_STOCK, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(EditStock), ex);
+            await logger.LogError(nameof(Edit), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -83,20 +71,21 @@ public partial class EditStockViewModel : ObservableObject
     /// Removes the Stock from the database.
     /// </summary>
     [RelayCommand]
-    async Task RemoveStock()
+    protected override async Task Remove()
     {
-        bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Stock.Symbol}\"?", "Yes", "No");
-        if (!flag) return;
+        bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{initalStock.Symbol}\"?", "Yes", "No");
+        if (!flag)
+            return;
 
         try
         {
-            await stockService.RemoveStock(Stock.Symbol);
+            await service.RemoveStock(initalStock.StockID);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_DELETE_STOCK, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(RemoveStock), ex);
+            await logger.LogError(nameof(Remove), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

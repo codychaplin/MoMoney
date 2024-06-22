@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Grid
+    x:Class="MoMoney.Components.ActionButtons"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="this"
+    Margin="0,5,0,0"
+    ColumnDefinitions="*,Auto,*"
+    ColumnSpacing="5">
+    <Button
+        x:Name="btnClear"
+        Grid.Column="0"
+        BackgroundColor="{AppThemeBinding Light={StaticResource LightBlue},
+                                          Dark={StaticResource Blue}}"
+        Clicked="BtnClear_Clicked"
+        HeightRequest="45"
+        Text="Clear" />
+    <Button
+        x:Name="btnDelete"
+        Grid.Column="1"
+        BackgroundColor="{AppThemeBinding Light={StaticResource LightRed},
+                                          Dark={StaticResource Red}}"
+        Command="{Binding Source={x:Reference this}, Path=RemoveCommand}"
+        HeightRequest="45"
+        IsVisible="{Binding Source={x:Reference this}, Path=IsEditMode}"
+        Text="Delete"
+        WidthRequest="100" />
+    <Button
+        x:Name="btnEnter"
+        Grid.Column="2"
+        BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                          Dark={StaticResource PrimaryDark}}"
+        HeightRequest="45">
+        <Button.Triggers>
+            <DataTrigger
+                Binding="{Binding Source={x:Reference this}, Path=IsEditMode}"
+                TargetType="Button"
+                Value="True">
+                <Setter Property="Text" Value="Update" />
+                <Setter Property="Command" Value="{Binding Source={x:Reference this}, Path=EditCommand}" />
+            </DataTrigger>
+            <DataTrigger
+                Binding="{Binding Source={x:Reference this}, Path=IsEditMode}"
+                TargetType="Button"
+                Value="False">
+                <Setter Property="Text" Value="Accept" />
+                <Setter Property="Command" Value="{Binding Source={x:Reference this}, Path=AddCommand}" />
+            </DataTrigger>
+        </Button.Triggers>
+    </Button>
+</Grid>

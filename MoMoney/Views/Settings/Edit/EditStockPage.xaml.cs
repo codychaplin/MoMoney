@@ -4,27 +4,22 @@ namespace MoMoney.Views.Settings.Edit;
 
 public partial class EditStockPage : ContentPage
 {
-    EditStockViewModel vm;
-
-    public EditStockPage(EditStockViewModel _vm)
+    public EditStockPage(EditStockViewModel vm)
     {
         InitializeComponent();
-        vm = _vm;
         BindingContext = vm;
+        Clear();
     }
 
-    protected override async void OnAppearing()
+    private void BtnClear_Clicked(object sender, EventArgs e)
     {
-        base.OnAppearing();
-        await vm.GetStock();
+        Clear();
     }
 
-    private void btnClear_Clicked(object sender, EventArgs e)
+    void Clear()
     {
         txtSymbol.Text = "";
         txtQuantity.Text = "";
         txtCost.Text = "";
-        txtMarketPrice.Text = "";
-        txtBookValue.Text = "";
     }
 }

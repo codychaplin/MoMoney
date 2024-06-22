@@ -33,7 +33,7 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
     [ObservableProperty] static DateTime from = new();
     [ObservableProperty] static DateTime to = new();
 
-    List<Transaction> Transactions = new();
+    List<Transaction> Transactions = [];
 
     public SfListView ListView { get; set; }
 
@@ -227,26 +227,12 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
     }
 
     /// <summary>
-    /// Calls UpdateFilter() and brings slider to front.
+    /// Calls UpdateFilter().
     /// </summary>
     [RelayCommand]
-    void AmountDragStarted(object obj)
-    {
-        var frame = obj as Frame;
-        frame.ZIndex = 3;
-    }
-
-    /// <summary>
-    /// Calls UpdateFilter() and brings slider to back.
-    /// </summary>
-    [RelayCommand]
-    async Task AmountDragCompleted(object obj)
+    void AmountDragCompleted()
     {
         UpdateFilter();
-
-        var frame = obj as Frame;
-        await Task.Delay(300);
-        frame.ZIndex = 1;
     }
 
     /// <summary>

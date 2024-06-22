@@ -11,7 +11,7 @@ public partial class StockStatsPage : ContentPage
 		InitializeComponent();
 		vm = _vm;
 		BindingContext = vm;
-		Loaded += vm.Init;
+		Loaded += async (s, e) => await vm.Init();
 	}
 
     protected override void OnDisappearing()

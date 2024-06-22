@@ -9,7 +9,7 @@ namespace MoMoney.Core.Services;
 /// <inheritdoc />
 public class StockService : BaseService<StockService, UpdateStocksMessage, string>, IStockService
 {
-    public Dictionary<string, Stock> Stocks { get; private set; } = new();
+    public Dictionary<int, Stock> Stocks { get; private set; } = new();
 
     public StockService(MoMoneydb _momoney, ILoggerService<StockService> _logger) : base(_momoney, _logger) { }
 
@@ -20,27 +20,20 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
             Stocks = await GetStocksAsDict();
     }
 
-    public async Task AddStock(string symbol, int quantity, decimal cost, decimal marketprice, decimal bookvalue)
+    public async Task AddStock(string symbol, string market, decimal quantity, decimal cost)
     {
         await DbOperation(async () =>
         {
-            ValidateStock(symbol, quantity, cost, marketprice, bookvalue);
+            ValidateStock(symbol, market, quantity, cost, 0);
 
-            var count = await momoney.db.Table<Stock>().CountAsync(s => s.Symbol == symbol);
+            var count = await momoney.db.Table<Stock>().CountAsync(s => s.Symbol == symbol && s.Market == market);
             if (count > 0)
-                throw new DuplicateStockException("Stock symbol'" + symbol + "' already exists");
+                throw new DuplicateStockException($"Stock symbol'{symbol}:{market}' already exists");
 
-            var stock = new Stock
-            {
-                Symbol = symbol,
-                Quantity = quantity,
-                Cost = cost,
-                MarketPrice = marketprice,
-                BookValue = bookvalue
-            };
+            var stock = new Stock(symbol, market, quantity, cost, cost);
 
             await momoney.db.InsertAsync(stock);
-            Stocks.Add(stock.Symbol, stock);
+            Stocks.Add(stock.StockID, stock);
 
             return $"Added Stock '{stock.Symbol}' to db.";
         });
@@ -60,7 +53,7 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
             // adds stocks to db and dictionary
             await momoney.db.InsertAllAsync(stocks);
             foreach (var stk in stocks)
-                Stocks.Add(stk.Symbol, stk);
+                Stocks.Add(stk.StockID, stk);
 
             return $"Added {stocks.Count} Stocks to db.";
         });
@@ -70,39 +63,23 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
     {
         await DbOperation(async () =>
         {
-            ValidateStock(updatedStock.Symbol, updatedStock.Quantity, updatedStock.Cost, updatedStock.MarketPrice, updatedStock.BookValue);
+            ValidateStock(updatedStock.Symbol, updatedStock.Market, updatedStock.Quantity, updatedStock.Cost, updatedStock.MarketPrice);
 
             await momoney.db.UpdateAsync(updatedStock);
-            Stocks[updatedStock.Symbol] = updatedStock;
+            Stocks[updatedStock.StockID] = updatedStock;
 
             return $"Updated Stock '{updatedStock.Symbol}' in db.";
         });
     }
 
-    public async Task UpdateStock(Stock updatedStock, Stock oldStock)
+    public async Task RemoveStock(int ID)
     {
         await DbOperation(async () =>
         {
-            ValidateStock(updatedStock.Symbol, updatedStock.Quantity, updatedStock.Cost, updatedStock.MarketPrice, updatedStock.BookValue);
+            await momoney.db.DeleteAsync<Stock>(ID);
+            Stocks.Remove(ID);
 
-            await momoney.db.DeleteAsync(oldStock);
-            await momoney.db.InsertAsync(updatedStock);
-
-            Stocks.Remove(oldStock.Symbol);
-            Stocks[updatedStock.Symbol] = updatedStock;
-
-            return $"Updated Stock '{updatedStock.Symbol}' in db.";
-        });
-    }
-
-    public async Task RemoveStock(string symbol)
-    {
-        await DbOperation(async () =>
-        {
-            await momoney.db.DeleteAsync<Stock>(symbol);
-            Stocks.Remove(symbol);
-
-            return $"Removed Stock '{symbol}' from db.";
+            return $"Removed Stock #{ID} from db.";
         });
     }
 
@@ -119,15 +96,15 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
         });
     }
 
-    public async Task<Stock> GetStock(string symbol)
+    public async Task<Stock> GetStock(int ID)
     {
         await Init();
-        if (Stocks.TryGetValue(symbol, out var stock))
+        if (Stocks.TryGetValue(ID, out var stock))
             return new Stock(stock);
 
-        var stk = await momoney.db.Table<Stock>().FirstOrDefaultAsync(s => s.Symbol == symbol);
+        var stk = await momoney.db.Table<Stock>().FirstOrDefaultAsync(s => s.StockID == ID);
         if (stk is null)
-            throw new StockNotFoundException($"Could not find Stock with symbol '{symbol}'.");
+            throw new StockNotFoundException($"Could not find Stock #{ID}.");
         else
             return stk;
     }
@@ -151,10 +128,10 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
     /// Gets all Stocks from Stocks table as a list.
     /// </summary>
     /// <returns>List of Stock objects</returns>
-    async Task<Dictionary<string, Stock>> GetStocksAsDict()
+    async Task<Dictionary<int, Stock>> GetStocksAsDict()
     {
         var stocks = await momoney.db.Table<Stock>().ToListAsync();
-        return stocks.ToDictionary(s => s.Symbol, s => s);
+        return stocks.ToDictionary(s => s.StockID, s => s);
     }
 
     /// <summary>
@@ -164,19 +141,18 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
     /// <param name="quantity"></param>
     /// <param name="cost"></param>
     /// <param name="marketPrice"></param>
-    /// <param name="bookValue"></param>
     /// <exception cref="InvalidStockException"></exception>
-    static void ValidateStock(string symbol, int quantity, decimal cost, decimal marketPrice, decimal bookValue)
+    static void ValidateStock(string symbol, string market, decimal quantity, decimal cost, decimal marketPrice)
     {
-        if (symbol == "")
+        if (string.IsNullOrEmpty(symbol))
             throw new InvalidStockException("Invalid symbol");
+        if (string.IsNullOrEmpty(market))
+            throw new InvalidStockException("Invalid market");
         if (quantity < 0)
             throw new InvalidStockException("Quantity must be > 0");
         if (cost <= 0)
             throw new InvalidStockException("Cost must be > 0");
         if (marketPrice < 0)
             throw new InvalidStockException("Market Price must be >= 0");
-        if (bookValue <= 0)
-            throw new InvalidStockException("Book Value must be > 0");
     }
 }

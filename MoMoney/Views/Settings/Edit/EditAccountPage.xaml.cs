@@ -4,24 +4,19 @@ namespace MoMoney.Views.Settings.Edit;
 
 public partial class EditAccountPage : ContentPage
 {
-    EditAccountViewModel vm;
-
-    public EditAccountPage(EditAccountViewModel _vm)
+    public EditAccountPage(EditAccountViewModel vm)
     {
         InitializeComponent();
-        vm = _vm;
         BindingContext = vm;
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
 
         // workaround for switch thumbcolor not updating on load
-        swEnabled.IsToggled = true;
-        swEnabled.IsToggled = false;
-
-        await vm.GetAccount();
+        swEnabled.IsToggled = !swEnabled.IsToggled;
+        swEnabled.IsToggled = !swEnabled.IsToggled;
     }
 
     /// <summary>
@@ -29,7 +24,7 @@ public partial class EditAccountPage : ContentPage
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void btnClear_Clicked(object sender, EventArgs e)
+    private void BtnClear_Clicked(object sender, EventArgs e)
     {
         txtName.Text = "";
         pckType.SelectedIndex = -1;
