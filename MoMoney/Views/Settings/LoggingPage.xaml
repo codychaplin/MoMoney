@@ -182,6 +182,19 @@
                         HorizontalTextAlignment="Center"
                         Text="No Logs Found" />
                 </sf:SfListView.EmptyView>
+                <sf:SfListView.LoadMoreTemplate>
+                    <DataTemplate>
+                        <!--  loading indicator  -->
+                        <sf:ListViewLoadMoreIndicator
+                            Margin="0,10"
+                            HeightRequest="30"
+                            IsRunning="{Binding IsLazyLoading, Source={x:Reference Name=listView}}"
+                            IsVisible="{Binding IsLazyLoading, Source={x:Reference Name=listView}}"
+                            WidthRequest="30"
+                            Color="{AppThemeBinding Light={StaticResource Primary},
+                                                    Dark={StaticResource PrimaryDark}}" />
+                    </DataTemplate>
+                </sf:SfListView.LoadMoreTemplate>
             </sf:SfListView>
         </Frame>
     </Grid>

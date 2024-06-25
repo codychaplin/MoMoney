@@ -22,13 +22,17 @@
             <Label Style="{StaticResource SettingsSubtitle}" Text="Data Maintenance" />
             <components:AlignedButton
                 Command="{Binding GoToLoggingCommand}"
+                IsVisible="{Binding IsAdmin}"
                 ShowArrow="True"
                 Text="Logging" />
             <components:AlignedButton
                 Command="{Binding GoToBulkEditingCommand}"
                 ShowArrow="True"
                 Text="Bulk Editing" />
-            <components:AlignedButton Command="{Binding CalculateAccountBalancesCommand}" Text="Recalculate Account Balances" />
+            <components:AlignedButton
+                Command="{Binding CalculateAccountBalancesCommand}"
+                IsVisible="{Binding IsAdmin}"
+                Text="Recalculate Account Balances" />
 
         </VerticalStackLayout>
     </ScrollView>

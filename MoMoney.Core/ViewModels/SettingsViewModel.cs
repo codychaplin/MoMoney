@@ -1,9 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using MoMoney.Core.Helpers;
+using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
 public partial class SettingsViewModel
 {
+    readonly ILoggerService<SettingsViewModel> logger;
+
+    public SettingsViewModel(ILoggerService<SettingsViewModel> _logger)
+    {
+        logger = _logger;
+    }
+
     /// <summary>
     /// Goes to AccountsPage.xaml.
     /// </summary>
@@ -47,5 +56,14 @@ public partial class SettingsViewModel
     async Task GoToAdmin()
     {
         await Shell.Current.GoToAsync("AdminPage");
+    }
+
+    [RelayCommand]
+    void ToggleDeveloperMode()
+    {
+        bool isAdmin = Preferences.Get("IsAdmin", false);
+        Preferences.Set("IsAdmin", !isAdmin);
+        logger.LogFirebaseEvent(FirebaseParameters.EVENT_DEVELOPER_MODE_TOGGLED, FirebaseParameters.GetFirebaseParameters());
+        _ = Utilities.DisplayToast($"Developer mode {(!isAdmin ? "enabled" : "disabled")}");
     }
 }

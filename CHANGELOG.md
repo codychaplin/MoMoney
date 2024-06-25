@@ -1,3 +1,15 @@
+# MoMoney v1.2.2
+
+### Fixes
+
+* Fixed StockStatsPage formatting and Stock csv exporting
+* Changed colour of LoggingPage loading indicator
+
+### Changes
+
+* Hide admin actions by default and added secret way to enable them
+* Added build number to firebase event logs
+
 # MoMoney v1.2.1
 
 ### Fixes

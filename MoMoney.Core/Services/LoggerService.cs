@@ -52,8 +52,8 @@ public class LoggerService<T> : ILoggerService<T>
 
     public async Task LogError(string functionName, Exception ex)
     {
-        // if SQLite or null reference exception, log as critical, otherwise log as error
-        if (ex is SQLite.SQLiteException || ex is NullReferenceException)
+        // if SQLite, log as critical, otherwise log as error
+        if (ex is SQLite.SQLiteException)
         {
             await LogCritical(functionName, ex);
         }

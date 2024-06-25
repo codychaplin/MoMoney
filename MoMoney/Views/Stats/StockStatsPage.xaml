@@ -66,7 +66,7 @@
             </Frame>
 
             <!--  stock list  -->
-            <Frame Padding="5">
+            <Frame Padding="5,5,5,0">
                 <listview:SfListView
                     ItemSpacing="0,0,0,5"
                     ItemsSource="{Binding Stocks}"
@@ -88,7 +88,7 @@
                                 BackgroundColor="{AppThemeBinding Light={StaticResource Gray150},
                                                                   Dark={StaticResource Gray700}}"
                                 HeightRequest="55">
-                                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,*">
                                     <Label
                                         FontSize="16"
                                         HorizontalOptions="Start"

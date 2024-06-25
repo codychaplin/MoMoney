@@ -51,9 +51,9 @@ public partial class LoggingViewModel : ObservableObject
         totalItems = Logs.Count;
 
         // populate filters
-        var levels = logs.Select(l => l.Level).Distinct().ToList();
-        var classes = logs.Select(l => l.ClassName).Distinct().ToList();
-        var exceptions = logs.Select(l => l.ExceptionType == "" ? "None" : l.ExceptionType).Distinct().ToList();
+        var levels = logs.Select(l => l.Level).Distinct();
+        var classes = logs.Select(l => l.ClassName).Distinct();
+        var exceptions = logs.Select(l => l.ExceptionType == "" ? "None" : l.ExceptionType).Distinct();
         Levels = new(levels);
         Classes = new(classes);
         Exceptions = new(exceptions);
