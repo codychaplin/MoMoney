@@ -14,10 +14,10 @@ namespace MoMoney.Core.Services;
 /// <inheritdoc />
 public class LoggerService<T> : ILoggerService<T>
 {
-    readonly MoMoneydb momoney;
+    readonly IMoMoneydb momoney;
     readonly string className;
 
-    public LoggerService(MoMoneydb _momoney)
+    public LoggerService(IMoMoneydb _momoney)
     {
         momoney = _momoney;
         className = typeof(T).Name;

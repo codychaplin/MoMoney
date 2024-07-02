@@ -11,7 +11,7 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
 {
     public Dictionary<int, Category> Categories { get; set; } = new();
 
-    public CategoryService(MoMoneydb _momoney, ILoggerService<CategoryService> _logger) : base(_momoney, _logger) { }
+    public CategoryService(IMoMoneydb _momoney, ILoggerService<CategoryService> _logger) : base(_momoney, _logger) { }
 
     protected override async Task Init()
     {

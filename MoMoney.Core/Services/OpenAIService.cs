@@ -12,14 +12,14 @@ namespace MoMoney.Core.Services;
 /// <inheritdoc />
 public class OpenAIService : IOpenAIService
 {
-    readonly MoMoneydb momoney;
+    readonly IMoMoneydb momoney;
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ILoggerService<OpenAIService> logger;
 
     readonly OpenAIClient openAIClient;
 
-    public OpenAIService(MoMoneydb _momoney, IAccountService _accountService, ICategoryService _categoryService, ILoggerService<OpenAIService> _logger)
+    public OpenAIService(IMoMoneydb _momoney, IAccountService _accountService, ICategoryService _categoryService, ILoggerService<OpenAIService> _logger)
     {
         momoney = _momoney;
         accountService = _accountService;

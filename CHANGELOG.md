@@ -9,6 +9,7 @@
 
 * Hide admin actions by default and added secret way to enable them
 * Added build number to firebase event logs
+* Finally added unit tests
 
 # MoMoney v1.2.1
 

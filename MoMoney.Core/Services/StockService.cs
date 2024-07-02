@@ -11,7 +11,7 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
 {
     public Dictionary<int, Stock> Stocks { get; private set; } = new();
 
-    public StockService(MoMoneydb _momoney, ILoggerService<StockService> _logger) : base(_momoney, _logger) { }
+    public StockService(IMoMoneydb _momoney, ILoggerService<StockService> _logger) : base(_momoney, _logger) { }
 
     protected override async Task Init()
     {

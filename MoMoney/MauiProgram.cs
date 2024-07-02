@@ -128,7 +128,7 @@ public static class MauiProgram
     static MauiAppBuilder RegisterOther(this MauiAppBuilder builder)
     {
          // db
-        builder.Services.AddSingleton<MoMoneydb>();
+        builder.Services.AddSingleton<IMoMoneydb, MoMoneydb>();
 
         // logging
         builder.Services.AddTransient(typeof(ILoggerService<>), typeof(LoggerService<>));

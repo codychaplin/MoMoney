@@ -39,6 +39,20 @@ public class Account
         CurrentBalance = account.CurrentBalance;
         Enabled = account.Enabled;
     }
+
+    public override bool Equals(object obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+            return false;
+
+        Account account = (Account)obj;
+        return AccountID == account.AccountID &&
+               AccountName == account.AccountName &&
+               AccountType == account.AccountType &&
+               StartingBalance == account.StartingBalance &&
+               CurrentBalance == account.CurrentBalance &&
+               Enabled == account.Enabled;
+    }
 }
 
 public enum AccountType // account types

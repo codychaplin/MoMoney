@@ -4,9 +4,9 @@ using MoMoney.Core.Helpers;
 
 namespace MoMoney.Core.Data;
 
-public class MoMoneydb
+public class MoMoneydb : IMoMoneydb
 {
-    public SQLiteAsyncConnection db { get; private set; }
+    public ISQLiteAsyncConnection db { get; private set; }
     bool initialized = false;
 
     /// <summary>
@@ -95,5 +95,27 @@ public class MoMoneydb
             new Category(Constants.DEBIT_ID, "Debit", "Transfer"), // 3
             new Category(Constants.CREDIT_ID, "Credit", "Transfer") // 4
         ];
+    }
+
+    // ----------------------- CRUD wrappers (needed for unit testing) ----------------------- //
+
+    public Task<int> AccountsCountAsync()
+    {
+        return db.Table<Account>().CountAsync();
+    }
+
+    public Task<int> AccountsCountAsync(string accountName)
+    {
+        return db.Table<Account>().CountAsync(a => a.AccountName == accountName);
+    }
+
+    public Task<List<Account>> AccountsToList()
+    {
+        return db.Table<Account>().ToListAsync();
+    }
+
+    public Task<Account> FirstOrDefaultAccountAsync(int accountID)
+    {
+        return db.Table<Account>().FirstOrDefaultAsync(a => a.AccountID == accountID);
     }
 }

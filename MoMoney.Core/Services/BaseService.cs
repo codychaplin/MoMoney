@@ -8,10 +8,10 @@ namespace MoMoney.Core.Services;
 
 public class BaseService<TLogger, TMessenger, TType> where TMessenger : ValueChangedMessage<TType>, new()
 {
-    protected readonly MoMoneydb momoney;
+    protected readonly IMoMoneydb momoney;
     readonly ILoggerService<TLogger> logger;
 
-    protected BaseService(MoMoneydb _momoney, ILoggerService<TLogger> _logger)
+    protected BaseService(IMoMoneydb _momoney, ILoggerService<TLogger> _logger)
     {
         momoney = _momoney;
         logger = _logger;

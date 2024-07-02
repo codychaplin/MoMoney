@@ -12,7 +12,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
 {
     readonly IAccountService accountService;
 
-    public TransactionService(MoMoneydb _momoney, ILoggerService<TransactionService> _logger, IAccountService _accountService) : base(_momoney, _logger)
+    public TransactionService(IMoMoneydb _momoney, ILoggerService<TransactionService> _logger, IAccountService _accountService) : base(_momoney, _logger)
     {
         accountService = _accountService;
     }
