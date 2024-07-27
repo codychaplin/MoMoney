@@ -1,14 +1,14 @@
-﻿using Color = Microsoft.Maui.Graphics.Color;
+﻿using System.Collections.ObjectModel;
+using Color = Microsoft.Maui.Graphics.Color;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Stats;
 
-public partial class BreakdownViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+public partial class BreakdownViewModel : ObservableObject
 {
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
@@ -20,8 +20,8 @@ public partial class BreakdownViewModel : CommunityToolkit.Mvvm.ComponentModel.O
     [ObservableProperty] List<Brush> incomePalette = [];
     [ObservableProperty] List<Brush> expensePalette = [];
 
-    [ObservableProperty] ObservableRangeCollection<BreakdownData> incomeData = [];
-    [ObservableProperty] ObservableRangeCollection<BreakdownData> expenseData = [];
+    [ObservableProperty] ObservableCollection<BreakdownData> incomeData = [];
+    [ObservableProperty] ObservableCollection<BreakdownData> expenseData = [];
 
     [ObservableProperty] DateTime selectedTime = new();
 
@@ -239,7 +239,9 @@ public partial class BreakdownViewModel : CommunityToolkit.Mvvm.ComponentModel.O
                 };
             });
 
-        ExpenseData.ReplaceRange(expenseData);
+        ExpenseData.Clear();
+        foreach (var item in expenseData)
+            ExpenseData.Add(item);
 
         // calculate size of slice as percentage
         decimal total = ExpenseData.Sum(d => d.Amount);
@@ -271,7 +273,9 @@ public partial class BreakdownViewModel : CommunityToolkit.Mvvm.ComponentModel.O
                 };
             });
 
-        IncomeData.ReplaceRange(incomeData);
+        IncomeData.Clear();
+        foreach (var item in incomeData)
+            IncomeData.Add(item);
 
         // calculate size of slice as percentage
         decimal total = IncomeData.Sum(d => d.Amount);

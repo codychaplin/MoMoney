@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
     xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
@@ -170,6 +171,36 @@
                         WidthRequest="250" />
 
                     <!--  payee search bar  -->
+                    <material:InputField WidthRequest="250">
+                        <Grid
+                            Margin="11,3,0,0"
+                            ColumnDefinitions="20,*"
+                            ColumnSpacing="2">
+                            <Image Source="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
+                            <input:SfAutocomplete
+                                Grid.Column="1"
+                                BackgroundColor="Transparent"
+                                ClearButtonIconColor="{AppThemeBinding Light={StaticResource Black},
+                                                                       Dark={StaticResource White}}"
+                                DropDownBackground="{AppThemeBinding Light={StaticResource White},
+                                                                     Dark={StaticResource Gray950}}"
+                                DropDownItemTextColor="{AppThemeBinding Light={StaticResource Black},
+                                                                        Dark={StaticResource White}}"
+                                IsClearButtonVisible="{Binding Payee.Length}"
+                                ItemsSource="{Binding Payees}"
+                                MaxDropDownHeight="250"
+                                Placeholder="Payee"
+                                PlaceholderColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                                   Dark={StaticResource Gray200}}"
+                                SelectionTextHighlightColor="#7742ba96"
+                                Stroke="Transparent"
+                                Text="{Binding Payee, Mode=TwoWay}"
+                                TextColor="{AppThemeBinding Light={StaticResource Black},
+                                                            Dark={StaticResource White}}"
+                                TextSearchMode="Contains" />
+                        </Grid>
+                    </material:InputField>
+                    <!--  payee search bar
                     <material:AutoCompleteTextField
                         x:Name="entPayee"
                         Title="Payee"
@@ -179,7 +210,7 @@
                         Text="{Binding Payee}"
                         TextColor="{AppThemeBinding Light={StaticResource Black},
                                                     Dark={StaticResource White}}"
-                        WidthRequest="250" />
+                        WidthRequest="250" />-->
 
                 </VerticalStackLayout>
             </Grid>

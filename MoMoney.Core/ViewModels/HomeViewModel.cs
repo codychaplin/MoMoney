@@ -2,29 +2,28 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
-public partial class HomeViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+public partial class HomeViewModel : ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
     readonly ILoggerService<HomeViewModel> logger;
 
-    [ObservableProperty] ObservableRangeCollection<Transaction> recentTransactions = [];
+    [ObservableProperty] ObservableCollection<Transaction> recentTransactions = [];
 
     [ObservableProperty] decimal networth = 0;
-    [ObservableProperty] ObservableRangeCollection<AccountTotalModel> accountTotals = [];
+    [ObservableProperty] ObservableCollection<AccountTotalModel> accountTotals = [];
 
     [ObservableProperty] static DateTime from = new();
     [ObservableProperty] static DateTime to = new();
 
-    [ObservableProperty] ObservableRangeCollection<BalanceOverTimeData> data = [];
+    [ObservableProperty] ObservableCollection<BalanceOverTimeData> data = [];
 
     [ObservableProperty] string showValue = "$0,k";
 
@@ -89,7 +88,9 @@ public partial class HomeViewModel : CommunityToolkit.Mvvm.ComponentModel.Observ
     void GetRecentTransactions(IEnumerable<Transaction> transactions)
     {
         transactions = transactions.Take(5);
-        RecentTransactions.ReplaceRange(transactions);
+        RecentTransactions.Clear();
+        foreach (Transaction transaction in transactions)
+            RecentTransactions.Add(transaction);
     }
 
     async Task GetAccountBalances(IEnumerable<Account> accounts)
@@ -103,7 +104,9 @@ public partial class HomeViewModel : CommunityToolkit.Mvvm.ComponentModel.Observ
                                               Total = Utilities.ShowValue ? group.Sum(acc => acc.CurrentBalance) : 0
                                           });
             
-            AccountTotals.ReplaceRange(groupedAccounts.Where(acc => acc != null));
+            AccountTotals.Clear();
+            foreach (AccountTotalModel account in groupedAccounts.Where(acc => acc != null))
+                AccountTotals.Add(account);
         }
         catch (Exception ex)
         {
@@ -137,7 +140,9 @@ public partial class HomeViewModel : CommunityToolkit.Mvvm.ComponentModel.Observ
                     runningTotal -= group.Sum(t => t.Amount);
                     return balanceData;
                 });
-            Data.ReplaceRange(data);
+            Data.Clear();
+            foreach (var d in data)
+                Data.Add(d);
         }
         else
         {
@@ -154,7 +159,9 @@ public partial class HomeViewModel : CommunityToolkit.Mvvm.ComponentModel.Observ
                     runningTotal -= group.Sum(t => t.Amount);
                     return balanceData;
                 });
-            Data.ReplaceRange(data);
+            Data.Clear();
+            foreach (var d in data)
+                Data.Add(d);
         }
     }
 

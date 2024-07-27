@@ -1,4 +1,4 @@
-﻿using MvvmHelpers;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Syncfusion.Maui.ListView;
@@ -8,18 +8,18 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
-public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+public partial class TransactionsViewModel : ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
 
-    [ObservableProperty] ObservableRangeCollection<Transaction> loadedTransactions = [];
+    [ObservableProperty] ObservableCollection<Transaction> loadedTransactions = [];
 
-    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
-    [ObservableProperty] ObservableRangeCollection<Category> categories = [];
-    [ObservableProperty] ObservableRangeCollection<Category> subcategories = [];
-    [ObservableProperty] ObservableRangeCollection<string> payees = [];
+    [ObservableProperty] ObservableCollection<Account> accounts = [];
+    [ObservableProperty] ObservableCollection<Category> categories = [];
+    [ObservableProperty] ObservableCollection<Category> subcategories = [];
+    [ObservableProperty] ObservableCollection<string> payees = [];
 
     [ObservableProperty] Account account;
 
@@ -115,7 +115,10 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
             Transactions.Clear();
             Transactions = new(transactions);
 
-            Payees.ReplaceRange(transactions.Select(t => t.Payee).Distinct());
+            var payees = transactions.Select(t => t.Payee).Distinct();
+            Payees.Clear();
+            foreach (var payee in payees)
+                Payees.Add(payee);
         }
         if (showValue != Utilities.ShowValue)
         {
@@ -185,7 +188,9 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
     public async Task GetAccounts()
     {
         var accounts = await accountService.GetActiveAccounts();
-        Accounts.ReplaceRange(accounts);
+        Accounts.Clear();
+        foreach (var account in accounts)
+            Accounts.Add(account);
     }
 
     /// <summary>
@@ -194,7 +199,9 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
     public async Task GetParentCategories()
     {
         var categories = await categoryService.GetAllParentCategories();
-        Categories.ReplaceRange(categories);
+        Categories.Clear();
+        foreach (var category in categories)
+            Categories.Add(category);
     }
 
     [RelayCommand]
@@ -222,7 +229,9 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
         if (parentCategory != null)
         {
             var subcategories = await categoryService.GetSubcategories(parentCategory);
-            Subcategories.ReplaceRange(subcategories);
+            Subcategories.Clear();
+            foreach (var subcategory in subcategories)
+                Subcategories.Add(subcategory);
         }
     }
 
@@ -307,6 +316,8 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
     /// <param name="count"></param>
     void AddTransactions(int index, int count)
     {
-        LoadedTransactions.AddRange(Transactions.Skip(index).Take(count));
+        var transactions = Transactions.Skip(index).Take(count);
+        foreach (var transaction in transactions)
+            LoadedTransactions.Add(transaction);
     }
 }

@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -9,7 +9,7 @@ using MoMoney.Core.Services.Interfaces;
 namespace MoMoney.Core.ViewModels;
 
 [QueryProperty(nameof(ID), "ID")]
-public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+public partial class EditTransactionViewModel : ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
@@ -18,10 +18,10 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
 
     public string ID { get; set; }
 
-    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
-    [ObservableProperty] ObservableRangeCollection<Category> categories = [];
-    [ObservableProperty] ObservableRangeCollection<Category> subcategories = [];
-    [ObservableProperty] ObservableRangeCollection<string> payees = [];
+    [ObservableProperty] ObservableCollection<Account> accounts = [];
+    [ObservableProperty] ObservableCollection<Category> categories = [];
+    [ObservableProperty] ObservableCollection<Category> subcategories = [];
+    [ObservableProperty] ObservableCollection<string> payees = [];
 
     [ObservableProperty] Account account;
     [ObservableProperty] Category category;
@@ -111,7 +111,9 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
         {
             // TODO: if using disabled account, retrieve from db as well
             var accounts = await accountService.GetActiveAccounts();
-            Accounts.ReplaceRange(accounts);
+            Accounts.Clear();
+            foreach (var account in accounts)
+                Accounts.Add(account);
 
             Account = InitialAccount;
             if (InitialCategory.CategoryID == Constants.TRANSFER_ID)
@@ -182,7 +184,9 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
         try
         {
             var categories = await categoryService.GetExpenseCategories();
-            Categories.ReplaceRange(categories);
+            Categories.Clear();
+            foreach (var category in categories)
+                Categories.Add(category);
             Subcategories.Clear();
             Category = InitialCategory;
         }
@@ -204,7 +208,9 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
             if (Category is not null)
             {
                 var subcategories = await categoryService.GetSubcategories(Category);
-                Subcategories.ReplaceRange(subcategories);
+                Subcategories.Clear();
+                foreach (var subcategory in subcategories)
+                    Subcategories.Add(subcategory);
             }
 
             Subcategory = InitialSubcategory;

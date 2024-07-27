@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -10,7 +10,7 @@ namespace MoMoney.Core.ViewModels.Settings.Edit;
 
 public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService, EditCategoryViewModel>
 {
-    [ObservableProperty] ObservableRangeCollection<Category> parents = []; // list of categories
+    [ObservableProperty] ObservableCollection<Category> parents = []; // list of categories
     [ObservableProperty] Category category = new(); // selected category
     [ObservableProperty] Category parent; // category parent
 
@@ -61,7 +61,9 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
         try
         {
             var categories = await service.GetParentCategories();
-            Parents.ReplaceRange(categories);
+            Parents.Clear();
+            foreach (var category in categories)
+                Parents.Add(category);
         }
         catch (Exception ex)
         {

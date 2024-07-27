@@ -1,18 +1,18 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
-public partial class CategoriesViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+public partial class CategoriesViewModel : ObservableObject
 {
     readonly ICategoryService categoryService;
     readonly ILoggerService<CategoriesViewModel> logger;
 
-    [ObservableProperty] ObservableRangeCollection<CategoryGroup> categories = [];
+    [ObservableProperty] ObservableCollection<CategoryGroup> categories = [];
 
     public CategoriesViewModel(ICategoryService _categoryService, ILoggerService<CategoriesViewModel> _logger)
     {
@@ -32,9 +32,12 @@ public partial class CategoriesViewModel : CommunityToolkit.Mvvm.ComponentModel.
 
             // groups categories by parent except where ParentName == ""
             // new parent categories will not show up in the list until a subcategory is added
-            Categories.ReplaceRange(categories.GroupBy(c => c.ParentName)
-                      .Where(cat => !string.IsNullOrEmpty(cat.Key))
-                      .Select(cat => new CategoryGroup(cat)));
+            var groupedCategories = categories.GroupBy(c => c.ParentName)
+                .Where(cat => !string.IsNullOrEmpty(cat.Key))
+                .Select(cat => new CategoryGroup(cat));
+            Categories.Clear();
+            foreach (var category in groupedCategories)
+                Categories.Add(category);
         }
         catch (Exception ex)
         {

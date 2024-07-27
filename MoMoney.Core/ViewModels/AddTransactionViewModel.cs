@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -8,7 +8,7 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
-public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+public partial class AddTransactionViewModel : ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
@@ -19,10 +19,10 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
 
     readonly IRecordAudioService recorder;
 
-    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
-    [ObservableProperty] ObservableRangeCollection<Category> categories = [];
-    [ObservableProperty] ObservableRangeCollection<Category> subcategories = [];
-    [ObservableProperty] ObservableRangeCollection<string> payees = [];
+    [ObservableProperty] ObservableCollection<Account> accounts = [];
+    [ObservableProperty] ObservableCollection<Category> categories = [];
+    [ObservableProperty] ObservableCollection<Category> subcategories = [];
+    [ObservableProperty] ObservableCollection<string> payees = [];
     
     [ObservableProperty] DateTime date;
     [ObservableProperty] Account account = new();
@@ -57,7 +57,9 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
     public async Task GetAccounts()
     {
         var accounts = await accountService.GetActiveAccounts();
-        Accounts.ReplaceRange(accounts);
+        Accounts.Clear();
+        foreach (var account in accounts)
+            Accounts.Add(account);
     }
 
     /// <summary>
@@ -134,7 +136,9 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
         try
         {
             var categories = await categoryService.GetExpenseCategories();
-            Categories.ReplaceRange(categories);
+            Categories.Clear();
+            foreach (var category in categories)
+                Categories.Add(category);
             Subcategories.Clear();
             Category = null;
             Subcategory = null;
@@ -160,7 +164,9 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
                 return;
 
             var subcategories = await categoryService.GetSubcategories(parentCategory);
-            Subcategories.ReplaceRange(subcategories);
+            Subcategories.Clear();
+            foreach (var subcategory in subcategories)
+                Subcategories.Add(subcategory);
         }
         catch (Exception ex)
         {

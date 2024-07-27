@@ -1,17 +1,17 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
-public partial class AccountsViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+public partial class AccountsViewModel : ObservableObject
 {
     readonly IAccountService accountService;
     readonly ILoggerService<AccountsViewModel> logger;
 
-    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
+    [ObservableProperty] ObservableCollection<Account> accounts = [];
 
     public AccountsViewModel(IAccountService _accountService, ILoggerService<AccountsViewModel> _logger)
     {
@@ -34,7 +34,9 @@ public partial class AccountsViewModel : CommunityToolkit.Mvvm.ComponentModel.Ob
                 return;
             }
 
-            Accounts.ReplaceRange(accounts);
+            Accounts.Clear();
+            foreach (var account in accounts)
+                Accounts.Add(account);
         }
         catch (Exception ex)
         {

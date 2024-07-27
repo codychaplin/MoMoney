@@ -12,6 +12,7 @@
 * Added build number to firebase event logs
 * Finally added unit tests
 * Updated to gpt-4o-mini
+* Removed MvvmHelpers due to incompatibility
 
 # MoMoney v1.2.1
 

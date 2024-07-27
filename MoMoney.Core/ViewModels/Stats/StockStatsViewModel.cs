@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers;
 using HtmlAgilityPack;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
@@ -9,13 +8,13 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Stats;
 
-public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+public partial class StockStatsViewModel : ObservableObject
 {
     readonly IStockService stockService;
     readonly ILoggerService<StockStatsViewModel> logger;
 
     [ObservableProperty] ObservableCollection<Stock> stocks = [];
-    [ObservableProperty] ObservableRangeCollection<StockData> stockData = [];
+    [ObservableProperty] ObservableCollection<StockData> stockData = [];
 
     [ObservableProperty] decimal total = 0;
     [ObservableProperty] decimal totalPercent = 0;
@@ -71,7 +70,9 @@ public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.
             };
         })
         .OrderByDescending(sd => sd.Price);
-        StockData.ReplaceRange(stockData);
+        StockData.Clear();
+        foreach (var data in stockData)
+            StockData.Add(data);
     }
 
     /// <summary>

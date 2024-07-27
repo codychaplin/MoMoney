@@ -8,7 +8,7 @@ namespace MoMoney.Core.ViewModels.Settings;
 
 public partial class AdminViewModel : ObservableObject
 {
-    readonly MoMoneydb momoney;
+    readonly IMoMoneydb momoney;
     readonly IStockService stockService;
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
@@ -18,7 +18,7 @@ public partial class AdminViewModel : ObservableObject
     [ObservableProperty]
     bool isAdmin;
 
-    public AdminViewModel(MoMoneydb _momoney, ITransactionService _transactionService, IAccountService _accountService,
+    public AdminViewModel(IMoMoneydb _momoney, ITransactionService _transactionService, IAccountService _accountService,
         ICategoryService _categoryService, IStockService _stockService, ILoggerService<AdminViewModel> _logger)
     {
         momoney = _momoney;
