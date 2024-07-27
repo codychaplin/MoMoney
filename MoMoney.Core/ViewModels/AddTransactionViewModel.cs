@@ -230,7 +230,10 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
                 IsWaitingForTranscription = true;
                 var transactionResponse = await openAIService.DictateTransaction(audioData, transactionType);
                 if (transactionResponse == null)
+                {
+                    IsWaitingForTranscription = false;
                     return;
+                }
 
                 responseIDs = transactionResponse.ResponseIDs;
 

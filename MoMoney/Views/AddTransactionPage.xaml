@@ -177,13 +177,13 @@
                 x:Name="grdAcceptButtons"
                 Margin="0,5"
                 ColumnDefinitions="*,70,*"
-                ColumnSpacing="10">
+                ColumnSpacing="10"
+                HeightRequest="50">
                 <Button
                     x:Name="btnClear"
                     BackgroundColor="{AppThemeBinding Light={StaticResource LightBlue},
                                                       Dark={StaticResource Blue}}"
                     Clicked="btnClear_Clicked"
-                    HeightRequest="50"
                     Text="Clear" />
                 <Button
                     x:Name="btnRecord"
@@ -197,12 +197,20 @@
                     CommandParameter="{x:Reference btnRecord}"
                     FontFamily="Material"
                     FontSize="30"
-                    Text="{x:Static m:MaterialRegular.Mic}" />
+                    Text="{x:Static m:MaterialRegular.Mic}">
+                    <Button.Triggers>
+                        <DataTrigger
+                            Binding="{Binding IsWaitingForTranscription}"
+                            TargetType="Button"
+                            Value="True">
+                            <Setter Property="Text" Value="" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
                 <!--  activity indicator runs while transcription is processing  -->
                 <ActivityIndicator
                     Grid.Column="1"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray200},
-                                                      Dark={StaticResource Gray600}}"
+                    BackgroundColor="Transparent"
                     HeightRequest="35"
                     IsRunning="{Binding IsWaitingForTranscription}"
                     IsVisible="{Binding IsWaitingForTranscription}"
@@ -214,7 +222,6 @@
                                                       Dark={StaticResource PrimaryDark}}"
                     Clicked="btnEnter_Clicked"
                     Command="{Binding AddTransactionCommand}"
-                    HeightRequest="50"
                     Text="Accept" />
             </Grid>
 

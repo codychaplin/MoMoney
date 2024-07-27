@@ -1,6 +1,8 @@
 ﻿using System.Text;
-using Azure;
-using Azure.AI.OpenAI;
+using System.ClientModel;
+using OpenAI;
+using OpenAI.Chat;
+using OpenAI.Audio;
 using Newtonsoft.Json;
 using MoMoney.Core.Data;
 using MoMoney.Core.Models;
@@ -16,8 +18,9 @@ public class OpenAIService : IOpenAIService
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ILoggerService<OpenAIService> logger;
-
-    readonly OpenAIClient openAIClient;
+    
+    readonly ChatClient chatClient;
+    readonly AudioClient audioClient;
 
     public OpenAIService(IMoMoneydb _momoney, IAccountService _accountService, ICategoryService _categoryService, ILoggerService<OpenAIService> _logger)
     {
@@ -26,7 +29,9 @@ public class OpenAIService : IOpenAIService
         categoryService = _categoryService;
         logger = _logger;
 
-        openAIClient = new OpenAIClient(Secret.OpenAIAPIKey);
+        var openAIClient = new OpenAIClient(Secret.OpenAIAPIKey);
+        chatClient = openAIClient.GetChatClient(Constants.CHAT_MODEL);
+        audioClient = openAIClient.GetAudioClient(Constants.AUDIO_MODEL);
     }
 
     public async Task<TransactionResponse> DictateTransaction(BinaryData audioData, TransactionType type)
@@ -39,13 +44,13 @@ public class OpenAIService : IOpenAIService
 
             // map the transcription to a transaction
             var chatCompletion = await CallChat(type, audioTranscription.Value.Text);
-            var chatResponse = new ChatResponse(chatCompletion.Value.Choices[0].Message.Content, chatCompletion.Value.Usage.PromptTokens, chatCompletion.Value.Usage.CompletionTokens);
+            var chatResponse = new ChatResponse(chatCompletion.Value.Content[0].Text, chatCompletion.Value.Usage.InputTokens, chatCompletion.Value.Usage.OutputTokens);
 
             // total cost in cents
             decimal totalCost = whisperResponse.Cost + chatResponse.CompletionCost + chatResponse.PromptCost;
 
             // deserialize the response into a TransactionResponse
-            var transactionResponse = JsonConvert.DeserializeObject<TransactionResponse>(chatCompletion.Value.Choices[0].Message.Content);
+            var transactionResponse = JsonConvert.DeserializeObject<TransactionResponse>(chatCompletion.Value.Content[0].Text);
 
             // add the responses to the database and add the IDs to the response
             int whisperID = await AddResponse(whisperResponse);
@@ -91,15 +96,12 @@ public class OpenAIService : IOpenAIService
     /// </summary>
     /// <param name="audioData"></param>
     /// <returns>AudioTransaction response</returns>
-    async Task<Response<AudioTranscription>> CallWhisper(BinaryData audioData)
+    async Task<ClientResult<AudioTranscription>> CallWhisper(BinaryData audioData)
     {
-        return await openAIClient.GetAudioTranscriptionAsync(new AudioTranscriptionOptions()
+        return await audioClient.TranscribeAudioAsync(audioData.ToStream(), Constants.AUDIO_FILE_NAME, new AudioTranscriptionOptions()
         {
             ResponseFormat = AudioTranscriptionFormat.Verbose,
-            DeploymentName = Constants.AUDIO_MODEL,
-            Language = "en",
-            AudioData = audioData,
-            Filename = Constants.AUDIO_FILE_NAME,
+            Language = "en"
         });
     }
 
@@ -109,21 +111,14 @@ public class OpenAIService : IOpenAIService
     /// <param name="type"></param>
     /// <param name="message"></param>
     /// <returns>ChatCompletion response</returns>
-    async Task<Response<ChatCompletions>> CallChat(TransactionType type, string message)
+    async Task<ClientResult<ChatCompletion>> CallChat(TransactionType type, string message)
     {
-        List<string> messages = await GeneratePrompt(type);
-        return await openAIClient.GetChatCompletionsAsync(new ChatCompletionsOptions()
+        List<ChatMessage> messages = await GeneratePrompt(type, message);
+        return await chatClient.CompleteChatAsync(messages, new ChatCompletionOptions()
         {
-            DeploymentName = Constants.CHAT_MODEL,
             MaxTokens = Constants.MAX_TOKENS,
             Temperature = 0f,
-            ResponseFormat = ChatCompletionsResponseFormat.JsonObject,
-            Messages = {
-                new ChatRequestSystemMessage(messages[0]), // instructions
-                new ChatRequestUserMessage(messages[1]), // example user message
-                new ChatRequestAssistantMessage(messages[2]), // example assistant message
-                new ChatRequestUserMessage(message) // user message
-            }
+            ResponseFormat = ChatResponseFormat.JsonObject
         });
         
     }
@@ -133,7 +128,7 @@ public class OpenAIService : IOpenAIService
     /// </summary>
     /// <param name="type"></param>
     /// <returns>List of messages to use as the prompt</returns>
-    async Task<List<string>> GeneratePrompt(TransactionType type)
+    async Task<List<ChatMessage>> GeneratePrompt(TransactionType type, string message)
     {
         var accounts = await accountService.GetActiveAccounts();
         var categories = await categoryService.GetAllCategories();
@@ -179,11 +174,11 @@ public class OpenAIService : IOpenAIService
         systemSb.AppendLine("Accounts:");
         systemSb.AppendLine(string.Join(',', accounts.Select(a => a.AccountName)));
 
-        if (categories == null) // no categories for transfers
-        {
-            System.Diagnostics.Debug.WriteLine(systemSb.ToString());
-            return [systemSb.ToString(), userSb.ToString(), assistantSb.ToString()];
-        }
+        List<ChatMessage> chatMessages = [new SystemChatMessage(systemSb.ToString()), new UserChatMessage(userSb.ToString()), new AssistantChatMessage(assistantSb.ToString()), new UserChatMessage(message)];
+
+        // no categories for transfers
+        if (categories == null)
+            return chatMessages;
 
         // group the categories and add them to the prompt in CSV format
         var groupedCategories = categories.GroupBy(c => c.ParentName);
@@ -191,13 +186,15 @@ public class OpenAIService : IOpenAIService
         foreach (var group in groupedCategories)
         {
             // add parent, then all subcategories separated by commas
-            if (string.IsNullOrEmpty(group.Key)) continue;
+            if (string.IsNullOrEmpty(group.Key))
+                continue;
             systemSb.Append(group.Key);
             systemSb.Append(',');
             systemSb.AppendLine(string.Join(',', group.Where(c => c.ParentName != "").Select(c => c.CategoryName)));
         }
 
-        System.Diagnostics.Debug.WriteLine(systemSb.ToString());
-        return [systemSb.ToString(), userSb.ToString(), assistantSb.ToString()];
+        // update systemSb with categories
+        chatMessages[0] = new SystemChatMessage(systemSb.ToString());
+        return chatMessages;
     }
 }
