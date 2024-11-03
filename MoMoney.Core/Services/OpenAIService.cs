@@ -44,7 +44,7 @@ public class OpenAIService : IOpenAIService
 
             // map the transcription to a transaction
             var chatCompletion = await CallChat(type, audioTranscription.Value.Text);
-            var chatResponse = new ChatResponse(chatCompletion.Value.Content[0].Text, chatCompletion.Value.Usage.InputTokens, chatCompletion.Value.Usage.OutputTokens);
+            var chatResponse = new ChatResponse(chatCompletion.Value.Content[0].Text, chatCompletion.Value.Usage.InputTokenCount, chatCompletion.Value.Usage.OutputTokenCount);
 
             // total cost in cents
             decimal totalCost = whisperResponse.Cost + chatResponse.CompletionCost + chatResponse.PromptCost;
@@ -116,9 +116,9 @@ public class OpenAIService : IOpenAIService
         List<ChatMessage> messages = await GeneratePrompt(type, message);
         return await chatClient.CompleteChatAsync(messages, new ChatCompletionOptions()
         {
-            MaxTokens = Constants.MAX_TOKENS,
+            MaxOutputTokenCount = Constants.MAX_TOKENS,
             Temperature = 0f,
-            ResponseFormat = ChatResponseFormat.JsonObject
+            ResponseFormat = ChatResponseFormat.CreateJsonObjectFormat()
         });
         
     }

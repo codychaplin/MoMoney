@@ -13,6 +13,8 @@
 * Finally added unit tests
 * Updated to gpt-4o-mini
 * Removed MvvmHelpers due to incompatibility
+* Updated packages
+* Optimized Stopwatch usage
 
 # MoMoney v1.2.1
 
