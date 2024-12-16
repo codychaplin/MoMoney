@@ -3,7 +3,7 @@
     x:Class="MoMoney.Views.Stats.StockStatsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
+    xmlns:chart="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
     xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
     xmlns:data="clr-namespace:Syncfusion.Maui.DataSource;assembly=Syncfusion.Maui.DataSource"
     xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
@@ -24,7 +24,7 @@
         <VerticalStackLayout Margin="10" Spacing="10">
 
             <!--  totals  -->
-            <Frame Padding="10">
+            <Border Padding="10">
                 <Grid ColumnDefinitions="*,*" RowDefinitions="0.5*,*,0.5*">
                     <Label
                         FontSize="16"
@@ -63,10 +63,10 @@
                             VerticalOptions="Center" />
                     </HorizontalStackLayout>
                 </Grid>
-            </Frame>
+            </Border>
 
             <!--  stock list  -->
-            <Frame Padding="5,5,5,0">
+            <Border Padding="5,5,5,0">
                 <listview:SfListView
                     ItemSpacing="0,0,0,5"
                     ItemsSource="{Binding Stocks}"
@@ -83,7 +83,7 @@
                     </listview:SfListView.EmptyView>
                     <listview:SfListView.ItemTemplate>
                         <DataTemplate x:DataType="models:Stock">
-                            <Frame
+                            <Border
                                 Padding="10,5"
                                 BackgroundColor="{AppThemeBinding Light={StaticResource Gray150},
                                                                   Dark={StaticResource Gray700}}"
@@ -115,14 +115,14 @@
                                         <Label Text="{Binding ChangePercent, Converter={StaticResource ShowValuePercent}, StringFormat=' ({0:P2})'}" TextColor="{Binding ChangePercent, Converter={StaticResource PosNegColour}}" />
                                     </HorizontalStackLayout>
                                 </Grid>
-                            </Frame>
+                            </Border>
                         </DataTemplate>
                     </listview:SfListView.ItemTemplate>
                 </listview:SfListView>
-            </Frame>
+            </Border>
 
             <!--  chart  -->
-            <Frame Padding="0">
+            <Border Padding="0">
                 <chart:SfCircularChart
                     x:Name="chart"
                     HeightRequest="400"
@@ -137,19 +137,16 @@
                         YBindingPath="Price" />
                     <chart:SfCircularChart.Resources>
                         <DataTemplate x:Key="labelTemplate" x:DataType="chart:ChartDataLabel">
-                            <Frame
-                                Padding="5"
-                                BackgroundColor="#66212121"
-                                CornerRadius="10">
+                            <Border Padding="5" BackgroundColor="#66212121">
                                 <Label
                                     FontSize="12"
                                     Text="{Binding Item, Converter={StaticResource StockDataLabel}}"
                                     TextColor="White" />
-                            </Frame>
+                            </Border>
                         </DataTemplate>
                     </chart:SfCircularChart.Resources>
                 </chart:SfCircularChart>
-            </Frame>
+            </Border>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

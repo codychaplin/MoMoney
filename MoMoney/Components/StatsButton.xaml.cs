@@ -2,7 +2,7 @@ using System.Windows.Input;
 
 namespace MoMoney.Components;
 
-public partial class StatsButton : Frame
+public partial class StatsButton : Border
 {
     public StatsButton()
     {

@@ -19,9 +19,9 @@
         RowDefinitions="Auto,Auto,*"
         RowSpacing="10">
         <Grid.Resources>
-            <Style TargetType="Frame">
+            <Style TargetType="Border">
                 <Setter Property="Padding" Value="0" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 10" />
                 <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
             </Style>
             <Style TargetType="VerticalStackLayout">
@@ -39,17 +39,13 @@
         <VerticalStackLayout>
 
             <!--  find title  -->
-            <Frame
-                Padding="15,0,0,0"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
-                                                  Dark={StaticResource Gray700}}"
-                HeightRequest="40">
+            <Border Padding="15,0,0,0" HeightRequest="40">
                 <Label
                     FontAttributes="Bold"
                     FontSize="16"
                     Text="Find..."
                     VerticalTextAlignment="Center" />
-            </Frame>
+            </Border>
 
             <!--  find account picker  -->
             <material:PickerField
@@ -117,17 +113,13 @@
         <VerticalStackLayout Grid.Column="1">
 
             <!--  replace title  -->
-            <Frame
-                Padding="15,0,0,0"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
-                                                  Dark={StaticResource Gray700}}"
-                HeightRequest="40">
+            <Border Padding="15,0,0,0" HeightRequest="40">
                 <Label
                     FontAttributes="Bold"
                     FontSize="16"
                     Text="Replace..."
                     VerticalTextAlignment="Center" />
-            </Frame>
+            </Border>
 
             <!--  replace account picker  -->
             <material:PickerField
@@ -186,12 +178,12 @@
             Command="{Binding BulkReplaceCommand}"
             Text="Replace" />
 
-        <Frame
+        <Border
             Grid.Row="2"
             Grid.ColumnSpan="2"
             Padding="10">
             <Label LineHeight="1.5" Text="{Binding Info}" />
-        </Frame>
+        </Border>
 
     </Grid>
 </ContentPage>

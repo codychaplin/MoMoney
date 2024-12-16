@@ -15,6 +15,8 @@
 * Removed MvvmHelpers due to incompatibility
 * Updated packages
 * Optimized Stopwatch usage
+* Replaced Frames with Borders
+* Switched to open source Syncfusion controls where possible
 
 # MoMoney v1.2.1
 

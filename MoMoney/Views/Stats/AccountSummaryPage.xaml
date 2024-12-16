@@ -61,12 +61,11 @@
     <ScrollView Padding="0,10,0,0">
         <VerticalStackLayout>
             <VerticalStackLayout.Resources>
-                <Style TargetType="Frame">
+                <Style CanCascade="True" TargetType="Border">
                     <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
+                    <Setter Property="StrokeShape" Value="RoundRectangle 10" />
                     <Setter Property="Padding" Value="5,5,10,5" />
                     <Setter Property="Margin" Value="10,0,10,20" />
-                    <Setter Property="CornerRadius" Value="10" />
-                    <Setter Property="HasShadow" Value="False" />
                 </Style>
                 <Style TargetType="CollectionView">
                     <Setter Property="ItemTemplate" Value="{StaticResource Account}" />
@@ -74,7 +73,7 @@
             </VerticalStackLayout.Resources>
 
             <!--  networth  -->
-            <Frame Padding="10">
+            <Border Padding="10">
                 <Grid>
                     <Label
                         Margin="0"
@@ -87,43 +86,43 @@
                         Style="{StaticResource lblAccountName}"
                         Text="{Binding Networth, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
                 </Grid>
-            </Frame>
+            </Border>
 
             <!--  checkings  -->
             <Grid IsVisible="{Binding CheckingsAccounts.Count}">
                 <Label Style="{StaticResource lblGroupTitle}" Text="Checkings" />
                 <Label Style="{StaticResource lblAccountName}" Text="{Binding CheckingsSum, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
             </Grid>
-            <Frame IsVisible="{Binding CheckingsAccounts.Count}">
+            <Border IsVisible="{Binding CheckingsAccounts.Count}">
                 <CollectionView ItemsSource="{Binding CheckingsAccounts}" />
-            </Frame>
+            </Border>
 
             <!--  savings  -->
             <Grid IsVisible="{Binding SavingsAccounts.Count}">
                 <Label Style="{StaticResource lblGroupTitle}" Text="Savings" />
                 <Label Style="{StaticResource lblAccountName}" Text="{Binding SavingsSum, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
             </Grid>
-            <Frame IsVisible="{Binding SavingsAccounts.Count}">
+            <Border IsVisible="{Binding SavingsAccounts.Count}">
                 <CollectionView ItemsSource="{Binding SavingsAccounts}" />
-            </Frame>
+            </Border>
 
             <!--  credit  -->
             <Grid IsVisible="{Binding CreditAccounts.Count}">
                 <Label Style="{StaticResource lblGroupTitle}" Text="Credit" />
                 <Label Style="{StaticResource lblAccountName}" Text="{Binding CreditSum, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
             </Grid>
-            <Frame IsVisible="{Binding CreditAccounts.Count}">
+            <Border IsVisible="{Binding CreditAccounts.Count}">
                 <CollectionView ItemsSource="{Binding CreditAccounts}" />
-            </Frame>
+            </Border>
 
             <!--  investment  -->
             <Grid IsVisible="{Binding InvestmentAccounts.Count}">
                 <Label Style="{StaticResource lblGroupTitle}" Text="Investments" />
                 <Label Style="{StaticResource lblAccountName}" Text="{Binding InvestmentSum, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
             </Grid>
-            <Frame IsVisible="{Binding InvestmentAccounts.Count}">
+            <Border IsVisible="{Binding InvestmentAccounts.Count}">
                 <CollectionView ItemsSource="{Binding InvestmentAccounts}" />
-            </Frame>
+            </Border>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

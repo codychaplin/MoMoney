@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Frame
+<Border
     x:Class="MoMoney.Components.StatsButton"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -8,8 +8,7 @@
     Padding="10"
     BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
                                       Dark={StaticResource Gray700}}"
-    CornerRadius="10"
-    HasShadow="False">
+    StrokeShape="RoundRectangle 10">
     <Grid RowDefinitions="*,30">
         <Label
             FontFamily="MaterialRegular"
@@ -33,4 +32,4 @@
             <TapGestureRecognizer Command="{Binding Source={x:Reference this}, Path=Command}" />
         </Grid.GestureRecognizers>
     </Grid>
-</Frame>
+</Border>

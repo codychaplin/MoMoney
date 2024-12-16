@@ -31,11 +31,9 @@
             </Grid>
 
             <!--  transaction type buttons  -->
-            <Frame
+            <Border
                 Margin="0,5,0,0"
                 Padding="0"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
-                                                  Dark={StaticResource Gray900}}"
                 HeightRequest="46">
                 <Grid x:Name="grdTransactionTypeButtons" ColumnDefinitions="*,*,*">
                     <Grid.Resources>
@@ -64,7 +62,7 @@
                         Command="{Binding GetTransferCategoryCommand}"
                         Text="Transfer" />
                 </Grid>
-            </Frame>
+            </Border>
 
             <!--  Date  -->
             <material:DatePickerField

@@ -9,7 +9,7 @@ namespace MoMoney.Core.ViewModels.Settings.Edit;
 
 public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, EditAccountViewModel>
 {
-    [ObservableProperty] Account account;
+    [ObservableProperty] Account account = new();
 
     public EditAccountViewModel(IAccountService _accountService, ILoggerService<EditAccountViewModel> _logger) : base(_accountService, _logger) { }
 

@@ -33,6 +33,6 @@ Works on Android 10.0 and later.
 * .NET 8
 * SQLite
 * CommunityToolkit.Maui
-* Syncfusion.Maui
+* Syncfusion.Maui.Toolkit
 * UraniumUI
 * OpenAI API

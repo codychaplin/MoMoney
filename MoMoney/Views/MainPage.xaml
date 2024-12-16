@@ -11,7 +11,7 @@
     xmlns:views="clr-namespace:MoMoney.Views"
     Title="">
     <ContentPage.Behaviors>
-        <toolkit:StatusBarBehavior StatusBarStyle="{AppThemeBinding Light='DarkContent', Dark='LightContent'}" />
+        <toolkit:StatusBarBehavior StatusBarColor="{AppThemeBinding Light=White, Dark=Black}" StatusBarStyle="{AppThemeBinding Light='DarkContent', Dark='LightContent'}" />
     </ContentPage.Behaviors>
 
     <!--  tab bar  -->

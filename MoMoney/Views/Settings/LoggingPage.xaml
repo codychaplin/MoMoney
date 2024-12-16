@@ -117,13 +117,13 @@
         <toolkit:Expander IsExpanded="{Binding IsExpanded}">
             <VerticalStackLayout Padding="0,5" Spacing="5">
 
-                <Frame
+                <Border
                     Padding="15,0,0,0"
                     BackgroundColor="{AppThemeBinding Light={StaticResource White},
                                                       Dark={StaticResource Gray700}}"
-                    BorderColor="{AppThemeBinding Light={StaticResource Gray600},
-                                                  Dark={StaticResource Gray400}}"
                     HeightRequest="50"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray600},
+                                             Dark={StaticResource Gray400}}"
                     WidthRequest="250">
                     <material:CheckBox
                         x:Name="ChkTileSize"
@@ -136,7 +136,7 @@
                                                     Dark={StaticResource White}}"
                         Color="{AppThemeBinding Light={StaticResource Primary},
                                                 Dark={StaticResource PrimaryDark}}" />
-                </Frame>
+                </Border>
 
                 <!--  filters  -->
                 <material:PickerField
@@ -161,12 +161,10 @@
         </toolkit:Expander>
 
         <!--  list  -->
-        <Frame
+        <Border
             Grid.Row="1"
             Margin="0,5,0,0"
-            Padding="0"
-            BackgroundColor="{AppThemeBinding Light={StaticResource White},
-                                              Dark={StaticResource Gray900}}">
+            Padding="0">
             <sf:SfListView
                 x:Name="listview"
                 ItemSpacing="1"
@@ -196,7 +194,7 @@
                     </DataTemplate>
                 </sf:SfListView.LoadMoreTemplate>
             </sf:SfListView>
-        </Frame>
+        </Border>
     </Grid>
 
 </ContentPage>
