@@ -207,7 +207,8 @@ public partial class BulkEditingViewModel : ObservableObject
                 return false;
             }
 
-            FoundTransactions = await transactionService.GetFilteredTransactions(FindAccount, FindCategory, FindSubcategory, FindPayee);
+            FoundTransactions = await transactionService.GetFilteredTransactions(accountID: FindAccount.AccountID,
+                categoryID: FindCategory.CategoryID, subcategoryID: FindSubcategory.CategoryID, payee: FindPayee);
             FoundTransactionCount = FoundTransactions.Count;
             UpdateText(0, true, false);
 

@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Syncfusion.Maui.ListView;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -28,8 +27,6 @@ public partial class LoggingViewModel : ObservableObject
 
     List<Log> Logs = [];
 
-    public SfListView listview;
-
     int totalItems = 0;
 
     public LoggingViewModel(ILoggerService<LoggingViewModel> _logger)
@@ -44,11 +41,11 @@ public partial class LoggingViewModel : ObservableObject
     {
         Shell.Current.IsBusy = true;
 
-        listview.LoadMoreOption = LoadMoreOption.Auto;
         var logs = await logger.GetLogs();
         Logs.Clear();
         Logs = new(logs);
         totalItems = Logs.Count;
+        await LoadMoreItems();
 
         // populate filters
         var levels = logs.Select(l => l.Level).Distinct();
@@ -58,7 +55,7 @@ public partial class LoggingViewModel : ObservableObject
         Classes = new(classes);
         Exceptions = new(exceptions);
 
-        await Task.Delay(200);
+        await Task.Delay(100);
         Shell.Current.IsBusy = false;
     }
 
@@ -69,108 +66,67 @@ public partial class LoggingViewModel : ObservableObject
     }
 
     /// <summary>
+    /// Updates the DataTemplateSelector
+    /// </summary>
+    [RelayCommand]
+    async Task CheckChanged()
+    {
+        await UpdateFilter();
+    }
+
+    /// <summary>
+    /// Updates Logs Filters.
+    /// </summary>
+    async Task UpdateFilter()
+    {
+        Logs = await logger.GetFilteredLogs(Level, ClassName, ExceptionType);
+        LoadedLogs.Clear();
+        await LoadMoreItems();
+    }
+
+
+    /// <summary>
     /// Loads items from Transactions.
     /// </summary>
     [RelayCommand]
     async Task LoadMoreItems()
     {
-        listview.IsLazyLoading = true;
-        await Task.Delay(250);
+        await Task.Delay(50);
         int index = LoadedLogs.Count;
         int count = index + Constants.LOAD_COUNT >= totalItems ? totalItems - index : Constants.LOAD_COUNT;
-        AddLogs(index, count);
-        listview.IsLazyLoading = false;
-
-        // disables loading indicator
-        if (totalItems > 0 && count == 0)
-            listview.LoadMoreOption = LoadMoreOption.None;
-    }
-
-    /// <summary>
-    /// Copies logs from Logs to LoadedLogs.
-    /// </summary>
-    /// <param name="index"></param>
-    /// <param name="count"></param>
-    void AddLogs(int index, int count)
-    {
-        for (int i = index; i < index + count && i < totalItems; i++)
-            LoadedLogs.Add(Logs[i]);
-    }
-
-    /// <summary>
-    /// Updates the DataTemplateSelector
-    /// </summary>
-    [RelayCommand]
-    void CheckChanged()
-    {
-        listview?.RefreshView();
-    }
-
-    /// <summary>
-    /// Updates Logs Filter.
-    /// </summary>
-    void UpdateFilter()
-    {
-        if (listview.DataSource != null)
-        {
-            listview.LoadMoreOption = LoadMoreOption.Auto;
-            listview.DataSource.Filter = FilterLogs;
-            listview.DataSource.RefreshFilter();
-        }
-    }
-
-    /// <summary>
-    /// Checks if log matches filters.
-    /// </summary>
-    /// <param name="obj"></param>
-    bool FilterLogs(object obj)
-    {
-        // if all are blank, show Log
-        if (Level == LogLevel.None && ClassName == null && ExceptionType == null)
-            return true;
-
-        var log = obj as Log;
-        string ex = ExceptionType == "None" ? "" : ExceptionType;
-
-        // if fields aren't blank and match values, show log
-        if (Level != LogLevel.None && log.Level != Level)
-            return false;
-        if (ClassName != null && log.ClassName != ClassName)
-            return false;
-        if (ex != null && log.ExceptionType != ex)
-            return false;
-
-        return true;
+        var logs = Logs.Skip(index).Take(count);
+        foreach (var log in logs)
+            LoadedLogs.Add(log);
     }
 
     /// <summary>
     /// Updates selected Level and filter.
     /// </summary>
     [RelayCommand]
-    void UpdateLevel(LogLevel level)
+    async Task UpdateLevel(LogLevel level)
     {
         Level = level;
-        UpdateFilter();
+        await UpdateFilter();
     }
 
     /// <summary>
     /// Updates selected Class and filter.
     /// </summary>
     [RelayCommand]
-    void UpdateClass(string className)
+    async Task UpdateClass(string className)
     {
         ClassName = className;
-        UpdateFilter();
+        await UpdateFilter();
     }
 
     /// <summary>
     /// Updates selected Exception and filter.
     /// </summary>
     [RelayCommand]
-    void UpdateException(string exceptionType)
+    async Task UpdateException(string exceptionType)
     {
         ExceptionType = exceptionType;
-        UpdateFilter();
+        await UpdateFilter();
     }
 
     [RelayCommand]

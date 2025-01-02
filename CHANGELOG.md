@@ -5,6 +5,7 @@
 * Fixed StockStatsPage formatting and Stock csv exporting
 * Changed colour of LoggingPage loading indicator
 * Stopped record button height from changing during animation
+* Fixed logging page
 
 ### Changes
 
@@ -16,6 +17,7 @@
 * Updated packages
 * Optimized Stopwatch usage
 * Replaced Frames with Borders
+* Stopped using Syncfusion ListView
 * Switched to open source Syncfusion controls where possible
 
 # MoMoney v1.2.1

@@ -23,7 +23,7 @@ public static class Constants
     public static readonly string[] MONTHS = CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedMonthNames;
 
     // load count for infinite scroll
-    public const int LOAD_COUNT = 50;
+    public const int LOAD_COUNT = 100;
 
     // OpenAI
     public const string AUDIO_FILE_NAME = "recording.ogg";

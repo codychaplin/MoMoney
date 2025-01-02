@@ -117,6 +117,24 @@ public class LoggerService<T> : ILoggerService<T>
         return await momoney.db.Table<Log>().OrderByDescending(l => l.Timestamp).ToListAsync();
     }
 
+    public async Task<List<Log>> GetFilteredLogs(LogLevel logLevel, string? className, string? exceptionType)
+    {
+        await momoney.Init();
+
+        var logQuery = momoney.db.Table<Log>();
+        if (logLevel != LogLevel.None)
+            logQuery = logQuery.Where(l => l.Level == logLevel);
+        if (className != null)
+            logQuery = logQuery.Where(l => l.ClassName == className);
+        if (exceptionType != null)
+        {
+            string ex = string.IsNullOrEmpty(exceptionType) ? "None" : exceptionType;
+            logQuery = logQuery.Where(l => l.ExceptionType == ex);
+        }
+
+        return await logQuery.OrderByDescending(l => l.Timestamp).ToListAsync();
+    }
+
     public async Task RemoveLogs()
     {
         await momoney.Init();

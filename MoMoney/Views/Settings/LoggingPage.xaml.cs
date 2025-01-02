@@ -9,7 +9,6 @@ public partial class LoggingPage : ContentPage
 	{
 		InitializeComponent();
         BindingContext = vm;
-		vm.listview = listview;
 		Loaded += async (s, e) => await vm.Init();
 
 		PckLevels.SelectedValueChanged += (s, e) =>

@@ -60,7 +60,8 @@ public interface ITransactionService
     /// Gets Transactions from Transaction table that match parameters as a list.
     /// </summary>
     /// <returns>List of Transaction objects</returns>
-    Task<List<Transaction>> GetFilteredTransactions(Account account, Category category, Category subcategory, string payee);
+    Task<List<Transaction>> GetFilteredTransactions(DateTime? from = null, DateTime? to = null, int? accountID = null,
+        decimal? minAmount = null, decimal? maxAmount = null, int? categoryID = null, int? subcategoryID = null, string? payee = null);
 
     /// <summary>
     /// Gets all distinct payees from Transactions table.
@@ -75,7 +76,7 @@ public interface ITransactionService
     /// <param name="to"></param>
     /// <param name="reverse"></param>
     /// <returns>List of Transaction objects between the specified dates</returns>
-    Task<IEnumerable<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse);
+    Task<List<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse);
 
     /// <summary>
     /// Gets first Transaction from Transaction table.

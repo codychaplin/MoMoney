@@ -3,7 +3,9 @@ using CsvHelper.Configuration.Attributes;
 
 namespace MoMoney.Core.Models;
 
+#pragma warning disable CS0659
 public class Account
+#pragma warning restore CS0659
 {
     [PrimaryKey, AutoIncrement, CsvHelper.Configuration.Attributes.Ignore]
     public int AccountID { get; set; }
