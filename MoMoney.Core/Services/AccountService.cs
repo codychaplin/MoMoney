@@ -143,7 +143,7 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
         return success;
     }
 
-    public async Task<Account> GetAccount(int ID, bool tryGet = false)
+    public async Task<Account?> GetAccount(int ID, bool tryGet = false)
     {
         await Init();
         if (Accounts.TryGetValue(ID, out var value))

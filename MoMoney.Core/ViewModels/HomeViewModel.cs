@@ -134,7 +134,7 @@ public partial class HomeViewModel : ObservableObject
                 {
                     var balanceData = new BalanceOverTimeData
                     {
-                        Date = group.FirstOrDefault().Date,
+                        Date = group.First().Date,
                         Balance = runningTotal
                     };
                     runningTotal -= group.Sum(t => t.Amount);

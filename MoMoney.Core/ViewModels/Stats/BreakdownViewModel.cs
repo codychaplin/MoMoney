@@ -14,8 +14,8 @@ public partial class BreakdownViewModel : ObservableObject
     readonly ITransactionService transactionService;
     readonly ILoggerService<BreakdownViewModel> logger;
 
-    [ObservableProperty] decimal incomeSum = 0;
-    [ObservableProperty] decimal expenseSum = 0;
+    [ObservableProperty] decimal incomeSum;
+    [ObservableProperty] decimal expenseSum;
 
     [ObservableProperty] List<Brush> incomePalette = [];
     [ObservableProperty] List<Brush> expensePalette = [];
@@ -29,10 +29,10 @@ public partial class BreakdownViewModel : ObservableObject
 
     [ObservableProperty] string showValue = "$0";
 
-    [ObservableProperty] int index = 0;
+    [ObservableProperty] int index;
     partial void OnIndexChanged(int value) => _ = UpdateBreakdown();
     
-    int timeIndex = 0;
+    int timeIndex;
 
     List<DateTime> Months = [];
     List<DateTime> Years = [];

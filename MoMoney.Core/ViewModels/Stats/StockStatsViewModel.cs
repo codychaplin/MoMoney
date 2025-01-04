@@ -16,14 +16,14 @@ public partial class StockStatsViewModel : ObservableObject
     [ObservableProperty] ObservableCollection<Stock> stocks = [];
     [ObservableProperty] ObservableCollection<StockData> stockData = [];
 
-    [ObservableProperty] decimal total = 0;
-    [ObservableProperty] decimal totalPercent = 0;
-    [ObservableProperty] decimal marketValue = 0;
+    [ObservableProperty] decimal total;
+    [ObservableProperty] decimal totalPercent;
+    [ObservableProperty] decimal marketValue;
 
     [ObservableProperty] string showValue = "$0";
 
-    decimal totalBook = 0;
-    decimal totalMarket = 0;
+    decimal totalBook;
+    decimal totalMarket;
 
     public CancellationTokenSource cts = new();
 

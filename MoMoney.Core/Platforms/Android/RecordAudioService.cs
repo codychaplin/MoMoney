@@ -7,7 +7,7 @@ namespace MoMoney.Core.Platforms.Android;
 
 public class RecordAudioService : IRecordAudioService
 {
-    MediaRecorder mediaRecorder;
+    MediaRecorder? mediaRecorder;
     public bool IsRecording { get; private set; } = false;
     string storagePath => $"{FileSystem.Current.CacheDirectory}/{Constants.AUDIO_FILE_NAME}";
 

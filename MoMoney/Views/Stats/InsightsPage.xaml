@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:chart="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
-    xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:converters="clr-namespace:MoMoney.Converters"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"

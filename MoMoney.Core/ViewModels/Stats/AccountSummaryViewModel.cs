@@ -15,11 +15,11 @@ public partial class AccountSummaryViewModel : ObservableObject
     [ObservableProperty] ObservableCollection<Account> creditAccounts = [];
     [ObservableProperty] ObservableCollection<Account> investmentAccounts = [];
 
-    [ObservableProperty] decimal checkingsSum = 0;
-    [ObservableProperty] decimal savingsSum = 0;
-    [ObservableProperty] decimal creditSum = 0;
-    [ObservableProperty] decimal investmentSum = 0;
-    [ObservableProperty] decimal networth = 0;
+    [ObservableProperty] decimal checkingsSum;
+    [ObservableProperty] decimal savingsSum;
+    [ObservableProperty] decimal creditSum;
+    [ObservableProperty] decimal investmentSum;
+    [ObservableProperty] decimal networth;
 
     public AccountSummaryViewModel(IAccountService _accountService, ILoggerService<AccountSummaryViewModel> _loggerService)
     {

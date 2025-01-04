@@ -20,13 +20,13 @@ public partial class TransactionsViewModel : ObservableObject
     [ObservableProperty] ObservableCollection<Category> subcategories = [];
     [ObservableProperty] ObservableCollection<string> payees = [];
 
-    [ObservableProperty] Account account;
+    [ObservableProperty] Account? account;
 
     [ObservableProperty] int amountRangeStart = 0;
     [ObservableProperty] int amountRangeEnd = 500;
 
-    [ObservableProperty] Category category;
-    [ObservableProperty] Category subcategory;
+    [ObservableProperty] Category? category;
+    [ObservableProperty] Category? subcategory;
     [ObservableProperty] string payee = "";
 
     [ObservableProperty] static DateTime from = new();
@@ -88,6 +88,9 @@ public partial class TransactionsViewModel : ObservableObject
     /// <param name="e"></param>
     void Create(TransactionEventArgs e)
     {
+        if (e.Transaction is null)
+            return;
+
         Transactions.Insert(0, e.Transaction);
         LoadedTransactions.Insert(0, e.Transaction);
 
@@ -135,6 +138,9 @@ public partial class TransactionsViewModel : ObservableObject
     /// <param name="e"></param>
     void Update(TransactionEventArgs e)
     {
+        if (e.Transaction is null)
+            return;
+
         Transaction transaction = e.Transaction;
         foreach (var trans in Transactions.Where(t => t.TransactionID == transaction.TransactionID))
         {
@@ -171,7 +177,7 @@ public partial class TransactionsViewModel : ObservableObject
     /// <param name="e"></param>
     void Delete(TransactionEventArgs e)
     {
-        Transaction trans = Transactions.Where(t => t.TransactionID == e.Transaction.TransactionID).FirstOrDefault();
+        Transaction? trans = Transactions.Where(t => t.TransactionID == e.Transaction?.TransactionID).FirstOrDefault();
         if (trans is not null)
         {
             Transactions.Remove(trans);

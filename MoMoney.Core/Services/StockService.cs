@@ -9,7 +9,7 @@ namespace MoMoney.Core.Services;
 /// <inheritdoc />
 public class StockService : BaseService<StockService, UpdateStocksMessage, string>, IStockService
 {
-    public Dictionary<int, Stock> Stocks { get; private set; } = new();
+    public Dictionary<int, Stock> Stocks { get; private set; } = [];
 
     public StockService(IMoMoneydb _momoney, ILoggerService<StockService> _logger) : base(_momoney, _logger) { }
 

@@ -51,7 +51,7 @@ public partial class AccountsViewModel : ObservableObject
     [RelayCommand]
     async Task GoToAddAccount()
     {
-        await Shell.Current.GoToAsync("EditAccountPage", new ShellNavigationQueryParameters() { { "Account", null } });
+        await Shell.Current.GoToAsync("EditAccountPage", new ShellNavigationQueryParameters() { { "Account", null! } });
     }
 
     /// <summary>

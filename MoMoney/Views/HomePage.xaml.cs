@@ -12,7 +12,9 @@ public partial class HomePage : ContentView
 
         HandlerChanged += async (s, e) =>
         {
-            HomeViewModel vm = Handler.MauiContext.Services.GetService<HomeViewModel>();
+            HomeViewModel? vm = Handler?.MauiContext?.Services.GetService<HomeViewModel>();
+            if (vm == null)
+                return;
             BindingContext = vm;
 
             Shell.Current.IsBusy = true;

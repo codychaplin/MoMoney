@@ -18,12 +18,12 @@ public partial class LoggingViewModel : ObservableObject
     [ObservableProperty] bool isChecked = true;
     [ObservableProperty] ObservableCollection<Log> loadedLogs = [];
 
-    [ObservableProperty] ObservableCollection<LogLevel> levels;
-    [ObservableProperty] ObservableCollection<string> classes;
-    [ObservableProperty] ObservableCollection<string> exceptions;
+    [ObservableProperty] ObservableCollection<LogLevel> levels = [];
+    [ObservableProperty] ObservableCollection<string> classes = [];
+    [ObservableProperty] ObservableCollection<string> exceptions = [];
     LogLevel Level = LogLevel.None;
-    string ClassName;
-    string ExceptionType;
+    string ClassName = string.Empty;
+    string ExceptionType = string.Empty;
 
     List<Log> Logs = [];
 

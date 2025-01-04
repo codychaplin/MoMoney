@@ -7,8 +7,8 @@ public partial class Stock : ObservableObject
 {
     [PrimaryKey, AutoIncrement, CsvHelper.Configuration.Attributes.Ignore]
     public int StockID { get; set; }
-    public string Symbol { get; set; }
-    public string Market { get; set; }
+    public string Symbol { get; set; } = string.Empty;
+    public string Market { get; set; } = string.Empty;
     public decimal Quantity { get; set; }
     public decimal Cost { get; set; }
 

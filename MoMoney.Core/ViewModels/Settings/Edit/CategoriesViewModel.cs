@@ -52,7 +52,7 @@ public partial class CategoriesViewModel : ObservableObject
     [RelayCommand]
     async Task GoToAddCategory()
     {
-        await Shell.Current.GoToAsync("EditCategoryPage", new ShellNavigationQueryParameters() { { "Category", null } });
+        await Shell.Current.GoToAsync("EditCategoryPage", new ShellNavigationQueryParameters() { { "Category", null! } });
     }
 
     /// <summary>
@@ -73,7 +73,7 @@ public partial class CategoriesViewModel : ObservableObject
         try
         {
             var category = await categoryService.GetParentCategory(name);
-            await Shell.Current.GoToAsync($"EditCategoryPage", new ShellNavigationQueryParameters() { { "Category", category } });
+            await Shell.Current.GoToAsync($"EditCategoryPage", new ShellNavigationQueryParameters() { { "Category", category! } });
         }
         catch (CategoryNotFoundException ex)
         {

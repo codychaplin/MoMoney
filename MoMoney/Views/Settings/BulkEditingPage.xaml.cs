@@ -24,7 +24,7 @@ public partial class BulkEditingPage : ContentPage
 		PckReplaceCategory.SelectedValueChanged += vm.GetReplaceSubcategories;
 	}
 
-	void OnClear(object sender, object newValue)
+	void OnClear(object? sender, object newValue)
 	{
 		if (newValue == null)
 		{

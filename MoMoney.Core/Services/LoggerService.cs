@@ -70,7 +70,7 @@ public class LoggerService<T> : ILoggerService<T>
         LogFirebaseEvent(FirebaseParameters.EVENT_CRITICAL_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className), ex);
     }
 
-    public void LogFirebaseEvent(string eventName, IDictionary<string, string> parameters, Exception exception = null)
+    public void LogFirebaseEvent(string eventName, IDictionary<string, string> parameters, Exception? exception = null)
     {
 #if ANDROID && RELEASE
         var firebaseAnalytics = FirebaseAnalytics.GetInstance(Platform.CurrentActivity);

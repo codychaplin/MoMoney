@@ -34,13 +34,13 @@ public class OpenAIService : IOpenAIService
         audioClient = openAIClient.GetAudioClient(Constants.AUDIO_MODEL);
     }
 
-    public async Task<TransactionResponse> DictateTransaction(BinaryData audioData, TransactionType type)
+    public async Task<TransactionResponse?> DictateTransaction(BinaryData audioData, TransactionType type)
     {
         try
         {
             // transcribe the audio
             var audioTranscription = await CallWhisper(audioData);
-            var whisperResponse = new WhisperResponse((decimal)audioTranscription.Value.Duration.Value.TotalMinutes, audioTranscription.Value.Text);
+            var whisperResponse = new WhisperResponse((decimal)audioTranscription.Value.Duration!.Value.TotalMinutes, audioTranscription.Value.Text);
 
             // map the transcription to a transaction
             var chatCompletion = await CallChat(type, audioTranscription.Value.Text);
@@ -49,13 +49,14 @@ public class OpenAIService : IOpenAIService
             // total cost in cents
             decimal totalCost = whisperResponse.Cost + chatResponse.CompletionCost + chatResponse.PromptCost;
 
-            // deserialize the response into a TransactionResponse
-            var transactionResponse = JsonConvert.DeserializeObject<TransactionResponse>(chatCompletion.Value.Content[0].Text);
-
             // add the responses to the database and add the IDs to the response
             int whisperID = await AddResponse(whisperResponse);
             int responseID = await AddResponse(chatResponse);
-            transactionResponse.ResponseIDs = new ResponseIDs(responseID, whisperID);
+
+            // deserialize the response into a TransactionResponse
+            var transactionResponse = JsonConvert.DeserializeObject<TransactionResponse>(chatCompletion.Value.Content[0].Text);
+            if (transactionResponse != null)
+                transactionResponse.ResponseIDs = new ResponseIDs(responseID, whisperID);
 
             // log the cost and the event to Firebase
             await logger.LogInfo($"{type} Transcription Cost: {totalCost:0.00##}\u00A2");

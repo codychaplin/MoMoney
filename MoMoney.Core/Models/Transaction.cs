@@ -29,7 +29,7 @@ public partial class Transaction : ObservableObject
     int subcategoryID;
 
     [ObservableProperty]
-    string payee;
+    string payee = string.Empty;
 
     [ObservableProperty]
     int? transferID;

@@ -4,13 +4,13 @@ namespace MoMoney.Selectors;
 
 class LogDataTemplateSelector : DataTemplateSelector
 {
-    public DataTemplate SmallTemplate { get; set; }
-    public DataTemplate LargeTemplate { get; set; }
-    public CheckBox CheckBox { get; set; }
+    public required DataTemplate SmallTemplate { get; set; }
+    public required DataTemplate LargeTemplate { get; set; }
+    public CheckBox? CheckBox { get; set; }
 
     protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
     {
-        if (CheckBox.IsChecked)
+        if (CheckBox != null && CheckBox.IsChecked)
         {
             return LargeTemplate;
         }

@@ -58,7 +58,7 @@ public interface IAccountService
     /// <param name="tryGet"></param>
     /// <returns>Account object</returns>
     /// <exception cref="AccountNotFoundException"></exception>
-    Task<Account> GetAccount(int ID, bool tryGet = false);
+    Task<Account?> GetAccount(int ID, bool tryGet = false);
 
     /// <summary>
     /// Gets all Accounts from Accounts table as a list.

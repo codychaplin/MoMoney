@@ -185,7 +185,7 @@ public class AccountServiceTests
         _MoMoneyDbMock.Setup(db => db.AccountsToList()).ReturnsAsync([_TestAccount0]);
 
         // Act
-        Account account = await _accountService.GetAccount(accountID);
+        Account? account = await _accountService.GetAccount(accountID);
 
         // Assert
         Assert.Equal(_TestAccount0, account);
@@ -198,7 +198,7 @@ public class AccountServiceTests
         // Arrange
         int accountID = _TestAccount0.AccountID;
         _MoMoneyDbMock.Setup(db => db.AccountsToList()).ReturnsAsync([]);
-        _MoMoneyDbMock.Setup(db => db.FirstOrDefaultAccountAsync(accountID)).ReturnsAsync(null as Account);
+        _MoMoneyDbMock.Setup(db => db.FirstOrDefaultAccountAsync(accountID))!.ReturnsAsync(null as Account);
 
         // Act
         async Task act() => await _accountService.GetAccount(accountID, false);
@@ -215,10 +215,10 @@ public class AccountServiceTests
         // Arrange
         int accountID = _TestAccount0.AccountID;
         _MoMoneyDbMock.Setup(db => db.AccountsToList()).ReturnsAsync([]);
-        _MoMoneyDbMock.Setup(db => db.FirstOrDefaultAccountAsync(accountID)).ReturnsAsync(null as Account);
+        _MoMoneyDbMock.Setup(db => db.FirstOrDefaultAccountAsync(accountID))!.ReturnsAsync(null as Account);
 
         // Act
-        Account account = await _accountService.GetAccount(accountID, true);
+        Account? account = await _accountService.GetAccount(accountID, true);
 
         // Assert
         Assert.Null(account);

@@ -12,7 +12,7 @@ public partial class SettingsPage : ContentView
 
         HandlerChanged += (s, e) =>
         {
-            BindingContext = Handler.MauiContext.Services.GetService<SettingsViewModel>();
+            BindingContext = Handler?.MauiContext?.Services.GetService<SettingsViewModel>();
         };
 
         lblVersion.Text = $"MoMoney ({AppInfo.Current.VersionString})";

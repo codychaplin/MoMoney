@@ -4,7 +4,7 @@ namespace MoMoney.Core.Helpers;
 
 public class TransactionEventArgs : EventArgs
 {
-    public Transaction Transaction { get; set; }
+    public Transaction? Transaction { get; set; }
 
     public CRUD Type { get; }
 
@@ -16,7 +16,7 @@ public class TransactionEventArgs : EventArgs
         Delete
     }
 
-    public TransactionEventArgs(Transaction transaction, CRUD type)
+    public TransactionEventArgs(Transaction? transaction, CRUD type)
     {
         Transaction = transaction;
         Type = type;

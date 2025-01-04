@@ -45,7 +45,7 @@ public partial class StocksViewModel : ObservableObject
     [RelayCommand]
     async Task GoToAddStock()
     {
-        await Shell.Current.GoToAsync($"EditStockPage", new ShellNavigationQueryParameters() { { "Stock", null } });
+        await Shell.Current.GoToAsync($"EditStockPage", new ShellNavigationQueryParameters() { { "Stock", null! } });
     }
 
     /// <summary>

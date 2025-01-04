@@ -8,7 +8,7 @@ using MoMoney.Core.Services.Interfaces;
 namespace MoMoney.Core.Services;
 
 /// <inheritdoc />
-public class TransactionService : BaseService<TransactionService, UpdateTransactionsMessage, TransactionEventArgs>, ITransactionService
+public class TransactionService : BaseService<TransactionService, UpdateTransactionsMessage, TransactionEventArgs?>, ITransactionService
 {
     readonly IAccountService accountService;
 
@@ -62,7 +62,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         {
             ValidateTransaction(updatedTransaction.Date, updatedTransaction.AccountID, updatedTransaction.Amount,
                 updatedTransaction.CategoryID, updatedTransaction.SubcategoryID,
-                updatedTransaction.Payee?.Trim(), updatedTransaction.TransferID);
+                updatedTransaction.Payee?.Trim() ?? string.Empty, updatedTransaction.TransferID);
             await momoney.db.UpdateAsync(updatedTransaction);
 
             return $"Updated Transaction #{updatedTransaction.TransactionID} in db.";

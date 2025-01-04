@@ -8,7 +8,7 @@ namespace MoMoney.Views;
 
 public partial class AddTransactionPage : ContentView
 {
-    AddTransactionViewModel vm;
+    AddTransactionViewModel? vm;
 
     public AddTransactionPage()
     {
@@ -16,7 +16,9 @@ public partial class AddTransactionPage : ContentView
 
         HandlerChanged += async (s, e) =>
         {
-            vm = Handler.MauiContext.Services.GetService<AddTransactionViewModel>();
+            vm = Handler?.MauiContext?.Services.GetService<AddTransactionViewModel>();
+            if (vm == null)
+                return;
             BindingContext = vm;
 
             await vm.GetPayees();
@@ -87,8 +89,11 @@ public partial class AddTransactionPage : ContentView
     /// Changes selected button colour to dark gray and changes others to background colour.
     /// </summary>
     /// <param name="button"></param>
-    void ChangeButtonColour(Button button)
+    void ChangeButtonColour(Button? button)
     {
+        if (button == null || Application.Current == null)
+            return;
+
         foreach (Button btn in grdTransactionTypeButtons.Children.Cast<Button>())
         {
             if (btn == button)
@@ -168,7 +173,7 @@ public partial class AddTransactionPage : ContentView
     /// </summary>
     void Clear()
     {
-        vm.Clear();
+        vm?.Clear();
         txtAmount.ClearValue();
         entPayee.SelectedItem = null;
         entPayee.Text = "";
@@ -177,7 +182,7 @@ public partial class AddTransactionPage : ContentView
 
     private void btnEnter_Clicked(object sender, EventArgs e)
     {
-        vm.ClearAfterAdd();
+        vm?.ClearAfterAdd();
         txtAmount.Text = "";
     }
 }

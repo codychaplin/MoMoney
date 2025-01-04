@@ -13,11 +13,11 @@ public class Log
     [Index(1)]
     public LogLevel Level { get; set; } = LogLevel.Information;
     [Index(4)]
-    public string Message { get; set; } = "";
+    public string Message { get; set; } = string.Empty;
     [Index(2)]
-    public string ClassName { get; set; } = "";
+    public string ClassName { get; set; } = string.Empty;
     [Index(3)]
-    public string ExceptionType { get; set; } = "";
+    public string ExceptionType { get; set; } = string.Empty;
 
     public Log() { }
 

@@ -10,6 +10,7 @@ public static class Constants
     SQLite.SQLiteOpenFlags.ReadWrite |
     SQLite.SQLiteOpenFlags.Create |
     SQLite.SQLiteOpenFlags.SharedCache;
+    public const string DefaultDbPath = ":memory:";
     public static string DatabasePath => Path.Combine(FileSystem.AppDataDirectory, dbName);
 
     // category IDs

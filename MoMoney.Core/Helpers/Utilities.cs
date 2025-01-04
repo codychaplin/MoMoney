@@ -8,7 +8,8 @@ public static class Utilities
     // if false, sensitive values are hidden
     public static bool ShowValue { get; set; } = true;
 
-    public static ResourceDictionary Colours => Application.Current.Resources.MergedDictionaries.FirstOrDefault();
+    public static Color GetColour(string lightColour, string darkColour) => UraniumUI.Resources.ColorResource.GetColor(lightColour, darkColour);
+    public static Color GetColour(string colour) => UraniumUI.Resources.ColorResource.GetColor(colour);
 
     /// <summary>
     /// Displays a toast message to the user.

@@ -19,8 +19,8 @@ public partial class InsightsViewModel : ObservableObject
     [ObservableProperty] ObservableCollection<IncomeExpenseData> incomeData = [];
     [ObservableProperty] ObservableCollection<IncomeExpenseData> expenseData = [];
 
-    [ObservableProperty] decimal totalIncome = 0;
-    [ObservableProperty] decimal totalExpense = 0;
+    [ObservableProperty] decimal totalIncome;
+    [ObservableProperty] decimal totalExpense;
 
     public InsightsViewModel(ITransactionService _transactionService, ILoggerService<InsightsViewModel> _logger)
     {

@@ -1,12 +1,7 @@
 ﻿
 namespace MoMoney.Core.Models;
 
-public class CategoryGroup : List<Category>
+public class CategoryGroup(IGrouping<string, Category> cat) : List<Category>([.. cat])
 {
-    public string CategoryName { get; private set; }
-
-    public CategoryGroup(IGrouping<string, Category> cat) : base(cat.ToList())
-    {
-        CategoryName = cat.Key;
-    }
+    public string CategoryName { get; private set; } = cat.Key;
 }

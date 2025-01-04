@@ -6,7 +6,7 @@ namespace MoMoney.Core.Data;
 
 public class MoMoneydb : IMoMoneydb
 {
-    public ISQLiteAsyncConnection db { get; private set; }
+    public ISQLiteAsyncConnection db { get; private set; } = new SQLiteAsyncConnection(Constants.DefaultDbPath);
     bool initialized = false;
 
     /// <summary>
@@ -14,7 +14,7 @@ public class MoMoneydb : IMoMoneydb
     /// </summary>
     public async Task Init()
     {
-        if (db is not null)
+        if (db.DatabasePath != Constants.DefaultDbPath)
         {
             while (!initialized)
             {
@@ -49,15 +49,18 @@ public class MoMoneydb : IMoMoneydb
     /// <returns></returns>
     public async Task ResetDb()
     {
-        await db.DropTableAsync<Log>();
-        await db.DropTableAsync<Stock>();
-        await db.DropTableAsync<Account>();
-        await db.DropTableAsync<Category>();
-        await db.DropTableAsync<Transaction>();
-        await db.DropTableAsync<ChatResponse>();
-        await db.DropTableAsync<WhisperResponse>();
-        await db.CloseAsync();
-        db = null;
+        if (db is not null)
+        {
+            await db.DropTableAsync<Log>();
+            await db.DropTableAsync<Stock>();
+            await db.DropTableAsync<Account>();
+            await db.DropTableAsync<Category>();
+            await db.DropTableAsync<Transaction>();
+            await db.DropTableAsync<ChatResponse>();
+            await db.DropTableAsync<WhisperResponse>();
+            await db.CloseAsync();
+            db = new SQLiteAsyncConnection(Constants.DefaultDbPath);
+        }
         initialized = false;
         await Init();
     }

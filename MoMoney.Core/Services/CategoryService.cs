@@ -31,7 +31,7 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
             var category = new Category
             {
                 CategoryName = categoryName,
-                ParentName = string.IsNullOrEmpty(parentName) ? "" : parentName
+                ParentName = parentName
             };
 
             // adds Category to db and dictionary
@@ -100,7 +100,7 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
         });
     }
 
-    public async Task<Category> GetCategory(int ID, bool tryGet = false)
+    public async Task<Category?> GetCategory(int ID, bool tryGet = false)
     {
         await Init();
         if (Categories.TryGetValue(ID, out var category))
@@ -112,7 +112,7 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
             : cat;
     }
 
-    public async Task<Category> GetCategory(string name, string parent, bool tryGet = false)
+    public async Task<Category?> GetCategory(string name, string parent, bool tryGet = false)
     {
         await Init();
         var cats = Categories.Values.Where(a => a.CategoryName.Equals(name, StringComparison.OrdinalIgnoreCase) &&
@@ -126,7 +126,7 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
             : cat;
     }
 
-    public async Task<Category> GetParentCategory(string name, bool tryGet = false)
+    public async Task<Category?> GetParentCategory(string name, bool tryGet = false)
     {
         await Init();
         var cats = Categories.Values.Where(a => a.CategoryName.Equals(name, StringComparison.OrdinalIgnoreCase));

@@ -58,7 +58,7 @@ public class FirebaseParameters
 
     public static string EVENT_REMOVE_ALL_DATA => "Remove_All_Data";
 
-    public static Dictionary<string, string> GetFirebaseParameters(Exception ex = null, string functionName = null, string className = null)
+    public static Dictionary<string, string> GetFirebaseParameters(Exception? ex = null, string? functionName = null, string? className = null)
     {
         var parameters = new Dictionary<string, string>
         {

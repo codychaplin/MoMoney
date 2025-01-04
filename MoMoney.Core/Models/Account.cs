@@ -10,9 +10,9 @@ public class Account
     [PrimaryKey, AutoIncrement, CsvHelper.Configuration.Attributes.Ignore]
     public int AccountID { get; set; }
     [Index(0)]
-    public string AccountName { get; set; }
+    public string AccountName { get; set; } = string.Empty;
     [Index(1)]
-    public string AccountType { get; set; }
+    public string AccountType { get; set; } = string.Empty;
     [Index(2)]
     public decimal StartingBalance { get; set; }
     [CsvHelper.Configuration.Attributes.Ignore]
@@ -42,7 +42,7 @@ public class Account
         Enabled = account.Enabled;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj == null || GetType() != obj.GetType())
             return false;
@@ -67,6 +67,6 @@ public enum AccountType // account types
 
 public class AccountTotalModel
 {
-    public string AccountType { get; set; }
+    public string AccountType { get; set; } = string.Empty;
     public decimal Total { get; set; }
 }

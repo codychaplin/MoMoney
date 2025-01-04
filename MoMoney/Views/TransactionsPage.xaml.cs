@@ -12,7 +12,9 @@ public partial class TransactionsPage : ContentView
 
         HandlerChanged += (s, e) =>
         {
-            TransactionsViewModel vm = Handler.MauiContext.Services.GetService<TransactionsViewModel>();
+            TransactionsViewModel? vm = Handler?.MauiContext?.Services.GetService<TransactionsViewModel>();
+            if (vm == null)
+                return;
             BindingContext = vm;
 
             _ = vm.Load();

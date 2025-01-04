@@ -67,7 +67,7 @@ public partial class ImportExportViewModel : ObservableObject
             }
             catch (TypeConverterException ex)
             {
-                string errorMessage = $"Account {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
+                string errorMessage = $"Account {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member?.Name}";
                 throw new InvalidAccountException(errorMessage);
             }
 
@@ -138,7 +138,7 @@ public partial class ImportExportViewModel : ObservableObject
             }
             catch (TypeConverterException ex)
             {
-                string errorMessage = $"Category {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
+                string errorMessage = $"Category {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member?.Name}";
                 throw new InvalidCategoryException(errorMessage);
             }
 
@@ -212,7 +212,7 @@ public partial class ImportExportViewModel : ObservableObject
             }
             catch (TypeConverterException ex)
             {
-                string errorMessage = $"Transaction {i}: '{ex.Text}' is not a valid value for '{ex.MemberMapData.Member.Name}'";
+                string errorMessage = $"Transaction {i}: '{ex.Text}' is not a valid value for '{ex.MemberMapData.Member?.Name}'";
                 throw new InvalidTransactionException(errorMessage);
             }
 
@@ -270,7 +270,7 @@ public partial class ImportExportViewModel : ObservableObject
             }
             catch (TypeConverterException ex)
             {
-                string errorMessage = $"Stock {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
+                string errorMessage = $"Stock {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member?.Name}";
                 throw new InvalidStockException(errorMessage);
             }
 
@@ -332,7 +332,7 @@ public partial class ImportExportViewModel : ObservableObject
             }
             catch (TypeConverterException ex)
             {
-                string errorMessage = $"Log {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member.Name}";
+                string errorMessage = $"Log {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member?.Name}";
                 throw new InvalidStockException(errorMessage);
             }
 
@@ -359,7 +359,7 @@ public partial class ImportExportViewModel : ObservableObject
     /// </summary>
     /// <returns>FileResult</returns>
     /// <exception cref="FormatException"></exception>
-    async static Task<FileResult> SelectFile()
+    async static Task<FileResult?> SelectFile()
     {
         var options = new PickOptions { PickerTitle = "Select a .CSV file" };
         var result = await FilePicker.Default.PickAsync(options);

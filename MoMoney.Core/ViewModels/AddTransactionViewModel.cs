@@ -25,18 +25,18 @@ public partial class AddTransactionViewModel : ObservableObject
     [ObservableProperty] ObservableCollection<string> payees = [];
     
     [ObservableProperty] DateTime date;
-    [ObservableProperty] Account account = new();
+    [ObservableProperty] Account? account;
     [ObservableProperty] decimal amount;
-    [ObservableProperty] Category category = new();
-    [ObservableProperty] Category subcategory = new();
-    [ObservableProperty] string payee;
-    [ObservableProperty] Account transferAccount = new();
+    [ObservableProperty] Category? category;
+    [ObservableProperty] Category? subcategory;
+    [ObservableProperty] string payee = string.Empty;
+    [ObservableProperty] Account? transferAccount;
 
     [ObservableProperty] bool isWaitingForTranscription = false; // activity indicator runs while this is true
 
     public TransactionType transactionType = TransactionType.None;
 
-    ResponseIDs responseIDs = null;
+    ResponseIDs? responseIDs = null;
 
     public AddTransactionViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService,
         ILoggerService<AddTransactionViewModel> _logger, IOpenAIService _openAIService, IRecordAudioService _recordAudioService)
@@ -44,10 +44,8 @@ public partial class AddTransactionViewModel : ObservableObject
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
-        logger = _logger;
-
         openAIService = _openAIService;
-
+        logger = _logger;
         recorder = _recordAudioService;
     }
 
@@ -76,7 +74,8 @@ public partial class AddTransactionViewModel : ObservableObject
             var income = await categoryService.GetCategory(Constants.INCOME_ID);
             Categories.Clear();
             Subcategories.Clear();
-            Categories.Add(income);
+            if (income != null)
+                Categories.Add(income);
             Subcategory = null;
             Category = income;
 
@@ -109,7 +108,8 @@ public partial class AddTransactionViewModel : ObservableObject
             var transfer = await categoryService.GetCategory(Constants.TRANSFER_ID);
             Categories.Clear();
             Subcategories.Clear();
-            Categories.Add(transfer);
+            if (transfer != null)
+                Categories.Add(transfer);
             Subcategory = null;
             Category = transfer;
 
@@ -300,7 +300,7 @@ public partial class AddTransactionViewModel : ObservableObject
     void ResetButtonColour(Button button)
     {
         button.SetAppTheme(Button.TextColorProperty, Colors.Black, Colors.White);
-        button.SetAppTheme(Button.BorderColorProperty, (Color)Utilities.Colours["Gray700"], (Color)Utilities.Colours["Gray200"]);
+        button.SetAppTheme(Button.BorderColorProperty, Utilities.GetColour("Gray400"), Utilities.GetColour("Gray200"));
     }
 
     /// <summary>
@@ -327,11 +327,11 @@ public partial class AddTransactionViewModel : ObservableObject
             else if (Category.CategoryID == Constants.TRANSFER_ID) // transfer = 2 transactions
             {
                 // must cache observable properties because they reset after being added to db
-                var _date = Date;
-                var _accountID = Account.AccountID;
-                var _amount = Amount;
-                var _categoryID = Category.CategoryID;
-                var _transferID = TransferAccount.AccountID;
+                DateTime _date = Date;
+                int _accountID = Account.AccountID;
+                decimal _amount = Amount;
+                int _categoryID = Category.CategoryID;
+                int _transferID = TransferAccount!.AccountID;
                 ID = await transactionService.AddTransaction(_date, _accountID, -_amount, _categoryID, Constants.DEBIT_ID, string.Empty, _transferID);
                 await transactionService.AddTransaction(_date, _transferID, _amount, _categoryID, Constants.CREDIT_ID, string.Empty, _accountID);
             }

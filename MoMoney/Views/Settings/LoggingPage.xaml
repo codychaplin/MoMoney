@@ -3,7 +3,7 @@
     x:Class="MoMoney.Views.Settings.LoggingPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:converters="clr-namespace:MoMoney.Converters"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"

@@ -10,7 +10,7 @@ public partial class StatsPage : ContentView
 
         HandlerChanged += (s, e) =>
         {
-            BindingContext = Handler.MauiContext.Services.GetService<StatsViewModel>();
+            BindingContext = Handler?.MauiContext?.Services.GetService<StatsViewModel>();
         };
     }
 }

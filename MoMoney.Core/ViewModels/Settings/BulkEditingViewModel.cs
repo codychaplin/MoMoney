@@ -18,22 +18,22 @@ public partial class BulkEditingViewModel : ObservableObject
     readonly ILoggerService<BulkEditingViewModel> logger;
 
     [ObservableProperty] ObservableCollection<Account> accounts = [];
-    [ObservableProperty] Account findAccount;
-    [ObservableProperty] Account replaceAccount;
+    [ObservableProperty] Account? findAccount;
+    [ObservableProperty] Account? replaceAccount;
 
     [ObservableProperty] ObservableCollection<Category> categories = [];
-    [ObservableProperty] Category findCategory;
-    [ObservableProperty] Category replaceCategory;
+    [ObservableProperty] Category? findCategory;
+    [ObservableProperty] Category? replaceCategory;
 
     [ObservableProperty] ObservableCollection<Category> findSubcategories = [];
     [ObservableProperty] ObservableCollection<Category> replaceSubcategories = [];
-    [ObservableProperty] Category findSubcategory;
-    [ObservableProperty] Category replaceSubcategory;
+    [ObservableProperty] Category? findSubcategory;
+    [ObservableProperty] Category? replaceSubcategory;
 
     [ObservableProperty] ObservableCollection<string> payees = [];
-    [ObservableProperty] string findPayee;
-    [ObservableProperty] string replacePayee;
-    [ObservableProperty] string info;
+    [ObservableProperty] string? findPayee;
+    [ObservableProperty] string? replacePayee;
+    [ObservableProperty] string info = string.Empty;
 
     List<Transaction> FoundTransactions { get; set; } = [];
     int TotalTransactionCount;
@@ -139,7 +139,8 @@ public partial class BulkEditingViewModel : ObservableObject
             // event might fire before SelectedItem updates in vm
             if (FindCategory is null)
             {
-                var pckCategories = sender as PickerField;
+                if (sender is not Picker pckCategories)
+                    return;
                 var category = pckCategories.SelectedItem as Category;
                 FindCategory = category;
                 if (FindCategory is null)
@@ -172,7 +173,8 @@ public partial class BulkEditingViewModel : ObservableObject
             // event might fire before SelectedItem updates in vm
             if (ReplaceCategory is null)
             {
-                var pckCategories = sender as Picker;
+                if (sender is not Picker pckCategories)
+                    return;
                 var category = pckCategories.SelectedItem as Category;
                 ReplaceCategory = category;
                 if (ReplaceCategory is null)
@@ -207,8 +209,8 @@ public partial class BulkEditingViewModel : ObservableObject
                 return false;
             }
 
-            FoundTransactions = await transactionService.GetFilteredTransactions(accountID: FindAccount.AccountID,
-                categoryID: FindCategory.CategoryID, subcategoryID: FindSubcategory.CategoryID, payee: FindPayee);
+            FoundTransactions = await transactionService.GetFilteredTransactions(accountID: FindAccount?.AccountID,
+                categoryID: FindCategory?.CategoryID, subcategoryID: FindSubcategory?.CategoryID, payee: FindPayee);
             FoundTransactionCount = FoundTransactions.Count;
             UpdateText(0, true, false);
 
@@ -230,7 +232,7 @@ public partial class BulkEditingViewModel : ObservableObject
     [RelayCommand]
     async Task BulkReplace()
     {
-        if (FoundTransactions == null || FoundTransactions.Count == 0)
+        if (FoundTransactions.Count == 0)
             if (await BulkFind(false) == false)
                 return;
 

@@ -49,7 +49,7 @@ public interface ICategoryService
     /// <param name="tryGet"></param>
     /// <returns>Category object</returns>
     /// <exception cref="CategoryNotFoundException"></exception>
-    Task<Category> GetCategory(int ID, bool tryGet = false);
+    Task<Category?> GetCategory(int ID, bool tryGet = false);
 
     /// <summary>
     /// Gets an category from the Categories table using a name and parent name.
@@ -59,7 +59,7 @@ public interface ICategoryService
     /// <param name="tryGet"></param>
     /// <returns>Category object</returns>
     /// <exception cref="CategoryNotFoundException"></exception>
-    Task<Category> GetCategory(string name, string parent, bool tryGet = false);
+    Task<Category?> GetCategory(string name, string parent, bool tryGet = false);
 
     /// <summary>
     /// Gets Category from the Categories table using name. Only works for parent categories.
@@ -68,7 +68,7 @@ public interface ICategoryService
     /// <param name="tryGet"></param>
     /// <returns>Category object</returns>
     /// <exception cref="CategoryNotFoundException"></exception>
-    Task<Category> GetParentCategory(string name, bool tryGet = false);
+    Task<Category?> GetParentCategory(string name, bool tryGet = false);
 
     /// <summary>
     /// Gets all Categories from Categories table as a dictionary with Category ID as Key.
