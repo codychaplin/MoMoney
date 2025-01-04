@@ -124,9 +124,9 @@ public class LoggerService<T> : ILoggerService<T>
         var logQuery = momoney.db.Table<Log>();
         if (logLevel != LogLevel.None)
             logQuery = logQuery.Where(l => l.Level == logLevel);
-        if (className != null)
+        if (!string.IsNullOrEmpty(className))
             logQuery = logQuery.Where(l => l.ClassName == className);
-        if (exceptionType != null)
+        if (!string.IsNullOrEmpty(exceptionType))
         {
             string ex = string.IsNullOrEmpty(exceptionType) ? "None" : exceptionType;
             logQuery = logQuery.Where(l => l.ExceptionType == ex);

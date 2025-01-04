@@ -22,11 +22,10 @@ public partial class StocksViewModel : ObservableObject
     /// <summary>
     /// Gets updated stocks from database, orders them, and refreshes Stocks collection.
     /// </summary>
-    public async void RefreshStocks(object s, EventArgs e)
+    public async Task LoadStocks()
     {
         try
         {
-            await Task.Delay(1);
             var stocks = await stockService.GetStocks();
             Stocks.Clear();
             foreach (var stock in stocks)
@@ -34,7 +33,7 @@ public partial class StocksViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(RefreshStocks), ex);
+            await logger.LogError(nameof(LoadStocks), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

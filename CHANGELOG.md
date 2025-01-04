@@ -17,6 +17,7 @@
 * Updated packages
 * Optimized Stopwatch usage
 * Replaced Frames with Borders
+* Moved init functions to PageLoader
 * Enabled nullable types
 * Stopped using Syncfusion ListView
 * Switched to open source Syncfusion controls where possible

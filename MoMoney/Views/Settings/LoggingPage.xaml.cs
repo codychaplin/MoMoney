@@ -1,15 +1,18 @@
 using Microsoft.Extensions.Logging;
+using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels.Settings;
 
 namespace MoMoney.Views.Settings;
 
 public partial class LoggingPage : ContentPage
 {
-	public LoggingPage(LoggingViewModel vm)
+	LoggingViewModel vm;
+
+    public LoggingPage(LoggingViewModel _vm)
 	{
 		InitializeComponent();
+		vm = _vm;
         BindingContext = vm;
-		Loaded += async (s, e) => await vm.Init();
 
 		PckLevels.SelectedValueChanged += (s, e) =>
 		{
@@ -23,5 +26,11 @@ public partial class LoggingPage : ContentPage
 		{
 			vm.UpdateExceptionCommand.Execute(e);
 		};
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+		await PageLoader.Load(vm.LoadLogs);
     }
 }

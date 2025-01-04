@@ -23,11 +23,10 @@ public partial class CategoriesViewModel : ObservableObject
     /// <summary>
     /// Gets updated categories from database and refreshes Categories collection.
     /// </summary>
-    public async void RefreshCategories(object s, EventArgs e)
+    public async Task LoadCategories()
     {
         try
         {
-            await Task.Delay(1);
             var categories = await categoryService.GetCategories();
 
             // groups categories by parent except where ParentName == ""
@@ -41,7 +40,7 @@ public partial class CategoriesViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(RefreshCategories), ex);
+            await logger.LogError(nameof(LoadCategories), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

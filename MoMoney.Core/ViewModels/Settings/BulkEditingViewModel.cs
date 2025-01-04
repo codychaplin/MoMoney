@@ -50,7 +50,7 @@ public partial class BulkEditingViewModel : ObservableObject
         logger = _logger;
     }
 
-    public async void Init(object sender, EventArgs e)
+    public async Task LoadBulkData()
     {
         try
         {
@@ -63,7 +63,7 @@ public partial class BulkEditingViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(Init), ex);
+            await logger.LogError(nameof(LoadBulkData), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -129,7 +129,7 @@ public partial class BulkEditingViewModel : ObservableObject
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="newValue"></param>
-    public async void GetFindSubcategories(object sender, object newValue)
+    public async void GetFindSubcategories(object? sender, object newValue)
     {
         try
         {
@@ -163,7 +163,7 @@ public partial class BulkEditingViewModel : ObservableObject
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="newValue"></param>
-    public async void GetReplaceSubcategories(object sender, object newValue)
+    public async void GetReplaceSubcategories(object? sender, object newValue)
     {
         try
         {

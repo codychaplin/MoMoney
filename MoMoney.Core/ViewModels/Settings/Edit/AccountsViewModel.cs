@@ -22,11 +22,10 @@ public partial class AccountsViewModel : ObservableObject
     /// <summary>
     /// Gets updated accounts from database, orders them, and refreshes Accounts collection.
     /// </summary>
-    public async void RefreshAccounts(object sender, EventArgs e)
+    public async Task LoadAccounts()
     {
         try
         {
-            await Task.Delay(1);
             var accounts = await accountService.GetOrderedAccounts();
             if (!accounts.Any())
             {
@@ -40,7 +39,7 @@ public partial class AccountsViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(RefreshAccounts), ex);
+            await logger.LogError(nameof(LoadAccounts), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }

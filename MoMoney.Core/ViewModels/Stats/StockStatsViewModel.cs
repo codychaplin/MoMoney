@@ -38,25 +38,33 @@ public partial class StockStatsViewModel : ObservableObject
     /// <summary>
     /// Initializes data for StocksPage
     /// </summary>
-    public async Task Init()
+    public async Task LoadStockStats()
     {
-        // populate collection with cached values first
-        var stocks = await stockService.GetStocks();
-        if (!stocks.Any())
-            return;
-
-        foreach (var stock in stocks)
+        try
         {
-            Stocks.Add(stock);
-            totalBook += stock.BookValue;
-            totalMarket += stock.MarketValue;
-        }
-        MarketValue = totalMarket;
-        Total = totalMarket - totalBook;
-        TotalPercent = (totalMarket / totalBook) - 1;
+            // populate collection with cached values first
+            var stocks = await stockService.GetStocks();
+            if (!stocks.Any())
+                return;
 
-        UpdateChart();
-        await GetUpdatedStockPrices(cts.Token); // get updated prices via webscraping
+            foreach (var stock in stocks)
+            {
+                Stocks.Add(stock);
+                totalBook += stock.BookValue;
+                totalMarket += stock.MarketValue;
+            }
+            MarketValue = totalMarket;
+            Total = totalMarket - totalBook;
+            TotalPercent = (totalMarket / totalBook) - 1;
+
+            UpdateChart();
+            await GetUpdatedStockPrices(cts.Token); // get updated prices via webscraping
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(LoadStockStats), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     void UpdateChart()

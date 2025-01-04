@@ -37,26 +37,29 @@ public partial class LoggingViewModel : ObservableObject
     /// <summary>
     /// Gets logs from db.
     /// </summary>
-    public async Task Init()
+    public async Task LoadLogs()
     {
-        Shell.Current.IsBusy = true;
+        try
+        {
+            var logs = await logger.GetLogs();
+            Logs.Clear();
+            Logs = new(logs);
+            totalItems = Logs.Count;
+            await LoadMoreItems();
 
-        var logs = await logger.GetLogs();
-        Logs.Clear();
-        Logs = new(logs);
-        totalItems = Logs.Count;
-        await LoadMoreItems();
-
-        // populate filters
-        var levels = logs.Select(l => l.Level).Distinct();
-        var classes = logs.Select(l => l.ClassName).Distinct();
-        var exceptions = logs.Select(l => l.ExceptionType == "" ? "None" : l.ExceptionType).Distinct();
-        Levels = new(levels);
-        Classes = new(classes);
-        Exceptions = new(exceptions);
-
-        await Task.Delay(100);
-        Shell.Current.IsBusy = false;
+            // populate filters
+            var levels = logs.Select(l => l.Level).Distinct();
+            var classes = logs.Select(l => l.ClassName).Distinct();
+            var exceptions = logs.Select(l => l.ExceptionType == "" ? "None" : l.ExceptionType).Distinct();
+            Levels = new(levels);
+            Classes = new(classes);
+            Exceptions = new(exceptions);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(LoadLogs), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     [RelayCommand]
@@ -79,9 +82,11 @@ public partial class LoggingViewModel : ObservableObject
     /// </summary>
     async Task UpdateFilter()
     {
+        Shell.Current.IsBusy = true;
         Logs = await logger.GetFilteredLogs(Level, ClassName, ExceptionType);
         LoadedLogs.Clear();
         await LoadMoreItems();
+        Shell.Current.IsBusy = false;
     }
 
 

@@ -50,7 +50,7 @@ public partial class BreakdownViewModel : ObservableObject
         ShowValue = Utilities.ShowValue ? "$0" : "$?";
     }
 
-    public async void Init(object s, EventArgs e)
+    public async Task LoadBreakdown()
     {
         try
         {
@@ -89,7 +89,7 @@ public partial class BreakdownViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(Init), ex);
+            await logger.LogError(nameof(LoadBreakdown), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
