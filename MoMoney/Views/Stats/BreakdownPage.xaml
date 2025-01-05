@@ -143,16 +143,13 @@
                                 XBindingPath="Category"
                                 YBindingPath="Amount">
                                 <chart:PieSeries.DataLabelSettings>
-                                    <chart:CircularDataLabelSettings LabelPlacement="Outer" UseSeriesPalette="True">
-                                        <chart:CircularDataLabelSettings.ConnectorLineSettings>
-                                            <chart:ConnectorLineStyle
-                                                ConnectorType="Line"
-                                                Stroke="Black"
-                                                StrokeWidth="3" />
-                                        </chart:CircularDataLabelSettings.ConnectorLineSettings>
+                                    <chart:CircularDataLabelSettings
+                                        LabelPosition="Outside"
+                                        SmartLabelAlignment="Shift"
+                                        UseSeriesPalette="True">
                                         <chart:CircularDataLabelSettings.LabelStyle>
                                             <chart:ChartDataLabelStyle
-                                                FontSize="11"
+                                                FontSize="12"
                                                 LabelFormat="{Binding ShowValue}"
                                                 TextColor="White" />
                                         </chart:CircularDataLabelSettings.LabelStyle>
@@ -184,7 +181,7 @@
                     <Border Margin="0" Padding="0">
                         <chart:SfCircularChart VerticalOptions="Center">
                             <chart:DoughnutSeries
-                                InnerRadius="0.6"
+                                InnerRadius="0.5"
                                 ItemsSource="{Binding IncomeData}"
                                 PaletteBrushes="{Binding IncomePalette}"
                                 Radius="0.7"
@@ -192,16 +189,13 @@
                                 XBindingPath="Category"
                                 YBindingPath="Amount">
                                 <chart:PieSeries.DataLabelSettings>
-                                    <chart:CircularDataLabelSettings LabelPlacement="Outer" UseSeriesPalette="True">
-                                        <chart:CircularDataLabelSettings.ConnectorLineSettings>
-                                            <chart:ConnectorLineStyle
-                                                ConnectorType="Line"
-                                                Stroke="Black"
-                                                StrokeWidth="3" />
-                                        </chart:CircularDataLabelSettings.ConnectorLineSettings>
+                                    <chart:CircularDataLabelSettings
+                                        LabelPosition="Outside"
+                                        SmartLabelAlignment="Shift"
+                                        UseSeriesPalette="True">
                                         <chart:CircularDataLabelSettings.LabelStyle>
                                             <chart:ChartDataLabelStyle
-                                                FontSize="11"
+                                                FontSize="12"
                                                 LabelFormat="{Binding ShowValue}"
                                                 TextColor="White" />
                                         </chart:CircularDataLabelSettings.LabelStyle>

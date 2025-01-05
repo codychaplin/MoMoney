@@ -47,7 +47,7 @@ public partial class BreakdownViewModel : ObservableObject
         categoryService = _categoryService;
         logger = _loggerService;
         logger.LogFirebaseEvent(FirebaseParameters.EVENT_VIEW_BREAKDOWN, FirebaseParameters.GetFirebaseParameters());
-        ShowValue = Utilities.ShowValue ? "$0" : "$?";
+        ShowValue = Utilities.ShowValue ? "C0" : "$?";
     }
 
     public async Task LoadBreakdown()
@@ -97,25 +97,26 @@ public partial class BreakdownViewModel : ObservableObject
     void InitPalettes()
     {
         // expense colour palette
-        ExpensePalette.Add(Color.FromArgb("9d0208"));
-        ExpensePalette.Add(Color.FromArgb("e85d04"));
-        ExpensePalette.Add(Color.FromArgb("faa307"));
-        ExpensePalette.Add(Color.FromArgb("83e377"));
-        ExpensePalette.Add(Color.FromArgb("16db93"));
-        ExpensePalette.Add(Color.FromArgb("0db39e"));
-        ExpensePalette.Add(Color.FromArgb("048ba8"));
-        ExpensePalette.Add(Color.FromArgb("2c699a"));
-        ExpensePalette.Add(Color.FromArgb("54478c"));
+        ExpensePalette.Add(Color.FromArgb("9D0208")); // red
+        ExpensePalette.Add(Color.FromArgb("EB7F08")); // orange
+        ExpensePalette.Add(Color.FromArgb("D6BF0F")); // yellow
+        ExpensePalette.Add(Color.FromArgb("79BD2B")); // lime
+        ExpensePalette.Add(Color.FromArgb("24B37F")); // teal-green
+        ExpensePalette.Add(Color.FromArgb("2E5B99")); // blue
+        ExpensePalette.Add(Color.FromArgb("55408F")); // purple
+        ExpensePalette.Add(Color.FromArgb("A15FD6")); // purple-pink
+        ExpensePalette.Add(Color.FromArgb("C261B5")); // pink
+        ExpensePalette.Add(Color.FromArgb("AD4B49")); // faded red
 
         // income colour palette
-        IncomePalette.Add(Color.FromArgb("155d27"));
-        IncomePalette.Add(Color.FromArgb("1a7431"));
-        IncomePalette.Add(Color.FromArgb("208b3a"));
-        IncomePalette.Add(Color.FromArgb("25a244"));
-        IncomePalette.Add(Color.FromArgb("2dc653"));
-        IncomePalette.Add(Color.FromArgb("4ad66d"));
-        IncomePalette.Add(Color.FromArgb("6ede8a"));
-        IncomePalette.Add(Color.FromArgb("92e6a7"));
+        IncomePalette.Add(Color.FromArgb("008000")); // start green
+        IncomePalette.Add(Color.FromArgb("1F991F"));
+        IncomePalette.Add(Color.FromArgb("47B347"));
+        IncomePalette.Add(Color.FromArgb("43CC79"));
+        IncomePalette.Add(Color.FromArgb("49D59F")); // start teal
+        IncomePalette.Add(Color.FromArgb("50BDA9"));
+        IncomePalette.Add(Color.FromArgb("21948A"));
+        IncomePalette.Add(Color.FromArgb("026969"));
     }
 
     [RelayCommand]
@@ -230,23 +231,27 @@ public partial class BreakdownViewModel : ObservableObject
             .Select(group =>
             {
                 var amount = Math.Abs(group.Sum(t => t.Amount));
+                var color = ExpensePalette[i++ % ExpensePalette.Count];
                 return new BreakdownData
                 {
                     Amount = amount,
                     ActualAmount = amount,
                     Category = categoryService.Categories[group.Key].CategoryName,
-                    Color = ExpensePalette[i++]
+                    Color = color
                 };
-            });
-
-        ExpenseData.Clear();
-        foreach (var item in expenseData)
-            ExpenseData.Add(item);
+            })
+            .OrderByDescending(c => c.Amount)
+            .ToList();
 
         // calculate size of slice as percentage
-        decimal total = ExpenseData.Sum(d => d.Amount);
-        foreach (var item in ExpenseData)
-            item.Percentage = item.Amount / total;
+        ExpenseData.Clear();
+        decimal total = expenseData.Sum(d => d.Amount);
+        foreach (var item in expenseData)
+        {
+            if (total > 0)
+                item.Percentage = item.Amount / total;
+            ExpenseData.Add(item);
+        }
     }
 
     /// <summary>
@@ -264,22 +269,25 @@ public partial class BreakdownViewModel : ObservableObject
             .Select(group =>
             {
                 var amount = group.Sum(t => t.Amount);
+                var color = IncomePalette[i++ % IncomePalette.Count];
                 return new BreakdownData
                 {
                     ActualAmount = amount,
                     Amount = (amount > 0) ? amount : 0,
                     Category = categoryService.Categories[group.Key].CategoryName,
-                    Color = IncomePalette[i++]
+                    Color = color
                 };
-            });
+            })
+            .OrderByDescending(c => c.Amount)
+            .ToList();
 
         IncomeData.Clear();
+        decimal total = incomeData.Sum(d => d.Amount);
         foreach (var item in incomeData)
+        {
+            if (total > 0)
+                item.Percentage = item.Amount / total;
             IncomeData.Add(item);
-
-        // calculate size of slice as percentage
-        decimal total = IncomeData.Sum(d => d.Amount);
-        foreach (var item in IncomeData)
-            item.Percentage = item.Amount / total;
+        }
     }
 }
