@@ -83,7 +83,7 @@
                             VerticalOptions="Center" />
                         <DatePicker
                             x:Name="dtFrom"
-                            Date="{Binding From}"
+                            Date="{Binding StartDate}"
                             HeightRequest="45" />
                         <Label
                             FontAttributes="Bold"
@@ -92,7 +92,7 @@
                             VerticalOptions="Center" />
                         <DatePicker
                             x:Name="dtTo"
-                            Date="{Binding To}"
+                            Date="{Binding EndDate}"
                             HeightRequest="45" />
                     </HorizontalStackLayout>
                 </Border>
@@ -194,7 +194,7 @@
                         FontAttributes="Bold"
                         FontSize="30"
                         HorizontalTextAlignment="Center"
-                        Text="{Binding Networth, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
+                        Text="{Binding NetworthAtEndDate, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
                     <ListView
                         ItemsSource="{Binding AccountTotals}"
                         RowHeight="35"

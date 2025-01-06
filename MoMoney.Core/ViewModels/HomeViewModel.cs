@@ -17,15 +17,19 @@ public partial class HomeViewModel : ObservableObject
 
     [ObservableProperty] ObservableCollection<Transaction> recentTransactions = [];
 
-    [ObservableProperty] decimal networth = 0;
+    [ObservableProperty] decimal networthAtEndDate = 0;
     [ObservableProperty] ObservableCollection<AccountTotalModel> accountTotals = [];
 
-    [ObservableProperty] static DateTime from = new();
-    [ObservableProperty] static DateTime to = new();
+    [ObservableProperty] static DateTime startDate = new();
+    [ObservableProperty] static DateTime endDate = new();
 
     [ObservableProperty] ObservableCollection<BalanceOverTimeData> data = [];
 
     [ObservableProperty] string showValue = "$0,k";
+
+    bool firstLoad = true;
+    DateTime latestTransactionDate = DateTime.Today;
+    decimal currentNetworth = 0;
 
     public HomeViewModel(ITransactionService _transactionService, IAccountService _accountService,
         ICategoryService _categoryService, ILoggerService<HomeViewModel> _logger)
@@ -36,27 +40,36 @@ public partial class HomeViewModel : ObservableObject
         logger = _logger;
 
         // first two months, show 1 year, starting March show YTD
-        From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
-        To = DateTime.Today;
+        StartDate = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
+        EndDate = DateTime.Today;
 
         logger.LogFirebaseEvent(FirebaseParameters.EVENT_OPEN_APP, FirebaseParameters.GetFirebaseParameters());
     }
 
+    /// <summary>
+    /// Refreshes the page with updated data.
+    /// </summary>
+    /// <returns></returns>
     public async Task Refresh()
     {
         try
         {
             ShowValue = Utilities.ShowValue ? "$0,k" : "$?";
-            var accounts = await accountService.GetActiveAccounts();
-            GetNetworth(accounts);
-            await GetAccountBalances(accounts);
 
-            var transactions = await transactionService.GetTransactionsFromTo(From, To, true);
-            if (!transactions.Any())
+            var transactions = await transactionService.GetTransactionsFromTo(StartDate, EndDate, true);
+            if (transactions.Count == 0)
             {
                 RecentTransactions.Clear();
                 return;
             }
+
+            if (firstLoad)
+            {
+                firstLoad = false;
+                latestTransactionDate = transactions[0].Date;
+            }
+
+            await CalculateNetworthAndAccountBalances();
 
             GetRecentTransactions(transactions);
             GetChartData(transactions);
@@ -69,17 +82,51 @@ public partial class HomeViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Gets updated total balance of all accounts combined.
+    /// Calculates networth at the end date.
     /// </summary>
-    void GetNetworth(IEnumerable<Account> accounts)
+    /// <returns></returns>
+    async Task CalculateNetworthAndAccountBalances()
     {
+        // calculate current networth
         if (Utilities.ShowValue == false)
         {
-            Networth = 0;
+            currentNetworth = 0;
             return;
         }
 
-        Networth = accounts.Sum(acc => acc.CurrentBalance);
+        var accounts = await accountService.GetActiveAccounts();
+        currentNetworth = accounts.Sum(acc => acc.CurrentBalance);
+
+        // calculate account balances
+        var groupedAccounts = accounts
+            .GroupBy(acc => acc.AccountType)
+            .Select(group => new AccountTotalModel
+            {
+                AccountType = group.Key.ToString(),
+                Total = Utilities.ShowValue ? group.Sum(acc => acc.CurrentBalance) : 0
+            })
+            .Where(acc => acc != null).ToList();
+
+        if (EndDate >= latestTransactionDate)
+        {
+            // if the end date is >= the date of the latest transaction, networth is current networth
+            NetworthAtEndDate = currentNetworth;
+        }
+        else
+        {
+            // if the end date is before the latest transaction date, get transactions between the two dates and calculate the difference
+            var transactions = await transactionService.GetTransactionsFromTo(EndDate, latestTransactionDate, true);
+            NetworthAtEndDate = currentNetworth - transactions.Where(trans => trans.CategoryID != Constants.TRANSFER_ID).Sum(t => t.Amount);
+            foreach (var account in groupedAccounts)
+            {
+                var transactionsForGroup = transactions.Where(t => accountService.Accounts[t.AccountID].AccountType == account.AccountType);
+                account.Total -= transactionsForGroup.Sum(t => t.Amount);
+            }
+        }
+
+        AccountTotals.Clear();
+        foreach (AccountTotalModel account in groupedAccounts)
+            AccountTotals.Add(account);
     }
 
     /// <summary>
@@ -93,28 +140,6 @@ public partial class HomeViewModel : ObservableObject
             RecentTransactions.Add(transaction);
     }
 
-    async Task GetAccountBalances(IEnumerable<Account> accounts)
-    {
-        try
-        {
-            var groupedAccounts = accounts.GroupBy(acc => acc.AccountType)
-                                          .Select(group => new AccountTotalModel
-                                          {
-                                              AccountType = group.Key.ToString(),
-                                              Total = Utilities.ShowValue ? group.Sum(acc => acc.CurrentBalance) : 0
-                                          });
-            
-            AccountTotals.Clear();
-            foreach (AccountTotalModel account in groupedAccounts.Where(acc => acc != null))
-                AccountTotals.Add(account);
-        }
-        catch (Exception ex)
-        {
-            await logger.LogError(nameof(GetAccountBalances), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
-        }
-    }
-
     /// <summary>
     /// Gets data for running balance chart.
     /// </summary>
@@ -122,8 +147,8 @@ public partial class HomeViewModel : ObservableObject
     {
         // if the date range is > 1 year, group results by Month, if < 1 year, group by day
         // get non-transfer transactions, group by date, and select date and sum of amounts on each date
-        bool isLong = (To - From).TotalDays > 365;
-        decimal runningTotal = Networth;
+        bool isLong = (EndDate - StartDate).TotalDays > 365;
+        decimal runningTotal = NetworthAtEndDate;
 
         if (isLong)
         {

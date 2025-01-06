@@ -5,6 +5,7 @@
 * Fixed StockStatsPage formatting and Stock csv exporting
 * Changed colour of LoggingPage loading indicator
 * Stopped record button height from changing during animation
+* Data on home page updates properly when date range changes
 * Fixed BreakdownPage percentages
 * Fixed logging page
 
