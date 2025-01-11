@@ -14,7 +14,7 @@ public class TransactionImportConverter : DefaultTypeConverter
     public override object ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
     {
         if (string.IsNullOrEmpty(text))
-            throw new InvalidTransactionException($"text is empty");
+            return string.Empty;
 
         string name = memberMapData.Member?.Name ?? string.Empty;
         switch (name)

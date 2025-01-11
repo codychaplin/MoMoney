@@ -149,7 +149,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         if (!string.IsNullOrEmpty(payee))
             transactionsQuery = transactionsQuery.Where(t => t.Payee == payee);
 
-        return await transactionsQuery.OrderBy(t => t.Date).ThenBy(t => t.TransactionID).ToListAsync();
+        return await transactionsQuery.OrderByDescending(t => t.Date).ThenBy(t => t.TransactionID).ToListAsync();
     }
 
     public async Task<IEnumerable<string>> GetPayeesFromTransactions()

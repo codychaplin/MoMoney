@@ -268,6 +268,9 @@ public partial class AddTransactionViewModel : ObservableObject
                     TransferAccount = transferAccount;
                 }
 
+                if (Date.Year != DateTime.Today.Year)
+                    await Utilities.DisplayToast("Warning: Date is not in the current year");
+
                 IsWaitingForTranscription = false;
             }
             else
