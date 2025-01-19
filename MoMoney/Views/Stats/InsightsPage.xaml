@@ -3,8 +3,8 @@
     x:Class="MoMoney.Views.Stats.InsightsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
-    xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:chart="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
+    xmlns:converters="clr-namespace:MoMoney.Converters"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
@@ -19,14 +19,6 @@
         Padding="10"
         RowDefinitions="Auto,Auto,*,Auto,Auto"
         RowSpacing="10">
-        <Grid.Resources>
-            <Style TargetType="Frame">
-                <Setter Property="Padding" Value="10" />
-                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" />
-                <Setter Property="HasShadow" Value="False" />
-                <Setter Property="CornerRadius" Value="10" />
-            </Style>
-        </Grid.Resources>
 
         <!--  year picker  -->
         <material:PickerField
@@ -44,7 +36,7 @@
             Grid.Row="1"
             Style="{StaticResource lblTitle}"
             Text="Income &amp; Expenses" />
-        <Frame Grid.Row="2" Padding="0">
+        <Border Grid.Row="2" Padding="0">
             <!--  chart  -->
             <chart:SfCartesianChart
                 Margin="0,0,0,10"
@@ -134,7 +126,7 @@
                     </chart:ColumnSeries.DataLabelSettings>
                 </chart:ColumnSeries>
             </chart:SfCartesianChart>
-        </Frame>
+        </Border>
 
         <!--  totals  -->
         <Label
@@ -144,7 +136,7 @@
             Text="Totals" />
 
         <VerticalStackLayout Grid.Row="4" Spacing="10">
-            <Frame Padding="5,5,10,5">
+            <Border Padding="5,5,10,5">
                 <Grid ColumnDefinitions="40,*,*">
                     <Image
                         HeightRequest="40"
@@ -167,8 +159,8 @@
                         Text="{Binding TotalIncome, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
                         VerticalOptions="Center" />
                 </Grid>
-            </Frame>
-            <Frame Padding="5,5,10,5">
+            </Border>
+            <Border Padding="5,5,10,5">
                 <Grid ColumnDefinitions="40,*,*">
                     <Image
                         HeightRequest="40"
@@ -190,7 +182,7 @@
                         Text="{Binding TotalExpense, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
                         VerticalOptions="Center" />
                 </Grid>
-            </Frame>
+            </Border>
         </VerticalStackLayout>
 
     </Grid>

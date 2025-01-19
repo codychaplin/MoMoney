@@ -1,3 +1,29 @@
+# MoMoney v1.2.2
+
+### Fixes
+
+* Fixed StockStatsPage formatting and Stock csv exporting
+* Changed colour of LoggingPage loading indicator
+* Stopped record button height from changing during animation
+* Data on home page updates properly when date range changes
+* Fixed BreakdownPage percentages
+* Fixed logging page
+
+### Changes
+
+* Hide admin actions by default and added secret way to enable them
+* Added build number to firebase event logs
+* Finally added unit tests
+* Updated to gpt-4o-mini
+* Removed MvvmHelpers due to incompatibility
+* Updated packages
+* Optimized Stopwatch usage
+* Replaced Frames with Borders
+* Moved init functions to PageLoader
+* Enabled nullable types
+* Stopped using Syncfusion ListView
+* Switched to open source Syncfusion controls where possible
+
 # MoMoney v1.2.1
 
 ### Fixes

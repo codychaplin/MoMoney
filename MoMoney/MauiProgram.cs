@@ -2,6 +2,7 @@
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
 using Syncfusion.Maui.Core.Hosting;
+using Syncfusion.Maui.Toolkit.Hosting;
 using UraniumUI;
 using MoMoney.Views;
 using MoMoney.Views.Stats;
@@ -25,6 +26,7 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
         builder.UseMauiApp<App>()
                .ConfigureSyncfusionCore()
+               .ConfigureSyncfusionToolkit()
                .RegisterPages()
                .RegisterViewModels()
                .RegisterServices()
@@ -128,7 +130,7 @@ public static class MauiProgram
     static MauiAppBuilder RegisterOther(this MauiAppBuilder builder)
     {
          // db
-        builder.Services.AddSingleton<MoMoneydb>();
+        builder.Services.AddSingleton<IMoMoneydb, MoMoneydb>();
 
         // logging
         builder.Services.AddTransient(typeof(ILoggerService<>), typeof(LoggerService<>));

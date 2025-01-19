@@ -4,9 +4,9 @@ using MoMoney.Core.Helpers;
 
 namespace MoMoney.Core.Data;
 
-public class MoMoneydb
+public class MoMoneydb : IMoMoneydb
 {
-    public SQLiteAsyncConnection db { get; private set; }
+    public ISQLiteAsyncConnection db { get; private set; } = new SQLiteAsyncConnection(Constants.DefaultDbPath);
     bool initialized = false;
 
     /// <summary>
@@ -14,7 +14,7 @@ public class MoMoneydb
     /// </summary>
     public async Task Init()
     {
-        if (db is not null)
+        if (db.DatabasePath != Constants.DefaultDbPath)
         {
             while (!initialized)
             {
@@ -49,15 +49,18 @@ public class MoMoneydb
     /// <returns></returns>
     public async Task ResetDb()
     {
-        await db.DropTableAsync<Log>();
-        await db.DropTableAsync<Stock>();
-        await db.DropTableAsync<Account>();
-        await db.DropTableAsync<Category>();
-        await db.DropTableAsync<Transaction>();
-        await db.DropTableAsync<ChatResponse>();
-        await db.DropTableAsync<WhisperResponse>();
-        await db.CloseAsync();
-        db = null;
+        if (db is not null)
+        {
+            await db.DropTableAsync<Log>();
+            await db.DropTableAsync<Stock>();
+            await db.DropTableAsync<Account>();
+            await db.DropTableAsync<Category>();
+            await db.DropTableAsync<Transaction>();
+            await db.DropTableAsync<ChatResponse>();
+            await db.DropTableAsync<WhisperResponse>();
+            await db.CloseAsync();
+            db = new SQLiteAsyncConnection(Constants.DefaultDbPath);
+        }
         initialized = false;
         await Init();
     }
@@ -95,5 +98,27 @@ public class MoMoneydb
             new Category(Constants.DEBIT_ID, "Debit", "Transfer"), // 3
             new Category(Constants.CREDIT_ID, "Credit", "Transfer") // 4
         ];
+    }
+
+    // ----------------------- CRUD wrappers (needed for unit testing) ----------------------- //
+
+    public Task<int> AccountsCountAsync()
+    {
+        return db.Table<Account>().CountAsync();
+    }
+
+    public Task<int> AccountsCountAsync(string accountName)
+    {
+        return db.Table<Account>().CountAsync(a => a.AccountName == accountName);
+    }
+
+    public Task<List<Account>> AccountsToList()
+    {
+        return db.Table<Account>().ToListAsync();
+    }
+
+    public Task<Account> FirstOrDefaultAccountAsync(int accountID)
+    {
+        return db.Table<Account>().FirstOrDefaultAsync(a => a.AccountID == accountID);
     }
 }

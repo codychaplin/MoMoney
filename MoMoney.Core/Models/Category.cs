@@ -8,9 +8,9 @@ public class Category
     [PrimaryKey, AutoIncrement, CsvHelper.Configuration.Attributes.Ignore]
     public int CategoryID { get; set; }
     [Index(0)]
-    public string CategoryName { get; set; }
+    public string CategoryName { get; set; } = string.Empty;
     [Index(1)]
-    public string ParentName { get; set; }
+    public string ParentName { get; set; } = string.Empty;
 
     public Category() { }
 

@@ -8,24 +8,24 @@ public class TransactionResponse
     public DateTime Date { get; set; }
 
     [JsonProperty("account")]
-    public string Account { get; set; }
+    public string Account { get; set; } = string.Empty;
 
     [JsonProperty("amount")]
     public decimal Amount { get; set; }
 
     [JsonProperty("category")]
-    public string Category { get; set; }
+    public string Category { get; set; } = string.Empty;
 
     [JsonProperty("subcategory")]
-    public string Subcategory { get; set; }
+    public string Subcategory { get; set; } = string.Empty;
 
     [JsonProperty("payee")]
-    public string Payee { get; set; }
+    public string Payee { get; set; } = string.Empty;
 
     [JsonProperty("transfer_account")]
-    public string TransferAccount { get; set; }
+    public string TransferAccount { get; set; } = string.Empty;
 
-    public ResponseIDs ResponseIDs { get; set; }
+    public ResponseIDs? ResponseIDs { get; set; }
 
     public override string ToString()
     {

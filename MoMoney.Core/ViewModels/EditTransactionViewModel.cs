@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -9,33 +9,33 @@ using MoMoney.Core.Services.Interfaces;
 namespace MoMoney.Core.ViewModels;
 
 [QueryProperty(nameof(ID), "ID")]
-public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+public partial class EditTransactionViewModel : ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
     readonly ILoggerService<EditTransactionViewModel> logger;
 
-    public string ID { get; set; }
+    public string ID { get; set; } = string.Empty;
 
-    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
-    [ObservableProperty] ObservableRangeCollection<Category> categories = [];
-    [ObservableProperty] ObservableRangeCollection<Category> subcategories = [];
-    [ObservableProperty] ObservableRangeCollection<string> payees = [];
+    [ObservableProperty] ObservableCollection<Account> accounts = [];
+    [ObservableProperty] ObservableCollection<Category> categories = [];
+    [ObservableProperty] ObservableCollection<Category> subcategories = [];
+    [ObservableProperty] ObservableCollection<string> payees = [];
 
-    [ObservableProperty] Account account;
-    [ObservableProperty] Category category;
-    [ObservableProperty] Category subcategory;
-    [ObservableProperty] Account transferAccount;
+    [ObservableProperty] Account? account;
+    [ObservableProperty] Category? category;
+    [ObservableProperty] Category? subcategory;
+    [ObservableProperty] Account? transferAccount;
 
-    [ObservableProperty] Transaction transaction;
+    [ObservableProperty] Transaction? transaction;
     
-    public Account InitialAccount { get; private set; }
-    public Category InitialCategory { get; private set; }
-    public Category InitialSubcategory { get; private set; }
-    public Account InitialTransferAccount { get; private set; }
+    public Account? InitialAccount { get; private set; }
+    public Category? InitialCategory { get; private set; }
+    public Category? InitialSubcategory { get; private set; }
+    public Account? InitialTransferAccount { get; private set; }
 
-    Transaction InitialTransaction;
+    Transaction? InitialTransaction;
 
     public EditTransactionViewModel(ITransactionService _transactionService, IAccountService _accountService,
         ICategoryService _categoryService, ILoggerService<EditTransactionViewModel> _logger)
@@ -62,14 +62,16 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
                 InitialCategory = await categoryService.GetCategory(InitialTransaction.CategoryID);
                 InitialSubcategory = await categoryService.GetCategory(InitialTransaction.SubcategoryID);
 
-                if (InitialCategory.CategoryID >= Constants.EXPENSE_ID) // if expense, make amount appear positive for user
+                if (InitialCategory?.CategoryID >= Constants.EXPENSE_ID) // if expense, make amount appear positive for user
                     Transaction.Amount *= -1;
-                else if (InitialCategory.CategoryID == Constants.TRANSFER_ID) // if transfer, set initial payee account
+                else if (InitialCategory?.CategoryID == Constants.TRANSFER_ID) // if transfer, set initial payee account
                 {
                     // if debit, make amount appear positive for user
-                    if (InitialSubcategory.CategoryID == Constants.DEBIT_ID)
+                    if (InitialSubcategory?.CategoryID == Constants.DEBIT_ID)
                         Transaction.Amount *= -1;
-                    InitialTransferAccount = await accountService.GetAccount((int)Transaction.TransferID);
+
+                    if (Transaction.TransferID.HasValue)
+                        InitialTransferAccount = await accountService.GetAccount(Transaction.TransferID.Value);
                 }
             }
             catch (TransactionNotFoundException ex)
@@ -111,10 +113,12 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
         {
             // TODO: if using disabled account, retrieve from db as well
             var accounts = await accountService.GetActiveAccounts();
-            Accounts.ReplaceRange(accounts);
+            Accounts.Clear();
+            foreach (var account in accounts)
+                Accounts.Add(account);
 
             Account = InitialAccount;
-            if (InitialCategory.CategoryID == Constants.TRANSFER_ID)
+            if (InitialCategory?.CategoryID == Constants.TRANSFER_ID)
                 TransferAccount = InitialTransferAccount;
         }
         catch (Exception ex)
@@ -133,7 +137,8 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
         {
             var income = await categoryService.GetCategory(Constants.INCOME_ID);
             Categories.Clear();
-            Categories.Add(income);
+            if (income != null)
+                Categories.Add(income);
             Subcategories.Clear();
             Category = InitialCategory;
         }
@@ -158,7 +163,8 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
         {
             var transfer = await categoryService.GetCategory(Constants.TRANSFER_ID);
             Categories.Clear();
-            Categories.Add(transfer);
+            if (transfer != null)
+                Categories.Add(transfer);
             Subcategories.Clear();
             Category = InitialCategory;
         }
@@ -182,7 +188,9 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
         try
         {
             var categories = await categoryService.GetExpenseCategories();
-            Categories.ReplaceRange(categories);
+            Categories.Clear();
+            foreach (var category in categories)
+                Categories.Add(category);
             Subcategories.Clear();
             Category = InitialCategory;
         }
@@ -204,7 +212,9 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
             if (Category is not null)
             {
                 var subcategories = await categoryService.GetSubcategories(Category);
-                Subcategories.ReplaceRange(subcategories);
+                Subcategories.Clear();
+                foreach (var subcategory in subcategories)
+                    Subcategories.Add(subcategory);
             }
 
             Subcategory = InitialSubcategory;
@@ -246,6 +256,9 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
             if (!isValid)
                 return;
 
+            if (Transaction is null || InitialAccount is null || InitialTransaction is null)
+                return;
+
             await transactionService.UpdateTransaction(Transaction);
 
             // if account unchanged, update account balance
@@ -270,7 +283,7 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
 
                 // update
                 otherTrans.Date = Transaction.Date;
-                otherTrans.AccountID = (int)Transaction.TransferID;
+                otherTrans.AccountID = Transaction.TransferID!.Value;
                 otherTrans.TransferID = Transaction.AccountID;
                 otherTrans.Amount = Transaction.Amount * -1;
                 await transactionService.UpdateTransaction(otherTrans);
@@ -282,7 +295,7 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
                 }
                 else // if changed, update both
                 {
-                    await accountService.UpdateBalance((int)InitialTransaction.TransferID, InitialTransaction.Amount);
+                    await accountService.UpdateBalance(InitialTransaction.TransferID!.Value, InitialTransaction.Amount);
                     await accountService.UpdateBalance(otherTrans.AccountID, -Transaction.Amount);
                 }
             }
@@ -315,6 +328,8 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
 
         try
         {
+            if (Transaction is null)
+                return;
             await transactionService.RemoveTransaction(Transaction);
 
             if (Transaction.CategoryID == Constants.TRANSFER_ID)
@@ -351,7 +366,7 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
         }
 
         // if expense or transfer debit, convert back to negative
-        if (InitialCategory.CategoryID >= Constants.EXPENSE_ID || InitialSubcategory.CategoryID == Constants.DEBIT_ID)
+        if (InitialCategory?.CategoryID >= Constants.EXPENSE_ID || InitialSubcategory?.CategoryID == Constants.DEBIT_ID)
             Transaction.Amount *= -1;
 
         // if payee is not in Payees list, update
@@ -365,7 +380,7 @@ public partial class EditTransactionViewModel : CommunityToolkit.Mvvm.ComponentM
         Transaction.TransferID = TransferAccount?.AccountID;
 
         // if nothing has changed, don't update
-        if (Transaction == InitialTransaction)
+        if (Transaction == InitialTransaction!)
         {
             await Shell.Current.GoToAsync("..");
             return false;

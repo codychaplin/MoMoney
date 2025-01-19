@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace MoMoney.Core.Converters;
+namespace MoMoney.Converters;
 
 /// <summary>
 /// Changes string format based on type

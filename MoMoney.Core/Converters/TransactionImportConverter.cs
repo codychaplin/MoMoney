@@ -8,12 +8,15 @@ namespace MoMoney.Core.Converters;
 
 public class TransactionImportConverter : DefaultTypeConverter
 {
-    public static Dictionary<string, int> accounts;
-    public static Dictionary<string, int> categories; // string is in 'subcategory,parentCategory' format
+    public static Dictionary<string, int> accounts = [];
+    public static Dictionary<string, int> categories = []; // string is in 'subcategory,parentCategory' format
 
-    public override object ConvertFromString(string text, IReaderRow row, MemberMapData memberMapData)
+    public override object ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
     {
-        string name = memberMapData.Member.Name;
+        if (string.IsNullOrEmpty(text))
+            return string.Empty;
+
+        string name = memberMapData.Member?.Name ?? string.Empty;
         switch (name)
         {
             case "AccountID":

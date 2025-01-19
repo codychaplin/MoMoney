@@ -54,7 +54,7 @@ public partial class ActionButtons : Grid
         set => SetValue(EditCommandProperty, value);
     }
 
-    public event EventHandler ClearClicked;
+    public event EventHandler? ClearClicked;
 
     private void BtnClear_Clicked(object sender, EventArgs e)
     {

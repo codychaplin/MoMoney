@@ -1,13 +1,20 @@
+using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels.Stats;
 
 namespace MoMoney.Views.Stats;
 
 public partial class BreakdownPage : ContentPage
 {
-	public BreakdownPage(BreakdownViewModel _vm)
-	{
-		InitializeComponent();
+    BreakdownViewModel vm;
+    public BreakdownPage(BreakdownViewModel _vm)
+    {
+        InitializeComponent();
+        vm = _vm;
         BindingContext = _vm;
-        Loaded += _vm.Init;
+    }
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await PageLoader.Load(vm.LoadBreakdown);
     }
 }

@@ -9,7 +9,7 @@ public class OpenAIResponse
 
     public DateTime CreationDate { get; set; }
 
-    public string Response { get; set; }
+    public string Response { get; set; } = string.Empty;
 
     public int? TransactionID { get; set; }
 

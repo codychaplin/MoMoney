@@ -1,7 +1,7 @@
 ﻿using System.Text;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers;
 using UraniumUI.Material.Controls;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
@@ -10,34 +10,36 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings;
 
-public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+public partial class BulkEditingViewModel : ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
     readonly ILoggerService<BulkEditingViewModel> logger;
 
-    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
-    [ObservableProperty] Account findAccount;
-    [ObservableProperty] Account replaceAccount;
+    [ObservableProperty] ObservableCollection<Account> accounts = [];
+    [ObservableProperty] Account? findAccount;
+    [ObservableProperty] Account? replaceAccount;
 
-    [ObservableProperty] ObservableRangeCollection<Category> categories = [];
-    [ObservableProperty] Category findCategory;
-    [ObservableProperty] Category replaceCategory;
+    [ObservableProperty] ObservableCollection<Category> categories = [];
+    [ObservableProperty] Category? findCategory;
+    [ObservableProperty] Category? replaceCategory;
 
-    [ObservableProperty] ObservableRangeCollection<Category> findSubcategories = [];
-    [ObservableProperty] ObservableRangeCollection<Category> replaceSubcategories = [];
-    [ObservableProperty] Category findSubcategory;
-    [ObservableProperty] Category replaceSubcategory;
+    [ObservableProperty] ObservableCollection<Category> findSubcategories = [];
+    [ObservableProperty] ObservableCollection<Category> replaceSubcategories = [];
+    [ObservableProperty] Category? findSubcategory;
+    [ObservableProperty] Category? replaceSubcategory;
 
-    [ObservableProperty] ObservableRangeCollection<string> payees = [];
-    [ObservableProperty] string findPayee;
-    [ObservableProperty] string replacePayee;
-    [ObservableProperty] string info;
+    [ObservableProperty] ObservableCollection<string> payees = [];
+    [ObservableProperty] string? findPayee;
+    [ObservableProperty] string? replacePayee;
+    [ObservableProperty] string info = string.Empty;
 
     List<Transaction> FoundTransactions { get; set; } = [];
     int TotalTransactionCount;
     int FoundTransactionCount;
+
+    StringBuilder infoSb = new();
 
     public BulkEditingViewModel(IAccountService _accountService, ICategoryService _categoryService,
         ITransactionService _transactionService, ILoggerService<BulkEditingViewModel> _logger)
@@ -48,7 +50,7 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
         logger = _logger;
     }
 
-    public async void Init(object sender, EventArgs e)
+    public async Task LoadBulkData()
     {
         try
         {
@@ -61,7 +63,7 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(Init), ex);
+            await logger.LogError(nameof(LoadBulkData), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -74,7 +76,9 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
         try
         {
             var accounts = await accountService.GetOrderedAccounts();
-            Accounts.ReplaceRange(accounts);
+            Accounts.Clear();
+            foreach (var account in accounts)
+                Accounts.Add(account);
         }
         catch (Exception ex)
         {
@@ -91,7 +95,9 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
         try
         {
             var categories = await categoryService.GetParentCategories();
-            Categories.ReplaceRange(categories);
+            Categories.Clear();
+            foreach (var category in categories)
+                Categories.Add(category);
         }
         catch (Exception ex)
         {
@@ -123,7 +129,7 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="newValue"></param>
-    public async void GetFindSubcategories(object sender, object newValue)
+    public async void GetFindSubcategories(object? sender, object newValue)
     {
         try
         {
@@ -133,7 +139,8 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
             // event might fire before SelectedItem updates in vm
             if (FindCategory is null)
             {
-                var pckCategories = sender as PickerField;
+                if (sender is not Picker pckCategories)
+                    return;
                 var category = pckCategories.SelectedItem as Category;
                 FindCategory = category;
                 if (FindCategory is null)
@@ -141,7 +148,8 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
             }
 
             var subcategories = await categoryService.GetSubcategories(FindCategory);
-            FindSubcategories.AddRange(subcategories);
+            foreach (var subcategory in subcategories)
+                FindSubcategories.Add(subcategory);
         }
         catch (Exception ex)
         {
@@ -155,7 +163,7 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="newValue"></param>
-    public async void GetReplaceSubcategories(object sender, object newValue)
+    public async void GetReplaceSubcategories(object? sender, object newValue)
     {
         try
         {
@@ -165,7 +173,8 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
             // event might fire before SelectedItem updates in vm
             if (ReplaceCategory is null)
             {
-                var pckCategories = sender as Picker;
+                if (sender is not Picker pckCategories)
+                    return;
                 var category = pckCategories.SelectedItem as Category;
                 ReplaceCategory = category;
                 if (ReplaceCategory is null)
@@ -173,7 +182,8 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
             }
 
             var subcategories = await categoryService.GetSubcategories(ReplaceCategory);
-            ReplaceSubcategories.AddRange(subcategories);
+            foreach (var subcategory in subcategories)
+                ReplaceSubcategories.Add(subcategory);
         }
         catch (Exception ex)
         {
@@ -199,7 +209,8 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
                 return false;
             }
 
-            FoundTransactions = await transactionService.GetFilteredTransactions(FindAccount, FindCategory, FindSubcategory, FindPayee);
+            FoundTransactions = await transactionService.GetFilteredTransactions(accountID: FindAccount?.AccountID,
+                categoryID: FindCategory?.CategoryID, subcategoryID: FindSubcategory?.CategoryID, payee: FindPayee);
             FoundTransactionCount = FoundTransactions.Count;
             UpdateText(0, true, false);
 
@@ -221,7 +232,7 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
     [RelayCommand]
     async Task BulkReplace()
     {
-        if (FoundTransactions == null || FoundTransactions.Count == 0)
+        if (FoundTransactions.Count == 0)
             if (await BulkFind(false) == false)
                 return;
 
@@ -262,12 +273,12 @@ public partial class BulkEditingViewModel : CommunityToolkit.Mvvm.ComponentModel
 
     void UpdateText(int replacedCount = 0, bool found = false, bool replaced = false)
     {
-        StringBuilder sb = new();
-        sb.Append($"Total Transactions: {TotalTransactionCount}\n");
+        infoSb.Clear();
+        infoSb.Append($"Total Transactions: {TotalTransactionCount}\n");
         if (found)
-            sb.Append($"Transactions Found: {FoundTransactionCount}\n");
+            infoSb.Append($"Transactions Found: {FoundTransactionCount}\n");
         if (replaced)
-            sb.Append($"Transactions Replaced: {replacedCount} \n");
-        Info = sb.ToString();
+            infoSb.Append($"Transactions Replaced: {replacedCount} \n");
+        Info = infoSb.ToString();
     }
 }

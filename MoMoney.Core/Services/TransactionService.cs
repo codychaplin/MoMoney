@@ -8,11 +8,11 @@ using MoMoney.Core.Services.Interfaces;
 namespace MoMoney.Core.Services;
 
 /// <inheritdoc />
-public class TransactionService : BaseService<TransactionService, UpdateTransactionsMessage, TransactionEventArgs>, ITransactionService
+public class TransactionService : BaseService<TransactionService, UpdateTransactionsMessage, TransactionEventArgs?>, ITransactionService
 {
     readonly IAccountService accountService;
 
-    public TransactionService(MoMoneydb _momoney, ILoggerService<TransactionService> _logger, IAccountService _accountService) : base(_momoney, _logger)
+    public TransactionService(IMoMoneydb _momoney, ILoggerService<TransactionService> _logger, IAccountService _accountService) : base(_momoney, _logger)
     {
         accountService = _accountService;
     }
@@ -62,7 +62,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         {
             ValidateTransaction(updatedTransaction.Date, updatedTransaction.AccountID, updatedTransaction.Amount,
                 updatedTransaction.CategoryID, updatedTransaction.SubcategoryID,
-                updatedTransaction.Payee?.Trim(), updatedTransaction.TransferID);
+                updatedTransaction.Payee?.Trim() ?? string.Empty, updatedTransaction.TransferID);
             await momoney.db.UpdateAsync(updatedTransaction);
 
             return $"Updated Transaction #{updatedTransaction.TransactionID} in db.";
@@ -125,20 +125,31 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         await momoney.Init();
         return await momoney.db.Table<Transaction>().OrderBy(t => t.Date).ThenBy(t => t.TransactionID).ToListAsync();
     }
-
-    public async Task<List<Transaction>> GetFilteredTransactions(Account account, Category category, Category subcategory, string payee)
+    
+    public async Task<List<Transaction>> GetFilteredTransactions(DateTime? from = null, DateTime? to = null, int? accountID = null,
+        decimal? minAmount = null, decimal? maxAmount = null, int? categoryID = null, int? subcategoryID = null, string? payee = null)
     {
         await momoney.Init();
-        IEnumerable<Transaction> transactions = await momoney.db.Table<Transaction>().ToListAsync();
-        if (account != null)
-            transactions = transactions.Where(t => t.AccountID == account.AccountID);
-        if (category != null)
-            transactions = transactions.Where(t => t.CategoryID == category.CategoryID);
-        if (subcategory != null)
-            transactions = transactions.Where(t => t.SubcategoryID == subcategory.CategoryID);
+
+        var transactionsQuery = momoney.db.Table<Transaction>();
+        if (from != null)
+            transactionsQuery = transactionsQuery.Where(t => t.Date >= from);
+        if (to != null)
+            transactionsQuery = transactionsQuery.Where(t => t.Date <= to);
+        if (accountID != null)
+            transactionsQuery = transactionsQuery.Where(t => t.AccountID == accountID);
+        if (minAmount != null && minAmount != 0)
+            transactionsQuery = transactionsQuery.Where(t => Math.Abs(t.Amount) >= minAmount);
+        if (maxAmount != null && maxAmount != 500) // 500 is the max on the scale, so only filter when it's changed
+            transactionsQuery = transactionsQuery.Where(t => Math.Abs(t.Amount) <= maxAmount);
+        if (categoryID != null)
+            transactionsQuery = transactionsQuery.Where(t => t.CategoryID == categoryID);
+        if (subcategoryID != null)
+            transactionsQuery = transactionsQuery.Where(t => t.SubcategoryID == subcategoryID);
         if (!string.IsNullOrEmpty(payee))
-            transactions = transactions.Where(t => t.Payee == payee);
-        return transactions.ToList();
+            transactionsQuery = transactionsQuery.Where(t => t.Payee == payee);
+
+        return await transactionsQuery.OrderByDescending(t => t.Date).ThenBy(t => t.TransactionID).ToListAsync();
     }
 
     public async Task<IEnumerable<string>> GetPayeesFromTransactions()
@@ -147,7 +158,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         return await momoney.db.QueryScalarsAsync<string>("SELECT DISTINCT Payee FROM \"Transaction\"");
     }
 
-    public async Task<IEnumerable<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse)
+    public async Task<List<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse)
     {
         await momoney.Init();
         if (reverse)

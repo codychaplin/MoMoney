@@ -10,27 +10,27 @@
 
     <ContentPage.Resources>
         <DataTemplate x:Key="HeaderTemplate" x:DataType="models:CategoryGroup">
-            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Style="{StaticResource SmallTileFrame}">
-                <Frame.GestureRecognizers>
+            <Border BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Style="{StaticResource SmallTileFrame}">
+                <Border.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryStringCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding CategoryName}" />
-                </Frame.GestureRecognizers>
+                </Border.GestureRecognizers>
                 <Grid>
                     <Label
                         FontSize="20"
                         Style="{StaticResource lblTile}"
                         Text="{Binding CategoryName}" />
                 </Grid>
-            </Frame>
+            </Border>
         </DataTemplate>
         <DataTemplate x:Key="ItemTemplate" x:DataType="models:Category">
-            <Frame Padding="10,0,0,0" Style="{StaticResource SmallTileFrame}">
-                <Frame.GestureRecognizers>
+            <Border Padding="10,0,0,0" Style="{StaticResource SmallTileFrame}">
+                <Border.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding .}" />
-                </Frame.GestureRecognizers>
+                </Border.GestureRecognizers>
                 <Grid>
                     <Label Style="{StaticResource lblTile}" Text="{Binding CategoryName}" />
                 </Grid>
-            </Frame>
+            </Border>
         </DataTemplate>
     </ContentPage.Resources>
 

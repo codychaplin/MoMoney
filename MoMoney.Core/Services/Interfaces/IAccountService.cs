@@ -17,31 +17,39 @@ public interface IAccountService
     /// <param name="accountType"></param>
     /// <param name="startingBalance"></param>
     /// <exception cref="DuplicateAccountException"></exception>
-    Task AddAccount(string accountName, string accountType, decimal startingBalance);
+    Task<int> AddAccount(string accountName, string accountType, decimal startingBalance);
 
     /// <summary>
     /// Inserts multiple Account objects into Accounts table.
     /// </summary>
     /// <param name="accounts"></param>
     /// <exception cref="DuplicateAccountException"></exception>
-    Task AddAccounts(List<Account> accounts);
+    Task<int> AddAccounts(List<Account> accounts);
 
     /// <summary>
     /// Given an Account object, updates the corresponding account in the Accounts table.
     /// </summary>
     /// <param name="updatedAccount"></param>
-    Task UpdateAccount(Account updatedAccount);
+    Task<int> UpdateAccount(Account updatedAccount);
+
+    /// <summary>
+    /// Updates CurrentBalance of specified Account.
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <param name="amount"></param>
+    /// <exception cref="AccountNotFoundException"></exception>
+    Task<int> UpdateBalance(int ID, decimal amount);
 
     /// <summary>
     /// Removes Account from Accounts table.
     /// </summary>
     /// <param name="ID"></param>
-    Task RemoveAccount(int ID);
+    Task<int> RemoveAccount(int ID);
 
     /// <summary>
     /// Removes ALL Accounts from Accounts table.
     /// </summary>
-    Task RemoveAllAccounts();
+    Task<bool> RemoveAllAccounts();
 
     /// <summary>
     /// Gets an account from the Accounts table using an ID.
@@ -50,16 +58,7 @@ public interface IAccountService
     /// <param name="tryGet"></param>
     /// <returns>Account object</returns>
     /// <exception cref="AccountNotFoundException"></exception>
-    Task<Account> GetAccount(int ID, bool tryGet = false);
-
-    /// <summary>
-    /// Gets an account from the Accounts table using a name.
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="tryGet"></param>
-    /// <returns>Account object</returns>
-    /// <exception cref="AccountNotFoundException"></exception>
-    Task<Account> GetAccount(string name, bool tryGet = false);
+    Task<Account?> GetAccount(int ID, bool tryGet = false);
 
     /// <summary>
     /// Gets all Accounts from Accounts table as a list.
@@ -90,11 +89,4 @@ public interface IAccountService
     /// </summary>
     /// <returns>Integer representing number of Accounts</returns>
     Task<int> GetAccountCount();
-
-    /// <summary>
-    /// Updates CurrentBalance of specified Account.
-    /// </summary>
-    /// <param name="ID"></param>
-    /// <param name="amount"></param>
-    Task UpdateBalance(int ID, decimal amount);
 }

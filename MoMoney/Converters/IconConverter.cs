@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using MoMoney.Core.Helpers;
 
-namespace MoMoney.Core.Converters;
+namespace MoMoney.Converters;
 
 /// <summary>
 /// Changes icon based on category
@@ -12,10 +12,10 @@ public class IconConverter : IMultiValueConverter
     {
         if (values[0] != null && values[1] != null)
         {
-            var cat = int.Parse(values[0].ToString());
+            var cat = int.Parse(values[0].ToString() ?? string.Empty);
             if (cat == Constants.TRANSFER_ID)
             {
-                var subcat = int.Parse(values[1].ToString());
+                var subcat = int.Parse(values[1].ToString() ?? string.Empty);
 
                 return subcat == Constants.DEBIT_ID ? "grey_arrow_right.svg" : "grey_arrow_left.svg";
             }

@@ -1,20 +1,24 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Data;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings;
 
-public partial class AdminViewModel
+public partial class AdminViewModel : ObservableObject
 {
-    readonly MoMoneydb momoney;
+    readonly IMoMoneydb momoney;
     readonly IStockService stockService;
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
     readonly ILoggerService<AdminViewModel> logger;
 
-    public AdminViewModel(MoMoneydb _momoney, ITransactionService _transactionService, IAccountService _accountService,
+    [ObservableProperty]
+    bool isAdmin;
+
+    public AdminViewModel(IMoMoneydb _momoney, ITransactionService _transactionService, IAccountService _accountService,
         ICategoryService _categoryService, IStockService _stockService, ILoggerService<AdminViewModel> _logger)
     {
         momoney = _momoney;
@@ -23,6 +27,8 @@ public partial class AdminViewModel
         categoryService = _categoryService;
         stockService = _stockService;
         logger = _logger;
+
+        IsAdmin = Preferences.Get("IsAdmin", false);
     }
 
     /// <summary>

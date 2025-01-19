@@ -17,11 +17,11 @@
                 <DataTemplate x:DataType="models:Stock">
 
                     <!--  template  -->
-                    <Frame Style="{StaticResource SmallTileFrame}">
-                        <Frame.GestureRecognizers>
+                    <Border BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" Style="{StaticResource SmallTileFrame}">
+                        <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Path=GoToEditStockCommand, Source={RelativeSource AncestorType={x:Type viewmodel:StocksViewModel}}}" CommandParameter="{Binding .}" />
-                        </Frame.GestureRecognizers>
-                        <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}">
+                        </Border.GestureRecognizers>
+                        <Grid>
 
                             <!--  symbol  -->
                             <Label Style="{StaticResource lblTile}" Text="{Binding Symbol}" />
@@ -33,7 +33,7 @@
                                 Style="{StaticResource lblTile}"
                                 Text="{Binding MarketPrice, StringFormat='{0:C2}'}" />
                         </Grid>
-                    </Frame>
+                    </Border>
 
                 </DataTemplate>
             </CollectionView.ItemTemplate>

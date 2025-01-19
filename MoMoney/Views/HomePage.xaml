@@ -3,8 +3,8 @@
     x:Class="MoMoney.Views.HomePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
-    xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:chart="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
+    xmlns:converters="clr-namespace:MoMoney.Converters"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
@@ -65,7 +65,7 @@
                 </toolkit:Expander.Header>
 
                 <!--  date range picker  -->
-                <Frame
+                <Border
                     x:Name="frDates"
                     Margin="0,10,0,0"
                     Padding="10,0"
@@ -83,7 +83,7 @@
                             VerticalOptions="Center" />
                         <DatePicker
                             x:Name="dtFrom"
-                            Date="{Binding From}"
+                            Date="{Binding StartDate}"
                             HeightRequest="45" />
                         <Label
                             FontAttributes="Bold"
@@ -92,10 +92,10 @@
                             VerticalOptions="Center" />
                         <DatePicker
                             x:Name="dtTo"
-                            Date="{Binding To}"
+                            Date="{Binding EndDate}"
                             HeightRequest="45" />
                     </HorizontalStackLayout>
-                </Frame>
+                </Border>
             </toolkit:Expander>
 
             <!--  chart title  -->
@@ -105,7 +105,7 @@
                 Text="Running Balance" />
 
             <!--  balance over time chart  -->
-            <Frame
+            <Border
                 Margin="10,0"
                 Padding="5,0,5,5"
                 BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
@@ -174,7 +174,7 @@
 
                     </chart:SfCartesianChart>
                 </Grid>
-            </Frame>
+            </Border>
 
             <!--  stats title  -->
             <Grid Margin="10,0">
@@ -182,7 +182,7 @@
                 <Button Command="{Binding ViewAllStatsCommand}" Text="View All" />
             </Grid>
 
-            <Frame Margin="10,0" Padding="10">
+            <Border Margin="10,0" Padding="10">
                 <VerticalStackLayout>
                     <Label
                         FontSize="16"
@@ -194,7 +194,7 @@
                         FontAttributes="Bold"
                         FontSize="30"
                         HorizontalTextAlignment="Center"
-                        Text="{Binding Networth, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
+                        Text="{Binding NetworthAtEndDate, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
                     <ListView
                         ItemsSource="{Binding AccountTotals}"
                         RowHeight="35"
@@ -222,7 +222,7 @@
                         </ListView.ItemTemplate>
                     </ListView>
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <!--  transactions title  -->
             <Grid Margin="10,0">
@@ -231,12 +231,12 @@
             </Grid>
 
             <!--  list of transactions  -->
-            <Frame Margin="10,0" Padding="0,5">
+            <Border Margin="10,0" Padding="0,5">
                 <CollectionView
                     EmptyView="No Transactions Found"
                     ItemTemplate="{StaticResource TransactionFrame}"
                     ItemsSource="{Binding RecentTransactions}" />
-            </Frame>
+            </Border>
         </VerticalStackLayout>
     </ScrollView>
 

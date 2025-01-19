@@ -1,5 +1,6 @@
 ﻿using MoMoney.Core.Models;
 using MoMoney.Core.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace MoMoney.Core.Services.Interfaces;
 public interface ILoggerService<T>
@@ -59,6 +60,15 @@ public interface ILoggerService<T>
     /// </summary>
     /// <returns>List of Log objects</returns>
     Task<IEnumerable<Log>> GetLogs();
+
+    /// <summary>
+    /// Gets filtered Logs from Logs table.
+    /// </summary>
+    /// <param name="logLevel"></param>
+    /// <param name="className"></param>
+    /// <param name="exceptionType"></param>
+    /// <returns>List of filtered Log objects</returns>
+    Task<List<Log>> GetFilteredLogs(LogLevel logLevel, string? className, string? exceptionType);
 
     /// <summary>
     /// Removes ALL Logs from Logs table.

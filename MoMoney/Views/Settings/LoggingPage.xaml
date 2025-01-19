@@ -3,12 +3,11 @@
     x:Class="MoMoney.Views.Settings.LoggingPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:converters="clr-namespace:MoMoney.Converters"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:selectors="clr-namespace:MoMoney.Selectors"
-    xmlns:sf="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
     Title="Logs"
@@ -105,7 +104,6 @@
             x:Key="LogDataTemplateSelector"
             CheckBox="{x:Reference ChkTileSize}"
             LargeTemplate="{StaticResource Large}"
-            ListView="{x:Reference listview}"
             SmallTemplate="{StaticResource Small}" />
 
     </ContentPage.Resources>
@@ -117,13 +115,13 @@
         <toolkit:Expander IsExpanded="{Binding IsExpanded}">
             <VerticalStackLayout Padding="0,5" Spacing="5">
 
-                <Frame
+                <Border
                     Padding="15,0,0,0"
                     BackgroundColor="{AppThemeBinding Light={StaticResource White},
                                                       Dark={StaticResource Gray700}}"
-                    BorderColor="{AppThemeBinding Light={StaticResource Gray600},
-                                                  Dark={StaticResource Gray400}}"
                     HeightRequest="50"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray600},
+                                             Dark={StaticResource Gray400}}"
                     WidthRequest="250">
                     <material:CheckBox
                         x:Name="ChkTileSize"
@@ -136,7 +134,7 @@
                                                     Dark={StaticResource White}}"
                         Color="{AppThemeBinding Light={StaticResource Primary},
                                                 Dark={StaticResource PrimaryDark}}" />
-                </Frame>
+                </Border>
 
                 <!--  filters  -->
                 <material:PickerField
@@ -161,29 +159,28 @@
         </toolkit:Expander>
 
         <!--  list  -->
-        <Frame
+        <Border
             Grid.Row="1"
             Margin="0,5,0,0"
-            Padding="0"
-            BackgroundColor="{AppThemeBinding Light={StaticResource White},
-                                              Dark={StaticResource Gray900}}">
-            <sf:SfListView
+            Padding="0">
+            <CollectionView
                 x:Name="listview"
-                ItemSpacing="1"
                 ItemTemplate="{StaticResource LogDataTemplateSelector}"
                 ItemsSource="{Binding LoadedLogs}"
-                LoadMoreCommand="{Binding LoadMoreItemsCommand}"
-                LoadMoreOption="None"
-                LoadMorePosition="End"
-                ScrollBarVisibility="Always">
-                <sf:SfListView.EmptyView>
+                RemainingItemsThreshold="0"
+                RemainingItemsThresholdReachedCommand="{Binding LoadMoreItemsCommand}"
+                VerticalScrollBarVisibility="Always">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="2" Orientation="Vertical" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.EmptyView>
                     <Label
                         Margin="0,10"
                         HorizontalTextAlignment="Center"
                         Text="No Logs Found" />
-                </sf:SfListView.EmptyView>
-            </sf:SfListView>
-        </Frame>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </Border>
     </Grid>
 
 </ContentPage>

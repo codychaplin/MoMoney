@@ -7,11 +7,13 @@ public class FirebaseParameters
     public static string FunctionName => "Function_Name";
     public static string Exception => "Exception";
     public static string AppVersion => "App_Version";
+    public static string AppBuild => "Build";
 
     public static string EVENT_OPEN_APP => "Open_App";
     public static string EVENT_BULK_FIND => "Bulk_Find";
     public static string EVENT_BULK_REPLACE => "Bulk_Replace";
     public static string EVENT_OPENAI_CALL => "OpenAI_Call";
+    public static string EVENT_DEVELOPER_MODE_TOGGLED => "Developer_Mode_Toggled";
 
     public static string EVENT_WARNING_LOG => "Warning_Log";
     public static string EVENT_ERROR_LOG => "Error_Log";
@@ -56,11 +58,12 @@ public class FirebaseParameters
 
     public static string EVENT_REMOVE_ALL_DATA => "Remove_All_Data";
 
-    public static Dictionary<string, string> GetFirebaseParameters(Exception ex = null, string functionName = null, string className = null)
+    public static Dictionary<string, string> GetFirebaseParameters(Exception? ex = null, string? functionName = null, string? className = null)
     {
         var parameters = new Dictionary<string, string>
         {
-            { AppVersion, AppInfo.Current.VersionString }
+            { AppVersion, VersionTracking.Default.CurrentVersion },
+            { AppBuild, VersionTracking.Default.CurrentBuild }
         };
 
         if (ex != null && !string.IsNullOrEmpty(functionName) && !string.IsNullOrEmpty(className))

@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers;
 using HtmlAgilityPack;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
@@ -9,22 +8,22 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Stats;
 
-public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+public partial class StockStatsViewModel : ObservableObject
 {
     readonly IStockService stockService;
     readonly ILoggerService<StockStatsViewModel> logger;
 
     [ObservableProperty] ObservableCollection<Stock> stocks = [];
-    [ObservableProperty] ObservableRangeCollection<StockData> stockData = [];
+    [ObservableProperty] ObservableCollection<StockData> stockData = [];
 
-    [ObservableProperty] decimal total = 0;
-    [ObservableProperty] decimal totalPercent = 0;
-    [ObservableProperty] decimal marketValue = 0;
+    [ObservableProperty] decimal total;
+    [ObservableProperty] decimal totalPercent;
+    [ObservableProperty] decimal marketValue;
 
     [ObservableProperty] string showValue = "$0";
 
-    decimal totalBook = 0;
-    decimal totalMarket = 0;
+    decimal totalBook;
+    decimal totalMarket;
 
     public CancellationTokenSource cts = new();
 
@@ -39,25 +38,33 @@ public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.
     /// <summary>
     /// Initializes data for StocksPage
     /// </summary>
-    public async Task Init()
+    public async Task LoadStockStats()
     {
-        // populate collection with cached values first
-        var stocks = await stockService.GetStocks();
-        if (!stocks.Any())
-            return;
-
-        foreach (var stock in stocks)
+        try
         {
-            Stocks.Add(stock);
-            totalBook += stock.BookValue;
-            totalMarket += stock.MarketValue;
-        }
-        MarketValue = totalMarket;
-        Total = totalMarket - totalBook;
-        TotalPercent = (totalMarket / totalBook) - 1;
+            // populate collection with cached values first
+            var stocks = await stockService.GetStocks();
+            if (!stocks.Any())
+                return;
 
-        UpdateChart();
-        await GetUpdatedStockPrices(cts.Token); // get updated prices via webscraping
+            foreach (var stock in stocks)
+            {
+                Stocks.Add(stock);
+                totalBook += stock.BookValue;
+                totalMarket += stock.MarketValue;
+            }
+            MarketValue = totalMarket;
+            Total = totalMarket - totalBook;
+            TotalPercent = (totalMarket / totalBook) - 1;
+
+            UpdateChart();
+            await GetUpdatedStockPrices(cts.Token); // get updated prices via webscraping
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(LoadStockStats), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     void UpdateChart()
@@ -71,7 +78,9 @@ public partial class StockStatsViewModel : CommunityToolkit.Mvvm.ComponentModel.
             };
         })
         .OrderByDescending(sd => sd.Price);
-        StockData.ReplaceRange(stockData);
+        StockData.Clear();
+        foreach (var data in stockData)
+            StockData.Add(data);
     }
 
     /// <summary>

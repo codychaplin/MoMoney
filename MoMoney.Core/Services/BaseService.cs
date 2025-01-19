@@ -8,10 +8,10 @@ namespace MoMoney.Core.Services;
 
 public class BaseService<TLogger, TMessenger, TType> where TMessenger : ValueChangedMessage<TType>, new()
 {
-    protected readonly MoMoneydb momoney;
+    protected readonly IMoMoneydb momoney;
     readonly ILoggerService<TLogger> logger;
 
-    protected BaseService(MoMoneydb _momoney, ILoggerService<TLogger> _logger)
+    protected BaseService(IMoMoneydb _momoney, ILoggerService<TLogger> _logger)
     {
         momoney = _momoney;
         logger = _logger;
@@ -30,13 +30,13 @@ public class BaseService<TLogger, TMessenger, TType> where TMessenger : ValueCha
     /// <returns></returns>
     protected async Task DbOperation(Func<Task<string>> operation, bool sendMessage = true)
     {
-        Stopwatch sw = Stopwatch.StartNew();
+        long startTime = Stopwatch.GetTimestamp();
         await Init();
 
         string logMessage = await operation();
 
-        sw.Stop();
-        await logger.LogInfo($"[{sw.ElapsedMilliseconds}ms] {logMessage}");
+        TimeSpan delta = Stopwatch.GetElapsedTime(startTime);
+        await logger.LogInfo($"[{delta.Milliseconds}ms] {logMessage}");
 
         if (sendMessage)
             WeakReferenceMessenger.Default.Send<TMessenger>();

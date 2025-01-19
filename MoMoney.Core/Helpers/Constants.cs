@@ -10,6 +10,7 @@ public static class Constants
     SQLite.SQLiteOpenFlags.ReadWrite |
     SQLite.SQLiteOpenFlags.Create |
     SQLite.SQLiteOpenFlags.SharedCache;
+    public const string DefaultDbPath = ":memory:";
     public static string DatabasePath => Path.Combine(FileSystem.AppDataDirectory, dbName);
 
     // category IDs
@@ -23,14 +24,14 @@ public static class Constants
     public static readonly string[] MONTHS = CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedMonthNames;
 
     // load count for infinite scroll
-    public const int LOAD_COUNT = 50;
+    public const int LOAD_COUNT = 100;
 
     // OpenAI
     public const string AUDIO_FILE_NAME = "recording.ogg";
     public const string AUDIO_MODEL = "whisper-1";
     public const decimal WHISPER_COST = 0.006m; // per minute
-    public const string CHAT_MODEL = "gpt-3.5-turbo-0125";
-    public const decimal CHAT_INPUT_COST = 0.0005m; // per 1000 tokens
-    public const decimal CHAT_OUTPUT_COST = 0.0015m; // per 1000 tokens
-    public const int MAX_TOKENS = 200;
+    public const string CHAT_MODEL = "gpt-4o-mini"; // "gpt-3.5-turbo-0125";
+    public const decimal CHAT_INPUT_COST = 0.00015m; // 0.0005m; // per 1000 tokens
+    public const decimal CHAT_OUTPUT_COST = 0.0006m; // 0.0015m; // per 1000 tokens
+    public const int MAX_TOKENS = 300;
 }

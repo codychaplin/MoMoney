@@ -3,7 +3,7 @@
     x:Class="MoMoney.App"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:converters="clr-namespace:MoMoney.Converters"
     xmlns:local="clr-namespace:MoMoney"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:material="clr-namespace:UraniumUI.Material.Resources;assembly=UraniumUI.Material"
@@ -55,20 +55,17 @@
             </Style>
 
             <!--  tile frame  -->
-            <Style x:Key="TileFrame" TargetType="Frame">
+            <Style x:Key="TileFrame" TargetType="Border">
                 <Setter Property="Margin" Value="10,0,10,10" />
                 <Setter Property="Padding" Value="10,0" />
                 <Setter Property="HeightRequest" Value="60" />
-                <Setter Property="CornerRadius" Value="10" />
-                <Setter Property="HasShadow" Value="False" />
-                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
             </Style>
 
             <!--  condensed frame tile  -->
             <Style
                 x:Key="SmallTileFrame"
                 BasedOn="{StaticResource TileFrame}"
-                TargetType="Frame">
+                TargetType="Border">
                 <Setter Property="Margin" Value="10,0,10,5" />
                 <Setter Property="HeightRequest" Value="45" />
             </Style>
@@ -124,15 +121,15 @@
 
             <!--  transaction template  -->
             <DataTemplate x:Key="TransactionFrame" x:DataType="models:Transaction">
-                <Frame
+                <Border
                     Margin="10,5"
                     Padding="5,10,10,10"
                     BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
                                                       Dark={StaticResource Gray700}}"
                     HeightRequest="65">
-                    <Frame.GestureRecognizers>
+                    <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding Path=GoToEditTransactionCommand, Source={x:Reference MoMoneyApp}}" CommandParameter="{Binding TransactionID}" />
-                    </Frame.GestureRecognizers>
+                    </Border.GestureRecognizers>
                     <Grid ColumnDefinitions="30,*">
                         <!--  icon  -->
                         <Image Scale="0.75">
@@ -187,7 +184,7 @@
                                                         Dark={StaticResource Gray300}}"
                             VerticalOptions="End" />
                     </Grid>
-                </Frame>
+                </Border>
 
             </DataTemplate>
 

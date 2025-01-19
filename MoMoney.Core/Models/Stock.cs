@@ -5,20 +5,25 @@ namespace MoMoney.Core.Models;
 
 public partial class Stock : ObservableObject
 {
-    [PrimaryKey, AutoIncrement]
+    [PrimaryKey, AutoIncrement, CsvHelper.Configuration.Attributes.Ignore]
     public int StockID { get; set; }
-    public string Symbol { get; set; }
-    public string Market { get; set; }
+    public string Symbol { get; set; } = string.Empty;
+    public string Market { get; set; } = string.Empty;
     public decimal Quantity { get; set; }
     public decimal Cost { get; set; }
 
-    [ObservableProperty]
+    [ObservableProperty, CsvHelper.Configuration.Attributes.Ignore]
     public decimal marketPrice;
 
+    [CsvHelper.Configuration.Attributes.Ignore]
     public string FullName => $"{Symbol}:{Market}";
+    [CsvHelper.Configuration.Attributes.Ignore]
     public decimal MarketValue => MarketPrice * Quantity;
+    [CsvHelper.Configuration.Attributes.Ignore]
     public decimal BookValue => Quantity * Cost;
+    [CsvHelper.Configuration.Attributes.Ignore]
     public decimal Change => MarketValue - BookValue;
+    [CsvHelper.Configuration.Attributes.Ignore]
     public decimal ChangePercent => (MarketValue / BookValue) - 1;
 
     public Stock() { }

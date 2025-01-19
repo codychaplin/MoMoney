@@ -1,41 +1,38 @@
-﻿using MvvmHelpers;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Syncfusion.Maui.ListView;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
-public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+public partial class TransactionsViewModel : ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
 
-    [ObservableProperty] ObservableRangeCollection<Transaction> loadedTransactions = [];
+    [ObservableProperty] ObservableCollection<Transaction> loadedTransactions = [];
 
-    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
-    [ObservableProperty] ObservableRangeCollection<Category> categories = [];
-    [ObservableProperty] ObservableRangeCollection<Category> subcategories = [];
-    [ObservableProperty] ObservableRangeCollection<string> payees = [];
+    [ObservableProperty] ObservableCollection<Account> accounts = [];
+    [ObservableProperty] ObservableCollection<Category> categories = [];
+    [ObservableProperty] ObservableCollection<Category> subcategories = [];
+    [ObservableProperty] ObservableCollection<string> payees = [];
 
-    [ObservableProperty] Account account;
+    [ObservableProperty] Account? account;
 
     [ObservableProperty] int amountRangeStart = 0;
     [ObservableProperty] int amountRangeEnd = 500;
 
-    [ObservableProperty] Category category;
-    [ObservableProperty] Category subcategory;
+    [ObservableProperty] Category? category;
+    [ObservableProperty] Category? subcategory;
     [ObservableProperty] string payee = "";
 
     [ObservableProperty] static DateTime from = new();
     [ObservableProperty] static DateTime to = new();
 
     List<Transaction> Transactions = [];
-
-    public SfListView ListView { get; set; }
 
     bool showValue = true;
 
@@ -91,6 +88,9 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
     /// <param name="e"></param>
     void Create(TransactionEventArgs e)
     {
+        if (e.Transaction is null)
+            return;
+
         Transactions.Insert(0, e.Transaction);
         LoadedTransactions.Insert(0, e.Transaction);
 
@@ -107,15 +107,19 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
     async Task Read()
     {
         var transactions = await transactionService.GetTransactionsFromTo(From, To, true);
-        if (transactions.Count() != Transactions.Count)
+        if (transactions.Count != Transactions.Count)
         {
-            ListView.LoadMoreOption = LoadMoreOption.Auto;
-
-            LoadedTransactions.Clear();
+            // update transactions
             Transactions.Clear();
             Transactions = new(transactions);
+            LoadedTransactions.Clear();
+            await LoadMoreItems();
 
-            Payees.ReplaceRange(transactions.Select(t => t.Payee).Distinct());
+            // update payees
+            var payees = transactions.Select(t => t.Payee).Distinct();
+            Payees.Clear();
+            foreach (var payee in payees)
+                Payees.Add(payee);
         }
         if (showValue != Utilities.ShowValue)
         {
@@ -134,6 +138,9 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
     /// <param name="e"></param>
     void Update(TransactionEventArgs e)
     {
+        if (e.Transaction is null)
+            return;
+
         Transaction transaction = e.Transaction;
         foreach (var trans in Transactions.Where(t => t.TransactionID == transaction.TransactionID))
         {
@@ -170,7 +177,7 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
     /// <param name="e"></param>
     void Delete(TransactionEventArgs e)
     {
-        Transaction trans = Transactions.Where(t => t.TransactionID == e.Transaction.TransactionID).FirstOrDefault();
+        Transaction? trans = Transactions.Where(t => t.TransactionID == e.Transaction?.TransactionID).FirstOrDefault();
         if (trans is not null)
         {
             Transactions.Remove(trans);
@@ -185,7 +192,9 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
     public async Task GetAccounts()
     {
         var accounts = await accountService.GetActiveAccounts();
-        Accounts.ReplaceRange(accounts);
+        Accounts.Clear();
+        foreach (var account in accounts)
+            Accounts.Add(account);
     }
 
     /// <summary>
@@ -194,7 +203,9 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
     public async Task GetParentCategories()
     {
         var categories = await categoryService.GetAllParentCategories();
-        Categories.ReplaceRange(categories);
+        Categories.Clear();
+        foreach (var category in categories)
+            Categories.Add(category);
     }
 
     [RelayCommand]
@@ -203,13 +214,13 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
         if (Category != null)
         {
             await GetSubcategories(Category);
-            UpdateFilter();
+            await UpdateFilter();
         }
         else
         {
             Subcategory = null;
             Subcategories.Clear();
-            UpdateFilter();
+            await UpdateFilter();
         }
     }
 
@@ -222,7 +233,9 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
         if (parentCategory != null)
         {
             var subcategories = await categoryService.GetSubcategories(parentCategory);
-            Subcategories.ReplaceRange(subcategories);
+            Subcategories.Clear();
+            foreach (var subcategory in subcategories)
+                Subcategories.Add(subcategory);
         }
     }
 
@@ -230,55 +243,22 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
     /// Calls UpdateFilter().
     /// </summary>
     [RelayCommand]
-    void AmountDragCompleted()
+    async Task AmountDragCompleted()
     {
-        UpdateFilter();
+        await UpdateFilter();
     }
 
     /// <summary>
     /// Updates Transactions Filter.
     /// </summary>
     [RelayCommand]
-    void UpdateFilter()
+    async Task UpdateFilter()
     {
-        if (ListView.DataSource != null)
-        {
-            ListView.LoadMoreOption = LoadMoreOption.Auto;
-            ListView.DataSource.Filter = FilterTransactions;
-            ListView.DataSource.RefreshFilter();
-        }
-    }
-
-    /// <summary>
-    /// Checks if transaction matches filters.
-    /// </summary>
-    /// <param name="obj"></param>
-    bool FilterTransactions(object obj)
-    {
-        // if all are blank, show Transaction
-        if (Account == null && Category == null && Subcategory == null &&
-            AmountRangeStart == 0 && AmountRangeEnd == 500 && Payee == "")
-            return true;
-
-        var trans = obj as Transaction;
-        var amount = Math.Abs(trans.Amount);
-        var payee = Payee.ToLower();
-
-        // if fields aren't blank and match values, show Transaction
-        if (Account != null && trans.AccountID != Account.AccountID)
-            return false;
-        if (amount < AmountRangeStart && AmountRangeStart != 0)
-            return false;
-        if (amount > AmountRangeEnd && AmountRangeEnd != 500)
-            return false;
-        if (Category != null && trans.CategoryID != Category.CategoryID)
-            return false;
-        if (Subcategory != null && trans.SubcategoryID != Subcategory.CategoryID)
-            return false;
-        if (payee.Length > 0 && !trans.Payee.ToLower().Contains(payee))
-            return false;
-        
-        return true;
+        Transactions = await transactionService.GetFilteredTransactions(
+            from, to, Account?.AccountID, AmountRangeStart, AmountRangeEnd,
+            Category?.CategoryID, Subcategory?.CategoryID, Payee);
+        LoadedTransactions.Clear();
+        await LoadMoreItems();
     }
 
     /// <summary>
@@ -287,26 +267,12 @@ public partial class TransactionsViewModel : CommunityToolkit.Mvvm.ComponentMode
     [RelayCommand]
     async Task LoadMoreItems()
     {
-        ListView.IsLazyLoading = true;
-        await Task.Delay(250);
+        await Task.Delay(50);
         int index = LoadedTransactions.Count;
         int totalItems = Transactions.Count;
         int count = index + Constants.LOAD_COUNT >= totalItems ? totalItems - index : Constants.LOAD_COUNT;
-        AddTransactions(index, count);
-        ListView.IsLazyLoading = false;
-
-        // disables loading indicator
-        if (count == 0)
-            ListView.LoadMoreOption = LoadMoreOption.None;
-    }
-
-    /// <summary>
-    /// Copies transactions from Transactions to LoadedTransactions.
-    /// </summary>
-    /// <param name="index"></param>
-    /// <param name="count"></param>
-    void AddTransactions(int index, int count)
-    {
-        LoadedTransactions.AddRange(Transactions.Skip(index).Take(count));
+        var transactions = Transactions.Skip(index).Take(count);
+        foreach (var transaction in transactions)
+            LoadedTransactions.Add(transaction);
     }
 }

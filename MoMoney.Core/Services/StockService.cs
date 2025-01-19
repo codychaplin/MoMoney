@@ -9,9 +9,9 @@ namespace MoMoney.Core.Services;
 /// <inheritdoc />
 public class StockService : BaseService<StockService, UpdateStocksMessage, string>, IStockService
 {
-    public Dictionary<int, Stock> Stocks { get; private set; } = new();
+    public Dictionary<int, Stock> Stocks { get; private set; } = [];
 
-    public StockService(MoMoneydb _momoney, ILoggerService<StockService> _logger) : base(_momoney, _logger) { }
+    public StockService(IMoMoneydb _momoney, ILoggerService<StockService> _logger) : base(_momoney, _logger) { }
 
     protected override async Task Init()
     {
@@ -46,7 +46,7 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
             var dbStocks = await momoney.db.Table<Stock>().ToListAsync();
 
             // checks if names of any new stocks matches any names from db and throw exception if true
-            bool containsDuplicates = stocks.Any(s => dbStocks.Select(dbs => dbs.Symbol).Contains(s.Symbol));
+            bool containsDuplicates = stocks.Any(s => dbStocks.Select(dbs => dbs.FullName).Contains(s.FullName));
             if (containsDuplicates)
                 throw new DuplicateStockException("Imported stocks contained duplicates. Please try again");
 

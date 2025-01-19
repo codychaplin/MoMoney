@@ -19,8 +19,8 @@ public partial class InsightsViewModel : ObservableObject
     [ObservableProperty] ObservableCollection<IncomeExpenseData> incomeData = [];
     [ObservableProperty] ObservableCollection<IncomeExpenseData> expenseData = [];
 
-    [ObservableProperty] decimal totalIncome = 0;
-    [ObservableProperty] decimal totalExpense = 0;
+    [ObservableProperty] decimal totalIncome;
+    [ObservableProperty] decimal totalExpense;
 
     public InsightsViewModel(ITransactionService _transactionService, ILoggerService<InsightsViewModel> _logger)
     {
@@ -32,21 +32,29 @@ public partial class InsightsViewModel : ObservableObject
     /// <summary>
     /// Initializes year range
     /// </summary>
-    public async Task Init()
+    public async Task LoadInsights()
     {
-        var first = await transactionService.GetFirstTransaction();
-        if (first is null)
-            return;
-
-        // get date of first transaction, today's date, and add each year to collection
-        var start = first.Date;
-        var end = DateTime.Today;
-        while (end >= start)
+        try
         {
-            Years.Add(end.Year);
-            end = end.AddYears(-1);
+            var first = await transactionService.GetFirstTransaction();
+            if (first is null)
+                return;
+
+            // get date of first transaction, today's date, and add each year to collection
+            var start = first.Date;
+            var end = DateTime.Today;
+            while (end >= start)
+            {
+                Years.Add(end.Year);
+                end = end.AddYears(-1);
+            }
+            SelectedYear = DateTime.Today.Year;
         }
-        SelectedYear = DateTime.Today.Year;
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(LoadInsights), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     [RelayCommand]

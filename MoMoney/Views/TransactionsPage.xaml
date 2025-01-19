@@ -3,8 +3,8 @@
     x:Class="MoMoney.Views.TransactionsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
-    xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
+    xmlns:converters="clr-namespace:MoMoney.Converters"
+    xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
@@ -170,6 +170,36 @@
                         WidthRequest="250" />
 
                     <!--  payee search bar  -->
+                    <material:InputField WidthRequest="250">
+                        <Grid
+                            Margin="11,3,0,0"
+                            ColumnDefinitions="20,*"
+                            ColumnSpacing="2">
+                            <Image Source="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
+                            <input:SfAutocomplete
+                                Grid.Column="1"
+                                BackgroundColor="Transparent"
+                                ClearButtonIconColor="{AppThemeBinding Light={StaticResource Black},
+                                                                       Dark={StaticResource White}}"
+                                DropDownBackground="{AppThemeBinding Light={StaticResource White},
+                                                                     Dark={StaticResource Gray950}}"
+                                DropDownItemTextColor="{AppThemeBinding Light={StaticResource Black},
+                                                                        Dark={StaticResource White}}"
+                                IsClearButtonVisible="{Binding Payee.Length}"
+                                ItemsSource="{Binding Payees}"
+                                MaxDropDownHeight="250"
+                                Placeholder="Payee"
+                                PlaceholderColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                                   Dark={StaticResource Gray200}}"
+                                SelectionTextHighlightColor="#7742ba96"
+                                Stroke="Transparent"
+                                Text="{Binding Payee, Mode=TwoWay}"
+                                TextColor="{AppThemeBinding Light={StaticResource Black},
+                                                            Dark={StaticResource White}}"
+                                TextSearchMode="Contains" />
+                        </Grid>
+                    </material:InputField>
+                    <!--  payee search bar
                     <material:AutoCompleteTextField
                         x:Name="entPayee"
                         Title="Payee"
@@ -179,44 +209,28 @@
                         Text="{Binding Payee}"
                         TextColor="{AppThemeBinding Light={StaticResource Black},
                                                     Dark={StaticResource White}}"
-                        WidthRequest="250" />
+                        WidthRequest="250" />-->
 
                 </VerticalStackLayout>
             </Grid>
         </toolkit:Expander>
 
         <!--  list of transactions  -->
-        <listview:SfListView
+        <CollectionView
             x:Name="listView"
             Grid.Row="1"
             Margin="0,5"
-            ItemSize="75"
-            ItemSpacing="0"
             ItemTemplate="{StaticResource TransactionFrame}"
             ItemsSource="{Binding LoadedTransactions}"
-            LoadMoreCommand="{Binding LoadMoreItemsCommand}"
-            LoadMoreOption="None"
-            LoadMorePosition="End"
-            ScrollBarVisibility="Always">
-            <listview:SfListView.LoadMoreTemplate>
-                <DataTemplate>
-                    <!--  loading indicator  -->
-                    <listview:ListViewLoadMoreIndicator
-                        Margin="0,10"
-                        HeightRequest="30"
-                        IsRunning="{Binding IsLazyLoading, Source={x:Reference Name=listView}}"
-                        IsVisible="{Binding IsLazyLoading, Source={x:Reference Name=listView}}"
-                        WidthRequest="30"
-                        Color="{AppThemeBinding Light={StaticResource Primary},
-                                                Dark={StaticResource PrimaryDark}}" />
-                </DataTemplate>
-            </listview:SfListView.LoadMoreTemplate>
-            <listview:SfListView.EmptyView>
+            RemainingItemsThreshold="0"
+            RemainingItemsThresholdReachedCommand="{Binding LoadMoreItemsCommand}"
+            VerticalScrollBarVisibility="Always">
+            <CollectionView.EmptyView>
                 <Label
                     Margin="10,20"
                     HorizontalOptions="Center"
                     Text="No Transactions Found" />
-            </listview:SfListView.EmptyView>
-        </listview:SfListView>
+            </CollectionView.EmptyView>
+        </CollectionView>
     </Grid>
 </ContentView>

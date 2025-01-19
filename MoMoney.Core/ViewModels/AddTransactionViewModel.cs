@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -8,7 +8,7 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
-public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+public partial class AddTransactionViewModel : ObservableObject
 {
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
@@ -19,24 +19,24 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
 
     readonly IRecordAudioService recorder;
 
-    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
-    [ObservableProperty] ObservableRangeCollection<Category> categories = [];
-    [ObservableProperty] ObservableRangeCollection<Category> subcategories = [];
-    [ObservableProperty] ObservableRangeCollection<string> payees = [];
+    [ObservableProperty] ObservableCollection<Account> accounts = [];
+    [ObservableProperty] ObservableCollection<Category> categories = [];
+    [ObservableProperty] ObservableCollection<Category> subcategories = [];
+    [ObservableProperty] ObservableCollection<string> payees = [];
     
     [ObservableProperty] DateTime date;
-    [ObservableProperty] Account account = new();
+    [ObservableProperty] Account? account;
     [ObservableProperty] decimal amount;
-    [ObservableProperty] Category category = new();
-    [ObservableProperty] Category subcategory = new();
-    [ObservableProperty] string payee;
-    [ObservableProperty] Account transferAccount = new();
+    [ObservableProperty] Category? category;
+    [ObservableProperty] Category? subcategory;
+    [ObservableProperty] string payee = string.Empty;
+    [ObservableProperty] Account? transferAccount;
 
     [ObservableProperty] bool isWaitingForTranscription = false; // activity indicator runs while this is true
 
     public TransactionType transactionType = TransactionType.None;
 
-    ResponseIDs responseIDs = null;
+    ResponseIDs? responseIDs = null;
 
     public AddTransactionViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService,
         ILoggerService<AddTransactionViewModel> _logger, IOpenAIService _openAIService, IRecordAudioService _recordAudioService)
@@ -44,10 +44,8 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
-        logger = _logger;
-
         openAIService = _openAIService;
-
+        logger = _logger;
         recorder = _recordAudioService;
     }
 
@@ -57,7 +55,9 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
     public async Task GetAccounts()
     {
         var accounts = await accountService.GetActiveAccounts();
-        Accounts.ReplaceRange(accounts);
+        Accounts.Clear();
+        foreach (var account in accounts)
+            Accounts.Add(account);
     }
 
     /// <summary>
@@ -74,7 +74,8 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
             var income = await categoryService.GetCategory(Constants.INCOME_ID);
             Categories.Clear();
             Subcategories.Clear();
-            Categories.Add(income);
+            if (income != null)
+                Categories.Add(income);
             Subcategory = null;
             Category = income;
 
@@ -107,7 +108,8 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
             var transfer = await categoryService.GetCategory(Constants.TRANSFER_ID);
             Categories.Clear();
             Subcategories.Clear();
-            Categories.Add(transfer);
+            if (transfer != null)
+                Categories.Add(transfer);
             Subcategory = null;
             Category = transfer;
 
@@ -134,7 +136,9 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
         try
         {
             var categories = await categoryService.GetExpenseCategories();
-            Categories.ReplaceRange(categories);
+            Categories.Clear();
+            foreach (var category in categories)
+                Categories.Add(category);
             Subcategories.Clear();
             Category = null;
             Subcategory = null;
@@ -160,7 +164,9 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
                 return;
 
             var subcategories = await categoryService.GetSubcategories(parentCategory);
-            Subcategories.ReplaceRange(subcategories);
+            Subcategories.Clear();
+            foreach (var subcategory in subcategories)
+                Subcategories.Add(subcategory);
         }
         catch (Exception ex)
         {
@@ -230,7 +236,10 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
                 IsWaitingForTranscription = true;
                 var transactionResponse = await openAIService.DictateTransaction(audioData, transactionType);
                 if (transactionResponse == null)
+                {
+                    IsWaitingForTranscription = false;
                     return;
+                }
 
                 responseIDs = transactionResponse.ResponseIDs;
 
@@ -258,6 +267,9 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
                     var transferAccount = Accounts.FirstOrDefault(a => a.AccountName == transactionResponse.TransferAccount);
                     TransferAccount = transferAccount;
                 }
+
+                if (Date.Year != DateTime.Today.Year)
+                    await Utilities.DisplayToast("Warning: Date is not in the current year");
 
                 IsWaitingForTranscription = false;
             }
@@ -291,7 +303,7 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
     void ResetButtonColour(Button button)
     {
         button.SetAppTheme(Button.TextColorProperty, Colors.Black, Colors.White);
-        button.SetAppTheme(Button.BorderColorProperty, (Color)Utilities.Colours["Gray700"], (Color)Utilities.Colours["Gray200"]);
+        button.SetAppTheme(Button.BorderColorProperty, Utilities.GetColour("Gray400"), Utilities.GetColour("Gray200"));
     }
 
     /// <summary>
@@ -318,11 +330,11 @@ public partial class AddTransactionViewModel : CommunityToolkit.Mvvm.ComponentMo
             else if (Category.CategoryID == Constants.TRANSFER_ID) // transfer = 2 transactions
             {
                 // must cache observable properties because they reset after being added to db
-                var _date = Date;
-                var _accountID = Account.AccountID;
-                var _amount = Amount;
-                var _categoryID = Category.CategoryID;
-                var _transferID = TransferAccount.AccountID;
+                DateTime _date = Date;
+                int _accountID = Account.AccountID;
+                decimal _amount = Amount;
+                int _categoryID = Category.CategoryID;
+                int _transferID = TransferAccount!.AccountID;
                 ID = await transactionService.AddTransaction(_date, _accountID, -_amount, _categoryID, Constants.DEBIT_ID, string.Empty, _transferID);
                 await transactionService.AddTransaction(_date, _transferID, _amount, _categoryID, Constants.CREDIT_ID, string.Empty, _accountID);
             }

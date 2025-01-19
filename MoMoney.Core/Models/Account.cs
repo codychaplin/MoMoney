@@ -3,14 +3,16 @@ using CsvHelper.Configuration.Attributes;
 
 namespace MoMoney.Core.Models;
 
+#pragma warning disable CS0659
 public class Account
+#pragma warning restore CS0659
 {
     [PrimaryKey, AutoIncrement, CsvHelper.Configuration.Attributes.Ignore]
     public int AccountID { get; set; }
     [Index(0)]
-    public string AccountName { get; set; }
+    public string AccountName { get; set; } = string.Empty;
     [Index(1)]
-    public string AccountType { get; set; }
+    public string AccountType { get; set; } = string.Empty;
     [Index(2)]
     public decimal StartingBalance { get; set; }
     [CsvHelper.Configuration.Attributes.Ignore]
@@ -39,6 +41,20 @@ public class Account
         CurrentBalance = account.CurrentBalance;
         Enabled = account.Enabled;
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+            return false;
+
+        Account account = (Account)obj;
+        return AccountID == account.AccountID &&
+               AccountName == account.AccountName &&
+               AccountType == account.AccountType &&
+               StartingBalance == account.StartingBalance &&
+               CurrentBalance == account.CurrentBalance &&
+               Enabled == account.Enabled;
+    }
 }
 
 public enum AccountType // account types
@@ -51,6 +67,6 @@ public enum AccountType // account types
 
 public class AccountTotalModel
 {
-    public string AccountType { get; set; }
+    public string AccountType { get; set; } = string.Empty;
     public decimal Total { get; set; }
 }

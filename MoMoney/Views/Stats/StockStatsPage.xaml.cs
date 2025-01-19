@@ -1,3 +1,4 @@
+using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels.Stats;
 
 namespace MoMoney.Views.Stats;
@@ -11,8 +12,13 @@ public partial class StockStatsPage : ContentPage
 		InitializeComponent();
 		vm = _vm;
 		BindingContext = vm;
-		Loaded += async (s, e) => await vm.Init();
 	}
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await PageLoader.Load(vm.LoadStockStats);
+    }
 
     protected override void OnDisappearing()
     {

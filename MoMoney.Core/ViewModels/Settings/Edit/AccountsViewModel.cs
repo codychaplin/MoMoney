@@ -1,17 +1,17 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
-public partial class AccountsViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+public partial class AccountsViewModel : ObservableObject
 {
     readonly IAccountService accountService;
     readonly ILoggerService<AccountsViewModel> logger;
 
-    [ObservableProperty] ObservableRangeCollection<Account> accounts = [];
+    [ObservableProperty] ObservableCollection<Account> accounts = [];
 
     public AccountsViewModel(IAccountService _accountService, ILoggerService<AccountsViewModel> _logger)
     {
@@ -22,11 +22,10 @@ public partial class AccountsViewModel : CommunityToolkit.Mvvm.ComponentModel.Ob
     /// <summary>
     /// Gets updated accounts from database, orders them, and refreshes Accounts collection.
     /// </summary>
-    public async void RefreshAccounts(object sender, EventArgs e)
+    public async Task LoadAccounts()
     {
         try
         {
-            await Task.Delay(1);
             var accounts = await accountService.GetOrderedAccounts();
             if (!accounts.Any())
             {
@@ -34,11 +33,13 @@ public partial class AccountsViewModel : CommunityToolkit.Mvvm.ComponentModel.Ob
                 return;
             }
 
-            Accounts.ReplaceRange(accounts);
+            Accounts.Clear();
+            foreach (var account in accounts)
+                Accounts.Add(account);
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(RefreshAccounts), ex);
+            await logger.LogError(nameof(LoadAccounts), ex);
             await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
@@ -49,7 +50,7 @@ public partial class AccountsViewModel : CommunityToolkit.Mvvm.ComponentModel.Ob
     [RelayCommand]
     async Task GoToAddAccount()
     {
-        await Shell.Current.GoToAsync("EditAccountPage", new ShellNavigationQueryParameters() { { "Account", null } });
+        await Shell.Current.GoToAsync("EditAccountPage", new ShellNavigationQueryParameters() { { "Account", null! } });
     }
 
     /// <summary>

@@ -1,3 +1,4 @@
+using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels.Settings;
 
 namespace MoMoney.Views.Settings;
@@ -10,7 +11,6 @@ public partial class BulkEditingPage : ContentPage
 		InitializeComponent();
 		vm = _vm;
 		BindingContext = vm;
-		Loaded += vm.Init;
 
 		PckFindAccount.SelectedValueChanged += OnClear;
 		PckFindCategory.SelectedValueChanged += OnClear;
@@ -24,11 +24,17 @@ public partial class BulkEditingPage : ContentPage
 		PckReplaceCategory.SelectedValueChanged += vm.GetReplaceSubcategories;
 	}
 
-	void OnClear(object sender, object newValue)
+	void OnClear(object? sender, object newValue)
 	{
 		if (newValue == null)
 		{
 			vm.Clear();
         }
 	}
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+		await PageLoader.Load(vm.LoadBulkData);
+    }
 }

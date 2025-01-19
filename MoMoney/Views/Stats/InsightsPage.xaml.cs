@@ -5,11 +5,12 @@ namespace MoMoney.Views.Stats;
 
 public partial class InsightsPage : ContentPage
 {
-	public InsightsPage(InsightsViewModel vm)
+    InsightsViewModel vm;
+    public InsightsPage(InsightsViewModel _vm)
 	{
 		InitializeComponent();
-		BindingContext = vm;
-		Loaded += async (s, e) => await vm.Init();
+        vm = _vm;
+        BindingContext = vm;
 
 		if (Utilities.ShowValue)
 		{
@@ -23,4 +24,10 @@ public partial class InsightsPage : ContentPage
             
         }
 	}
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await PageLoader.Load(vm.LoadInsights);
+    }
 }

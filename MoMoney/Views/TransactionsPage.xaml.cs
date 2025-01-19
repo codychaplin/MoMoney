@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.Messaging;
-using Syncfusion.Maui.ListView.Helpers;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels;
 
@@ -13,17 +12,14 @@ public partial class TransactionsPage : ContentView
 
         HandlerChanged += (s, e) =>
         {
-            TransactionsViewModel vm = Handler.MauiContext.Services.GetService<TransactionsViewModel>();
+            TransactionsViewModel? vm = Handler?.MauiContext?.Services.GetService<TransactionsViewModel>();
+            if (vm == null)
+                return;
             BindingContext = vm;
 
-            vm.ListView = listView;
             _ = vm.Load();
             WeakReferenceMessenger.Default.Register<UpdateTransactionsMessage>(this, async (r, m) => await vm.Refresh(m.Value));
         };
-
-        // add padding to bottom of sfListView
-        var scrollview = listView.GetScrollView();
-        scrollview.Padding = new Thickness(0, 0, 0, 10);
 
         dtFrom.DateSelected += (s,e) => WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read)));
         dtTo.DateSelected += (s,e) => WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read)));

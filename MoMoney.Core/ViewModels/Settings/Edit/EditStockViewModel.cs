@@ -10,7 +10,7 @@ public partial class EditStockViewModel : BaseEditViewModel<IStockService, EditS
 {
     [ObservableProperty] Stock stock = new();
 
-    Stock initalStock = null;
+    Stock? initalStock = null;
 
     public EditStockViewModel(IStockService _stockService, ILoggerService<EditStockViewModel> _logger) : base(_stockService, _logger) { }
 
@@ -73,12 +73,14 @@ public partial class EditStockViewModel : BaseEditViewModel<IStockService, EditS
     [RelayCommand]
     protected override async Task Remove()
     {
-        bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{initalStock.Symbol}\"?", "Yes", "No");
+        bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{initalStock?.Symbol}\"?", "Yes", "No");
         if (!flag)
             return;
 
         try
         {
+            if (initalStock == null)
+                return;
             await service.RemoveStock(initalStock.StockID);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_DELETE_STOCK, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");

@@ -3,13 +3,13 @@
     x:Class="MoMoney.Views.Stats.BreakdownPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
-    xmlns:converters="clr-namespace:MoMoney.Core.Converters;assembly=MoMoney.Core"
+    xmlns:chart="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
+    xmlns:converters="clr-namespace:MoMoney.Converters"
     xmlns:data="clr-namespace:Syncfusion.Maui.DataSource;assembly=Syncfusion.Maui.DataSource"
     xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
-    xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView"
+    xmlns:tabView="clr-namespace:Syncfusion.Maui.Toolkit.TabView;assembly=Syncfusion.Maui.Toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
     Title="Breakdown"
     x:DataType="viewmodel:BreakdownViewModel"
@@ -31,7 +31,7 @@
                     Padding="10,0"
                     ColumnDefinitions="45,*,*"
                     ColumnSpacing="10">
-                    <Frame
+                    <Border
                         Margin="0"
                         Padding="0"
                         Background="{Binding Color}"
@@ -42,7 +42,7 @@
                             Text="{Binding Percentage, StringFormat='{0:P0}'}"
                             TextColor="White"
                             VerticalOptions="Center" />
-                    </Frame>
+                    </Border>
                     <Label
                         Grid.Column="1"
                         HorizontalOptions="Start"
@@ -64,19 +64,21 @@
         <!--  title  -->
         <Grid>
             <Grid.Resources>
-                <Style BasedOn="{StaticResource imgBtnTinted}" TargetType="ImageButton">
-                    <Setter Property="WidthRequest" Value="50" />
-                    <Setter Property="HeightRequest" Value="50" />
+                <Style TargetType="Button">
+                    <Setter Property="WidthRequest" Value="40" />
+                    <Setter Property="HeightRequest" Value="40" />
+                    <Setter Property="BackgroundColor" Value="Transparent" />
+                    <Setter Property="TextColor" Value="{AppThemeBinding Light=Black, Dark=White}" />
+                    <Setter Property="FontSize" Value="30" />
+                    <Setter Property="FontFamily" Value="MaterialRegular" />
                     <Setter Property="Padding" Value="5" />
                     <Setter Property="Margin" Value="10,0,10,0" />
                 </Style>
             </Grid.Resources>
-            <ImageButton
+            <Button
                 Command="{Binding DecrementCommand}"
-                HeightRequest="30"
                 HorizontalOptions="Start"
-                Source="{FontImageSource FontFamily=MaterialRegular,
-                                         Glyph={x:Static m:MaterialRegular.Chevron_left}}" />
+                Text="{x:Static m:MaterialRegular.Chevron_left}" />
             <Label
                 FontAttributes="Bold"
                 FontSize="20"
@@ -89,12 +91,10 @@
                     </MultiBinding>
                 </Label.Text>
             </Label>
-            <ImageButton
+            <Button
                 Command="{Binding IncrementCommand}"
-                HeightRequest="30"
                 HorizontalOptions="End"
-                Source="{FontImageSource FontFamily=MaterialRegular,
-                                         Glyph={x:Static m:MaterialRegular.Chevron_right}}" />
+                Text="{x:Static m:MaterialRegular.Chevron_right}" />
         </Grid>
 
         <tabView:SfTabView
@@ -131,9 +131,8 @@
 
             <!--  expense tab  -->
             <tabView:SfTabItem Header="{Binding ExpenseSum, Converter={StaticResource ShowValue}, StringFormat='Expenses {0:C2}'}">
-                <!--  doughnut chart  -->
                 <Grid RowDefinitions="*,*">
-                    <Frame Margin="0" Padding="0">
+                    <Border Margin="0" Padding="0">
                         <chart:SfCircularChart VerticalOptions="Center">
                             <chart:DoughnutSeries
                                 InnerRadius="0.6"
@@ -145,12 +144,12 @@
                                 YBindingPath="Amount">
                                 <chart:PieSeries.DataLabelSettings>
                                     <chart:CircularDataLabelSettings
-                                        ConnectorType="Line"
-                                        LabelPlacement="Outer"
+                                        LabelPosition="Outside"
+                                        SmartLabelAlignment="Shift"
                                         UseSeriesPalette="True">
                                         <chart:CircularDataLabelSettings.LabelStyle>
                                             <chart:ChartDataLabelStyle
-                                                FontSize="11"
+                                                FontSize="12"
                                                 LabelFormat="{Binding ShowValue}"
                                                 TextColor="White" />
                                         </chart:CircularDataLabelSettings.LabelStyle>
@@ -158,10 +157,10 @@
                                 </chart:PieSeries.DataLabelSettings>
                             </chart:DoughnutSeries>
                         </chart:SfCircularChart>
-                    </Frame>
+                    </Border>
 
                     <!--  collection  -->
-                    <Frame
+                    <Border
                         Grid.Row="1"
                         Margin="0,10"
                         Padding="0">
@@ -171,7 +170,7 @@
                             RowHeight="45"
                             SelectionMode="None"
                             SeparatorVisibility="Default" />
-                    </Frame>
+                    </Border>
                 </Grid>
             </tabView:SfTabItem>
 
@@ -179,10 +178,10 @@
             <tabView:SfTabItem Header="{Binding IncomeSum, Converter={StaticResource ShowValue}, StringFormat='Income {0:C2}'}">
                 <!--  doughnut chart  -->
                 <Grid RowDefinitions="*,*">
-                    <Frame Margin="0" Padding="0">
+                    <Border Margin="0" Padding="0">
                         <chart:SfCircularChart VerticalOptions="Center">
                             <chart:DoughnutSeries
-                                InnerRadius="0.6"
+                                InnerRadius="0.5"
                                 ItemsSource="{Binding IncomeData}"
                                 PaletteBrushes="{Binding IncomePalette}"
                                 Radius="0.7"
@@ -191,12 +190,12 @@
                                 YBindingPath="Amount">
                                 <chart:PieSeries.DataLabelSettings>
                                     <chart:CircularDataLabelSettings
-                                        ConnectorType="Line"
-                                        LabelPlacement="Outer"
+                                        LabelPosition="Outside"
+                                        SmartLabelAlignment="Shift"
                                         UseSeriesPalette="True">
                                         <chart:CircularDataLabelSettings.LabelStyle>
                                             <chart:ChartDataLabelStyle
-                                                FontSize="11"
+                                                FontSize="12"
                                                 LabelFormat="{Binding ShowValue}"
                                                 TextColor="White" />
                                         </chart:CircularDataLabelSettings.LabelStyle>
@@ -204,10 +203,10 @@
                                 </chart:PieSeries.DataLabelSettings>
                             </chart:DoughnutSeries>
                         </chart:SfCircularChart>
-                    </Frame>
+                    </Border>
 
                     <!--  collection  -->
-                    <Frame
+                    <Border
                         Grid.Row="1"
                         Margin="0,10"
                         Padding="0">
@@ -217,7 +216,7 @@
                             RowHeight="45"
                             SelectionMode="None"
                             SeparatorVisibility="Default" />
-                    </Frame>
+                    </Border>
                 </Grid>
             </tabView:SfTabItem>
         </tabView:SfTabView>

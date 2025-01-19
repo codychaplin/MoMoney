@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -10,9 +10,9 @@ namespace MoMoney.Core.ViewModels.Settings.Edit;
 
 public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService, EditCategoryViewModel>
 {
-    [ObservableProperty] ObservableRangeCollection<Category> parents = []; // list of categories
+    [ObservableProperty] ObservableCollection<Category> parents = []; // list of categories
     [ObservableProperty] Category category = new(); // selected category
-    [ObservableProperty] Category parent; // category parent
+    [ObservableProperty] Category? parent; // category parent
 
     public EditCategoryViewModel(ICategoryService _categoryService, ILoggerService<EditCategoryViewModel> _logger) : base(_categoryService, _logger) { }
 
@@ -20,37 +20,34 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
     /// Controls whether the view is in edit mode or not.
     /// </summary>
     /// <param name="query"></param>
-    public override void ApplyQueryAttributes(IDictionary<string, object> query)
+    public override async void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (query["Category"] is not Category category)
+        try
         {
-            Task.Run(GetParents);
-            return;
-        }
-
-        IsEditMode = true;
-        Category = new(category);
-
-        Task.Run(async () =>
-        {
-            try
+            if (query["Category"] is not Category category)
             {
                 await GetParents();
+                return;
+            }
 
-                if (!string.IsNullOrEmpty(Category.ParentName))
-                    Parent = await service.GetParentCategory(Category.ParentName);
-            }
-            catch (CategoryNotFoundException ex)
-            {
-                await logger.LogError(nameof(ApplyQueryAttributes), ex);
-                await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
-            }
-            catch (Exception ex)
-            {
-                await logger.LogError(nameof(ApplyQueryAttributes), ex);
-                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
-            }
-        });
+            IsEditMode = true;
+            Category = new(category);
+
+            await GetParents();
+
+            if (!string.IsNullOrEmpty(Category.ParentName))
+                Parent = await service.GetParentCategory(Category.ParentName);
+        }
+        catch (CategoryNotFoundException ex)
+        {
+            await logger.LogError(nameof(ApplyQueryAttributes), ex);
+            await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(ApplyQueryAttributes), ex);
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
@@ -61,7 +58,9 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
         try
         {
             var categories = await service.GetParentCategories();
-            Parents.ReplaceRange(categories);
+            Parents.Clear();
+            foreach (var category in categories)
+                Parents.Add(category);
         }
         catch (Exception ex)
         {
@@ -78,7 +77,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
     {
         try
         {
-            await service.AddCategory(Category.CategoryName, Parent.CategoryName);
+            await service.AddCategory(Category.CategoryName, Parent?.CategoryName ?? string.Empty);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_CATEGORY, FirebaseParameters.GetFirebaseParameters());
 
             // if parent category, notify the user that it won't show up until a subcategory is added
@@ -114,7 +113,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
 
         try
         {
-            Category.ParentName = Parent.CategoryName;
+            Category.ParentName = Parent?.CategoryName ?? string.Empty;
             await service.UpdateCategory(Category);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_EDIT_CATEGORY, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");

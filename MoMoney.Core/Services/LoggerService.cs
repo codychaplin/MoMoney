@@ -14,10 +14,10 @@ namespace MoMoney.Core.Services;
 /// <inheritdoc />
 public class LoggerService<T> : ILoggerService<T>
 {
-    readonly MoMoneydb momoney;
+    readonly IMoMoneydb momoney;
     readonly string className;
 
-    public LoggerService(MoMoneydb _momoney)
+    public LoggerService(IMoMoneydb _momoney)
     {
         momoney = _momoney;
         className = typeof(T).Name;
@@ -52,8 +52,8 @@ public class LoggerService<T> : ILoggerService<T>
 
     public async Task LogError(string functionName, Exception ex)
     {
-        // if SQLite or null reference exception, log as critical, otherwise log as error
-        if (ex is SQLite.SQLiteException || ex is NullReferenceException)
+        // if SQLite, log as critical, otherwise log as error
+        if (ex is SQLite.SQLiteException)
         {
             await LogCritical(functionName, ex);
         }
@@ -70,7 +70,7 @@ public class LoggerService<T> : ILoggerService<T>
         LogFirebaseEvent(FirebaseParameters.EVENT_CRITICAL_LOG, FirebaseParameters.GetFirebaseParameters(ex, functionName, className), ex);
     }
 
-    public void LogFirebaseEvent(string eventName, IDictionary<string, string> parameters, Exception exception = null)
+    public void LogFirebaseEvent(string eventName, IDictionary<string, string> parameters, Exception? exception = null)
     {
 #if ANDROID && RELEASE
         var firebaseAnalytics = FirebaseAnalytics.GetInstance(Platform.CurrentActivity);
@@ -115,6 +115,24 @@ public class LoggerService<T> : ILoggerService<T>
     {
         await momoney.Init();
         return await momoney.db.Table<Log>().OrderByDescending(l => l.Timestamp).ToListAsync();
+    }
+
+    public async Task<List<Log>> GetFilteredLogs(LogLevel logLevel, string? className, string? exceptionType)
+    {
+        await momoney.Init();
+
+        var logQuery = momoney.db.Table<Log>();
+        if (logLevel != LogLevel.None)
+            logQuery = logQuery.Where(l => l.Level == logLevel);
+        if (!string.IsNullOrEmpty(className))
+            logQuery = logQuery.Where(l => l.ClassName == className);
+        if (!string.IsNullOrEmpty(exceptionType))
+        {
+            string ex = string.IsNullOrEmpty(exceptionType) ? "None" : exceptionType;
+            logQuery = logQuery.Where(l => l.ExceptionType == ex);
+        }
+
+        return await logQuery.OrderByDescending(l => l.Timestamp).ToListAsync();
     }
 
     public async Task RemoveLogs()

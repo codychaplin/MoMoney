@@ -10,7 +10,7 @@ public interface IOpenAIService
     /// <param name="audioData"></param>
     /// <param name="type"></param>
     /// <returns>TransactionResponse object</returns>
-    Task<TransactionResponse> DictateTransaction(BinaryData audioData, TransactionType type);
+    Task<TransactionResponse?> DictateTransaction(BinaryData audioData, TransactionType type);
 
     /// <summary>
     /// Adds TransactionID to the corresponding Responses.
