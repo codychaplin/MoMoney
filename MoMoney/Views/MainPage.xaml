@@ -6,6 +6,7 @@
     xmlns:behavior="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:tabView="clr-namespace:Syncfusion.Maui.Toolkit.TabView;assembly=Syncfusion.Maui.Toolkit"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
     xmlns:views="clr-namespace:MoMoney.Views"
@@ -15,109 +16,104 @@
     </ContentPage.Behaviors>
 
     <!--  tab bar  -->
-    <material:TabView
+    <tabView:SfTabView
         x:Name="MainTabView"
-        CachingStrategy="CacheOnLayout"
-        TabPlacement="Bottom">
+        IndicatorBackground="{AppThemeBinding Light={StaticResource Primary},
+                                              Dark={StaticResource PrimaryDark}}"
+        TabBarPlacement="Bottom">
 
-        <material:TabView.TabHeaderItemTemplate>
-            <DataTemplate x:DataType="material:TabItem">
-                <Grid
-                    Margin="0"
-                    Padding="0"
-                    HeightRequest="50"
-                    RowDefinitions="*,4">
-                    <Grid.Triggers>
-                        <DataTrigger
-                            Binding="{Binding IsSelected}"
-                            TargetType="Grid"
-                            Value="True">
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
-                        </DataTrigger>
-                        <DataTrigger
-                            Binding="{Binding IsSelected}"
-                            TargetType="Grid"
-                            Value="False">
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
-                        </DataTrigger>
-                    </Grid.Triggers>
-                    <Button
-                        Margin="0"
-                        Padding="0"
-                        Command="{Binding Command}"
-                        CornerRadius="0"
-                        FontFamily="MaterialRegular"
-                        Text="{Binding Title}">
-                        <Button.Triggers>
-                            <DataTrigger
-                                Binding="{Binding IsSelected}"
-                                TargetType="Button"
-                                Value="True">
-                                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
-                                <Setter Property="FontSize" Value="30" />
-                            </DataTrigger>
-                            <DataTrigger
-                                Binding="{Binding IsSelected}"
-                                TargetType="Button"
-                                Value="False">
-                                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                                <Setter Property="FontSize" Value="28" />
-                            </DataTrigger>
-                        </Button.Triggers>
-                    </Button>
-                </Grid>
-            </DataTemplate>
-        </material:TabView.TabHeaderItemTemplate>
+        <!--  header  -->
+        <tabView:SfTabView.Resources>
+            <Style TargetType="tabView:SfTabItem">
 
-        <!--  home page  -->
-        <material:TabItem
-            x:Name="HomePageTab"
-            Title="{x:Static m:MaterialRegular.Home}"
-            Data="0">
-            <material:TabItem.Content>
-                <views:HomePage />
-            </material:TabItem.Content>
-        </material:TabItem>
+                <!--  changes text colour when selected  -->
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup>
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray300}}" />
+                                    <Setter Property="Scale" Value="1.1" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Selected">
+                                <VisualState.Setters>
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                                    <Setter Property="Scale" Value="1.3" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+        </tabView:SfTabView.Resources>
 
-        <!--  transactions page  -->
-        <material:TabItem
-            x:Name="TransactionsPageTab"
-            Title="{x:Static m:MaterialRegular.Article}"
-            Data="1">
-            <material:TabItem.Content>
-                <views:TransactionsPage />
-            </material:TabItem.Content>
-        </material:TabItem>
+        <tabView:SfTabView.Items>
+            <!--  home page  -->
+            <tabView:SfTabItem x:Name="HomePageTab">
+                <tabView:SfTabItem.ImageSource>
+                    <FontImageSource
+                        FontFamily="MaterialRound"
+                        Glyph="{x:Static m:MaterialRound.Home}"
+                        Color="{Binding Source={x:Reference HomePageTab}, Path=TextColor}" />
+                </tabView:SfTabItem.ImageSource>
+                <tabView:SfTabItem.Content>
+                    <views:HomePage />
+                </tabView:SfTabItem.Content>
+            </tabView:SfTabItem>
 
-        <!--  add transaction page  -->
-        <material:TabItem
-            x:Name="AddTransactionPageTab"
-            Title="{x:Static m:MaterialRegular.Add_circle}"
-            Data="2">
-            <material:TabItem.Content>
-                <views:AddTransactionPage />
-            </material:TabItem.Content>
-        </material:TabItem>
+            <!--  transactions page  -->
+            <tabView:SfTabItem x:Name="TransactionsPageTab">
+                <tabView:SfTabItem.ImageSource>
+                    <FontImageSource
+                        FontFamily="MaterialRound"
+                        Glyph="{x:Static m:MaterialRound.Article}"
+                        Color="{Binding Source={x:Reference TransactionsPageTab}, Path=TextColor}" />
+                </tabView:SfTabItem.ImageSource>
+                <tabView:SfTabItem.Content>
+                    <views:TransactionsPage />
+                </tabView:SfTabItem.Content>
+            </tabView:SfTabItem>
 
-        <!--  stats page  -->
-        <material:TabItem
-            x:Name="StatsPageTab"
-            Title="{x:Static m:MaterialRegular.Donut_small}"
-            Data="3">
-            <material:TabItem.Content>
-                <views:StatsPage />
-            </material:TabItem.Content>
-        </material:TabItem>
+            <!--  add transaction page  -->
+            <tabView:SfTabItem x:Name="AddTransactionPageTab">
+                <tabView:SfTabItem.ImageSource>
+                    <FontImageSource
+                        FontFamily="MaterialRound"
+                        Glyph="{x:Static m:MaterialRound.Add_circle}"
+                        Color="{Binding Source={x:Reference AddTransactionPageTab}, Path=TextColor}" />
+                </tabView:SfTabItem.ImageSource>
+                <tabView:SfTabItem.Content>
+                    <views:AddTransactionPage />
+                </tabView:SfTabItem.Content>
+            </tabView:SfTabItem>
 
-        <!--  settings page  -->
-        <material:TabItem
-            x:Name="SettingsPageTab"
-            Title="{x:Static m:MaterialRegular.Settings}"
-            Data="4">
-            <material:TabItem.Content>
-                <views:SettingsPage />
-            </material:TabItem.Content>
-        </material:TabItem>
+            <!--  stats page  -->
+            <tabView:SfTabItem x:Name="StatsPageTab">
+                <tabView:SfTabItem.ImageSource>
+                    <FontImageSource
+                        FontFamily="MaterialRound"
+                        Glyph="{x:Static m:MaterialRound.Donut_small}"
+                        Color="{Binding Source={x:Reference StatsPageTab}, Path=TextColor}" />
+                </tabView:SfTabItem.ImageSource>
+                <tabView:SfTabItem.Content>
+                    <views:StatsPage />
+                </tabView:SfTabItem.Content>
+            </tabView:SfTabItem>
 
-    </material:TabView>
+            <!--  settings page  -->
+            <tabView:SfTabItem x:Name="SettingsPageTab">
+                <tabView:SfTabItem.ImageSource>
+                    <FontImageSource
+                        FontFamily="MaterialRound"
+                        Glyph="{x:Static m:MaterialRound.Settings}"
+                        Color="{Binding Source={x:Reference SettingsPageTab}, Path=TextColor}" />
+                </tabView:SfTabItem.ImageSource>
+                <tabView:SfTabItem.Content>
+                    <views:SettingsPage />
+                </tabView:SfTabItem.Content>
+            </tabView:SfTabItem>
+
+        </tabView:SfTabView.Items>
+    </tabView:SfTabView>
 </ContentPage>

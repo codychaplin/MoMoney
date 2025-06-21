@@ -7,6 +7,8 @@
 ### Changes
 
 * Updated converter names
+* Updated to .NET 9
+* Switched to Syncfusion tabs
 
 # MoMoney v1.2.2
 

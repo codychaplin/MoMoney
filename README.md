@@ -1,4 +1,4 @@
-# MoMoney v1.2.2
+# MoMoney v1.2.3
 ## About
 MoMoney is a personal finance tracker Android app made with .NET MAUI.
 Works on Android 10.0 and later.
@@ -30,7 +30,7 @@ Works on Android 10.0 and later.
 * NOTE: Uses Google Finance's exchange names
 
 ## Technologies Used
-* .NET 8
+* .NET 9
 * SQLite
 * CommunityToolkit.Maui
 * Syncfusion.Maui.Toolkit

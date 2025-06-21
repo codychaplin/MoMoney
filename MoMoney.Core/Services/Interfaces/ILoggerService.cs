@@ -39,7 +39,7 @@ public interface ILoggerService<T>
     /// <param name="eventName"></param>
     /// <param name="parameters"></param>
     /// <param name="exception"></param>
-    void LogFirebaseEvent(string eventName, IDictionary<string, string> parameters, Exception exception = null);
+    void LogFirebaseEvent(string eventName, IDictionary<string, string> parameters, Exception? exception = null);
 
     /// <summary>
     /// Adds a list of logs to the db.
