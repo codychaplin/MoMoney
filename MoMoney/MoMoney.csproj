@@ -16,7 +16,7 @@
 		<ApplicationIdGuid>060046E2-FDB6-4E63-9250-A1589815AA45</ApplicationIdGuid>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.2.3</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">29.0</SupportedOSPlatformVersion>
@@ -31,7 +31,6 @@
 		<AndroidSigningKeyPass>apps-pherda</AndroidSigningKeyPass>
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
 		<AndroidEnableMultiDex>True</AndroidEnableMultiDex>
-		<ApplicationDisplayVersion>1.2.3</ApplicationDisplayVersion>
 		<RunAOTCompilation>False</RunAOTCompilation>
 		<AndroidUseAapt2>True</AndroidUseAapt2>
 	</PropertyGroup>
@@ -39,7 +38,6 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
 		<AndroidSigningStorePass></AndroidSigningStorePass>
 		<AndroidEnableMultiDex>True</AndroidEnableMultiDex>
-		<ApplicationDisplayVersion>1.2.3</ApplicationDisplayVersion>
 		<AndroidUseAapt2>True</AndroidUseAapt2>
 	</PropertyGroup>
 
