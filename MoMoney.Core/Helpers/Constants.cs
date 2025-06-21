@@ -5,11 +5,8 @@ namespace MoMoney.Core.Helpers;
 public static class Constants
 {
     // db constants
-    public const string dbName = "MoMoney.db";
-    public const SQLite.SQLiteOpenFlags Flags =
-    SQLite.SQLiteOpenFlags.ReadWrite |
-    SQLite.SQLiteOpenFlags.Create |
-    SQLite.SQLiteOpenFlags.SharedCache;
+    public const string dbName = "momoney.db";
+    public const string dbEncryptionKey = "EncryptionKey";
     public const string DefaultDbPath = ":memory:";
     public static string DatabasePath => Path.Combine(FileSystem.AppDataDirectory, dbName);
 

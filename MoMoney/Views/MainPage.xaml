@@ -32,7 +32,7 @@
                         <VisualStateGroup>
                             <VisualState x:Name="Normal">
                                 <VisualState.Setters>
-                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray300}}" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray200}}" />
                                     <Setter Property="Scale" Value="1.1" />
                                 </VisualState.Setters>
                             </VisualState>

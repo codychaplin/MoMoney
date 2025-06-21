@@ -9,6 +9,7 @@
 * Updated converter names
 * Updated to .NET 9
 * Switched to Syncfusion tabs
+* Added db encryption
 
 # MoMoney v1.2.2
 

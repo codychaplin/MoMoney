@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
+using MoMoney.Core.Data;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels;
 
@@ -13,11 +14,13 @@ public partial class HomePage : ContentView
         HandlerChanged += async (s, e) =>
         {
             HomeViewModel? vm = Handler?.MauiContext?.Services.GetService<HomeViewModel>();
-            if (vm == null)
+            IMoMoneydb? momoneyDb = Handler?.MauiContext?.Services.GetService<IMoMoneydb>();
+            if (vm == null || momoneyDb == null)
                 return;
             BindingContext = vm;
 
             Shell.Current.IsBusy = true;
+            await momoneyDb.Init(false);
             await vm.Refresh();
             Shell.Current.IsBusy = false;
 

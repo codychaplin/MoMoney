@@ -7,12 +7,16 @@ namespace MoMoney;
 public partial class App : Application
 {
     public App()
-	{
+    {
         Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(Secret.SfLicenseKey);
-
         InitializeComponent();
-		MainPage = new AppShell();
     }
+
+    protected override Window CreateWindow(IActivationState? activationState)
+    {
+        return new Window(new AppShell());
+    }
+
 
     /// <summary>
     /// Goes to EditTransactionsPage with a transaction ID as the parameter.
