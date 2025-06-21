@@ -12,7 +12,7 @@
     x:DataType="viewmodel:InsightsViewModel">
 
     <ContentPage.Resources>
-        <converters:ShowValueConverter x:Key="ShowValue" />
+        <converters:ShowValueConverter x:Key="ShowValueConverter" />
     </ContentPage.Resources>
 
     <Grid
@@ -156,7 +156,7 @@
                         Grid.Column="2"
                         FontSize="18"
                         HorizontalOptions="End"
-                        Text="{Binding TotalIncome, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                        Text="{Binding TotalIncome, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
                         VerticalOptions="Center" />
                 </Grid>
             </Border>
@@ -179,7 +179,7 @@
                         Grid.Column="2"
                         FontSize="18"
                         HorizontalOptions="End"
-                        Text="{Binding TotalExpense, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                        Text="{Binding TotalExpense, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
                         VerticalOptions="Center" />
                 </Grid>
             </Border>

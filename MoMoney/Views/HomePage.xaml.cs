@@ -22,7 +22,6 @@ public partial class HomePage : ContentView
             Shell.Current.IsBusy = false;
 
             // refresh when dates change, or when it is triggered by UpdateHomePageMessage
-            WeakReferenceMessenger.Default.Register<UpdateHomePageMessage>(this, async (r, m) => await vm.Refresh());
             dtFrom.DateSelected += (s, e) => WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
             dtTo.DateSelected += (s, e) => WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
         };

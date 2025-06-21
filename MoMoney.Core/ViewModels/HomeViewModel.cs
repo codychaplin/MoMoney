@@ -44,6 +44,8 @@ public partial class HomeViewModel : ObservableObject
         EndDate = DateTime.Today;
 
         logger.LogFirebaseEvent(FirebaseParameters.EVENT_OPEN_APP, FirebaseParameters.GetFirebaseParameters());
+
+        WeakReferenceMessenger.Default.Register<UpdateHomePageMessage>(this, async (r, m) => await Refresh());
     }
 
     /// <summary>
@@ -88,12 +90,6 @@ public partial class HomeViewModel : ObservableObject
     async Task CalculateNetworthAndAccountBalances()
     {
         // calculate current networth
-        if (Utilities.ShowValue == false)
-        {
-            currentNetworth = 0;
-            return;
-        }
-
         var accounts = await accountService.GetActiveAccounts();
         currentNetworth = accounts.Sum(acc => acc.CurrentBalance);
 
@@ -107,7 +103,11 @@ public partial class HomeViewModel : ObservableObject
             })
             .Where(acc => acc != null).ToList();
 
-        if (EndDate >= latestTransactionDate)
+        if (Utilities.ShowValue == false)
+        {
+            NetworthAtEndDate = 0;
+        }
+        else if (EndDate >= latestTransactionDate)
         {
             // if the end date is >= the date of the latest transaction, networth is current networth
             NetworthAtEndDate = currentNetworth;

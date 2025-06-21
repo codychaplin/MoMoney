@@ -12,7 +12,7 @@
     <ContentPage.Resources>
 
         <!--  converter  -->
-        <converters:ShowValueConverter x:Key="ShowValue" />
+        <converters:ShowValueConverter x:Key="ShowValueConverter" />
 
         <!--  styles  -->
         <Style
@@ -51,7 +51,7 @@
                     <Label
                         Grid.Column="1"
                         HorizontalOptions="End"
-                        Text="{Binding CurrentBalance, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
+                        Text="{Binding CurrentBalance, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
                 </Grid>
             </DataTemplate>
         </ResourceDictionary>
@@ -84,14 +84,14 @@
                         Margin="0"
                         FontSize="20"
                         Style="{StaticResource lblAccountName}"
-                        Text="{Binding Networth, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
+                        Text="{Binding Networth, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
                 </Grid>
             </Border>
 
             <!--  checkings  -->
             <Grid IsVisible="{Binding CheckingsAccounts.Count}">
                 <Label Style="{StaticResource lblGroupTitle}" Text="Checkings" />
-                <Label Style="{StaticResource lblAccountName}" Text="{Binding CheckingsSum, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
+                <Label Style="{StaticResource lblAccountName}" Text="{Binding CheckingsSum, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
             </Grid>
             <Border IsVisible="{Binding CheckingsAccounts.Count}">
                 <CollectionView ItemsSource="{Binding CheckingsAccounts}" />
@@ -100,7 +100,7 @@
             <!--  savings  -->
             <Grid IsVisible="{Binding SavingsAccounts.Count}">
                 <Label Style="{StaticResource lblGroupTitle}" Text="Savings" />
-                <Label Style="{StaticResource lblAccountName}" Text="{Binding SavingsSum, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
+                <Label Style="{StaticResource lblAccountName}" Text="{Binding SavingsSum, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
             </Grid>
             <Border IsVisible="{Binding SavingsAccounts.Count}">
                 <CollectionView ItemsSource="{Binding SavingsAccounts}" />
@@ -109,7 +109,7 @@
             <!--  credit  -->
             <Grid IsVisible="{Binding CreditAccounts.Count}">
                 <Label Style="{StaticResource lblGroupTitle}" Text="Credit" />
-                <Label Style="{StaticResource lblAccountName}" Text="{Binding CreditSum, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
+                <Label Style="{StaticResource lblAccountName}" Text="{Binding CreditSum, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
             </Grid>
             <Border IsVisible="{Binding CreditAccounts.Count}">
                 <CollectionView ItemsSource="{Binding CreditAccounts}" />
@@ -118,7 +118,7 @@
             <!--  investment  -->
             <Grid IsVisible="{Binding InvestmentAccounts.Count}">
                 <Label Style="{StaticResource lblGroupTitle}" Text="Investments" />
-                <Label Style="{StaticResource lblAccountName}" Text="{Binding InvestmentSum, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
+                <Label Style="{StaticResource lblAccountName}" Text="{Binding InvestmentSum, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
             </Grid>
             <Border IsVisible="{Binding InvestmentAccounts.Count}">
                 <CollectionView ItemsSource="{Binding InvestmentAccounts}" />

@@ -19,11 +19,11 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <converters:IconConverter x:Key="Icon" />
-            <converters:ShowValueConverter x:Key="ShowValue" />
-            <converters:IdToAccountConverter x:Key="IdToAccount" />
-            <converters:AmountColourConverter x:Key="AmountColour" />
-            <converters:IdToCategoryConverter x:Key="IdToCategory" />
+            <converters:IconConverter x:Key="IconConverter" />
+            <converters:ShowValueConverter x:Key="ShowValueConverter" />
+            <converters:IdToAccountConverter x:Key="IdToAccountConverter" />
+            <converters:AmountColourConverter x:Key="AmountColourConverter" />
+            <converters:IdToCategoryConverter x:Key="IdToCategoryConverter" />
 
             <!--  title  -->
             <Style x:Key="lblTitle" TargetType="Label">
@@ -134,7 +134,7 @@
                         <!--  icon  -->
                         <Image Scale="0.75">
                             <Image.Source>
-                                <MultiBinding Converter="{StaticResource Icon}">
+                                <MultiBinding Converter="{StaticResource IconConverter}">
                                     <Binding Path="CategoryID" />
                                     <Binding Path="SubcategoryID" />
                                 </MultiBinding>
@@ -148,7 +148,7 @@
                             HorizontalTextAlignment="Start"
                             MinimumWidthRequest="180"
                             Style="{StaticResource lblTile}"
-                            Text="{Binding SubcategoryID, Converter={StaticResource IdToCategory}}"
+                            Text="{Binding SubcategoryID, Converter={StaticResource IdToCategoryConverter}}"
                             VerticalOptions="Start" />
                         <!--  account  -->
                         <Label
@@ -157,7 +157,7 @@
                             HorizontalTextAlignment="Start"
                             MinimumWidthRequest="150"
                             Style="{StaticResource lblTile}"
-                            Text="{Binding AccountID, Converter={StaticResource IdToAccount}}"
+                            Text="{Binding AccountID, Converter={StaticResource IdToAccountConverter}}"
                             TextColor="{AppThemeBinding Light={StaticResource Gray500},
                                                         Dark={StaticResource Gray300}}"
                             VerticalOptions="End" />
@@ -169,8 +169,8 @@
                             HorizontalTextAlignment="End"
                             MinimumWidthRequest="100"
                             Style="{StaticResource lblTile}"
-                            Text="{Binding Amount, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
-                            TextColor="{Binding CategoryID, Converter={StaticResource AmountColour}}"
+                            Text="{Binding Amount, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
+                            TextColor="{Binding CategoryID, Converter={StaticResource AmountColourConverter}}"
                             VerticalOptions="Start" />
                         <!--  date  -->
                         <Label

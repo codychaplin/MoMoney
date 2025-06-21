@@ -1,3 +1,13 @@
+# MoMoney v1.2.3
+
+### Fixes
+
+* Fixed some sensitive values showing when not supposed to
+
+### Changes
+
+* Updated converter names
+
 # MoMoney v1.2.2
 
 ### Fixes

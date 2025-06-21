@@ -10,8 +10,8 @@
     x:DataType="viewmodel:AccountsViewModel">
 
     <ContentPage.Resources>
-        <converters:TileColourConverter x:Key="TileColour" />
-        <converters:ShowValueConverter x:Key="ShowValue" />
+        <converters:TileColourConverter x:Key="TileColourConverter" />
+        <converters:ShowValueConverter x:Key="ShowValueConverter" />
     </ContentPage.Resources>
 
     <!--  main page  -->
@@ -25,7 +25,7 @@
             <!--  template  -->
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Account">
-                    <Border BackgroundColor="{Binding Enabled, Converter={StaticResource TileColour}}" Style="{StaticResource SmallTileFrame}">
+                    <Border BackgroundColor="{Binding Enabled, Converter={StaticResource TileColourConverter}}" Style="{StaticResource SmallTileFrame}">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Path=GoToEditAccountCommand, Source={RelativeSource AncestorType={x:Type viewmodel:AccountsViewModel}}}" CommandParameter="{Binding .}" />
                         </Border.GestureRecognizers>
@@ -39,7 +39,7 @@
                                 HorizontalOptions="End"
                                 IsVisible="{Binding Enabled}"
                                 Style="{StaticResource lblTile}"
-                                Text="{Binding CurrentBalance, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
+                                Text="{Binding CurrentBalance, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
                         </Grid>
                     </Border>
                 </DataTemplate>

@@ -21,7 +21,7 @@
     <ContentPage.Resources>
 
         <!--  converter  -->
-        <converters:ShowValueConverter x:Key="ShowValue" />
+        <converters:ShowValueConverter x:Key="ShowValueConverter" />
         <converters:DateConverter x:Key="DateConverter" />
 
         <!--  SfListView Item Template  -->
@@ -51,7 +51,7 @@
                     <Label
                         Grid.Column="2"
                         HorizontalOptions="End"
-                        Text="{Binding ActualAmount, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                        Text="{Binding ActualAmount, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
                         VerticalOptions="Center" />
                 </Grid>
             </ViewCell>
@@ -130,7 +130,7 @@
             </tabView:SfTabView.Resources>
 
             <!--  expense tab  -->
-            <tabView:SfTabItem Header="{Binding ExpenseSum, Converter={StaticResource ShowValue}, StringFormat='Expenses {0:C2}'}">
+            <tabView:SfTabItem Header="{Binding ExpenseSum, Converter={StaticResource ShowValueConverter}, StringFormat='Expenses {0:C2}'}">
                 <Grid RowDefinitions="*,*">
                     <Border Margin="0" Padding="0">
                         <chart:SfCircularChart VerticalOptions="Center">
@@ -175,7 +175,7 @@
             </tabView:SfTabItem>
 
             <!--  income tab  -->
-            <tabView:SfTabItem Header="{Binding IncomeSum, Converter={StaticResource ShowValue}, StringFormat='Income {0:C2}'}">
+            <tabView:SfTabItem Header="{Binding IncomeSum, Converter={StaticResource ShowValueConverter}, StringFormat='Income {0:C2}'}">
                 <!--  doughnut chart  -->
                 <Grid RowDefinitions="*,*">
                     <Border Margin="0" Padding="0">

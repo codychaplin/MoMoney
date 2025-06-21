@@ -14,10 +14,10 @@
 
     <ContentPage.Resources>
         <!--  converters  -->
-        <converters:ShowValueConverter x:Key="ShowValue" />
-        <converters:ShowValuePercentConverter x:Key="ShowValuePercent" />
-        <converters:PositiveNegativeColourConverter x:Key="PosNegColour" />
-        <converters:StockDataLabelConverter x:Key="StockDataLabel" />
+        <converters:ShowValueConverter x:Key="ShowValueConverter" />
+        <converters:ShowValuePercentConverter x:Key="ShowValuePercentConverter" />
+        <converters:PositiveNegativeColourConverter x:Key="PosNegColourConverter" />
+        <converters:StockDataLabelConverter x:Key="StockDataLabelConverter" />
     </ContentPage.Resources>
 
     <ScrollView>
@@ -36,7 +36,7 @@
                         Grid.ColumnSpan="2"
                         FontSize="36"
                         HorizontalOptions="Start"
-                        Text="{Binding MarketValue, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                        Text="{Binding MarketValue, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
                         VerticalOptions="Center" />
                     <Label
                         Grid.Row="2"
@@ -52,14 +52,14 @@
                         <Label
                             FontSize="18"
                             HorizontalOptions="Center"
-                            Text="{Binding Total, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
-                            TextColor="{Binding Total, Converter={StaticResource PosNegColour}}"
+                            Text="{Binding Total, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
+                            TextColor="{Binding Total, Converter={StaticResource PosNegColourConverter}}"
                             VerticalOptions="Center" />
                         <Label
                             FontSize="18"
                             HorizontalOptions="Center"
-                            Text="{Binding TotalPercent, Converter={StaticResource ShowValuePercent}, StringFormat=' ({0:P2})'}"
-                            TextColor="{Binding TotalPercent, Converter={StaticResource PosNegColour}}"
+                            Text="{Binding TotalPercent, Converter={StaticResource ShowValuePercentConverter}, StringFormat=' ({0:P2})'}"
+                            TextColor="{Binding TotalPercent, Converter={StaticResource PosNegColourConverter}}"
                             VerticalOptions="Center" />
                     </HorizontalStackLayout>
                 </Grid>
@@ -97,22 +97,22 @@
                                     <Label
                                         Grid.Row="1"
                                         HorizontalOptions="Start"
-                                        Text="{Binding MarketValue, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                                        Text="{Binding MarketValue, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
                                         TextColor="{AppThemeBinding Light={StaticResource Gray900},
                                                                     Dark={StaticResource Gray200}}"
                                         VerticalOptions="Center" />
                                     <Label
                                         Grid.Column="1"
                                         HorizontalOptions="End"
-                                        Text="{Binding MarketPrice, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                                        Text="{Binding MarketPrice, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
                                         VerticalOptions="Center" />
                                     <HorizontalStackLayout
                                         Grid.Row="1"
                                         Grid.Column="1"
                                         HorizontalOptions="End"
                                         VerticalOptions="Center">
-                                        <Label Text="{Binding Change, Converter={StaticResource ShowValue}, StringFormat='{0:C2} '}" TextColor="{Binding Change, Converter={StaticResource PosNegColour}}" />
-                                        <Label Text="{Binding ChangePercent, Converter={StaticResource ShowValuePercent}, StringFormat=' ({0:P2})'}" TextColor="{Binding ChangePercent, Converter={StaticResource PosNegColour}}" />
+                                        <Label Text="{Binding Change, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2} '}" TextColor="{Binding Change, Converter={StaticResource PosNegColourConverter}}" />
+                                        <Label Text="{Binding ChangePercent, Converter={StaticResource ShowValuePercentConverter}, StringFormat=' ({0:P2})'}" TextColor="{Binding ChangePercent, Converter={StaticResource PosNegColourConverter}}" />
                                     </HorizontalStackLayout>
                                 </Grid>
                             </Border>
@@ -140,7 +140,7 @@
                             <Border Padding="5" BackgroundColor="#66212121">
                                 <Label
                                     FontSize="12"
-                                    Text="{Binding Item, Converter={StaticResource StockDataLabel}}"
+                                    Text="{Binding Item, Converter={StaticResource StockDataLabelConverter}}"
                                     TextColor="White" />
                             </Border>
                         </DataTemplate>

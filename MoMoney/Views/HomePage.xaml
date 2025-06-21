@@ -15,7 +15,7 @@
 
     <!--  converters  -->
     <ContentView.Resources>
-        <converters:ShowValueConverter x:Key="ShowValue" />
+        <converters:ShowValueConverter x:Key="ShowValueConverter" />
     </ContentView.Resources>
 
     <!--  main page  -->
@@ -194,7 +194,7 @@
                         FontAttributes="Bold"
                         FontSize="30"
                         HorizontalTextAlignment="Center"
-                        Text="{Binding NetworthAtEndDate, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}" />
+                        Text="{Binding NetworthAtEndDate, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
                     <ListView
                         ItemsSource="{Binding AccountTotals}"
                         RowHeight="35"
@@ -214,7 +214,7 @@
                                             Grid.Column="1"
                                             FontSize="16"
                                             HorizontalTextAlignment="End"
-                                            Text="{Binding Total, Converter={StaticResource ShowValue}, StringFormat='{0:C2}'}"
+                                            Text="{Binding Total, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
                                             VerticalTextAlignment="Center" />
                                     </Grid>
                                 </ViewCell>
