@@ -193,9 +193,9 @@
                     BorderWidth="1.5"
                     Command="{Binding RecordCommand}"
                     CommandParameter="{x:Reference btnRecord}"
-                    FontFamily="Material"
+                    FontFamily="MaterialRound"
                     FontSize="30"
-                    Text="{x:Static m:MaterialRegular.Mic}">
+                    Text="{x:Static m:MaterialRound.Mic}">
                     <Button.Triggers>
                         <DataTrigger
                             Binding="{Binding IsWaitingForTranscription}"

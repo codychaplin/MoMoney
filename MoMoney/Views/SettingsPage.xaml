@@ -77,7 +77,10 @@
                 TextColor="{AppThemeBinding Light={StaticResource Gray600},
                                             Dark={StaticResource Gray300}}">
                 <Label.Behaviors>
-                    <toolkit:TouchBehavior LongPressCommand="{Binding ToggleDeveloperModeCommand}" LongPressDuration="3000" />
+                    <toolkit:TouchBehavior
+                        BindingContext="{Binding Path=BindingContext, Source={x:Reference lblVersion}, x:DataType=HorizontalStackLayout}"
+                        LongPressCommand="{Binding ToggleDeveloperModeCommand}"
+                        LongPressDuration="3000" />
                 </Label.Behaviors>
             </Label>
 
