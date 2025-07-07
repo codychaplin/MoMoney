@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
@@ -34,6 +35,8 @@ public partial class AddTransactionViewModel : ObservableObject
 
     [ObservableProperty] bool isWaitingForTranscription = false; // activity indicator runs while this is true
 
+    [ObservableProperty] bool transactionDictationEnabled = false;
+
     public TransactionType transactionType = TransactionType.None;
 
     ResponseIDs? responseIDs = null;
@@ -47,6 +50,9 @@ public partial class AddTransactionViewModel : ObservableObject
         openAIService = _openAIService;
         logger = _logger;
         recorder = _recordAudioService;
+
+        TransactionDictationEnabled = Utilities.TransactionDictationEnabled;
+        WeakReferenceMessenger.Default.Register<UpdateTransactionDictationMessage>(this, (_, m) => TransactionDictationEnabled = m.Value);
     }
 
     /// <summary>
@@ -243,25 +249,41 @@ public partial class AddTransactionViewModel : ObservableObject
 
                 responseIDs = transactionResponse.ResponseIDs;
 
-                Date = transactionResponse.Date;
+                if (transactionResponse.Date.HasValue)
+                    Date = transactionResponse.Date.Value;
 
-                Amount = transactionResponse.Amount;
+                if (transactionResponse.Amount.HasValue)
+                    Amount = transactionResponse.Amount.Value;
 
-                var account = Accounts.FirstOrDefault(a => a.AccountName == transactionResponse.Account);
-                if (account is not null)
-                    Account = account;
+                if (!string.IsNullOrEmpty(transactionResponse.Account))
+                {
+                    var account = Accounts.FirstOrDefault(a => a.AccountName == transactionResponse.Account);
+                    if (account is not null)
+                        Account = account;
+                }
 
-                var category = Categories.FirstOrDefault(c => c.CategoryName == transactionResponse.Category);
-                if (category is not null)
-                    Category = category;
+                if (!string.IsNullOrEmpty(transactionResponse.Category))
+                {
+                    var category = Categories.FirstOrDefault(c => c.CategoryName == transactionResponse.Category);
+                    if (category is not null)
+                        Category = category;
+                }
 
-                var subcategory = Subcategories.FirstOrDefault(c => c.CategoryName == transactionResponse.Subcategory);
-                if (subcategory is not null)
-                    Subcategory = subcategory;
+                if (!string.IsNullOrEmpty(transactionResponse.Subcategory))
+                {
+                    var subcategory = Subcategories.FirstOrDefault(c => c.CategoryName == transactionResponse.Subcategory);
+                    if (subcategory is not null)
+                        Subcategory = subcategory;
+                }
 
-                Payee = transactionResponse.Payee;
+                if (!string.IsNullOrEmpty(transactionResponse.Payee))
+                {
+                    Payee = transactionResponse.Payee;
+                    if (!Payees.Contains(Payee))
+                        _ = Utilities.DisplayToast("New payee detected");
+                }
 
-                if (transactionType == TransactionType.Transfer)
+                if (transactionType == TransactionType.Transfer && !string.IsNullOrEmpty(transactionResponse.TransferAccount))
                 {
                     // if contains transfer account, get the account and set transferId
                     var transferAccount = Accounts.FirstOrDefault(a => a.AccountName == transactionResponse.TransferAccount);
@@ -350,6 +372,18 @@ public partial class AddTransactionViewModel : ObservableObject
             }
 
             ClearAfterAdd();
+
+            // add any new payees to OpenAIService's recent payees list which is used in the prompt
+            if (!string.IsNullOrEmpty(Payee))
+            {
+                List<string> recentPayees = [];
+                if (transactionType == TransactionType.Income)
+                    recentPayees = openAIService._recentIncomePayees;
+                else if (transactionType == TransactionType.Expense)
+                    recentPayees = openAIService._recentExpensePayees;
+                if (!recentPayees.Contains(Payee))
+                    recentPayees.Add(Payee);
+            }
 
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_TRANSACTION, FirebaseParameters.GetFirebaseParameters());
         }

@@ -66,8 +66,16 @@ public interface ITransactionService
     /// <summary>
     /// Gets all distinct payees from Transactions table.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>List of Payee strings</returns>
     Task<IEnumerable<string>> GetPayeesFromTransactions();
+
+    /// <summary>
+    /// Gets x amount of distinct payees from the Transactions Table.
+    /// </summary>
+    /// <param name="transactionCount"></param>
+    /// <param name="numOfPayees"></param>
+    /// <returns>List of Payee strings</returns>
+    Task<List<string>> GetPayeesFromTransactions(TransactionType type, int transactionCount, int numOfPayees);
 
     /// <summary>
     /// Gets all Transactions between specified dates from Transaction table as a list.

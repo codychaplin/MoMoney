@@ -1,5 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MoMoney.Core.Data;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
@@ -18,6 +19,9 @@ public partial class AdminViewModel : ObservableObject
     [ObservableProperty]
     bool isAdmin;
 
+    [ObservableProperty]
+    bool transactionDictationEnabled;
+
     public AdminViewModel(IMoMoneydb _momoney, ITransactionService _transactionService, IAccountService _accountService,
         ICategoryService _categoryService, IStockService _stockService, ILoggerService<AdminViewModel> _logger)
     {
@@ -28,7 +32,8 @@ public partial class AdminViewModel : ObservableObject
         stockService = _stockService;
         logger = _logger;
 
-        IsAdmin = Preferences.Get("IsAdmin", false);
+        IsAdmin = Utilities.IsAdmin;
+        TransactionDictationEnabled = Utilities.TransactionDictationEnabled;
     }
 
     /// <summary>
@@ -212,5 +217,15 @@ public partial class AdminViewModel : ObservableObject
     async Task GoToBulkEditing()
     {
         await Shell.Current.GoToAsync("BulkEditingPage");
+    }
+
+    /// <summary>
+    /// Toggle TransactionDictationEnabled in Preferences (shows/hides AI feature)
+    /// </summary>
+    /// <param name="value"></param>
+    partial void OnTransactionDictationEnabledChanged(bool value)
+    {
+        Utilities.TransactionDictationEnabled = value;
+        WeakReferenceMessenger.Default.Send(new UpdateTransactionDictationMessage(value));
     }
 }

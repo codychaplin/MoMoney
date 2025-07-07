@@ -158,6 +158,29 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         return await momoney.db.QueryScalarsAsync<string>("SELECT DISTINCT Payee FROM \"Transaction\"");
     }
 
+    public async Task<List<string>> GetPayeesFromTransactions(TransactionType type, int transactionCount, int numOfPayees)
+    {
+        await momoney.Init();
+        var query = momoney.db.Table<Transaction>();
+        if (type == TransactionType.Income)
+            query = query.Where(t => t.CategoryID == Constants.INCOME_ID);
+        else
+            query = query.Where(t => t.CategoryID >= Constants.EXPENSE_ID);
+        query = query
+            .Where(t => !string.IsNullOrEmpty(t.Payee))
+            .OrderByDescending(t => t.TransactionID)
+            .Take(transactionCount);
+        var transactions = await query.ToListAsync();
+
+
+        return transactions
+            .GroupBy(t => t.Payee)
+            .OrderByDescending(g => g.Count())
+            .Take(numOfPayees)
+            .Select(g => g.Key)
+            .ToList();
+    }
+
     public async Task<List<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse)
     {
         await momoney.Init();

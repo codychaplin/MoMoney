@@ -80,7 +80,7 @@
                     <toolkit:TouchBehavior
                         BindingContext="{Binding Path=BindingContext, Source={x:Reference lblVersion}, x:DataType=HorizontalStackLayout}"
                         LongPressCommand="{Binding ToggleDeveloperModeCommand}"
-                        LongPressDuration="3000" />
+                        LongPressDuration="5000" />
                 </Label.Behaviors>
             </Label>
 

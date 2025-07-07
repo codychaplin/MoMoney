@@ -174,11 +174,11 @@
             <Grid
                 x:Name="grdAcceptButtons"
                 Margin="0,5"
-                ColumnDefinitions="*,70,*"
-                ColumnSpacing="10"
+                ColumnDefinitions="*,Auto,*"
                 HeightRequest="50">
                 <Button
                     x:Name="btnClear"
+                    Margin="0,0,5,0"
                     BackgroundColor="{AppThemeBinding Light={StaticResource LightBlue},
                                                       Dark={StaticResource Blue}}"
                     Clicked="btnClear_Clicked"
@@ -186,6 +186,7 @@
                 <Button
                     x:Name="btnRecord"
                     Grid.Column="1"
+                    Margin="5,0"
                     BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
                                                       Dark={StaticResource Gray700}}"
                     BorderColor="{AppThemeBinding Light={StaticResource Gray400},
@@ -195,7 +196,9 @@
                     CommandParameter="{x:Reference btnRecord}"
                     FontFamily="MaterialRound"
                     FontSize="30"
-                    Text="{x:Static m:MaterialRound.Mic}">
+                    IsVisible="{Binding TransactionDictationEnabled}"
+                    Text="{x:Static m:MaterialRound.Mic}"
+                    WidthRequest="70">
                     <Button.Triggers>
                         <DataTrigger
                             Binding="{Binding IsWaitingForTranscription}"
@@ -216,6 +219,7 @@
                 <Button
                     x:Name="btnEnter"
                     Grid.Column="2"
+                    Margin="5,0,0,0"
                     BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
                                                       Dark={StaticResource PrimaryDark}}"
                     Clicked="btnEnter_Clicked"

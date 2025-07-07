@@ -1,3 +1,15 @@
+# MoMoney v1.0.1
+
+### Fixes
+
+* Fixed breakdown page crash
+* Made AI feature more reliable
+
+### Changes
+
+* Hide AI usage unless dev mode is enabled
+* Switched to OpenAI's official nuget package
+
 # MoMoney v1.0.0
 
 ### Fixes

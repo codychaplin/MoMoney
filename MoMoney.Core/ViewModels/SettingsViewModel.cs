@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
 
@@ -61,9 +62,18 @@ public partial class SettingsViewModel
     [RelayCommand]
     void ToggleDeveloperMode()
     {
-        bool isAdmin = Preferences.Get("IsAdmin", false);
-        Preferences.Set("IsAdmin", !isAdmin);
+        bool isAdmin = Utilities.IsAdmin;
+        bool newIsAdmin = !isAdmin;
+        Utilities.IsAdmin = newIsAdmin;
+
+        // disable AI feature when disabling developer mode
+        if (!newIsAdmin)
+        {
+            Utilities.TransactionDictationEnabled = false;
+            WeakReferenceMessenger.Default.Send(new UpdateTransactionDictationMessage(false));
+        }
+
         logger.LogFirebaseEvent(FirebaseParameters.EVENT_DEVELOPER_MODE_TOGGLED, FirebaseParameters.GetFirebaseParameters());
-        _ = Utilities.DisplayToast($"Developer mode {(!isAdmin ? "enabled" : "disabled")}");
+        _ = Utilities.DisplayToast($"Developer mode {(newIsAdmin ? "enabled" : "disabled")}");
     }
 }
