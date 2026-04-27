@@ -15,9 +15,8 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
 
     public AccountService(IMoMoneydb _momoney, ILoggerService<AccountService> _logger) : base(_momoney, _logger) { }
     
-    protected override async Task Init()
+    protected async Task Init()
     {
-        await base.Init();
         if (Accounts.Count == 0)
             Accounts = await GetAccountsAsDict();
     }
@@ -204,7 +203,6 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
     /// <returns>Dictionary of Account objects</returns>
     async Task<Dictionary<int, Account>> GetAccountsAsDict()
     {
-        await momoney.Init();
         var accounts = await momoney.AccountsToList();
         return accounts.ToDictionary(a => a.AccountID, a => a);
     }

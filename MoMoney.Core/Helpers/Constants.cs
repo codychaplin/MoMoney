@@ -6,9 +6,11 @@ public static class Constants
 {
     // db constants
     public const string dbName = "momoney.db";
-    public const string dbEncryptionKey = "EncryptionKey";
     public const string DefaultDbPath = ":memory:";
     public static string DatabasePath => Path.Combine(FileSystem.AppDataDirectory, dbName);
+
+    // secure storage keys
+    public const string dbEncryptionKey = "encryption_key";
 
     // category IDs
     public const int INCOME_ID = 1;

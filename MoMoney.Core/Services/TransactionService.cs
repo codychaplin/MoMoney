@@ -113,7 +113,6 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
 
     public async Task<Transaction> GetTransaction(int ID)
     {
-        await momoney.Init();
         var transaction = await momoney.db.Table<Transaction>().FirstOrDefaultAsync(t => t.TransactionID == ID);
         return transaction is null
             ? throw new TransactionNotFoundException($"Could not find Transaction with ID '{ID}'.")
@@ -122,15 +121,12 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
 
     public async Task<IEnumerable<Transaction>> GetTransactions()
     {
-        await momoney.Init();
         return await momoney.db.Table<Transaction>().OrderBy(t => t.Date).ThenBy(t => t.TransactionID).ToListAsync();
     }
     
     public async Task<List<Transaction>> GetFilteredTransactions(DateTime? from = null, DateTime? to = null, int? accountID = null,
         decimal? minAmount = null, decimal? maxAmount = null, int? categoryID = null, int? subcategoryID = null, string? payee = null)
     {
-        await momoney.Init();
-
         var transactionsQuery = momoney.db.Table<Transaction>();
         if (from != null)
             transactionsQuery = transactionsQuery.Where(t => t.Date >= from);
@@ -154,7 +150,6 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
 
     public async Task<IEnumerable<string>> GetPayeesFromTransactions()
     {
-        await momoney.Init();
         return await momoney.db.QueryScalarsAsync<string>("SELECT DISTINCT Payee FROM \"Transaction\"");
     }
 
@@ -183,7 +178,6 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
 
     public async Task<List<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse)
     {
-        await momoney.Init();
         if (reverse)
         {
             return await momoney.db.Table<Transaction>().Where(t => t.Date >= from && t.Date <= to)
@@ -198,13 +192,11 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
 
     public async Task<Transaction> GetFirstTransaction()
     {
-        await momoney.Init();
         return await momoney.db.Table<Transaction>().FirstOrDefaultAsync();
     }
 
     public async Task<int> GetTransactionCount()
     {
-        await momoney.Init();
         return await momoney.db.Table<Transaction>().CountAsync();
     }
 

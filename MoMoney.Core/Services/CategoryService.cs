@@ -13,9 +13,8 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
 
     public CategoryService(IMoMoneydb _momoney, ILoggerService<CategoryService> _logger) : base(_momoney, _logger) { }
 
-    protected override async Task Init()
+    protected async Task Init()
     {
-        await base.Init();
         if (Categories.Count == 0)
             Categories = await GetCategoriesAsDict();
     }
@@ -219,7 +218,6 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
 
     public async Task<int> GetCategoryCount()
     {
-        await momoney.Init();
         return await momoney.db.Table<Category>().CountAsync();
     }
 
@@ -229,7 +227,6 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
     /// <returns>Dictionary of Category objects</returns>
     async Task<Dictionary<int, Category>> GetCategoriesAsDict()
     {
-        await momoney.Init();
         var categories = await momoney.db.Table<Category>().ToListAsync();
         return categories.ToDictionary(c => c.CategoryID, c => c);
     }

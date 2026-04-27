@@ -31,7 +31,7 @@ Works on Android 10.0 and later.
 * NOTE: Uses Google Finance's exchange names
 
 ## Technologies Used
-* .NET 9
+* .NET 10
 * SQLite
 * CommunityToolkit.Maui
 * Syncfusion.Maui.Toolkit

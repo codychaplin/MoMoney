@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net9.0;net9.0-android</TargetFrameworks>
+		<TargetFrameworks>net10.0;net10.0-android</TargetFrameworks>
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -11,7 +11,7 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-android|AnyCPU'">
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
 		<AndroidEnableMultiDex>True</AndroidEnableMultiDex>
 		<RunAOTCompilation>False</RunAOTCompilation>
@@ -19,35 +19,36 @@
 		<PublishTrimmed>True</PublishTrimmed>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-android|AnyCPU'">
 		<AndroidEnableMultiDex>True</AndroidEnableMultiDex>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Maui" Version="12.0.0" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="Azure.AI.OpenAI" Version="2.1.0" />
+		<PackageReference Include="CommunityToolkit.Maui" Version="14.1.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="CsvHelper" Version="33.1.0" />
-		<PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="Newtonsoft.Json.Schema" Version="4.0.1" />
-		<PackageReference Include="OpenAI" Version="2.2.0" />
-		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.80" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.80" />
-		<PackageReference Include="UraniumUI.Material" Version="2.12.1" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.51" />
+		<PackageReference Include="sqlite-net-base" Version="1.10.196-beta" />
+		<PackageReference Include="SQLite3MC.PCLRaw.bundle" Version="2.3.3" />
+		<PackageReference Include="UraniumUI.Material" Version="2.15.0" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
+	  <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData.Core" Version="2.10.0.2" />
 	  <PackageReference Include="Xamarin.Firebase.Analytics">
-	    <Version>122.4.0</Version>
+	    <Version>123.0.0.3</Version>
 	  </PackageReference>
 	  <PackageReference Include="Xamarin.Firebase.Crashlytics">
-	    <Version>119.4.3</Version>
+	    <Version>120.0.4.1</Version>
 	  </PackageReference>
 	</ItemGroup>
 	<ItemGroup>
 		<Reference Include="UraniumUI.Material">
-			<HintPath>..\..\..\..\..\..\..\Nugets\uraniumui.material\2.8.0\lib\net8.0-android34.0\UraniumUI.Material.dll</HintPath>
+			<HintPath>..\..\..\..\..\..\..\Nugets\uraniumui.material\2.8.0\lib\net10.0-android36.0\UraniumUI.Material.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 

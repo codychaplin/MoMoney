@@ -45,7 +45,16 @@ public static class MauiProgram
                    essentials.UseVersionTracking();
                });
 
-        return builder.Build();
+        // needed to initialize sqlite
+        SQLitePCL.Batteries_V2.Init();
+
+        var app = builder.Build();
+
+        // initialize db
+        var db = app.Services.GetRequiredService<IMoMoneydb>();
+        Task.Run(async () => await db.Init()).Wait();
+
+        return app;
 	}
 
     static MauiAppBuilder RegisterServices(this MauiAppBuilder builder)

@@ -1,3 +1,9 @@
+# MoMoney v1.0.2
+
+### Changes
+* Update packages
+* Remove database lazy loading
+
 # MoMoney v1.0.1
 
 ### Fixes

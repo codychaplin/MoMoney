@@ -27,7 +27,6 @@ public class LoggerService<T> : ILoggerService<T>
     {
         try
         {
-            await momoney.Init();
             Log log = new(level, className, message, exceptionType);
             await momoney.db.InsertAsync(log);
 
@@ -96,14 +95,11 @@ public class LoggerService<T> : ILoggerService<T>
 
     public async Task AddLogs(IEnumerable<Log> logs)
     {
-        await momoney.Init();
         await momoney.db.InsertAllAsync(logs);
     }
 
     public async Task<Log> GetLog(int ID)
     {
-        await momoney.Init();
-
         var log = await momoney.db.Table<Log>().FirstOrDefaultAsync(l => l.LogId == ID);
         if (log is null)
             throw new LogNotFoundException($"Could not find Log with ID '{ID}'.");
@@ -113,14 +109,11 @@ public class LoggerService<T> : ILoggerService<T>
 
     public async Task<IEnumerable<Log>> GetLogs()
     {
-        await momoney.Init();
         return await momoney.db.Table<Log>().OrderByDescending(l => l.Timestamp).ToListAsync();
     }
 
     public async Task<List<Log>> GetFilteredLogs(LogLevel logLevel, string? className, string? exceptionType)
     {
-        await momoney.Init();
-
         var logQuery = momoney.db.Table<Log>();
         if (logLevel != LogLevel.None)
             logQuery = logQuery.Where(l => l.Level == logLevel);
@@ -137,7 +130,6 @@ public class LoggerService<T> : ILoggerService<T>
 
     public async Task RemoveLogs()
     {
-        await momoney.Init();
         await momoney.db.DeleteAllAsync<Log>();
         await momoney.db.DropTableAsync<Log>();
         await momoney.db.CreateTableAsync<Log>();
@@ -145,7 +137,6 @@ public class LoggerService<T> : ILoggerService<T>
 
     public async Task<int> GetLogCount()
     {
-        await momoney.Init();
         return await momoney.db.Table<Log>().CountAsync();
     }
 }

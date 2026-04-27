@@ -13,9 +13,8 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
 
     public StockService(IMoMoneydb _momoney, ILoggerService<StockService> _logger) : base(_momoney, _logger) { }
 
-    protected override async Task Init()
+    protected async Task Init()
     {
-        await base.Init();
         if (Stocks.Count == 0)
             Stocks = await GetStocksAsDict();
     }
@@ -120,7 +119,6 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
 
     public async Task<int> GetStockCount()
     {
-        await momoney.Init();
         return await momoney.db.Table<Stock>().CountAsync();
     }
 

@@ -17,11 +17,6 @@ public class BaseService<TLogger, TMessenger, TType> where TMessenger : ValueCha
         logger = _logger;
     }
 
-    protected virtual async Task Init()
-    {
-        await momoney.Init();
-    }
-
     /// <summary>
     /// This function is a wrapper for all database operations. It lazy loads the database, logs the elapsed time, and sends a weak reference message so the UI can update if required.
     /// </summary>
@@ -31,7 +26,6 @@ public class BaseService<TLogger, TMessenger, TType> where TMessenger : ValueCha
     protected async Task DbOperation(Func<Task<string>> operation, bool sendMessage = true)
     {
         long startTime = Stopwatch.GetTimestamp();
-        await Init();
 
         string logMessage = await operation();
 

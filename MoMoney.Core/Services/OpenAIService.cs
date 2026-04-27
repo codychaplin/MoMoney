@@ -99,7 +99,6 @@ public class OpenAIService : IOpenAIService
 
     public async Task MapDictationToTransaction(int transactionID, ResponseIDs responseIDs)
     {
-        await momoney.Init();
         await momoney.db.ExecuteAsync("UPDATE WhisperResponse SET TransactionID = ? WHERE ID = ?", transactionID, responseIDs.WhisperResponseID);
         await momoney.db.ExecuteAsync("UPDATE ChatResponse SET TransactionID = ? WHERE ID = ?", transactionID, responseIDs.ChatResponseID);
     }
@@ -111,7 +110,6 @@ public class OpenAIService : IOpenAIService
     /// <returns>ID of newly created response</returns>
     async Task<int> AddResponse(OpenAIResponse response)
     {
-        await momoney.Init();
         await momoney.db.InsertAsync(response);
         return response.ID;
     }

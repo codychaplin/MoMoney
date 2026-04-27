@@ -8,25 +8,21 @@ namespace MoMoney.Core.Data;
 public class MoMoneydb : IMoMoneydb
 {
     public ISQLiteAsyncConnection db { get; private set; } = new SQLiteAsyncConnection(Constants.DefaultDbPath);
-    private TaskCompletionSource<bool> _initializationTcs = new();
 
     public async Task Init(bool wait = true)
     {
-        if (wait)
-        {
-            await _initializationTcs.Task;
-            return;
-        }
-
         try
         {
-            // Get or create encryption key
+            // Ensure db is encrypted with a key stored in secure storage.
             string? dbEncryptionKey = await SecureStorage.Default.GetAsync(Constants.dbEncryptionKey);
             if (string.IsNullOrEmpty(dbEncryptionKey))
             {
-                dbEncryptionKey = GenerateRandomKey(32); // 32 bytes = 256 bits
+                byte[] newEncrpytionKey = RandomNumberGenerator.GetBytes(32);
+                dbEncryptionKey = Convert.ToBase64String(newEncrpytionKey);
                 await SecureStorage.Default.SetAsync(Constants.dbEncryptionKey, dbEncryptionKey);
-            } 
+            }
+
+            // Create encrypted db connection
             var options = new SQLiteConnectionString(Constants.DatabasePath, true, dbEncryptionKey);
             db = new SQLiteAsyncConnection(options);
 
@@ -37,26 +33,11 @@ public class MoMoneydb : IMoMoneydb
             await db.CreateTableAsync<ChatResponse>();
             await db.CreateTableAsync<WhisperResponse>();
             await CreateCategories();
-
-            _initializationTcs.SetResult(true);
         }
         catch (Exception ex)
         {
-            _initializationTcs.SetException(ex);
-            await Shell.Current.DisplayAlert("Database Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Database Error", ex.Message, "OK");
         }
-    }
-
-    /// <summary>
-    /// Generates a secure random key and encodes it as Base64.
-    /// </summary>
-    /// <param name="length">Number of bytes for the key.</param>
-    /// <returns>Base64 string of the random key.</returns>
-    static string GenerateRandomKey(int length)
-    {
-        byte[] keyBytes = new byte[length];
-        RandomNumberGenerator.Fill(keyBytes);
-        return Convert.ToBase64String(keyBytes);
     }
 
     /// <summary>
@@ -77,7 +58,6 @@ public class MoMoneydb : IMoMoneydb
             await db.CloseAsync();
             db = new SQLiteAsyncConnection(Constants.DefaultDbPath);
         }
-        _initializationTcs = new TaskCompletionSource<bool>();
         await Init();
     }
 
@@ -105,7 +85,7 @@ public class MoMoneydb : IMoMoneydb
     /// Gets default categories.
     /// </summary>
     /// <returns>List of default categories</returns>
-    List<Category> GetDefaultCategories()
+    static List<Category> GetDefaultCategories()
     {
         return
         [
