@@ -63,7 +63,7 @@ public partial class StockStatsViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(LoadStockStats), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -136,18 +136,18 @@ public partial class StockStatsViewModel : ObservableObject
         catch (HttpRequestException ex)
         {
             await logger.LogError(nameof(GetUpdatedStockPrices), ex);
-            await Shell.Current.DisplayAlert("HTTP Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("HTTP Error", ex.Message, "OK");
         }
         catch (InvalidStockException ex)
         {
             await logger.LogError(nameof(GetUpdatedStockPrices), ex);
-            await Shell.Current.DisplayAlert("Parse Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Parse Error", ex.Message, "OK");
         }
 
         catch (StockNotFoundException ex)
         {
             await logger.LogError(nameof(GetUpdatedStockPrices), ex);
-            await Shell.Current.DisplayAlert("Stock not found", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Stock not found", ex.Message, "OK");
         }
         catch (InvalidOperationException)
         {
@@ -160,7 +160,7 @@ public partial class StockStatsViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetUpdatedStockPrices), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
         {

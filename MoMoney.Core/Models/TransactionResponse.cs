@@ -1,29 +1,29 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using MoMoney.Core.Helpers;
 
 namespace MoMoney.Core.Models;
 
 public class TransactionResponse
 {
-    [JsonProperty("date")]
+    [JsonPropertyName("date")]
     public DateTime? Date { get; set; }
 
-    [JsonProperty("account")]
+    [JsonPropertyName("account")]
     public string Account { get; set; } = string.Empty;
 
-    [JsonProperty("amount")]
+    [JsonPropertyName("amount")]
     public decimal? Amount { get; set; }
 
-    [JsonProperty("category")]
+    [JsonPropertyName("category")]
     public string Category { get; set; } = string.Empty;
 
-    [JsonProperty("subcategory")]
+    [JsonPropertyName("subcategory")]
     public string Subcategory { get; set; } = string.Empty;
 
-    [JsonProperty("payee")]
+    [JsonPropertyName("payee")]
     public string Payee { get; set; } = string.Empty;
 
-    [JsonProperty("transfer_account")]
+    [JsonPropertyName("transfer_account")]
     public string TransferAccount { get; set; } = string.Empty;
 
     [JsonIgnore]

@@ -81,7 +81,7 @@ public partial class AccountSummaryViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(LoadAccountsSummary), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 }

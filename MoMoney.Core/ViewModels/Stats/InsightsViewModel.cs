@@ -53,7 +53,7 @@ public partial class InsightsViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(LoadInsights), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 

@@ -3,12 +3,13 @@ using System.ClientModel;
 using OpenAI;
 using OpenAI.Chat;
 using OpenAI.Audio;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Schema.Generation;
+using System.Text.Json.Schema;
 using MoMoney.Core.Data;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace MoMoney.Core.Services;
 
@@ -41,8 +42,9 @@ public class OpenAIService : IOpenAIService
         chatClient = openAIClient.GetChatClient(Constants.CHAT_MODEL);
         audioClient = openAIClient.GetAudioClient(Constants.AUDIO_MODEL);
 
-        JSchemaGenerator generator = new();
-        _jsonSchema = generator.Generate(typeof(TransactionResponse)).ToString();
+        JsonSerializerOptions options = JsonSerializerOptions.Default;
+        JsonNode schema = options.GetJsonSchemaAsNode(typeof(TransactionResponse));
+        _jsonSchema = schema.ToString();
     }
 
     public async Task<TransactionResponse?> DictateTransaction(BinaryData audioData, TransactionType type)
@@ -78,7 +80,7 @@ public class OpenAIService : IOpenAIService
             int responseID = await AddResponse(chatResponse);
 
             // deserialize the response into a TransactionResponse
-            var transactionResponse = JsonConvert.DeserializeObject<TransactionResponse>(chatCompletion.Value.Content[0].Text);
+            var transactionResponse = JsonSerializer.Deserialize<TransactionResponse>(chatCompletion.Value.Content[0].Text);
             if (transactionResponse != null)
                 transactionResponse.ResponseIDs = new ResponseIDs(responseID, whisperID);
 
@@ -91,7 +93,7 @@ public class OpenAIService : IOpenAIService
         catch (Exception ex)
         {
             await logger.LogError(nameof(DictateTransaction), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
 
         return null;

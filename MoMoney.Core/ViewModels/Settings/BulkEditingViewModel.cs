@@ -64,7 +64,7 @@ public partial class BulkEditingViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(LoadBulkData), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -83,7 +83,7 @@ public partial class BulkEditingViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetAccounts), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -102,7 +102,7 @@ public partial class BulkEditingViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetCategories), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -120,7 +120,7 @@ public partial class BulkEditingViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetPayees), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -154,7 +154,7 @@ public partial class BulkEditingViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetFindSubcategories), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -188,7 +188,7 @@ public partial class BulkEditingViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetReplaceSubcategories), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -205,7 +205,7 @@ public partial class BulkEditingViewModel : ObservableObject
         {
             if (FindAccount == null && FindCategory == null && FindSubcategory == null && string.IsNullOrEmpty(FindPayee))
             {
-                await Shell.Current.DisplayAlert("Warning", "Please select at least one filter", "OK");
+                await Shell.Current.DisplayAlertAsync("Warning", "Please select at least one filter", "OK");
                 return false;
             }
 
@@ -223,7 +223,7 @@ public partial class BulkEditingViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(BulkFind), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
 
         return false;
@@ -236,7 +236,7 @@ public partial class BulkEditingViewModel : ObservableObject
             if (await BulkFind(false) == false)
                 return;
 
-        bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to replace {FoundTransactionCount} transactions", "Yes", "No");
+        bool flag = await Shell.Current.DisplayAlertAsync("", $"Are you sure you want to replace {FoundTransactionCount} transactions", "Yes", "No");
         if (!flag)
             return;
 
@@ -258,12 +258,12 @@ public partial class BulkEditingViewModel : ObservableObject
         catch (InvalidTransactionException ex)
         {
             await logger.LogWarning(nameof(BulkReplace), ex);
-            await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Validation Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(BulkReplace), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
         {

@@ -58,7 +58,7 @@ public partial class LoggingViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(LoadLogs), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -147,17 +147,17 @@ public partial class LoggingViewModel : ObservableObject
             if (log.ExceptionType != "")
                 sb.Append($"Exception: {log.ExceptionType}\n\n");
             sb.Append($"Message: {log.Message}");
-            await Shell.Current.DisplayAlert("Details", sb.ToString(), "OK");
+            await Shell.Current.DisplayAlertAsync("Details", sb.ToString(), "OK");
         }
         catch (LogNotFoundException ex)
         {
             await logger.LogError(nameof(OpenPopup), ex);
-            await Shell.Current.DisplayAlert("Log Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Log Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(OpenPopup), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 }

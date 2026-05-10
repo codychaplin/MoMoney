@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:converters="clr-namespace:MoMoney.Converters"
+    xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
@@ -28,25 +29,12 @@
 
             <!--  title  -->
             <toolkit:Expander.Header>
-                <Grid
-                    Padding="10,0"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                                      Dark={StaticResource PrimaryDark}}"
-                    HeightRequest="55">
-                    <Label
-                        Style="{StaticResource lblTitle}"
-                        Text="Transactions"
-                        VerticalOptions="Center" />
-                    <Image
-                        HeightRequest="30"
-                        HorizontalOptions="End"
-                        Source="{FontImageSource FontFamily=MaterialRegular,
-                                                 Color={AppThemeBinding Light={StaticResource Black},
-                                                                        Dark={StaticResource White}},
-                                                 Glyph={x:Static m:MaterialRegular.Tune}}"
-                        VerticalOptions="Center"
-                        WidthRequest="30" />
-                </Grid>
+                <components:PageHeader 
+                        Title="Transactions" 
+                        ImageSource="{FontImageSource FontFamily=MaterialRegular,
+                                                     Color={AppThemeBinding Light={StaticResource Black},
+                                                                            Dark={StaticResource White}},
+                                                     Glyph={x:Static m:MaterialRegular.Tune}}" />
             </toolkit:Expander.Header>
 
             <!--  filters  -->

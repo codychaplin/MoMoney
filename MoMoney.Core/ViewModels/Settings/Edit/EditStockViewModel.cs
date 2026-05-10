@@ -43,7 +43,7 @@ public partial class EditStockViewModel : BaseEditViewModel<IStockService, EditS
         catch (Exception ex)
         {
             await logger.LogError(nameof(Add), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -63,7 +63,7 @@ public partial class EditStockViewModel : BaseEditViewModel<IStockService, EditS
         catch (Exception ex)
         {
             await logger.LogError(nameof(Edit), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -73,7 +73,7 @@ public partial class EditStockViewModel : BaseEditViewModel<IStockService, EditS
     [RelayCommand]
     protected override async Task Remove()
     {
-        bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{initalStock?.Symbol}\"?", "Yes", "No");
+        bool flag = await Shell.Current.DisplayAlertAsync("", $"Are you sure you want to delete \"{initalStock?.Symbol}\"?", "Yes", "No");
         if (!flag)
             return;
 
@@ -88,7 +88,7 @@ public partial class EditStockViewModel : BaseEditViewModel<IStockService, EditS
         catch (Exception ex)
         {
             await logger.LogError(nameof(Remove), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 }

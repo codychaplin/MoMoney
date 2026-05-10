@@ -77,29 +77,29 @@ public partial class EditTransactionViewModel : ObservableObject
             catch (TransactionNotFoundException ex)
             {
                 await logger.LogError(nameof(GetTransaction), ex);
-                await Shell.Current.DisplayAlert("Transaction Error", ex.Message, "OK");
+                await Shell.Current.DisplayAlertAsync("Transaction Error", ex.Message, "OK");
             }
             catch (AccountNotFoundException ex)
             {
                 await logger.LogError(nameof(GetTransaction), ex);
-                await Shell.Current.DisplayAlert("Account Error", ex.Message, "OK");
+                await Shell.Current.DisplayAlertAsync("Account Error", ex.Message, "OK");
             }
             catch (CategoryNotFoundException ex)
             {
                 await logger.LogError(nameof(GetTransaction), ex);
-                await Shell.Current.DisplayAlert("Category Error", ex.Message, "OK");
+                await Shell.Current.DisplayAlertAsync("Category Error", ex.Message, "OK");
             }
             catch (Exception ex)
             {
                 await logger.LogError(nameof(GetTransaction), ex);
-                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+                await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
             }
         }
         else
         {
             string message = $"{ID} is not a valid ID";
             await logger.LogError(nameof(GetTransaction), new Exception(message));
-            await Shell.Current.DisplayAlert("Transaction ID Error", message, "OK");
+            await Shell.Current.DisplayAlertAsync("Transaction ID Error", message, "OK");
         }
     }
 
@@ -124,7 +124,7 @@ public partial class EditTransactionViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetAccounts), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -145,12 +145,12 @@ public partial class EditTransactionViewModel : ObservableObject
         catch (CategoryNotFoundException ex)
         {
             await logger.LogError(nameof(GetIncomeCategory), ex);
-            await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Category Not Found Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetIncomeCategory), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -171,12 +171,12 @@ public partial class EditTransactionViewModel : ObservableObject
         catch (CategoryNotFoundException ex)
         {
             await logger.LogError(nameof(GetTransferCategory), ex);
-            await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Category Not Found Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetTransferCategory), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -197,7 +197,7 @@ public partial class EditTransactionViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetExpenseCategories), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -222,7 +222,7 @@ public partial class EditTransactionViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetSubcategories), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -240,7 +240,7 @@ public partial class EditTransactionViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetPayees), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -305,12 +305,12 @@ public partial class EditTransactionViewModel : ObservableObject
         catch (TransactionNotFoundException ex)
         {
             await logger.LogError(nameof(EditTransaction), ex);
-            await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
+            await Shell.Current.DisplayAlertAsync("Error", "Could not find corresponding transfer", "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(EditTransaction), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
 
         await Shell.Current.GoToAsync("..");
@@ -322,7 +322,7 @@ public partial class EditTransactionViewModel : ObservableObject
     [RelayCommand]
     async Task RemoveTransaction()
     {
-        bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete this transaction?", "Yes", "No");
+        bool flag = await Shell.Current.DisplayAlertAsync("", "Are you sure you want to delete this transaction?", "Yes", "No");
         if (!flag)
             return;
 
@@ -346,12 +346,12 @@ public partial class EditTransactionViewModel : ObservableObject
         catch (TransactionNotFoundException ex)
         {
             await logger.LogError(nameof(RemoveTransaction), ex);
-            await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
+            await Shell.Current.DisplayAlertAsync("Error", "Could not find corresponding transfer", "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(RemoveTransaction), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
 
         await Shell.Current.GoToAsync("..");
@@ -361,7 +361,7 @@ public partial class EditTransactionViewModel : ObservableObject
     {
         if (Transaction is null || Account is null || Category is null || Subcategory is null)
         {
-            await Shell.Current.DisplayAlert("Validation Error", "Please fill out all fields", "OK");
+            await Shell.Current.DisplayAlertAsync("Validation Error", "Please fill out all fields", "OK");
             return false;
         }
 
@@ -389,7 +389,7 @@ public partial class EditTransactionViewModel : ObservableObject
         // if account and transfer account are same, don't update
         if (Transaction.AccountID == Transaction.TransferID)
         {
-            await Shell.Current.DisplayAlert("Error", "Cannot transfer to and from the same Account", "OK");
+            await Shell.Current.DisplayAlertAsync("Error", "Cannot transfer to and from the same Account", "OK");
             return false;
         }
 

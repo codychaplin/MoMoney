@@ -73,7 +73,7 @@ public partial class ImportExportViewModel : ObservableObject
 
             await accountService.AddAccounts(accounts);
             string message = i == 2 ? "1 account has been added." : $"{i - 1} accounts have been added";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlertAsync("Success", message, "OK");
 
             await logger.LogInfo($"Imported {accounts.Count} accounts from '{result.FileName}'.");
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_ACCOUNTS, FirebaseParameters.GetFirebaseParameters());
@@ -81,17 +81,17 @@ public partial class ImportExportViewModel : ObservableObject
         catch (InvalidAccountException ex)
         {
             await logger.LogWarning(nameof(ImportAccountsCSV), ex);
-            await Shell.Current.DisplayAlert("Warning", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
         }
         catch (DuplicateAccountException ex)
         {
             await logger.LogError(nameof(ImportAccountsCSV), ex);
-            await Shell.Current.DisplayAlert("Duplicate Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Duplicate Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(ImportAccountsCSV), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
         {
@@ -144,7 +144,7 @@ public partial class ImportExportViewModel : ObservableObject
 
             await categoryService.AddCategories(categories);
             string message = i == 2 ? "1 category has been added." : $"{i - 1} categories have been added";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlertAsync("Success", message, "OK");
 
             await logger.LogInfo($"Imported {categories.Count} categories from '{result.FileName}'.");
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_CATEGORIES, FirebaseParameters.GetFirebaseParameters());
@@ -152,17 +152,17 @@ public partial class ImportExportViewModel : ObservableObject
         catch (InvalidCategoryException ex)
         {
             await logger.LogWarning(nameof(ImportCategoriesCSV), ex);
-            await Shell.Current.DisplayAlert("Warning", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
         }
         catch (DuplicateCategoryException ex)
         {
             await logger.LogError(nameof(ImportCategoriesCSV), ex);
-            await Shell.Current.DisplayAlert("Duplicate Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Duplicate Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(ImportCategoriesCSV), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
         {
@@ -219,7 +219,7 @@ public partial class ImportExportViewModel : ObservableObject
             await transactionService.AddTransactions(transactions);
             await CalculateAccountBalances();
             string message = i == 2 ? "1 transaction has been added." : $"{i - 1} transactions have been added";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlertAsync("Success", message, "OK");
 
             await logger.LogInfo($"Imported {transactions.Count} transactions from '{result.FileName}'.");
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_TRANSACTIONS, FirebaseParameters.GetFirebaseParameters());
@@ -227,12 +227,12 @@ public partial class ImportExportViewModel : ObservableObject
         catch (InvalidTransactionException ex)
         {
             await logger.LogWarning(nameof(ImportTransactionsCSV), ex);
-            await Shell.Current.DisplayAlert("Warning", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(ImportTransactionsCSV), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
         {
@@ -276,7 +276,7 @@ public partial class ImportExportViewModel : ObservableObject
 
             await stockService.AddStocks(stocks);
             string message = i == 2 ? "1 stock has been added." : $"{i - 1} stocks have been added";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlertAsync("Success", message, "OK");
 
             await logger.LogInfo($"Imported {stocks.Count} stocks from '{result.FileName}'.");
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_STOCKS, FirebaseParameters.GetFirebaseParameters());
@@ -284,17 +284,17 @@ public partial class ImportExportViewModel : ObservableObject
         catch (InvalidStockException ex)
         {
             await logger.LogWarning(nameof(ImportStocksCSV), ex);
-            await Shell.Current.DisplayAlert("Warning", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
         }
         catch (DuplicateStockException ex)
         {
             await logger.LogError(nameof(ImportStocksCSV), ex);
-            await Shell.Current.DisplayAlert("Duplicate Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Duplicate Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(ImportStocksCSV), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
         {
@@ -338,7 +338,7 @@ public partial class ImportExportViewModel : ObservableObject
 
             await logger.AddLogs(logs);
             string message = i == 2 ? "1 log has been added." : $"{i - 1} logs have been added";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+            _ = Shell.Current.DisplayAlertAsync("Success", message, "OK");
 
             await logger.LogInfo($"Imported {logs.Count} logs from '{result.FileName}'.");
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_LOGS, FirebaseParameters.GetFirebaseParameters());
@@ -346,7 +346,7 @@ public partial class ImportExportViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(ImportLogsCSV), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
         {
@@ -391,7 +391,7 @@ public partial class ImportExportViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(ExportTransactionsCSV), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
         {
@@ -415,7 +415,7 @@ public partial class ImportExportViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(ExportAccountsCSV), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
         {
@@ -439,7 +439,7 @@ public partial class ImportExportViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(ExportCategoriesCSV), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
         {
@@ -463,7 +463,7 @@ public partial class ImportExportViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(ExportLogsCSV), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
         {
@@ -487,7 +487,7 @@ public partial class ImportExportViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(ExportStocksCSV), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
         {
@@ -516,7 +516,7 @@ public partial class ImportExportViewModel : ObservableObject
                 var status = await Permissions.RequestAsync<Permissions.StorageWrite>();
                 if (status != PermissionStatus.Granted)
                 {
-                    await Shell.Current.DisplayAlert("Error", "Storage permissions are required in order to save to CSV", "OK");
+                    await Shell.Current.DisplayAlertAsync("Error", "Storage permissions are required in order to save to CSV", "OK");
                     return;
                 }
             }
@@ -549,7 +549,7 @@ public partial class ImportExportViewModel : ObservableObject
         // log/display success message
         int count = records.Count();
         string message = $"Successfully downloaded file with {count} " + (count == 1 ? typeSingular : typePlural) + $" to:\n'{result.FilePath}'";
-        _ = Shell.Current.DisplayAlert("Success", message, "OK");
+        _ = Shell.Current.DisplayAlertAsync("Success", message, "OK");
 
         await logger.LogInfo($"Exported {count} {typePlural} to '{name}'.");
         logger.LogFirebaseEvent(firebaseEvent, FirebaseParameters.GetFirebaseParameters());
@@ -568,7 +568,7 @@ public partial class ImportExportViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(CalculateAccountBalances), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 }

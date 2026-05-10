@@ -41,12 +41,12 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
         catch (CategoryNotFoundException ex)
         {
             await logger.LogError(nameof(ApplyQueryAttributes), ex);
-            await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Category Not Found Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(ApplyQueryAttributes), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -65,7 +65,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetParents), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -82,19 +82,19 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
 
             // if parent category, notify the user that it won't show up until a subcategory is added
             if (Parent == null)
-                _ = Shell.Current.DisplayAlert("Note", "Parent categories will only appear in this list once a subcategory has been added.", "OK");
+                _ = Shell.Current.DisplayAlertAsync("Note", "Parent categories will only appear in this list once a subcategory has been added.", "OK");
 
             await Shell.Current.GoToAsync("..");
         }
         catch (DuplicateCategoryException ex)
         {
             await logger.LogWarning(nameof(Add), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(Add), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -107,7 +107,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
         if (Category is null || string.IsNullOrEmpty(Category.CategoryName))
         {
             // if invalid, display error
-            await Shell.Current.DisplayAlert("Error", "Information not valid", "OK");
+            await Shell.Current.DisplayAlertAsync("Error", "Information not valid", "OK");
             return;
         }
 
@@ -121,7 +121,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
         catch (Exception ex)
         {
             await logger.LogError(nameof(Edit), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -131,7 +131,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
     [RelayCommand]
     protected override async Task Remove()
     {
-        bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Category.CategoryName}\"?", "Yes", "No");
+        bool flag = await Shell.Current.DisplayAlertAsync("", $"Are you sure you want to delete \"{Category.CategoryName}\"?", "Yes", "No");
         if (!flag)
             return;
 
@@ -144,7 +144,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
         catch (Exception ex)
         {
             await logger.LogError(nameof(Remove), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 }

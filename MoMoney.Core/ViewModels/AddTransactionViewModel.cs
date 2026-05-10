@@ -94,12 +94,12 @@ public partial class AddTransactionViewModel : ObservableObject
         catch (CategoryNotFoundException ex)
         {
             await logger.LogWarning(nameof(GetIncomeCategory), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetIncomeCategory), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -124,12 +124,12 @@ public partial class AddTransactionViewModel : ObservableObject
         catch (CategoryNotFoundException ex)
         {
             await logger.LogWarning(nameof(GetTransferCategory), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetTransferCategory), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -154,7 +154,7 @@ public partial class AddTransactionViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetExpenseCategories), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -177,7 +177,7 @@ public partial class AddTransactionViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetSubcategories), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -192,7 +192,7 @@ public partial class AddTransactionViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetPayees), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -308,13 +308,13 @@ public partial class AddTransactionViewModel : ObservableObject
         {
             ResetButtonColour(btnRecord);
             await logger.LogError(nameof(Record), ex);
-            await Shell.Current.DisplayAlert("Error", "Failed to record audio. Please try again", "OK");
+            await Shell.Current.DisplayAlertAsync("Error", "Failed to record audio. Please try again", "OK");
         }
         catch (Exception ex)
         {
             ResetButtonColour(btnRecord);
             await logger.LogError(nameof(Record), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -390,12 +390,12 @@ public partial class AddTransactionViewModel : ObservableObject
         catch (InvalidTransactionException ex)
         {
             await logger.LogWarning(nameof(AddTransaction), ex);
-            await Shell.Current.DisplayAlert("Validation Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Validation Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(AddTransaction), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 

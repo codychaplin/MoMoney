@@ -14,13 +14,11 @@ public partial class HomePage : ContentView
         HandlerChanged += async (s, e) =>
         {
             HomeViewModel? vm = Handler?.MauiContext?.Services.GetService<HomeViewModel>();
-            IMoMoneydb? momoneyDb = Handler?.MauiContext?.Services.GetService<IMoMoneydb>();
-            if (vm == null || momoneyDb == null)
+            if (vm == null)
                 return;
             BindingContext = vm;
 
             Shell.Current.IsBusy = true;
-            await momoneyDb.Init(false);
             await vm.Refresh();
             Shell.Current.IsBusy = false;
 

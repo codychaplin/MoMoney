@@ -41,7 +41,7 @@ public partial class CategoriesViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(LoadCategories), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -77,12 +77,12 @@ public partial class CategoriesViewModel : ObservableObject
         catch (CategoryNotFoundException ex)
         {
             await logger.LogError(nameof(GoToEditCategoryString), ex);
-            await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Category Not Found Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(GoToEditCategoryString), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 }

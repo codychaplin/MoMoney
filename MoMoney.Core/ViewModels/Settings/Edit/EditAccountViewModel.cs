@@ -41,12 +41,12 @@ public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, E
         catch (DuplicateAccountException ex)
         {
             await logger.LogWarning(nameof(Add), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(Add), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -61,7 +61,7 @@ public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, E
             string.IsNullOrEmpty(Account.AccountType))
         {
             // if invalid, display error
-            await Shell.Current.DisplayAlert("Validation Error", "Information not valid", "OK");
+            await Shell.Current.DisplayAlertAsync("Validation Error", "Information not valid", "OK");
             return;
         }
 
@@ -74,7 +74,7 @@ public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, E
         catch (Exception ex)
         {
             await logger.LogError(nameof(Edit), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -84,7 +84,7 @@ public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, E
     [RelayCommand]
     protected override async Task Remove()
     {
-        bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Account.AccountName}\"?", "Yes", "No");
+        bool flag = await Shell.Current.DisplayAlertAsync("", $"Are you sure you want to delete \"{Account.AccountName}\"?", "Yes", "No");
         if (!flag)
             return;
 
@@ -97,7 +97,7 @@ public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, E
         catch (Exception ex)
         {
             await logger.LogError(nameof(Remove), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 }

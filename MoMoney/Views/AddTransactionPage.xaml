@@ -3,6 +3,7 @@
     x:Class="MoMoney.Views.AddTransactionPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
@@ -18,17 +19,9 @@
         <VerticalStackLayout Padding="10,0" Spacing="5">
 
             <!--  title  -->
-            <Grid
+            <components:PageHeader 
                 Margin="-10,0"
-                Padding="10,0"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                                  Dark={StaticResource PrimaryDark}}"
-                HeightRequest="55">
-                <Label
-                    Style="{StaticResource lblTitle}"
-                    Text="Add Transaction"
-                    VerticalOptions="Center" />
-            </Grid>
+                Title="Add Transaction" />
 
             <!--  transaction type buttons  -->
             <Border

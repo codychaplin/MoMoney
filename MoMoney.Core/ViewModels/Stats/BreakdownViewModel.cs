@@ -90,7 +90,7 @@ public partial class BreakdownViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(LoadBreakdown), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -212,7 +212,7 @@ public partial class BreakdownViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(UpdateBreakdown), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
