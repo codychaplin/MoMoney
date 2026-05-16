@@ -3,6 +3,8 @@
 ### Changes
 * Update packages
 * Remove database lazy loading
+* Add bank-specific CSV importing
+* Connect subcategories to parents by ID instead of name
 
 # MoMoney v1.0.1
 

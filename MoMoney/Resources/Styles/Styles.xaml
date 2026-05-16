@@ -48,6 +48,26 @@
     <Style
         BaseResourceKey="InputFieldBaseStyle"
         CanCascade="True"
+        TargetType="material:EditorField">
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.6" />
+                            <Setter Property="BorderColor" Value="{StaticResource Gray500}" />
+                            <Setter Property="TextColor" Value="{StaticResource Gray200}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style
+        BaseResourceKey="InputFieldBaseStyle"
+        CanCascade="True"
         TargetType="material:PickerField">
         <Setter Property="AllowClear" Value="True" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />

@@ -94,6 +94,15 @@
                 <Setter Property="VerticalOptions" Value="Center" />
             </Style>
 
+            <!--  separator  -->
+            <Style
+                x:Key="separator"
+                TargetType="BoxView">
+                <Setter Property="HeightRequest" Value="1" />
+                <Setter Property="Margin" Value="0,10" />
+                <Setter Property="Color" Value="{StaticResource Gray500}" />
+            </Style>
+
             <!--  add button  -->
             <Style x:Key="btnAdd" TargetType="Button">
                 <Setter Property="Shadow">
@@ -101,7 +110,7 @@
                         <Shadow
                             Brush="Black"
                             Opacity="0.8"
-                            Radius="30"
+                            Radius="5"
                             Offset="5,5" />
                     </Setter.Value>
                 </Setter>

@@ -35,9 +35,13 @@
             <!--  import/export  -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Import/Export" />
             <components:AlignedButton
+                Command="{Binding GoToImportStatementCommand}"
+                ShowArrow="True"
+                Text="Import Data from Bank Statement" />
+            <components:AlignedButton
                 Command="{Binding GoToImportExportCommand}"
                 ShowArrow="True"
-                Text="Import/Export Data" />
+                Text="Import/Export MoMoney Data" />
 
             <!--  privacy  -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Privacy" />

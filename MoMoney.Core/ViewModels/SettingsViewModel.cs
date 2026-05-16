@@ -42,6 +42,15 @@ public partial class SettingsViewModel
     }
 
     /// <summary>
+    /// Goes to GoToImportStatement.xaml.
+    /// </summary>
+    [RelayCommand]
+    async Task GoToImportStatement()
+    {
+        await Shell.Current.GoToAsync("ImportStatementPage");
+    }
+
+    /// <summary>
     /// Goes to ImportExportPage.xaml.
     /// </summary>
     [RelayCommand]

@@ -1,4 +1,5 @@
 ﻿using MoMoney.Core.Models;
+using MoMoney.Core.Models.Statements;
 using SQLite;
 
 namespace MoMoney.Core.Data;

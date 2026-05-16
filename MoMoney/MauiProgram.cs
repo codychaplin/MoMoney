@@ -63,6 +63,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<ICategoryService, CategoryService>();
         builder.Services.AddSingleton<IStockService, StockService>();
         builder.Services.AddSingleton<ITransactionService, TransactionService>();
+        builder.Services.AddSingleton<IMappingRuleService, MappingRuleService>();
         builder.Services.AddSingleton<IRecordAudioService, RecordAudioService>();
 
         return builder;
@@ -89,6 +90,7 @@ public static class MauiProgram
         builder.Services.AddTransient<AdminPage>();
         builder.Services.AddTransient<BulkEditingPage>();
         builder.Services.AddTransient<ImportExportPage>();
+        builder.Services.AddTransient<ImportStatementPage>();
         builder.Services.AddTransient<LoggingPage>();
 
         // models
@@ -122,6 +124,7 @@ public static class MauiProgram
         builder.Services.AddTransient<AdminViewModel>();
         builder.Services.AddTransient<BulkEditingViewModel>();
         builder.Services.AddTransient<ImportExportViewModel>();
+        builder.Services.AddTransient<ImportStatementViewModel>();
         builder.Services.AddTransient<LoggingViewModel>();
 
         // models

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="MainTheme" parent="Maui.MainTheme">
+	<style name="MainTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 		<item name="colorPrimary">@color/White</item>
 		<item name="android:actionMenuTextColor">@color/White</item>
 		<item name="alertDialogTheme">@style/MauiAlertDialogTheme</item>
+		<item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
 	</style>
 	
 	<style name="MauiAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">

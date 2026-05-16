@@ -184,9 +184,7 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
-
-	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionMoMoneyHideInfoBar="True" XamarinHotReloadUnhandledDeviceExceptionMoMoneyHideInfoBar="True" /></VisualStudio></ProjectExtensions>
-
+	
 	<ItemGroup>
 		<Compile Update="Platforms\Android\RecordAudioService.cs">
 		  <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>

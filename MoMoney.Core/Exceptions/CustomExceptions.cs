@@ -81,6 +81,15 @@ public class DuplicateStockException : Exception
     public DuplicateStockException(string message, Exception inner) : base(message, inner) { }
 }
 
+public class DuplicateMappingRuleException : Exception
+{
+    public DuplicateMappingRuleException() { }
+
+    public DuplicateMappingRuleException(string message) : base(message) { }
+
+    public DuplicateMappingRuleException(string message, Exception inner) : base(message, inner) { }
+}
+
 // ------------------------------------
 // -------- INVALID EXCEPTIONS --------
 // ------------------------------------
@@ -119,4 +128,13 @@ public class InvalidTransactionException : Exception
     public InvalidTransactionException(string message) : base(message) { }
 
     public InvalidTransactionException(string message, Exception inner) : base(message, inner) { }
+}
+
+public class InvalidStatementException : Exception
+{
+    public InvalidStatementException() { }
+
+    public InvalidStatementException(string message) : base(message) { }
+
+    public InvalidStatementException(string message, Exception inner) : base(message, inner) { }
 }

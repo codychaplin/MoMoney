@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             x:Class="MoMoney.Views.ImportStatementPage"
+             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
+             x:DataType="viewmodel:ImportStatementViewModel"
+             xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+             xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:segmentedControl="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:converters="clr-namespace:MoMoney.Converters"
+             Title="Import Statement">
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="5">
+            <VerticalStackLayout.Resources>
+                <ResourceDictionary>
+                    <converters:ImportStatusToColourConverter x:Key="ImportStatusToColourConverter" />
+                    <converters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
+                    <Style TargetType="Label" x:Key="SectionTitle">
+                        <Setter Property="FontSize" Value="18" />
+                        <Setter Property="FontAttributes" Value="Bold" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light=Black, Dark=White}" />
+                    </Style>
+                </ResourceDictionary>
+            </VerticalStackLayout.Resources>
+
+            <!--  Setup section title  -->
+            <Label Text="Setup" Style="{StaticResource SectionTitle}" />
+            
+            <!--  Account  -->
+            <material:PickerField
+                x:Name="pckAccount"
+                Title="Account"
+                x:DataType="models:Account"
+                ItemDisplayBinding="{Binding AccountName}"
+                ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}" />
+
+            <!--  Bank Template  -->
+            <material:PickerField Title="Bank" SelectedItem="{Binding SelectedBankType}">
+                <material:PickerField.Items>
+                    <x:String>Tangerine</x:String>
+                    <x:String>Wealthsimple</x:String>
+                </material:PickerField.Items>
+            </material:PickerField>
+
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" Margin="0,5,0,0">
+                <!--  Clear button  -->
+                <Button
+                    Text="Clear"
+                    IsEnabled="{Binding FileUploaded}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightRed},
+                                                    Dark={StaticResource Red}}"
+                    Command="{Binding ClearCommand}" />
+
+                <!--  Reload button  -->
+                <Button
+                    Grid.Column="1"
+                    Text="Reload"
+                    IsEnabled="{Binding FileUploaded}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBlue},
+                                                    Dark={StaticResource Blue}}"
+                    Command="{Binding ReloadCommand}" />
+
+                <!--  Upload file button  -->
+                <Button
+                    Grid.Column="2"
+                    Text="Upload File"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                    Dark={StaticResource PrimaryDark}}"
+                    Command="{Binding ImportStatementCommand}" />
+            </Grid>
+
+            <VerticalStackLayout IsVisible="{Binding FileUploaded}" Spacing="5">
+                
+                <BoxView Style="{StaticResource separator}" />
+
+                <!--  Create a rule section title  -->
+                <Label Text="Create a Rule" Style="{StaticResource SectionTitle}" />
+                <Label
+                    Text="A rule is a regular expression that will be used to match the text of a transaction"
+                    FontAttributes="None"
+                    FontSize="14"
+                    TextColor="{AppThemeBinding Light={StaticResource Gray700},
+                                                Dark={StaticResource Gray300}}" />
+
+                <!-- Rule regex textbox -->
+                <material:TextField Title="Pattern" Text="{Binding RuleRegex}" />
+
+                <!-- Create rule button  -->
+                <Button
+                    Margin="0,5,0,0"
+                    Text="Create Rule"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                    Dark={StaticResource PrimaryDark}}"
+                    Command="{Binding ImportStatementCommand}" />
+
+                <BoxView Style="{StaticResource separator}" />
+
+                <Grid ColumnDefinitions="Auto,*,*,Auto" ColumnSpacing="10" Margin="0,0,0,5">
+                    <Grid.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="WidthRequest" Value="30" />
+                            <Setter Property="HeightRequest" Value="30" />
+                            <Setter Property="CornerRadius" Value="10" />
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary},
+                                                                                        Dark={StaticResource PrimaryDark}}" />
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light=Black, Dark=White}" />
+                            <Setter Property="FontSize" Value="25" />
+                            <Setter Property="FontFamily" Value="MaterialRegular" />
+                            <Setter Property="Padding" Value="0" />
+                        </Style>
+                    </Grid.Resources>
+
+                    <!--  Left button  -->
+                    <Button Command="{Binding DecrementTransactionCommand}" Text="{x:Static m:MaterialRegular.Chevron_left}" />
+
+                     <!--  CSV Record title  -->
+                    <Label
+                        Grid.Column="1"
+                        Text="CSV Record"
+                        FontSize="18"
+                        VerticalOptions="Center"
+                        FontAttributes="Bold"
+                        HorizontalTextAlignment="Start" />
+
+                    <!--  Selected transaction index  -->
+                    <Label
+                        Grid.Column="2"
+                        HorizontalTextAlignment="End"
+                        VerticalOptions="Center"
+                        Text="{Binding ProgressText}"
+                        FontSize="18"
+                        FontAttributes="Bold" />
+
+                    <!--  Right button  -->
+                    <Button Grid.Column="3" Command="{Binding IncrementTransactionCommand}" Text="{x:Static m:MaterialRegular.Chevron_right}" />
+                </Grid>
+                    
+                <!-- text field that needs mapping from CSV -->
+                <material:EditorField
+                    Grid.ColumnSpan="3"
+                    Title="Text"
+                    Text="{Binding SelectedTangerineTransactionPair.RawData.FullText}"
+                    IsReadOnly="True"
+                    IsEnabled="False" />
+
+                <BoxView Style="{StaticResource separator}"/>
+
+                <!-- Transaction section title -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Label Text="Transaction" VerticalOptions="Center" Style="{StaticResource SectionTitle}" />
+                    <Border
+                        Grid.Column="1"
+                        HorizontalOptions="End"
+                        Padding="8,4"
+                        BackgroundColor="{Binding SelectedTangerineTransactionPair.Status, Converter={StaticResource ImportStatusToColourConverter}}"
+                        Stroke="Transparent">
+                        <Label
+                            Text="{Binding SelectedTangerineTransactionPair.Status, Converter={StaticResource EnumToDescriptionConverter}}"
+                            TextColor="White"
+                            FontAttributes="Bold" />
+                    </Border>
+                </Grid>
+
+                <Grid ColumnDefinitions="*,*,*" RowSpacing="5" ColumnSpacing="5">
+                    <!-- Readonly confirmed fields -->
+                    <material:TextField
+                        Grid.Column="0"
+                        Grid.Row="1"
+                        Title="Date"
+                        Text="{Binding SelectedTangerineTransactionPair.Transaction.Date, StringFormat='{0:yyyy-MM-dd}'}"
+                        IsEnabled="False"
+                        AllowClear="False" />
+                    <material:TextField
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        Title="Account"
+                        Text="{Binding Account.AccountName}"
+                        IsEnabled="False"
+                        AllowClear="False" />
+                    <material:EditorField
+                        Grid.Column="2"
+                        Grid.Row="1"
+                        Title="Amount"
+                        Text="{Binding SelectedTangerineTransactionPair.Transaction.Amount}"
+                        IsEnabled="False" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*,*" RowDefinitions="*,*,*" RowSpacing="5" ColumnSpacing="5">
+                    <!--  Category  -->
+                    <material:PickerField
+                        Title="Category"
+                        IsEnabled="{Binding SelectedTangerineTransactionPair.CanEdit}"
+                        x:DataType="viewmodel:ImportStatementViewModel"
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Category}}"
+                        ItemDisplayBinding="{Binding CategoryName}"
+                        ItemsSource="{Binding Categories}"
+                        SelectedItem="{Binding Category}"
+                        SelectedValueChangedCommand="{Binding CategoryChangedCommand}" />
+
+                    <!--  Subcategory  -->
+                    <material:PickerField
+                        Grid.Column="1"
+                        Title="Subcategory"
+                        IsEnabled="{Binding SelectedTangerineTransactionPair.CanEdit}"
+                        x:DataType="viewmodel:ImportStatementViewModel"
+                        Icon="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Category}}"
+                        ItemDisplayBinding="{Binding CategoryName}"
+                        ItemsSource="{Binding Subcategories}"
+                        SelectedItem="{Binding Subcategory}" />
+                    
+                    <!--  Payee  -->
+                    <material:InputField
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        x:Name="entPayeeParent"
+                        IsEnabled="{Binding Path=SelectedTangerineTransactionPair.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                        >
+                        <Grid
+                            Margin="11,3,0,0"
+                            ColumnDefinitions="20,*"
+                            ColumnSpacing="2">
+                            <Image Source="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
+                            <input:SfAutocomplete
+                                x:Name="entPayee"
+                                Grid.Column="1"
+                                BackgroundColor="Transparent"
+                                ClearButtonIconColor="{AppThemeBinding Light={StaticResource Black},
+                                                                    Dark={StaticResource White}}"
+                                DropDownBackground="{AppThemeBinding Light={StaticResource White},
+                                                                    Dark={StaticResource Gray950}}"
+                                DropDownItemTextColor="{AppThemeBinding Light={StaticResource Black},
+                                                                        Dark={StaticResource White}}"
+                                IsClearButtonVisible="{Binding Payee.Length}"
+                                ItemsSource="{Binding Payees}"
+                                MaxDropDownHeight="250"
+                                Placeholder="Payee"
+                                PlaceholderColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                                Dark={StaticResource Gray200}}"
+                                SelectionTextHighlightColor="#7742ba96"
+                                Stroke="Transparent"
+                                Text="{Binding Payee, Mode=TwoWay}"
+                                TextColor="{AppThemeBinding Light={StaticResource Black},
+                                                            Dark={StaticResource White}}"
+                                TextSearchMode="Contains" />
+                        </Grid>
+                    </material:InputField>
+
+                    <HorizontalStackLayout Grid.Row="2" Spacing="5">
+                        <Label FontSize="16" Text="Manual Edit" VerticalOptions="Center" />
+                        <Switch HorizontalOptions="Start" IsToggled="{Binding SelectedTangerineTransactionPair.CanEdit}" />
+                    </HorizontalStackLayout>
+                    
+                    <Button
+                        Margin="0,5,0,0"
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                        Dark={StaticResource PrimaryDark}}"
+                        Text="Approve"
+                        IsEnabled="{Binding SelectedTangerineTransactionPair.CanEdit}"
+                        Command="{Binding ApproveTransactionCommand}" />
+                </Grid>
+
+                <BoxView Style="{StaticResource separator}"/>
+
+                <!--  Summary section title  -->
+                <Label Text="Summary" Style="{StaticResource SectionTitle}" />
+
+                <!--  Progress summary  -->
+                <Label Text="{Binding StatusMessage}" />
+
+                <!--  Import button  -->
+                <Button
+                    Margin="0,5,0,0"
+                    Text="Commit"
+                    IsEnabled="{Binding IsCommitButtonEnabled}"
+                    Command="{Binding CommitImportCommand}" />
+                    
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

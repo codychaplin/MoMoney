@@ -2,6 +2,7 @@
 using SQLite;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
+using MoMoney.Core.Models.Statements;
 
 namespace MoMoney.Core.Data;
 
@@ -30,6 +31,7 @@ public class MoMoneydb : IMoMoneydb
             await db.CreateTableAsync<Stock>();
             await db.CreateTableAsync<Account>();
             await db.CreateTableAsync<Transaction>();
+            await db.CreateTableAsync<MappingRule>();
             await db.CreateTableAsync<ChatResponse>();
             await db.CreateTableAsync<WhisperResponse>();
             await CreateCategories();
@@ -53,6 +55,7 @@ public class MoMoneydb : IMoMoneydb
             await db.DropTableAsync<Account>();
             await db.DropTableAsync<Category>();
             await db.DropTableAsync<Transaction>();
+            await db.DropTableAsync<MappingRule>();
             await db.DropTableAsync<ChatResponse>();
             await db.DropTableAsync<WhisperResponse>();
             await db.CloseAsync();
