@@ -14,9 +14,9 @@ public interface ICategoryService
     /// Creates new Category object and inserts into Category table.
     /// </summary>
     /// <param name="categoryName"></param>
-    /// <param name="parentName"></param>
+    /// <param name="parentCategoryID"></param>
     /// <exception cref="DuplicateCategoryException"></exception>
-    Task AddCategory(string categoryName, string parentName);
+    Task AddCategory(string categoryName, int? parentCategoryID);
 
     /// <summary>
     /// Inserts multiple Category objects into Categories table.
@@ -52,23 +52,22 @@ public interface ICategoryService
     Task<Category?> GetCategory(int ID, bool tryGet = false);
 
     /// <summary>
-    /// Gets an category from the Categories table using a name and parent name.
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="parent"></param>
-    /// <param name="tryGet"></param>
-    /// <returns>Category object</returns>
-    /// <exception cref="CategoryNotFoundException"></exception>
-    Task<Category?> GetCategory(string name, string parent, bool tryGet = false);
-
-    /// <summary>
     /// Gets Category from the Categories table using name. Only works for parent categories.
     /// </summary>
     /// <param name="name"></param>
     /// <param name="tryGet"></param>
     /// <returns>Category object</returns>
     /// <exception cref="CategoryNotFoundException"></exception>
-    Task<Category?> GetParentCategory(string name, bool tryGet = false);
+    Task<Category?> GetParentCategoryByName(string name, bool tryGet = false);
+
+    /// <summary>
+    /// Gets Category from the Categories table using an ID. Only works for parent categories.
+    /// </summary>
+    /// <param name="parentCategoryID"></param>
+    /// <param name="tryGet"></param>
+    /// <returns>Category object</returns>
+    /// <exception cref="CategoryNotFoundException"></exception>
+    Task<Category?> GetParentCategoryByID(int parentCategoryID, bool tryGet = false);
 
     /// <summary>
     /// Gets all Categories from Categories table as a dictionary with Category ID as Key.
@@ -79,8 +78,9 @@ public interface ICategoryService
     /// <summary>
     /// Gets all mutable Categories from Categories table as a list.
     /// </summary>
+    /// <param name="includeParentName"></param>
     /// <returns>List of Category objects</returns>
-    Task<IEnumerable<Category>> GetCategories();
+    Task<IEnumerable<Category>> GetCategories(bool includeParentName = false);
 
     /// <summary>
     /// Gets all Categories from Categories table as a list.

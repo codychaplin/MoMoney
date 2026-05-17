@@ -12,13 +12,13 @@
         <DataTemplate x:Key="HeaderTemplate" x:DataType="models:CategoryGroup">
             <Border BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Style="{StaticResource SmallTileFrame}">
                 <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryStringCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding CategoryName}" />
+                    <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding Parent}" />
                 </Border.GestureRecognizers>
                 <Grid>
                     <Label
                         FontSize="20"
                         Style="{StaticResource lblTile}"
-                        Text="{Binding CategoryName}" />
+                        Text="{Binding Parent.CategoryName}" />
                 </Grid>
             </Border>
         </DataTemplate>

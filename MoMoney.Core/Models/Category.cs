@@ -9,22 +9,24 @@ public class Category
     public int CategoryID { get; set; }
     [Index(0)]
     public string CategoryName { get; set; } = string.Empty;
-    [Index(1)]
+    [CsvHelper.Configuration.Attributes.Ignore]
+    public int? ParentCategoryID{ get; set; }
+    [Index(1), SQLite.Ignore]
     public string ParentName { get; set; } = string.Empty;
 
     public Category() { }
 
-    public Category(int categoryID, string categoryName, string parentName)
+    public Category(int categoryID, string categoryName, int? parentCategoryID)
     {
         CategoryID = categoryID;
         CategoryName = categoryName;
-        ParentName = parentName;
+        ParentCategoryID = parentCategoryID;
     }
 
     public Category(Category category)
     {
         CategoryID = category.CategoryID;
         CategoryName = category.CategoryName;
-        ParentName = category.ParentName;
+        ParentCategoryID = category.ParentCategoryID;
     }
 }

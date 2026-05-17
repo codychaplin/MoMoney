@@ -35,8 +35,8 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
 
             await GetParents();
 
-            if (!string.IsNullOrEmpty(Category.ParentName))
-                Parent = await service.GetParentCategory(Category.ParentName);
+            if (Category.ParentCategoryID.HasValue)
+                Parent = await service.GetParentCategoryByID(Category.ParentCategoryID.Value);
         }
         catch (CategoryNotFoundException ex)
         {
@@ -77,7 +77,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
     {
         try
         {
-            await service.AddCategory(Category.CategoryName, Parent?.CategoryName ?? string.Empty);
+            await service.AddCategory(Category.CategoryName, Parent?.ParentCategoryID);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_CATEGORY, FirebaseParameters.GetFirebaseParameters());
 
             // if parent category, notify the user that it won't show up until a subcategory is added
@@ -113,7 +113,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
 
         try
         {
-            Category.ParentName = Parent?.CategoryName ?? string.Empty;
+            Category.ParentCategoryID = Parent?.CategoryID;
             await service.UpdateCategory(Category);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_EDIT_CATEGORY, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");

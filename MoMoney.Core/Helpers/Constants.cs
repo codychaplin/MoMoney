@@ -13,10 +13,10 @@ public static class Constants
     public const string dbEncryptionKey = "encryption_key";
 
     // category IDs
-    public const int INCOME_ID = 1;
-    public const int TRANSFER_ID = 2;
-    public const int DEBIT_ID = 3;
-    public const int CREDIT_ID = 4;
+    public const int TRANSFER_ID = 1;
+    public const int DEBIT_ID = 2;
+    public const int CREDIT_ID = 3;
+    public const int INCOME_ID = 4;
     public const int EXPENSE_ID = 5; // anything >= 5 will be an expense
 
     // month name array alias

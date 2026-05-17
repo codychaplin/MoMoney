@@ -127,7 +127,7 @@ public partial class ImportExportViewModel : ObservableObject
                     string parent = category.ParentName;
                     if (!string.IsNullOrEmpty(parent))
                     {
-                        var parentCat = await categoryService.GetParentCategory(parent, true);
+                        var parentCat = await categoryService.GetParentCategoryByName(parent, true);
                         if (parentCat == null && !categories.Select(c => c.CategoryName).Contains(parent))
                             throw new InvalidCategoryException($"'{parent}' is not an existing parent category.");
                     }
@@ -142,7 +142,25 @@ public partial class ImportExportViewModel : ObservableObject
                 throw new InvalidCategoryException(errorMessage);
             }
 
-            await categoryService.AddCategories(categories);
+            // split into parents and children
+            var parents = categories.Where(c => string.IsNullOrEmpty(c.ParentName)).ToList();
+            var children = categories.Where(c => !string.IsNullOrEmpty(c.ParentName)).ToList();
+
+            // add parents and get updated list with IDs
+            await categoryService.AddCategories(parents);
+            var updatedParents = await categoryService.GetParentCategories();
+
+            // map parent IDs to children
+            foreach (var child in children)
+            {
+                var parent = updatedParents.FirstOrDefault(p => p.CategoryName == child.ParentName);
+                if (parent != null)
+                    child.ParentCategoryID = parent.CategoryID;
+            }
+
+            // add children
+            await categoryService.AddCategories(children);
+
             string message = i == 2 ? "1 category has been added." : $"{i - 1} categories have been added";
             _ = Shell.Current.DisplayAlertAsync("Success", message, "OK");
 
@@ -432,7 +450,7 @@ public partial class ImportExportViewModel : ObservableObject
         try
         {
             IsBusy = true;
-            var categories = await categoryService.GetCategories();
+            var categories = await categoryService.GetCategories(true);
             await ExportData(categories, "categories.csv", "category", "categories", FirebaseParameters.EVENT_EXPORT_CATEGORIES);
         }
         catch (TaskCanceledException) { }

@@ -176,13 +176,13 @@ public class OpenAIService : IOpenAIService
         switch (type)
         {
             case TransactionType.Income:
-                categories = categories.Where(c => c.CategoryID == Constants.INCOME_ID || c.ParentName == "Income"); // reduce to only income categories
+                categories = categories.Where(c => c.CategoryID == Constants.INCOME_ID || c.ParentCategoryID == Constants.INCOME_ID); // reduce to only income categories
                 systemSb.Append("For this transaction, category is \"Income\" and transfer_account is \"\". ");
                 userSb.AppendLine("December 2nd,Savings,9.34,Interest,Tangerine");
                 assistantSb.AppendLine($"{{\"date\":\"{currentYear}-12-02\",\"account\":\"Tan Savings\",\"amount\":9.34,\"category\":\"Income\",\"subcategory\":\"Interest\",\"payee\":\"Tangerine\",\"transfer_account\":\"\"}}");
                 break;
             case TransactionType.Expense:
-                categories = categories.Where(c => c.CategoryID >= Constants.EXPENSE_ID && c.ParentName != "Income"); // reduce to only expense categories
+                categories = categories.Where(c => c.CategoryID >= Constants.EXPENSE_ID && c.ParentCategoryID != Constants.INCOME_ID); // reduce to only expense categories
                 systemSb.Append("For this transaction, transfer_account is \"\". ");
                 userSb.AppendLine("April 7th,Mastercard,91.65,Food,Restaurant,Amici");
                 assistantSb.AppendLine($"{{\"date\":\"{currentYear}-04-07\",\"account\":\"Mastercard\",\"amount\":91.65,\"category\":\"Food\",\"subcategory\":\"Restaurant\",\"payee\":\"Amici\",\"transfer_account\":\"\"}}");

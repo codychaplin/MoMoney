@@ -92,10 +92,10 @@ public class MoMoneydb : IMoMoneydb
     {
         return
         [
-            new Category(Constants.INCOME_ID, "Income", string.Empty), // 1
-            new Category(Constants.TRANSFER_ID, "Transfer", string.Empty), // 2
-            new Category(Constants.DEBIT_ID, "Debit", "Transfer"), // 3
-            new Category(Constants.CREDIT_ID, "Credit", "Transfer") // 4
+            new Category(Constants.TRANSFER_ID, "Transfer", null), // 1
+            new Category(Constants.DEBIT_ID, "Debit", Constants.TRANSFER_ID), // 2
+            new Category(Constants.CREDIT_ID, "Credit", Constants.TRANSFER_ID), // 3
+            new Category(Constants.INCOME_ID, "Income", null) // 4
         ];
     }
 

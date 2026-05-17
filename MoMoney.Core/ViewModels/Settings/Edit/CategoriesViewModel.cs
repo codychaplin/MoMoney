@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
-using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
+using MoMoney.Core.Helpers;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
@@ -29,11 +29,16 @@ public partial class CategoriesViewModel : ObservableObject
         {
             var categories = await categoryService.GetCategories();
 
-            // groups categories by parent except where ParentName == ""
+            // groups categories by parent except where ParentCategoryID == null
             // new parent categories will not show up in the list until a subcategory is added
-            var groupedCategories = categories.GroupBy(c => c.ParentName)
-                .Where(cat => !string.IsNullOrEmpty(cat.Key))
-                .Select(cat => new CategoryGroup(cat));
+            var groupedCategories = categories
+                .Where(c => c.ParentCategoryID != null)
+                .GroupBy(c => c.ParentCategoryID)
+                .Select(group =>
+                {
+                    var parent = categories.FirstOrDefault(c => c.CategoryID == group.Key);
+                    return new CategoryGroup(parent!, group);
+                });
             Categories.Clear();
             foreach (var category in groupedCategories)
                 Categories.Add(category);
@@ -60,29 +65,12 @@ public partial class CategoriesViewModel : ObservableObject
     [RelayCommand]
     async Task GoToEditCategory(Category category)
     {
-        await Shell.Current.GoToAsync($"EditCategoryPage", new ShellNavigationQueryParameters() { { "Category", category } });
-    }
+        if (category.CategoryID == Constants.INCOME_ID)
+        {
+            await Utilities.DisplayToast($"The {category.CategoryName} category cannot be edited");
+            return;
+        }
 
-    /// <summary>
-    /// Goes to EditCategoryPage.xaml with a Category ID as a parameter.
-    /// </summary>
-    [RelayCommand]
-    async Task GoToEditCategoryString(string name)
-    {
-        try
-        {
-            var category = await categoryService.GetParentCategory(name);
-            await Shell.Current.GoToAsync($"EditCategoryPage", new ShellNavigationQueryParameters() { { "Category", category! } });
-        }
-        catch (CategoryNotFoundException ex)
-        {
-            await logger.LogError(nameof(GoToEditCategoryString), ex);
-            await Shell.Current.DisplayAlertAsync("Category Not Found Error", ex.Message, "OK");
-        }
-        catch (Exception ex)
-        {
-            await logger.LogError(nameof(GoToEditCategoryString), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
-        }
+        await Shell.Current.GoToAsync($"EditCategoryPage", new ShellNavigationQueryParameters() { { "Category", category } });
     }
 }

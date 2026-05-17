@@ -28,7 +28,7 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
         {
             var count = await momoney.AccountsCountAsync(accountName);
             if (count > 0)
-                throw new DuplicateAccountException("Account named '" + accountName + "' already exists");
+                throw new DuplicateAccountException($"Account named '{accountName}' already exists");
 
             // startingBalance used for CurrentBalance because it's calculated later
             var account = new Account

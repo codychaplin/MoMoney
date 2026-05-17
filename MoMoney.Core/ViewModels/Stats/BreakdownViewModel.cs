@@ -199,9 +199,9 @@ public partial class BreakdownViewModel : ObservableObject
             // calculates sums for tab headers
             // absolute value for expenses just to make it look cleaner
             ExpenseSum = Math.Abs(transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
-                                              .Select(t => t.Amount).Sum());
+                                              .Sum(t => t.Amount));
             IncomeSum = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
-                                    .Select(t => t.Amount).Sum();
+                                    .Sum(t => t.Amount);
 
             // first tab = expenses, second tab = income
             if (Index == 0)
