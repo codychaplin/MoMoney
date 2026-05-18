@@ -17,7 +17,7 @@ public interface IAccountService
     /// <param name="accountType"></param>
     /// <param name="startingBalance"></param>
     /// <exception cref="DuplicateAccountException"></exception>
-    Task<int> AddAccount(string accountName, string accountType, decimal startingBalance);
+    Task<int> AddAccount(string accountName, string? accountType, decimal? startingBalance);
 
     /// <summary>
     /// Inserts multiple Account objects into Accounts table.

@@ -49,7 +49,7 @@
         <!--  delete/clear/enter buttons  -->
         <components:ActionButtons
             AddCommand="{Binding AddCommand}"
-            ClearClicked="BtnClear_Clicked"
+            ClearCommand="{Binding ClearCommand}"
             EditCommand="{Binding EditCommand}"
             IsEditMode="{Binding IsEditMode}"
             RemoveCommand="{Binding RemoveCommand}" />

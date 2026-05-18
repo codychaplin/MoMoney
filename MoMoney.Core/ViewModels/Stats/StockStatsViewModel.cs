@@ -112,7 +112,7 @@ public partial class StockStatsViewModel : ObservableObject
                 if (decimal.TryParse(price, out decimal newPrice))
                 {
                     // if price has changed, update values
-                    decimal difference = newPrice - Stocks[i].MarketPrice;
+                    decimal difference = newPrice - Stocks[i].MarketPrice ?? 0;
                     if (difference == 0)
                         continue;
 

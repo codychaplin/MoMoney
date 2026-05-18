@@ -24,6 +24,7 @@
             <converters:IdToAccountConverter x:Key="IdToAccountConverter" />
             <converters:AmountColourConverter x:Key="AmountColourConverter" />
             <converters:IdToCategoryConverter x:Key="IdToCategoryConverter" />
+            <converters:NullToVisibleConverter x:Key="NullToVisibleConverter" />
 
             <!--  title  -->
             <Style x:Key="lblTitle" TargetType="Label">

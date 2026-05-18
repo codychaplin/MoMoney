@@ -16,11 +16,6 @@
     BackgroundColor="{AppThemeBinding Light={StaticResource White},
                                       Dark={StaticResource Gray950}}">
 
-    <!--  converters  -->
-    <ContentView.Resources>
-        <converters:NullToVisibleConverter x:Key="NullToVisible" />
-    </ContentView.Resources>
-
     <!--  main page  -->
     <Grid RowDefinitions="Auto,*">
 

@@ -8,18 +8,5 @@ public partial class EditStockPage : ContentPage
     {
         InitializeComponent();
         BindingContext = vm;
-        Clear();
-    }
-
-    private void BtnClear_Clicked(object sender, EventArgs e)
-    {
-        Clear();
-    }
-
-    void Clear()
-    {
-        txtSymbol.Text = "";
-        txtQuantity.Text = "";
-        txtCost.Text = "";
     }
 }

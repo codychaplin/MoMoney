@@ -32,8 +32,10 @@ public partial class TangerineTransactionPair : ObservableObject
 {
     public Tangerine RawData { get; set; }
     public Transaction Transaction { get; set; }
-    [ObservableProperty]  ImportStatus status = ImportStatus.NeedsVerification;
-    [ObservableProperty] bool canEdit = false;
+    [ObservableProperty]
+    ImportStatus status = ImportStatus.NeedsVerification;
+    [ObservableProperty]
+    bool canEdit = false;
 
     public TangerineTransactionPair(Tangerine rawData) : this(rawData, new Transaction()) {}
 

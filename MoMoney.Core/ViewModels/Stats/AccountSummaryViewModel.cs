@@ -46,7 +46,7 @@ public partial class AccountSummaryViewModel : ObservableObject
             // update account type values
             foreach (var acc in accounts)
             {
-                var type = Enum.Parse(typeof(AccountType), acc.AccountType);
+                var type = Enum.Parse<AccountType>(acc.AccountType ?? string.Empty);
                 switch (type)
                 {
                     case AccountType.Checkings:

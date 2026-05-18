@@ -27,7 +27,7 @@ public class AccountServiceTests
     {
         // Arrange
         string accountName = _TestAccount0.AccountName;
-        string accountType = _TestAccount0.AccountType;
+        string? accountType = _TestAccount0.AccountType;
         decimal startingBalance = 100.0m;
         _MoMoneyDbMock.Setup(db => db.db.InsertAsync(It.IsAny<Account>())).ReturnsAsync(1);
         _MoMoneyDbMock.Setup(db => db.AccountsToList()).ReturnsAsync([]);
@@ -45,8 +45,8 @@ public class AccountServiceTests
     {
         // Arrange
         string accountName = _TestAccount0.AccountName;
-        string accountType = _TestAccount0.AccountType;
-        decimal startingBalance = _TestAccount0.StartingBalance;
+        string? accountType = _TestAccount0.AccountType;
+        decimal? startingBalance = _TestAccount0.StartingBalance;
         _MoMoneyDbMock.Setup(db => db.AccountsCountAsync(accountName)).ReturnsAsync(1);
         _MoMoneyDbMock.Setup(db => db.AccountsToList()).ReturnsAsync([]);
 

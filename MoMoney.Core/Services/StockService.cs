@@ -19,7 +19,7 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
             Stocks = await GetStocksAsDict();
     }
 
-    public async Task AddStock(string symbol, string market, decimal quantity, decimal cost)
+    public async Task AddStock(string symbol, string market, decimal? quantity, decimal? cost)
     {
         await DbOperation(async () =>
         {
@@ -140,7 +140,7 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
     /// <param name="cost"></param>
     /// <param name="marketPrice"></param>
     /// <exception cref="InvalidStockException"></exception>
-    static void ValidateStock(string symbol, string market, decimal quantity, decimal cost, decimal marketPrice)
+    static void ValidateStock(string symbol, string market, decimal? quantity, decimal? cost, decimal? marketPrice)
     {
         if (string.IsNullOrEmpty(symbol))
             throw new InvalidStockException("Invalid symbol");

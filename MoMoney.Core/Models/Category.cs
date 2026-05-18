@@ -1,14 +1,15 @@
 ﻿using SQLite;
 using CsvHelper.Configuration.Attributes;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MoMoney.Core.Models;
 
-public class Category
+public partial class Category : ObservableObject
 {
     [PrimaryKey, AutoIncrement, CsvHelper.Configuration.Attributes.Ignore]
     public int CategoryID { get; set; }
-    [Index(0)]
-    public string CategoryName { get; set; } = string.Empty;
+    [Index(0), ObservableProperty]
+    public partial string CategoryName { get; set; } = string.Empty;
     [CsvHelper.Configuration.Attributes.Ignore]
     public int? ParentCategoryID{ get; set; }
     [Index(1), SQLite.Ignore]

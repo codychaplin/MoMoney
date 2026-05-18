@@ -100,4 +100,12 @@ public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, E
             await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
+
+    [RelayCommand]
+    void Clear()
+    {
+        Account.AccountName = string.Empty;
+        Account.AccountType = null;
+        Account.StartingBalance = null;
+    }
 }

@@ -91,4 +91,13 @@ public partial class EditStockViewModel : BaseEditViewModel<IStockService, EditS
             await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
+
+    [RelayCommand]
+    void Clear()
+    {
+        Stock.Symbol = string.Empty;
+        Stock.Market = null;
+        Stock.Quantity = null;
+        Stock.Cost = null;
+    }
 }

@@ -21,7 +21,7 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
             Accounts = await GetAccountsAsDict();
     }
 
-    public async Task<int> AddAccount(string accountName, string accountType, decimal startingBalance)
+    public async Task<int> AddAccount(string accountName, string? accountType, decimal? startingBalance)
     {
         int numRows = 0;
         await DbOperation(async () =>
@@ -30,13 +30,15 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
             if (count > 0)
                 throw new DuplicateAccountException($"Account named '{accountName}' already exists");
 
+            ValidateAccount(accountName, accountType, startingBalance);
+
             // startingBalance used for CurrentBalance because it's calculated later
             var account = new Account
             {
                 AccountName = accountName,
                 AccountType = accountType,
                 StartingBalance = startingBalance,
-                CurrentBalance = startingBalance,
+                CurrentBalance = startingBalance ?? 0,
                 Enabled = true
             };
 
@@ -66,7 +68,10 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
             // adds accounts to db and dictionary
             numRows = await momoney.db.InsertAllAsync(accounts);
             foreach (var acc in accounts)
+            {
+                ValidateAccount(acc.AccountName, acc.AccountType, acc.StartingBalance);   
                 Accounts.Add(acc.AccountID, acc);
+            }
 
             return $"Added {accounts.Count} Accounts to db.";
         });
@@ -80,6 +85,8 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
         int numRows = 0;
         await DbOperation(async () =>
         {
+            ValidateAccount(updatedAccount.AccountName, updatedAccount.AccountType, updatedAccount.StartingBalance);
+
             numRows = await momoney.db.UpdateAsync(updatedAccount);
             Accounts[updatedAccount.AccountID] = updatedAccount;
 
@@ -205,5 +212,15 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
     {
         var accounts = await momoney.AccountsToList();
         return accounts.ToDictionary(a => a.AccountID, a => a);
+    }
+
+    static void ValidateAccount(string accountName, string? accountType, decimal? startingBalance)
+    {
+        if (string.IsNullOrEmpty(accountName))
+            throw new InvalidStockException("Invalid name");
+        if (string.IsNullOrEmpty(accountType))
+            throw new InvalidStockException("Invalid type");
+        if (!startingBalance.HasValue)
+            throw new InvalidStockException("Account must have a startin balance");
     }
 }

@@ -18,16 +18,4 @@ public partial class EditAccountPage : ContentPage
         swEnabled.IsToggled = !swEnabled.IsToggled;
         swEnabled.IsToggled = !swEnabled.IsToggled;
     }
-
-    /// <summary>
-    /// Clears input fields in view.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void BtnClear_Clicked(object sender, EventArgs e)
-    {
-        txtName.Text = "";
-        pckType.SelectedIndex = -1;
-        txtStartingBalance.Text = "";
-    }
 }

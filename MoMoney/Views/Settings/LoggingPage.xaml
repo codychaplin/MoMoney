@@ -19,7 +19,6 @@
     <ContentPage.Resources>
 
         <converters:NoneToVisibleConverter x:Key="NoneToVisible" />
-        <converters:NullToVisibleConverter x:Key="NullToVisible" />
 
         <!--  small item template  -->
         <DataTemplate x:Key="Small" x:DataType="models:Log">

@@ -147,4 +147,11 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
             await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
+
+    [RelayCommand]
+    void Clear()
+    {
+        Category.CategoryName = string.Empty;
+        Parent = null;
+    }
 }

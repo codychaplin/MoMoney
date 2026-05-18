@@ -9,15 +9,4 @@ public partial class EditCategoryPage : ContentPage
         InitializeComponent();
         BindingContext = vm;
     }
-
-    /// <summary>
-    /// Clears input fields in view.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void BtnClear_Clicked(object sender, EventArgs e)
-    {
-        txtName.Text = "";
-        pckParent.SelectedIndex = -1;
-    }
 }
