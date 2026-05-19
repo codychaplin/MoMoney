@@ -45,57 +45,44 @@
                 </material:PickerField.Items>
             </material:PickerField>
 
-            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" Margin="0,5,0,0">
-                <!--  Clear button  -->
+            <Grid ColumnDefinitions="*,*" RowDefinitions="*,*" ColumnSpacing="10" RowSpacing="10" Margin="0,5,0,0">
+                <!--  Upload file button  -->
                 <Button
-                    Text="Clear"
-                    IsEnabled="{Binding FileUploaded}"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource LightRed},
-                                                    Dark={StaticResource Red}}"
-                    Command="{Binding ClearCommand}" />
+                    Text="Upload File"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                    Dark={StaticResource PrimaryDark}}"
+                    Command="{Binding ImportStatementCommand}" />
+
+                <!--  Update rules button  -->
+                <Button
+                    Grid.Column="1"
+                    Text="Update Rules"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                    Dark={StaticResource Gray500}}"
+                    Command="{Binding GoToEditMappingRulesCommand}" />
 
                 <!--  Reload button  -->
                 <Button
-                    Grid.Column="1"
-                    Text="Reload"
+                    Grid.Row="1"
+                    Text="Run Again"
                     IsEnabled="{Binding FileUploaded}"
                     BackgroundColor="{AppThemeBinding Light={StaticResource LightBlue},
                                                     Dark={StaticResource Blue}}"
                     Command="{Binding ReloadCommand}" />
 
-                <!--  Upload file button  -->
+                <!--  Clear button  -->
                 <Button
-                    Grid.Column="2"
-                    Text="Upload File"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                                    Dark={StaticResource PrimaryDark}}"
-                    Command="{Binding ImportStatementCommand}" />
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Text="Clear"
+                    IsEnabled="{Binding FileUploaded}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightRed},
+                                                    Dark={StaticResource Red}}"
+                    Command="{Binding ClearCommand}" />
             </Grid>
 
             <VerticalStackLayout IsVisible="{Binding FileUploaded}" Spacing="5">
                 
-                <BoxView Style="{StaticResource separator}" />
-
-                <!--  Create a rule section title  -->
-                <Label Text="Create a Rule" Style="{StaticResource SectionTitle}" />
-                <Label
-                    Text="A rule is a regular expression that will be used to match the text of a transaction"
-                    FontAttributes="None"
-                    FontSize="14"
-                    TextColor="{AppThemeBinding Light={StaticResource Gray700},
-                                                Dark={StaticResource Gray300}}" />
-
-                <!-- Rule regex textbox -->
-                <material:TextField Title="Pattern" Text="{Binding RuleRegex}" />
-
-                <!-- Create rule button  -->
-                <Button
-                    Margin="0,5,0,0"
-                    Text="Create Rule"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                                    Dark={StaticResource PrimaryDark}}"
-                    Command="{Binding ImportStatementCommand}" />
-
                 <BoxView Style="{StaticResource separator}" />
 
                 <Grid ColumnDefinitions="Auto,*,*,Auto" ColumnSpacing="10" Margin="0,0,0,5">
@@ -192,32 +179,32 @@
                     <!--  Category  -->
                     <material:PickerField
                         Title="Category"
-                        IsEnabled="{Binding SelectedTangerineTransactionPair.CanEdit}"
-                        x:DataType="viewmodel:ImportStatementViewModel"
+                        IsEnabled="{Binding SelectedTangerineTransactionPair.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                        x:DataType="models:Category"
                         Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Category}}"
                         ItemDisplayBinding="{Binding CategoryName}"
-                        ItemsSource="{Binding Categories}"
-                        SelectedItem="{Binding Category}"
-                        SelectedValueChangedCommand="{Binding CategoryChangedCommand}" />
+                        ItemsSource="{Binding Categories, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                        SelectedItem="{Binding Category, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                        SelectedValueChangedCommand="{Binding CategoryChangedCommand, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}" />
 
                     <!--  Subcategory  -->
                     <material:PickerField
                         Grid.Column="1"
                         Title="Subcategory"
-                        IsEnabled="{Binding SelectedTangerineTransactionPair.CanEdit}"
-                        x:DataType="viewmodel:ImportStatementViewModel"
+                        IsEnabled="{Binding SelectedTangerineTransactionPair.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                        x:DataType="models:Category"
                         Icon="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Category}}"
                         ItemDisplayBinding="{Binding CategoryName}"
-                        ItemsSource="{Binding Subcategories}"
-                        SelectedItem="{Binding Subcategory}" />
+                        ItemsSource="{Binding Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                        SelectedItem="{Binding Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}" />
                     
                     <!--  Payee  -->
                     <material:InputField
                         Grid.Row="1"
                         Grid.ColumnSpan="2"
                         x:Name="entPayeeParent"
-                        IsEnabled="{Binding Path=SelectedTangerineTransactionPair.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
-                        >
+                        IsVisible="{Binding SelectedTangerineTransactionPair.IsTransfer, Converter={StaticResource InverseBoolConverter}}"
+                        IsEnabled="{Binding Path=SelectedTangerineTransactionPair.CanEdit}">
                         <Grid
                             Margin="11,3,0,0"
                             ColumnDefinitions="20,*"
@@ -248,6 +235,19 @@
                         </Grid>
                     </material:InputField>
 
+                    <!--  Transfer Account -->
+                    <material:PickerField
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        Title="Transfer Account"
+                        x:DataType="models:Account"
+                        Icon="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Account_circle}}"
+                        IsEnabled="{Binding Path=SelectedTangerineTransactionPair.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                        IsVisible="{Binding SelectedTangerineTransactionPair.IsTransfer, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                        ItemDisplayBinding="{Binding AccountName}"
+                        ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                        SelectedItem="{Binding Path=TransferAccount, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}" />
+
                     <HorizontalStackLayout Grid.Row="2" Spacing="5">
                         <Label FontSize="16" Text="Manual Edit" VerticalOptions="Center" />
                         <Switch HorizontalOptions="Start" IsToggled="{Binding SelectedTangerineTransactionPair.CanEdit}" />
@@ -277,6 +277,8 @@
                     Margin="0,5,0,0"
                     Text="Commit"
                     IsEnabled="{Binding IsCommitButtonEnabled}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                      Dark={StaticResource PrimaryDark}}"
                     Command="{Binding CommitImportCommand}" />
                     
             </VerticalStackLayout>

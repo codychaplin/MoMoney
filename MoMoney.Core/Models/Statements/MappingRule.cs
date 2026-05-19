@@ -12,7 +12,7 @@ public enum BankType
 public partial class MappingRule : ObservableObject
 {
     [PrimaryKey, AutoIncrement]
-    public int Id { get; set; }
+    public int? Id { get; set; }
     public BankType BankType { get; set; }
     [ObservableProperty]
     public partial string Name { get; set; } = string.Empty;

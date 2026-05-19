@@ -51,6 +51,8 @@ public partial class ImportStatementViewModel : ObservableObject
     [ObservableProperty] ObservableCollection<Category> subcategories = [];
     [ObservableProperty] Category? subcategory;
     [ObservableProperty] ObservableCollection<string> payees = [];
+    [ObservableProperty] string payee = string.Empty;
+    [ObservableProperty] Account? transferAccount;
 
     // progress tracking info
     [ObservableProperty] string statusMessage = string.Empty;
@@ -79,7 +81,7 @@ public partial class ImportStatementViewModel : ObservableObject
             foreach (var account in accounts)
                 Accounts.Add(account);
 
-            var categories = await categoryService.GetAllCategories();
+            var categories = await categoryService.GetAllParentCategories();
             Categories.Clear();
             foreach (var category in categories)
                 Categories.Add(category);
@@ -95,8 +97,18 @@ public partial class ImportStatementViewModel : ObservableObject
     }
 
     [RelayCommand]
-    void Clear()
+    async Task GoToEditMappingRules()
     {
+        await Shell.Current.GoToAsync("EditMappingRulesPage");
+    }
+
+    [RelayCommand]
+    async Task Clear()
+    {
+        var result = await Shell.Current.DisplayAlertAsync("Clear", "Are you sure you want to clear the data?", "Yes", "No");
+        if (!result)
+            return;
+
         uploadedRecords.Clear();
         SelectedTangerineTransactionPair = null;
         SelectedTransactionIndex = -1;
@@ -207,6 +219,53 @@ public partial class ImportStatementViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    async Task CategoryChanged()
+    {
+        if (Category is null)
+        {
+            Subcategories.Clear();
+            Subcategory = null;
+            SelectedTangerineTransactionPair?.IsTransfer = false;
+            return;
+        }
+
+        SelectedTangerineTransactionPair?.IsTransfer = Category.CategoryID == Constants.TRANSFER_ID;
+
+        var subcategories = await categoryService.GetSubcategories(Category);
+        Subcategories.Clear();
+        foreach (var subcategory in subcategories)
+            Subcategories.Add(subcategory);
+    }
+
+    async partial void OnSelectedTangerineTransactionPairChanged(TangerineTransactionPair? value)
+    {
+        if (value == null)
+        {
+            Category = null;
+            Subcategory = null;
+            Payee = string.Empty;
+            TransferAccount = null;
+            return;
+        }
+
+        var transaction = value.Transaction;
+        Category = Categories.FirstOrDefault(c => c.CategoryID == transaction.CategoryID);
+        if (Category != null)
+        {
+            await CategoryChanged();
+            Subcategory = Subcategories.FirstOrDefault(c => c.CategoryID == transaction.SubcategoryID);
+        }
+        else
+        {
+            Subcategories.Clear();
+            Subcategory = null;
+        }
+
+        Payee = transaction.Payee;
+        TransferAccount = Accounts.FirstOrDefault(a => a.AccountID == transaction.TransferID);
+    }
+
     /// <summary>
     /// Prompts user to select a CSV file and returns the result.
     /// </summary>
@@ -278,11 +337,14 @@ public partial class ImportStatementViewModel : ObservableObject
                     payee = payeeString;
 
                 if (mapping.TryGetValue("TransferAccount", out string? transferAccount) && int.TryParse(transferAccount, out int transferAccountID))
+                {
+                    isTransfer = true;
                     transferID = transferAccountID;
+                }
 
                 // once all properties are set, mark as complete and break
-                if (categoryID != -1 && subcategoryID != -1 && !string.IsNullOrEmpty(payee) && (!isTransfer || transferID != null))
-                {   
+                if (categoryID != -1 && subcategoryID != -1 && ((isTransfer && transferID.HasValue) || (!isTransfer && !string.IsNullOrEmpty(payee))))
+                {
                     match = true;
                     break;
                 }
@@ -290,7 +352,7 @@ public partial class ImportStatementViewModel : ObservableObject
         }
 
         // build transaction from available rules
-        transaction.SetData(date, accountID, record.Amount, categoryID, subcategoryID, payee, null);
+        transaction.SetData(date, accountID, record.Amount, categoryID, subcategoryID, payee, transferID);
 
         // if it's not complete, add to the verify list, otherwise, add it to the complete list
         if (!match)
@@ -325,21 +387,32 @@ public partial class ImportStatementViewModel : ObservableObject
         if (SelectedTangerineTransactionPair == null)
             return;
 
-        if (SelectedTangerineTransactionPair.Transaction.CategoryID <= 0)
+        if (Category == null)
         {
             await Utilities.DisplayToast("Please select a category first.");
             return;
         }
-        if (SelectedTangerineTransactionPair.Transaction.SubcategoryID <= 0)
+        if (Subcategory == null)
         {
             await Utilities.DisplayToast("Please select a subcategory first.");
             return;
         }
-        if (string.IsNullOrEmpty(SelectedTangerineTransactionPair.Transaction.Payee))
+        if (string.IsNullOrEmpty(Payee) && !SelectedTangerineTransactionPair.IsTransfer)
         {
             await Utilities.DisplayToast("Please select a payee first.");
             return;
         }
+        if (TransferAccount == null && SelectedTangerineTransactionPair.IsTransfer)
+        {
+            await Utilities.DisplayToast("Please select a transfer account first.");
+            return;
+        }
+
+        var transaction = SelectedTangerineTransactionPair.Transaction;
+        transaction.CategoryID = Category.CategoryID;
+        transaction.SubcategoryID = Subcategory.CategoryID;
+        transaction.Payee = Payee;
+        transaction.TransferID = TransferAccount?.AccountID;
 
         SelectedTangerineTransactionPair.Status = ImportStatus.ManuallyApproved;
         SelectedTangerineTransactionPair.CanEdit = false;

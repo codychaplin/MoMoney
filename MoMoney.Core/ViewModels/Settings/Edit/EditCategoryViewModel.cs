@@ -77,7 +77,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
     {
         try
         {
-            await service.AddCategory(Category.CategoryName, Parent?.ParentCategoryID);
+            await service.AddCategory(Category.CategoryName, Parent?.CategoryID);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_CATEGORY, FirebaseParameters.GetFirebaseParameters());
 
             // if parent category, notify the user that it won't show up until a subcategory is added

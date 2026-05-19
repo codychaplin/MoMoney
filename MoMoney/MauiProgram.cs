@@ -91,6 +91,7 @@ public static class MauiProgram
         builder.Services.AddTransient<BulkEditingPage>();
         builder.Services.AddTransient<ImportExportPage>();
         builder.Services.AddTransient<ImportStatementPage>();
+        builder.Services.AddTransient<EditMappingRulesPage>();
         builder.Services.AddTransient<LoggingPage>();
 
         // models
@@ -125,6 +126,7 @@ public static class MauiProgram
         builder.Services.AddTransient<BulkEditingViewModel>();
         builder.Services.AddTransient<ImportExportViewModel>();
         builder.Services.AddTransient<ImportStatementViewModel>();
+        builder.Services.AddTransient<EditMappingRulesViewModel>();
         builder.Services.AddTransient<LoggingViewModel>();
 
         // models

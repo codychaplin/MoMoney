@@ -19,9 +19,9 @@ public class MappingRuleService : IMappingRuleService
         logger = _logger;
     }
 
-    public Task<int> AddRule(string bankType, string pattern, string mappingJson)
+    public async Task<int> InsertOrReplaceRule(MappingRule rule)
     {
-        throw new NotImplementedException();
+        return await momoney.db.InsertOrReplaceAsync(rule);
     }
 
     async Task<MappingRule?> IMappingRuleService.GetRule(int Id, bool tryGet)
@@ -29,7 +29,7 @@ public class MappingRuleService : IMappingRuleService
         return await momoney.db.Table<MappingRule>().FirstOrDefaultAsync(a => a.Id == Id);
     }
 
-    public async Task<List<MappingRule>> GetRules(BankType? bankType)
+    public async Task<List<MappingRule>> GetRules(BankType? bankType = null)
     {
         var query = momoney.db.Table<MappingRule>();
         if (bankType != null)
@@ -38,18 +38,8 @@ public class MappingRuleService : IMappingRuleService
         return await query.ToListAsync();
     }
 
-    public Task<bool> RemoveAllRules()
+    public async Task<int> RemoveRule(int ID)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<int> RemoveRule(int ID)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<int> UpdateRule(MappingRule updatedRule)
-    {
-        throw new NotImplementedException();
+        return await momoney.db.DeleteAsync<MappingRule>(ID);
     }
 }
