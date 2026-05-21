@@ -32,9 +32,6 @@ public partial class ImportStatementViewModel : ObservableObject
 
     [ObservableProperty] bool fileUploaded = false;
     [ObservableProperty] bool isCommitButtonEnabled = false;
-
-    // Rule section
-    [ObservableProperty] string ruleRegex = "";
     
     // transaction that is currently being reviewed
     [ObservableProperty] string progressText = "";
@@ -66,6 +63,14 @@ public partial class ImportStatementViewModel : ObservableObject
     [ObservableProperty] bool showNeedsVerification = false;
     partial void OnShowNeedsVerificationChanged(bool value) => ApplyFilter();
     [ObservableProperty] string needsVerificationCount = string.Empty;
+
+    [ObservableProperty] bool showAutoSkipped = false;
+    partial void OnShowAutoSkippedChanged(bool value) => ApplyFilter();
+    [ObservableProperty] string autoSkippedCount = string.Empty;
+
+    [ObservableProperty] bool showManuallySkipped = false;
+    partial void OnShowManuallySkippedChanged(bool value) => ApplyFilter();
+    [ObservableProperty] string manuallySkippedCount = string.Empty;
 
     public ImportStatementViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService, IMappingRuleService _mappingRuleService, ILoggerService<ImportStatementViewModel> _logger)
     {
@@ -112,25 +117,31 @@ public partial class ImportStatementViewModel : ObservableObject
     }
 
     [RelayCommand]
-    async Task Clear()
+    async Task Clear(bool confirm = true)
     {
-        var result = await Shell.Current.DisplayAlertAsync("Clear", "Are you sure you want to clear the data?", "Yes", "No");
-        if (!result)
-            return;
+        if (confirm)
+        {
+            var result = await Shell.Current.DisplayAlertAsync("Clear", "Are you sure you want to clear the data?", "Yes", "No");
+            if (!result)
+                return;
+        }
 
         uploadedRecords.Clear();
         SelectedRecord = null;
         SelectedTransactionIndex = -1;
         FileUploaded = false;
         IsCommitButtonEnabled = false;
-        RuleRegex = string.Empty;
         ProgressText = string.Empty;
         ShowVerified = false;
         ShowManuallyApproved = false;
         ShowNeedsVerification = false;
+        ShowAutoSkipped = false;
+        ShowManuallySkipped = false;
         VerifiedCount = string.Empty;
         ManuallyApprovedCount = string.Empty;
         NeedsVerificationCount = string.Empty;
+        AutoSkippedCount = string.Empty;
+        ManuallySkippedCount = string.Empty;
     }
 
     [RelayCommand]
@@ -192,6 +203,8 @@ public partial class ImportStatementViewModel : ObservableObject
                 if (result == null)
                     return;
 
+                await Clear(false);
+
                 var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true };
                 using var sr = new StreamReader(result.FullPath);
                 using var csv = new CsvReader(sr, config);
@@ -239,7 +252,7 @@ public partial class ImportStatementViewModel : ObservableObject
             IsBusy = false;
         }
         
-        UpdateProgressMessage();
+        UpdateProgress();
 
         if (uploadedRecords.Count > 0)
         {
@@ -351,11 +364,18 @@ public partial class ImportStatementViewModel : ObservableObject
                 if (mapping is null)
                    continue;
 
+                // check for skip rule first
+                if (mapping.TryGetValue("Skip", out string? skip) && skip == "true")
+                {
+                    pair.Status = ImportStatus.AutoSkipped;
+                    return;
+                }
+
                 // date and account are always set automatically
 
                 if (mapping.TryGetValue("Category", out string? category) && int.TryParse(category, out int catID))
                     categoryID = catID;
-                
+
                 if (mapping.TryGetValue("Subcategory", out string? subcategory) && int.TryParse(subcategory, out int subcatID))
                     subcategoryID = subcatID;
 
@@ -389,8 +409,8 @@ public partial class ImportStatementViewModel : ObservableObject
 
     void ApplyFilter()
     {
-        bool applyFilters = (ShowVerified || ShowManuallyApproved || ShowNeedsVerification) &&
-            (!ShowVerified || !ShowManuallyApproved || !ShowNeedsVerification);
+        bool applyFilters = (ShowVerified || ShowManuallyApproved || ShowNeedsVerification || ShowAutoSkipped || ShowManuallySkipped) &&
+            (!ShowVerified || !ShowManuallyApproved || !ShowNeedsVerification || !ShowAutoSkipped || !ShowManuallySkipped);
 
         FilteredRecords = applyFilters
             ? [.. uploadedRecords.Where(MatchesFilter)]
@@ -398,7 +418,7 @@ public partial class ImportStatementViewModel : ObservableObject
 
         SelectedTransactionIndex = FilteredRecords.Count > 0 ? 0 : -1;
         SelectedRecord = SelectedTransactionIndex >= 0 ? FilteredRecords[SelectedTransactionIndex] : null;
-        UpdateProgressMessage();
+        UpdateProgress();
         UpdateProgressText(0);
     }
 
@@ -409,6 +429,8 @@ public partial class ImportStatementViewModel : ObservableObject
             ImportStatus.Verified => ShowVerified,
             ImportStatus.ManuallyApproved => ShowManuallyApproved,
             ImportStatus.NeedsVerification => ShowNeedsVerification,
+            ImportStatus.AutoSkipped => ShowAutoSkipped,
+            ImportStatus.ManuallySkipped => ShowManuallySkipped,
             _ => false
         };
     }
@@ -416,21 +438,21 @@ public partial class ImportStatementViewModel : ObservableObject
     [RelayCommand]
     void DecrementTransaction()
     {
-        if (SelectedTransactionIndex > 0)
-        {
-            SelectedTransactionIndex--;
-            SelectedRecord = FilteredRecords[SelectedTransactionIndex];
-        }
+        if (SelectedTransactionIndex <= 0)
+            return;
+        
+        SelectedTransactionIndex--;
+        SelectedRecord = FilteredRecords[SelectedTransactionIndex];
     }
 
     [RelayCommand]
     void IncrementTransaction()
     {
-        if (SelectedTransactionIndex < FilteredRecords.Count - 1)
-        {
-            SelectedTransactionIndex++;
-            SelectedRecord = FilteredRecords[SelectedTransactionIndex];
-        }
+        if (SelectedTransactionIndex >= FilteredRecords.Count - 1)
+            return;
+        
+        SelectedTransactionIndex++;
+        SelectedRecord = FilteredRecords[SelectedTransactionIndex];
     }
 
     [RelayCommand]
@@ -468,28 +490,54 @@ public partial class ImportStatementViewModel : ObservableObject
 
         SelectedRecord.Status = ImportStatus.ManuallyApproved;
         SelectedRecord.CanEdit = false;
-        UpdateProgressMessage();
+        UpdateProgress();
     }
 
-    void UpdateProgressText(int value)
+    [RelayCommand]
+    void SkipTransaction()
     {
-        ProgressText = FilteredRecords.Count > 0 ? $"{value + 1}/{FilteredRecords.Count}" : "";
+        if (SelectedRecord == null)
+            return;
+
+        SelectedRecord.Status = ImportStatus.ManuallySkipped;
+        SelectedRecord.CanEdit = false;
+        UpdateProgress();
     }
 
-    void UpdateProgressMessage()
+    void UpdateProgressText(int value) =>ProgressText = FilteredRecords.Count > 0 ? $"{value + 1}/{FilteredRecords.Count}" : "";
+
+    void UpdateProgress()
     {
-        int acceptedCount = uploadedRecords.Count(x => x.Status == ImportStatus.Verified);
+        int verifiedCount = uploadedRecords.Count(x => x.Status == ImportStatus.Verified);
         int manuallyApprovedCount = uploadedRecords.Count(x => x.Status == ImportStatus.ManuallyApproved);
         int needsVerificationCount = uploadedRecords.Count(x => x.Status == ImportStatus.NeedsVerification);
+        int autoSkippedCount = uploadedRecords.Count(x => x.Status == ImportStatus.AutoSkipped);
+        int manuallySkippedCount = uploadedRecords.Count(x => x.Status == ImportStatus.ManuallySkipped);
 
-        VerifiedCount = $"{acceptedCount} transactions ready for import";
+        VerifiedCount = $"{verifiedCount} transactions ready for import";
         ManuallyApprovedCount = $"{manuallyApprovedCount} transactions have been manually approved";
         NeedsVerificationCount = $"{needsVerificationCount} transactions need to be verified";
+        AutoSkippedCount = $"{autoSkippedCount} transactions have been auto skipped";
+        ManuallySkippedCount = $"{manuallySkippedCount} transactions have been manually skipped";
+
+        IsCommitButtonEnabled = needsVerificationCount == 0;
     }
     
     [RelayCommand]
     async Task CommitImport()
     {
-        
+        try
+        {
+            var transactions = uploadedRecords
+                .Where(x => x.Status == ImportStatus.Verified || x.Status == ImportStatus.ManuallyApproved)
+                .Select(x => x.Transaction)
+                .ToList();
+            await transactionService.AddTransactions(transactions);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(CommitImport), ex);
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+        }
     }
 }

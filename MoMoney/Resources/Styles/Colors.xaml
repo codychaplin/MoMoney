@@ -35,6 +35,8 @@
     <Color x:Key="SubtleRed">#FFBBBB</Color>
     <Color x:Key="Blue">#3B74C5</Color>
     <Color x:Key="LightBlue">#75AEFF</Color>
+    <Color x:Key="Purple">#7E3BC5</Color>
+    <Color x:Key="Orange">#B1723E</Color>
     <Color x:Key="Yellow">#ffc107</Color>
     <Color x:Key="Green">#42ba96</Color>
     <Color x:Key="SubtleGreen">#9942ba96</Color>

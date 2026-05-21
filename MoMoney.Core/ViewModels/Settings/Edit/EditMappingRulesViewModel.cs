@@ -32,6 +32,7 @@ public partial class EditMappingRulesViewModel : ObservableObject
     [ObservableProperty] bool isTransfer;
     [ObservableProperty] ObservableCollection<string> payees = [];
     [ObservableProperty] string payee = string.Empty;
+    [ObservableProperty] bool isSkipRule = false;
 
     public EditMappingRulesViewModel(IMappingRuleService _mappingRuleService, ICategoryService _categoryService, IAccountService _accountService, ITransactionService _transactionService, ILoggerService<EditMappingRulesViewModel> _logger)
     {
@@ -130,6 +131,7 @@ public partial class EditMappingRulesViewModel : ObservableObject
             TransferAccount = null;
             Payee = string.Empty;
             IsTransfer = false;
+            IsSkipRule = false;
             return;
         }
 
@@ -137,6 +139,17 @@ public partial class EditMappingRulesViewModel : ObservableObject
         {
             var mapping = JsonSerializer.Deserialize<Dictionary<string, string>>(value.MappingJson);
             if (mapping == null) return;
+
+            IsSkipRule = mapping.ContainsKey("Skip") && mapping["Skip"] == "true";
+            if (IsSkipRule)
+            {
+                Category = null;
+                Subcategory = null;
+                TransferAccount = null;
+                Payee = string.Empty;
+                IsTransfer = false;
+                return;
+            }
 
             if (mapping.TryGetValue("Category", out string? catIdStr) && int.TryParse(catIdStr, out int catId))
             {
@@ -182,7 +195,7 @@ public partial class EditMappingRulesViewModel : ObservableObject
         {
             if (SelectedMappingRule == null)
                 return;
-            
+
             SelectedMappingRule.Name = string.Empty;
             SelectedMappingRule.Pattern = string.Empty;
             SelectedMappingRule.MappingJson = string.Empty;
@@ -192,6 +205,7 @@ public partial class EditMappingRulesViewModel : ObservableObject
             TransferAccount = null;
             Payee = string.Empty;
             IsTransfer = false;
+            IsSkipRule = false;
         }
         catch (Exception ex)
         {
@@ -208,17 +222,25 @@ public partial class EditMappingRulesViewModel : ObservableObject
             if (SelectedMappingRule == null)
                 return;
 
-            // add selected category/subcategory/transfer account/payee
+            // add selected category/subcategory/transfer account/payee or skip status
             // transfer account can only be added for transfers, payee is used for all else
             var mapping = new Dictionary<string, string>();
-            if (Category != null)
-                mapping.Add("Category", Category.CategoryID.ToString());
-            if (Subcategory != null)
-                mapping.Add("Subcategory", Subcategory.CategoryID.ToString());
-            if (TransferAccount != null && Category?.CategoryID == Constants.TRANSFER_ID)
-                mapping.Add("TransferAccount", TransferAccount.AccountID.ToString());
-            if (!string.IsNullOrEmpty(Payee) && Category?.CategoryID != Constants.TRANSFER_ID)
-                mapping.Add("Payee", Payee);
+
+            if (IsSkipRule)
+            {
+                mapping.Add("Skip", "true");
+            }
+            else
+            {
+                if (Category != null)
+                    mapping.Add("Category", Category.CategoryID.ToString());
+                if (Subcategory != null)
+                    mapping.Add("Subcategory", Subcategory.CategoryID.ToString());
+                if (TransferAccount != null && Category?.CategoryID == Constants.TRANSFER_ID)
+                    mapping.Add("TransferAccount", TransferAccount.AccountID.ToString());
+                if (!string.IsNullOrEmpty(Payee) && Category?.CategoryID != Constants.TRANSFER_ID)
+                    mapping.Add("Payee", Payee);
+            }
 
             SelectedMappingRule.MappingJson = JsonSerializer.Serialize(mapping);
 

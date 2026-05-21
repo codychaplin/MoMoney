@@ -249,20 +249,31 @@
                         ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
                         SelectedItem="{Binding Path=TransferAccount, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}" />
 
-                    <HorizontalStackLayout Grid.Row="2" Spacing="5">
-                        <Label FontSize="16" Text="Manual Edit" VerticalOptions="Center" />
-                        <Switch HorizontalOptions="Start" IsToggled="{Binding SelectedRecord.CanEdit}" />
-                    </HorizontalStackLayout>
-                    
-                    <Button
-                        Margin="0,5,0,0"
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                                        Dark={StaticResource PrimaryDark}}"
-                        Text="Approve"
-                        IsEnabled="{Binding SelectedRecord.CanEdit}"
-                        Command="{Binding ApproveTransactionCommand}" />
+                    <Grid Grid.Row="2" Grid.ColumnSpan="2" ColumnDefinitions="*,*,*" ColumnSpacing="10" Margin="0,5,0,0">
+                        <!--  Edit button  -->
+                        <HorizontalStackLayout>
+                            <Label FontSize="16" Text="Manual Edit" VerticalOptions="Center" />
+                            <Switch HorizontalOptions="Start" IsToggled="{Binding SelectedRecord.CanEdit}" />
+                        </HorizontalStackLayout>
+
+                        <!--  Skip button  -->
+                        <Button
+                            Margin="5,0,0,0"
+                            Grid.Column="1"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                            Dark={StaticResource Gray500}}"
+                            Text="Skip"
+                            Command="{Binding SkipTransactionCommand}" />
+
+                        <!--  Approve button  -->
+                        <Button
+                            Grid.Column="2"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                            Dark={StaticResource PrimaryDark}}"
+                            Text="Approve"
+                            IsEnabled="{Binding SelectedRecord.CanEdit}"
+                            Command="{Binding ApproveTransactionCommand}" />
+                    </Grid>
                 </Grid>
 
                 <BoxView Style="{StaticResource separator}"/>
@@ -284,6 +295,16 @@
                 <HorizontalStackLayout Spacing="15">
                     <CheckBox IsChecked="{Binding ShowNeedsVerification}" />
                     <Label Text="{Binding NeedsVerificationCount}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout Spacing="15">
+                    <CheckBox IsChecked="{Binding ShowAutoSkipped}" />
+                    <Label Text="{Binding AutoSkippedCount}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout Spacing="15">
+                    <CheckBox IsChecked="{Binding ShowManuallySkipped}" />
+                    <Label Text="{Binding ManuallySkippedCount}" VerticalOptions="Center" />
                 </HorizontalStackLayout>
 
                 <!--  Import button  -->

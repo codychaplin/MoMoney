@@ -16,8 +16,8 @@ public class Wealthsimple : IStatement
     public string Name { get; set; } = string.Empty;
     public string Currency { get; set; } = string.Empty;
     public decimal Quantity { get; set; }
-    public decimal Unit_price { get; set; }
-    public decimal Commission { get; set; }
+    public decimal? Unit_price { get; set; }
+    public decimal? Commission { get; set; }
     public decimal Net_cash_amount { get; set; }
     public string FullText => $"""
     transaction_date: {Transaction_date}

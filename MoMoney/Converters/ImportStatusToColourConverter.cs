@@ -15,6 +15,8 @@ public class ImportStatusToColourConverter : IValueConverter
                 ImportStatus.Verified => Utilities.GetColour("Green"),
                 ImportStatus.ManuallyApproved => Utilities.GetColour("Blue"),
                 ImportStatus.NeedsVerification => Utilities.GetColour("Red"),
+                ImportStatus.AutoSkipped => Utilities.GetColour("Purple"),
+                ImportStatus.ManuallySkipped => Utilities.GetColour("Orange"),
                 _ => Utilities.GetColour("Gray")
             };
         }

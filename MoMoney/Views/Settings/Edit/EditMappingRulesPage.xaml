@@ -54,8 +54,9 @@
                     <Label.FormattedText>
                         <FormattedString>
                             <Span Text="A rule consists of a name, a pattern and the fields the pattern matches. "/>
-                            <Span Text="The pattern itself is text that is matched against the raw text of the statement."/>
-                            <Span Text="It can be a regular expression or simple text."/>
+                            <Span Text="The pattern itself is text that is matched against the raw text of the statement. "/>
+                            <Span Text="It can be a regular expression or simple text. "/>
+                            <Span Text="If you instead want to skip matching transactions, toggle the 'Skip matching transactions' switch."/>
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
@@ -69,8 +70,14 @@
                 <material:TextField
                     Text="{Binding SelectedMappingRule.Pattern}"
                     Title="Pattern" />
-                
-                <Grid ColumnDefinitions="*,*" RowDefinitions="*,*,*" RowSpacing="5" ColumnSpacing="5">
+
+                <!--  Skip toggle  -->
+                <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
+                    <Label Text="Skip matching transactions" VerticalOptions="Center" />
+                    <Switch IsToggled="{Binding IsSkipRule}" HorizontalOptions="Start" />
+                </HorizontalStackLayout>
+
+                <Grid ColumnDefinitions="*,*" RowDefinitions="*,*,*" RowSpacing="5" ColumnSpacing="5" IsVisible="{Binding IsSkipRule, Converter={StaticResource InverseBoolConverter}}">
                         <!--  Category  -->
                         <material:PickerField
                             Title="Category"

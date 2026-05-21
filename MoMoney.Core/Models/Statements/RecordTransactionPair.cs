@@ -9,7 +9,11 @@ public enum ImportStatus
     [Description("Manually Approved")]
     ManuallyApproved,
     [Description("Needs Verification")]
-    NeedsVerification
+    NeedsVerification,
+    [Description("Auto Skipped")]
+    AutoSkipped,
+    [Description("Manually Skipped")]
+    ManuallySkipped
 }
 
 public partial class RecordTransactionPair : ObservableObject
