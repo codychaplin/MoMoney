@@ -1,9 +1,9 @@
-using System.ComponentModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.Globalization;
+using CsvHelper.Configuration;
 
 namespace MoMoney.Core.Models.Statements;
 
-public class Tangerine
+public class Tangerine : IStatement
 {
     public string Date { get; set; } = string.Empty;
     public string Transaction { get; set; } = string.Empty;
@@ -17,34 +17,19 @@ public class Tangerine
     Memo: {Memo}
     Amount: {Amount}
     """;
+
+    DateTime IStatement.Date => DateTime.Parse(Date, CultureInfo.InvariantCulture);
+    string IStatement.SearchText => $"{Name} {Memo}".ToLower();
 }
 
-public enum ImportStatus
+public class TangerineClassMap : ClassMap<Tangerine>
 {
-    Verified,
-    [Description("Manually Approved")]
-    ManuallyApproved,
-    [Description("Needs Verification")]
-    NeedsVerification
-}
-
-public partial class TangerineTransactionPair : ObservableObject
-{
-    public Tangerine RawData { get; set; }
-    public Transaction Transaction { get; set; }
-    [ObservableProperty]
-    ImportStatus status = ImportStatus.NeedsVerification;
-    [ObservableProperty]
-    bool canEdit = false;
-    [ObservableProperty]
-    bool isTransfer = false;
-
-    public TangerineTransactionPair(Tangerine rawData) : this(rawData, new Transaction()) {}
-
-    public TangerineTransactionPair(Tangerine rawData, Transaction transaction)
+    public TangerineClassMap()
     {
-        RawData = rawData;
-        Transaction = transaction;
-        Status = ImportStatus.NeedsVerification;
+        Map(m => m.Date).Index(0).Name("Date", "Transaction date");
+        Map(m => m.Transaction).Index(1);
+        Map(m => m.Name).Index(2);
+        Map(m => m.Memo).Index(3);
+        Map(m => m.Amount).Index(4);
     }
 }

@@ -39,11 +39,8 @@ public partial class ImportStatementViewModel : ObservableObject
     // transaction that is currently being reviewed
     [ObservableProperty] string progressText = "";
     [ObservableProperty] int selectedTransactionIndex = -1;
-    partial void OnSelectedTransactionIndexChanged(int value)
-    {
-        ProgressText = $"{value + 1}/{uploadedRecords.Count}";
-    }
-    [ObservableProperty] TangerineTransactionPair? selectedTangerineTransactionPair;
+    partial void OnSelectedTransactionIndexChanged(int value) => UpdateProgressText(value);
+    [ObservableProperty] RecordTransactionPair? selectedRecord;
 
     // source data fields
     [ObservableProperty] ObservableCollection<Category> categories = [];
@@ -55,8 +52,20 @@ public partial class ImportStatementViewModel : ObservableObject
     [ObservableProperty] Account? transferAccount;
 
     // progress tracking info
-    [ObservableProperty] string statusMessage = string.Empty;
-    List<TangerineTransactionPair> uploadedRecords = [];
+    List<RecordTransactionPair> uploadedRecords = [];
+    [ObservableProperty] ObservableCollection<RecordTransactionPair> filteredRecords = [];
+
+    [ObservableProperty] bool showVerified = false;
+    partial void OnShowVerifiedChanged(bool value) => ApplyFilter();
+    [ObservableProperty] string verifiedCount = string.Empty;
+
+    [ObservableProperty] bool showManuallyApproved = false;
+    partial void OnShowManuallyApprovedChanged(bool value) => ApplyFilter();
+    [ObservableProperty] string manuallyApprovedCount = string.Empty;
+
+    [ObservableProperty] bool showNeedsVerification = false;
+    partial void OnShowNeedsVerificationChanged(bool value) => ApplyFilter();
+    [ObservableProperty] string needsVerificationCount = string.Empty;
 
     public ImportStatementViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService, IMappingRuleService _mappingRuleService, ILoggerService<ImportStatementViewModel> _logger)
     {
@@ -110,13 +119,18 @@ public partial class ImportStatementViewModel : ObservableObject
             return;
 
         uploadedRecords.Clear();
-        SelectedTangerineTransactionPair = null;
+        SelectedRecord = null;
         SelectedTransactionIndex = -1;
         FileUploaded = false;
         IsCommitButtonEnabled = false;
         RuleRegex = string.Empty;
         ProgressText = string.Empty;
-        StatusMessage = string.Empty;
+        ShowVerified = false;
+        ShowManuallyApproved = false;
+        ShowNeedsVerification = false;
+        VerifiedCount = string.Empty;
+        ManuallyApprovedCount = string.Empty;
+        NeedsVerificationCount = string.Empty;
     }
 
     [RelayCommand]
@@ -181,12 +195,28 @@ public partial class ImportStatementViewModel : ObservableObject
                 var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true };
                 using var sr = new StreamReader(result.FullPath);
                 using var csv = new CsvReader(sr, config);
-                await foreach (var record in csv.GetRecordsAsync<Tangerine>())
+
+                if (bankType == BankType.Tangerine)
                 {
-                    TangerineTransactionPair newRecord = new(record);
-                    uploadedRecords.Add(newRecord);
-                    TryMapTransaction(rules, newRecord, Account.AccountID);
-                    i++;
+                    csv.Context.RegisterClassMap<TangerineClassMap>();
+                    await foreach (var record in csv.GetRecordsAsync<Tangerine>())
+                    {
+                        RecordTransactionPair newRecord = new(record);
+                        uploadedRecords.Add(newRecord);
+                        TryMapTransaction(rules, newRecord, Account.AccountID);
+                        i++;
+                    }
+                }
+                else if (bankType == BankType.Wealthsimple)
+                {
+                    csv.Context.RegisterClassMap<WealthsimpleClassMap>();
+                    await foreach (var record in csv.GetRecordsAsync<Wealthsimple>())
+                    {
+                        RecordTransactionPair newRecord = new(record);
+                        uploadedRecords.Add(newRecord);
+                        TryMapTransaction(rules, newRecord, Account.AccountID);
+                        i++;
+                    }
                 }
             }
             else
@@ -213,8 +243,10 @@ public partial class ImportStatementViewModel : ObservableObject
 
         if (uploadedRecords.Count > 0)
         {
-            SelectedTransactionIndex = 0;
-            SelectedTangerineTransactionPair = uploadedRecords[SelectedTransactionIndex];
+            ShowVerified = false;
+            ShowManuallyApproved = false;
+            ShowNeedsVerification = false;
+            ApplyFilter();
             FileUploaded = true;
         }
     }
@@ -226,11 +258,11 @@ public partial class ImportStatementViewModel : ObservableObject
         {
             Subcategories.Clear();
             Subcategory = null;
-            SelectedTangerineTransactionPair?.IsTransfer = false;
+            SelectedRecord?.IsTransfer = false;
             return;
         }
 
-        SelectedTangerineTransactionPair?.IsTransfer = Category.CategoryID == Constants.TRANSFER_ID;
+        SelectedRecord?.IsTransfer = Category.CategoryID == Constants.TRANSFER_ID;
 
         var subcategories = await categoryService.GetSubcategories(Category);
         Subcategories.Clear();
@@ -238,7 +270,7 @@ public partial class ImportStatementViewModel : ObservableObject
             Subcategories.Add(subcategory);
     }
 
-    async partial void OnSelectedTangerineTransactionPairChanged(TangerineTransactionPair? value)
+    async partial void OnSelectedRecordChanged(RecordTransactionPair? value)
     {
         if (value == null)
         {
@@ -291,31 +323,25 @@ public partial class ImportStatementViewModel : ObservableObject
     /// <param name="pair"></param>
     /// <param name="accountID"></param>
     /// <returns></returns>
-    void TryMapTransaction(List<MappingRule> rules, TangerineTransactionPair pair, int accountID)
+    void TryMapTransaction(List<MappingRule> rules, RecordTransactionPair pair, int accountID)
     {
         // separate CSV record and transaction
-        Tangerine record = pair.RawData;
+        IStatement record = pair.RawData;
         Transaction transaction = pair.Transaction;
 
-        var date = DateTime.Parse(record.Date);
+        // default values
+        var date = record.Date;
         int categoryID = -1;
         int subcategoryID = -1;
         string payee = string.Empty;
         int? transferID = null;
 
-        // Hard rules:
-        // if debit or credit, this is a transfer
-        bool isTransfer = record.Transaction is "DEBIT" or "CREDIT";
-        if (isTransfer)
-        {
-            // set cat/subcat IDs
-            categoryID = Constants.TRANSFER_ID;
-            subcategoryID = record.Transaction == "DEBIT" ? Constants.DEBIT_ID : Constants.CREDIT_ID;
-        }
-
-        // Soft rules:
-        var searchText = $"{record.Name} {record.Memo}".ToLower();
+        // tracking variables
+        bool isTransfer = false;
+        var searchText = record.SearchText;
         bool match = false;
+
+        // loop through rules
         foreach (var rule in rules)
         {
             // if a pattern matches, check the mapping and set any applicable values
@@ -361,30 +387,56 @@ public partial class ImportStatementViewModel : ObservableObject
             pair.Status = ImportStatus.Verified;
     }
 
+    void ApplyFilter()
+    {
+        bool applyFilters = (ShowVerified || ShowManuallyApproved || ShowNeedsVerification) &&
+            (!ShowVerified || !ShowManuallyApproved || !ShowNeedsVerification);
+
+        FilteredRecords = applyFilters
+            ? [.. uploadedRecords.Where(MatchesFilter)]
+            : [.. uploadedRecords];
+
+        SelectedTransactionIndex = FilteredRecords.Count > 0 ? 0 : -1;
+        SelectedRecord = SelectedTransactionIndex >= 0 ? FilteredRecords[SelectedTransactionIndex] : null;
+        UpdateProgressMessage();
+        UpdateProgressText(0);
+    }
+
+    bool MatchesFilter(RecordTransactionPair pair)
+    {
+        return pair.Status switch
+        {
+            ImportStatus.Verified => ShowVerified,
+            ImportStatus.ManuallyApproved => ShowManuallyApproved,
+            ImportStatus.NeedsVerification => ShowNeedsVerification,
+            _ => false
+        };
+    }
+
     [RelayCommand]
     void DecrementTransaction()
     {
         if (SelectedTransactionIndex > 0)
         {
             SelectedTransactionIndex--;
-            SelectedTangerineTransactionPair = uploadedRecords[SelectedTransactionIndex];   
+            SelectedRecord = FilteredRecords[SelectedTransactionIndex];
         }
     }
 
     [RelayCommand]
     void IncrementTransaction()
     {
-        if (SelectedTransactionIndex < uploadedRecords.Count - 1)
+        if (SelectedTransactionIndex < FilteredRecords.Count - 1)
         {
             SelectedTransactionIndex++;
-            SelectedTangerineTransactionPair = uploadedRecords[SelectedTransactionIndex];
+            SelectedRecord = FilteredRecords[SelectedTransactionIndex];
         }
     }
 
     [RelayCommand]
     async Task ApproveTransaction()
     {
-        if (SelectedTangerineTransactionPair == null)
+        if (SelectedRecord == null)
             return;
 
         if (Category == null)
@@ -397,26 +449,31 @@ public partial class ImportStatementViewModel : ObservableObject
             await Utilities.DisplayToast("Please select a subcategory first.");
             return;
         }
-        if (string.IsNullOrEmpty(Payee) && !SelectedTangerineTransactionPair.IsTransfer)
+        if (string.IsNullOrEmpty(Payee) && !SelectedRecord.IsTransfer)
         {
             await Utilities.DisplayToast("Please select a payee first.");
             return;
         }
-        if (TransferAccount == null && SelectedTangerineTransactionPair.IsTransfer)
+        if (TransferAccount == null && SelectedRecord.IsTransfer)
         {
             await Utilities.DisplayToast("Please select a transfer account first.");
             return;
         }
 
-        var transaction = SelectedTangerineTransactionPair.Transaction;
+        var transaction = SelectedRecord.Transaction;
         transaction.CategoryID = Category.CategoryID;
         transaction.SubcategoryID = Subcategory.CategoryID;
         transaction.Payee = Payee;
         transaction.TransferID = TransferAccount?.AccountID;
 
-        SelectedTangerineTransactionPair.Status = ImportStatus.ManuallyApproved;
-        SelectedTangerineTransactionPair.CanEdit = false;
+        SelectedRecord.Status = ImportStatus.ManuallyApproved;
+        SelectedRecord.CanEdit = false;
         UpdateProgressMessage();
+    }
+
+    void UpdateProgressText(int value)
+    {
+        ProgressText = FilteredRecords.Count > 0 ? $"{value + 1}/{FilteredRecords.Count}" : "";
     }
 
     void UpdateProgressMessage()
@@ -424,11 +481,10 @@ public partial class ImportStatementViewModel : ObservableObject
         int acceptedCount = uploadedRecords.Count(x => x.Status == ImportStatus.Verified);
         int manuallyApprovedCount = uploadedRecords.Count(x => x.Status == ImportStatus.ManuallyApproved);
         int needsVerificationCount = uploadedRecords.Count(x => x.Status == ImportStatus.NeedsVerification);
-        StatusMessage = $"""
-        {acceptedCount} transactions ready for import.
-        {manuallyApprovedCount} transactions have been manually approved.
-        {needsVerificationCount} transactions need to be verified.
-        """;
+
+        VerifiedCount = $"{acceptedCount} transactions ready for import";
+        ManuallyApprovedCount = $"{manuallyApprovedCount} transactions have been manually approved";
+        NeedsVerificationCount = $"{needsVerificationCount} transactions need to be verified";
     }
     
     [RelayCommand]

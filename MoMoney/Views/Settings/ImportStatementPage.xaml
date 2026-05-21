@@ -129,8 +129,9 @@
                 <material:EditorField
                     Grid.ColumnSpan="3"
                     Title="Text"
-                    Text="{Binding SelectedTangerineTransactionPair.RawData.FullText}"
+                    Text="{Binding SelectedRecord.RawData.FullText}"
                     IsReadOnly="True"
+                    IsVisible="{Binding FilteredRecords.Count}"
                     IsEnabled="False" />
 
                 <BoxView Style="{StaticResource separator}"/>
@@ -142,22 +143,22 @@
                         Grid.Column="1"
                         HorizontalOptions="End"
                         Padding="8,4"
-                        BackgroundColor="{Binding SelectedTangerineTransactionPair.Status, Converter={StaticResource ImportStatusToColourConverter}}"
+                        BackgroundColor="{Binding SelectedRecord.Status, Converter={StaticResource ImportStatusToColourConverter}}"
                         Stroke="Transparent">
                         <Label
-                            Text="{Binding SelectedTangerineTransactionPair.Status, Converter={StaticResource EnumToDescriptionConverter}}"
+                            Text="{Binding SelectedRecord.Status, Converter={StaticResource EnumToDescriptionConverter}}"
                             TextColor="White"
                             FontAttributes="Bold" />
                     </Border>
                 </Grid>
 
-                <Grid ColumnDefinitions="*,*,*" RowSpacing="5" ColumnSpacing="5">
+                <Grid ColumnDefinitions="*,*,*" RowSpacing="5" ColumnSpacing="5" IsVisible="{Binding FilteredRecords.Count}">
                     <!-- Readonly confirmed fields -->
                     <material:TextField
                         Grid.Column="0"
                         Grid.Row="1"
                         Title="Date"
-                        Text="{Binding SelectedTangerineTransactionPair.Transaction.Date, StringFormat='{0:yyyy-MM-dd}'}"
+                        Text="{Binding SelectedRecord.Transaction.Date, StringFormat='{0:yyyy-MM-dd}'}"
                         IsEnabled="False"
                         AllowClear="False" />
                     <material:TextField
@@ -171,15 +172,15 @@
                         Grid.Column="2"
                         Grid.Row="1"
                         Title="Amount"
-                        Text="{Binding SelectedTangerineTransactionPair.Transaction.Amount}"
+                        Text="{Binding SelectedRecord.Transaction.Amount}"
                         IsEnabled="False" />
                 </Grid>
 
-                <Grid ColumnDefinitions="*,*" RowDefinitions="*,*,*" RowSpacing="5" ColumnSpacing="5">
+                <Grid ColumnDefinitions="*,*" RowDefinitions="*,*,*" RowSpacing="5" ColumnSpacing="5" IsVisible="{Binding FilteredRecords.Count}">
                     <!--  Category  -->
                     <material:PickerField
                         Title="Category"
-                        IsEnabled="{Binding SelectedTangerineTransactionPair.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                        IsEnabled="{Binding SelectedRecord.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
                         x:DataType="models:Category"
                         Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Category}}"
                         ItemDisplayBinding="{Binding CategoryName}"
@@ -191,7 +192,7 @@
                     <material:PickerField
                         Grid.Column="1"
                         Title="Subcategory"
-                        IsEnabled="{Binding SelectedTangerineTransactionPair.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                        IsEnabled="{Binding SelectedRecord.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
                         x:DataType="models:Category"
                         Icon="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Category}}"
                         ItemDisplayBinding="{Binding CategoryName}"
@@ -203,8 +204,8 @@
                         Grid.Row="1"
                         Grid.ColumnSpan="2"
                         x:Name="entPayeeParent"
-                        IsVisible="{Binding SelectedTangerineTransactionPair.IsTransfer, Converter={StaticResource InverseBoolConverter}}"
-                        IsEnabled="{Binding Path=SelectedTangerineTransactionPair.CanEdit}">
+                        IsVisible="{Binding SelectedRecord.IsTransfer, Converter={StaticResource InverseBoolConverter}}"
+                        IsEnabled="{Binding Path=SelectedRecord.CanEdit}">
                         <Grid
                             Margin="11,3,0,0"
                             ColumnDefinitions="20,*"
@@ -242,15 +243,15 @@
                         Title="Transfer Account"
                         x:DataType="models:Account"
                         Icon="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Account_circle}}"
-                        IsEnabled="{Binding Path=SelectedTangerineTransactionPair.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
-                        IsVisible="{Binding SelectedTangerineTransactionPair.IsTransfer, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                        IsEnabled="{Binding Path=SelectedRecord.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                        IsVisible="{Binding SelectedRecord.IsTransfer, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
                         ItemDisplayBinding="{Binding AccountName}"
                         ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
                         SelectedItem="{Binding Path=TransferAccount, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}" />
 
                     <HorizontalStackLayout Grid.Row="2" Spacing="5">
                         <Label FontSize="16" Text="Manual Edit" VerticalOptions="Center" />
-                        <Switch HorizontalOptions="Start" IsToggled="{Binding SelectedTangerineTransactionPair.CanEdit}" />
+                        <Switch HorizontalOptions="Start" IsToggled="{Binding SelectedRecord.CanEdit}" />
                     </HorizontalStackLayout>
                     
                     <Button
@@ -260,7 +261,7 @@
                         BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
                                                         Dark={StaticResource PrimaryDark}}"
                         Text="Approve"
-                        IsEnabled="{Binding SelectedTangerineTransactionPair.CanEdit}"
+                        IsEnabled="{Binding SelectedRecord.CanEdit}"
                         Command="{Binding ApproveTransactionCommand}" />
                 </Grid>
 
@@ -270,7 +271,20 @@
                 <Label Text="Summary" Style="{StaticResource SectionTitle}" />
 
                 <!--  Progress summary  -->
-                <Label Text="{Binding StatusMessage}" />
+                <HorizontalStackLayout Spacing="15">
+                    <CheckBox IsChecked="{Binding ShowVerified}" />
+                    <Label Text="{Binding VerifiedCount}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout Spacing="15">
+                    <CheckBox IsChecked="{Binding ShowManuallyApproved}" />
+                    <Label Text="{Binding ManuallyApprovedCount}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout Spacing="15">
+                    <CheckBox IsChecked="{Binding ShowNeedsVerification}" />
+                    <Label Text="{Binding NeedsVerificationCount}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
 
                 <!--  Import button  -->
                 <Button
