@@ -532,7 +532,52 @@ public partial class ImportStatementViewModel : ObservableObject
                 .Where(x => x.Status == ImportStatus.Verified || x.Status == ImportStatus.ManuallyApproved)
                 .Select(x => x.Transaction)
                 .ToList();
+
+            if (transactions.Count <= 0)
+            {
+                await Utilities.DisplayToast("No transactions to import");
+                return;
+            }
+
+            var minDate = transactions.Min(t => t.Date);
+            var maxDate = transactions.Max(t => t.Date);
+
+            var existingTransactions = await transactionService.GetTransactionsFromTo(minDate, maxDate, false);
+
+            var duplicates = transactions
+                .Where(t => existingTransactions.Any(e =>
+                    e.Date == t.Date &&
+                    e.Amount == t.Amount &&
+                    e.CategoryID == t.CategoryID &&
+                    e.SubcategoryID == t.SubcategoryID &&
+                    e.AccountID == t.AccountID &&
+                    e.Payee == t.Payee))
+                .ToList();
+
+            if (duplicates.Count > 0)
+            {
+                var skipDuplicates = await Shell.Current.DisplayAlertAsync(
+                    "Duplicate Transactions",
+                    $"Found {duplicates.Count} duplicate transaction(s). Skip duplicates or add them as new transations?",
+                    "Skip Duplicates",
+                    "Add new");
+
+                if (skipDuplicates)
+                    transactions = [.. transactions.Where(t => !duplicates.Contains(t))];
+            }
+
+            if (transactions.Count <= 0)
+            {
+                await Utilities.DisplayToast("No new transactions to import");
+                return;   
+            }
+            
             await transactionService.AddTransactions(transactions);
+            await Clear();
+            var msg = duplicates.Count > 0
+                ? $"Imported {transactions.Count} transactions (skipped {duplicates.Count} duplicates)"
+                : $"Imported {transactions.Count} transactions successfully";
+            await Utilities.DisplayToast(msg);
         }
         catch (Exception ex)
         {

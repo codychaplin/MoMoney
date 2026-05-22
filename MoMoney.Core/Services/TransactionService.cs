@@ -222,7 +222,8 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         // update current balance in db
         foreach (var account in matchingAccounts)
         {
-            account.CurrentBalance = account.StartingBalance ?? 0 + currentBalances[account.AccountID];
+            decimal startingBalance = account.StartingBalance ?? 0;
+            account.CurrentBalance = startingBalance + currentBalances[account.AccountID];
             await accountService.UpdateAccount(account);
         }
     }
