@@ -272,40 +272,33 @@ public partial class EditTransactionViewModel : ObservableObject
                 await accountService.UpdateBalance(Transaction.AccountID, Transaction.Amount);
             }
 
-            // if transfer, update other side of transfer
+            // if transfer, update other side of transfer if it exists
             if (Transaction.CategoryID == Constants.TRANSFER_ID)
             {
-                // get other Transaction
-                int transID = Transaction.TransactionID;
-                int otherTransID = (Transaction.SubcategoryID == Constants.DEBIT_ID) ? transID + 1 : transID - 1;
-
-                Transaction otherTrans = await transactionService.GetTransaction(otherTransID);
-
-                // update
-                otherTrans.Date = Transaction.Date;
-                otherTrans.AccountID = Transaction.TransferID!.Value;
-                otherTrans.TransferID = Transaction.AccountID;
-                otherTrans.Amount = Transaction.Amount * -1;
-                await transactionService.UpdateTransaction(otherTrans);
-
-                // if payee unchanged, update payee account balance
-                if (InitialTransaction.TransferID == Transaction.TransferID)
+                Transaction? otherTrans = await transactionService.TryGetCorrespondingTransfer(Transaction);
+                if (otherTrans is not null)
                 {
-                    await accountService.UpdateBalance(otherTrans.AccountID, InitialTransaction.Amount - Transaction.Amount);
-                }
-                else // if changed, update both
-                {
-                    await accountService.UpdateBalance(InitialTransaction.TransferID!.Value, InitialTransaction.Amount);
-                    await accountService.UpdateBalance(otherTrans.AccountID, -Transaction.Amount);
+                    // update
+                    otherTrans.Date = Transaction.Date;
+                    otherTrans.AccountID = Transaction.TransferID!.Value;
+                    otherTrans.TransferID = Transaction.AccountID;
+                    otherTrans.Amount = Transaction.Amount * -1;
+                    await transactionService.UpdateTransaction(otherTrans);
+
+                    // if payee unchanged, update payee account balance
+                    if (InitialTransaction.TransferID == Transaction.TransferID)
+                    {
+                        await accountService.UpdateBalance(otherTrans.AccountID, InitialTransaction.Amount - Transaction.Amount);
+                    }
+                    else // if changed, update both
+                    {
+                        await accountService.UpdateBalance(InitialTransaction.TransferID!.Value, InitialTransaction.Amount);
+                        await accountService.UpdateBalance(otherTrans.AccountID, -Transaction.Amount);
+                    }
                 }
             }
 
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_EDIT_TRANSACTION, FirebaseParameters.GetFirebaseParameters());
-        }
-        catch (TransactionNotFoundException ex)
-        {
-            await logger.LogError(nameof(EditTransaction), ex);
-            await Shell.Current.DisplayAlertAsync("Error", "Could not find corresponding transfer", "OK");
         }
         catch (Exception ex)
         {
@@ -326,27 +319,22 @@ public partial class EditTransactionViewModel : ObservableObject
         if (!flag)
             return;
 
+        if (Transaction is null)
+            return;
+
         try
         {
-            if (Transaction is null)
-                return;
             await transactionService.RemoveTransaction(Transaction);
 
             if (Transaction.CategoryID == Constants.TRANSFER_ID)
             {
                 // get and remove other Transaction
-                int transID = Transaction.TransactionID;
-                int otherTransID = (Transaction.SubcategoryID == Constants.DEBIT_ID) ? transID + 1 : transID - 1;
-                Transaction otherTrans = await transactionService.GetTransaction(otherTransID);
-                await transactionService.RemoveTransaction(otherTrans);
+                Transaction? otherTrans = await transactionService.TryGetCorrespondingTransfer(Transaction);
+                if (otherTrans is not null)
+                    await transactionService.RemoveTransaction(otherTrans);
             }
 
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_DELETE_TRANSACTION, FirebaseParameters.GetFirebaseParameters());
-        }
-        catch (TransactionNotFoundException ex)
-        {
-            await logger.LogError(nameof(RemoveTransaction), ex);
-            await Shell.Current.DisplayAlertAsync("Error", "Could not find corresponding transfer", "OK");
         }
         catch (Exception ex)
         {

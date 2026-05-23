@@ -84,7 +84,14 @@ public interface ITransactionService
     /// <param name="to"></param>
     /// <param name="reverse"></param>
     /// <returns>List of Transaction objects between the specified dates</returns>
-    Task<List<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse);
+    Task<List<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse = true);
+
+    /// <summary>
+    /// Tries to get the corresponding transfer for a Transaction.
+    /// </summary>
+    /// <param name="transaction"></param>
+    /// <returns>Transaction object or null if none found</returns>
+    Task<Transaction?> TryGetCorrespondingTransfer(Transaction transaction);
 
     /// <summary>
     /// Gets first Transaction from Transaction table.

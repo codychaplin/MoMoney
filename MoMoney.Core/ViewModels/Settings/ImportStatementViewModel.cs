@@ -542,7 +542,7 @@ public partial class ImportStatementViewModel : ObservableObject
             var minDate = transactions.Min(t => t.Date);
             var maxDate = transactions.Max(t => t.Date);
 
-            var existingTransactions = await transactionService.GetTransactionsFromTo(minDate, maxDate, false);
+            var existingTransactions = await transactionService.GetTransactionsFromTo(minDate, maxDate);
 
             var duplicates = transactions
                 .Where(t => existingTransactions.Any(e =>
@@ -573,7 +573,7 @@ public partial class ImportStatementViewModel : ObservableObject
             }
             
             await transactionService.AddTransactions(transactions);
-            await Clear();
+            await Clear(false);
             var msg = duplicates.Count > 0
                 ? $"Imported {transactions.Count} transactions (skipped {duplicates.Count} duplicates)"
                 : $"Imported {transactions.Count} transactions successfully";

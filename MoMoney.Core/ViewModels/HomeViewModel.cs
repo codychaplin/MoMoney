@@ -58,7 +58,7 @@ public partial class HomeViewModel : ObservableObject
         {
             ShowValue = Utilities.ShowValue ? "$0,k" : "$?";
 
-            var transactions = await transactionService.GetTransactionsFromTo(StartDate, EndDate, true);
+            var transactions = await transactionService.GetTransactionsFromTo(StartDate, EndDate);
             if (transactions.Count == 0)
             {
                 RecentTransactions.Clear();
@@ -115,7 +115,7 @@ public partial class HomeViewModel : ObservableObject
         else
         {
             // if the end date is before the latest transaction date, get transactions between the two dates and calculate the difference
-            var transactions = await transactionService.GetTransactionsFromTo(EndDate, latestTransactionDate, true);
+            var transactions = await transactionService.GetTransactionsFromTo(EndDate, latestTransactionDate);
             NetworthAtEndDate = currentNetworth - transactions.Where(trans => trans.CategoryID != Constants.TRANSFER_ID).Sum(t => t.Amount);
             foreach (var account in groupedAccounts)
             {

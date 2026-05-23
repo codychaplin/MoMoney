@@ -176,7 +176,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
             .ToList();
     }
 
-    public async Task<List<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse)
+    public async Task<List<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse = true)
     {
         if (reverse)
         {
@@ -188,6 +188,21 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         return await momoney.db.Table<Transaction>().Where(t => t.Date >= from && t.Date <= to)
                                                     .OrderBy(t => t.Date)
                                                     .ToListAsync();
+    }
+
+    public async Task<Transaction?> TryGetCorrespondingTransfer(Transaction transaction)
+    {
+        if (transaction.TransferID == null || transaction.CategoryID != Constants.TRANSFER_ID)
+            return null;
+        
+        // try to match by:
+        // date is the same, account matches transfer account, and subcategory is the opposite (debit/credit) 
+        int oppositeSubcategory = transaction.SubcategoryID == Constants.DEBIT_ID ? Constants.CREDIT_ID : Constants.DEBIT_ID;
+        return await momoney.db.Table<Transaction>().FirstOrDefaultAsync(
+            t => t.Date == transaction.Date &&
+            t.AccountID == transaction.TransferID &&
+            t.SubcategoryID == oppositeSubcategory
+        );
     }
 
     public async Task<Transaction> GetFirstTransaction()

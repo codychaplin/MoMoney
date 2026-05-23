@@ -21,7 +21,7 @@
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">29.0</SupportedOSPlatformVersion>
-		<AndroidSigningKeyStore>pherda-apps.keystore</AndroidSigningKeyStore>
+		<AndroidSigningKeyStore>$(SolutionDir)pherda-apps.keystore</AndroidSigningKeyStore>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 

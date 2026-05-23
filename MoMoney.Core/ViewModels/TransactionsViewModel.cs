@@ -106,7 +106,7 @@ public partial class TransactionsViewModel : ObservableObject
     /// </summary>
     async Task Read()
     {
-        var transactions = await transactionService.GetTransactionsFromTo(From, To, true);
+        var transactions = await transactionService.GetTransactionsFromTo(From, To);
         if (transactions.Count != Transactions.Count)
         {
             // update transactions

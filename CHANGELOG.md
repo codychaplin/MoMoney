@@ -5,6 +5,7 @@
 * Remove database lazy loading
 * Add bank-specific CSV importing
 * Connect subcategories to parents by ID instead of name
+* Gracefully try to edit opposite side of transfers
 
 # MoMoney v1.0.1
 
