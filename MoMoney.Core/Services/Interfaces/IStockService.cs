@@ -17,14 +17,14 @@ public interface IStockService
     /// <param name="market"></param>
     /// <param name="quantity"></param>
     /// <param name="cost"></param>
-    /// <exception cref="DuplicateStockException"></exception>
+    /// <exception cref="DuplicateException"></exception>
     Task AddStock(string symbol, string market, decimal? quantity, decimal? cost);
 
     /// <summary>
     /// Inserts multiple Stock objects into Stocks table.
     /// </summary>
     /// <param name="stocks"></param>
-    /// <exception cref="DuplicateStockException"></exception>
+    /// <exception cref="DuplicateException"></exception>
     Task AddStocks(List<Stock> stocks);
 
     /// <summary>

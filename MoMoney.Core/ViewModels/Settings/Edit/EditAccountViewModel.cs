@@ -38,7 +38,7 @@ public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, E
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_ACCOUNT, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
         }
-        catch (DuplicateAccountException ex)
+        catch (DuplicateException ex)
         {
             await logger.LogWarning(nameof(Add), ex);
             await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");

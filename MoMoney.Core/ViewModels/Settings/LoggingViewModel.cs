@@ -149,11 +149,6 @@ public partial class LoggingViewModel : ObservableObject
             sb.Append($"Message: {log.Message}");
             await Shell.Current.DisplayAlertAsync("Details", sb.ToString(), "OK");
         }
-        catch (LogNotFoundException ex)
-        {
-            await logger.LogError(nameof(OpenPopup), ex);
-            await Shell.Current.DisplayAlertAsync("Log Error", ex.Message, "OK");
-        }
         catch (Exception ex)
         {
             await logger.LogError(nameof(OpenPopup), ex);

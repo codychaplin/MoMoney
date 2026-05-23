@@ -16,6 +16,7 @@
             <components:AlignedButton Command="{Binding RemoveAllStocksCommand}" Text="Remove All Stocks" />
             <components:AlignedButton Command="{Binding RemoveAllTransactionsCommand}" Text="Remove All Transactions" />
             <components:AlignedButton Command="{Binding RemoveAllLogsCommand}" Text="Remove All Logs" />
+            <components:AlignedButton Command="{Binding RemoveAllMappingRulesCommand}" Text="Remove All Mapping Rules" />
             <components:AlignedButton Command="{Binding RemoveAllDataCommand}" Text="Remove Everything" />
 
             <!--  data maintenance  -->

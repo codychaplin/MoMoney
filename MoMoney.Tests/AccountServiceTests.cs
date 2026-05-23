@@ -41,7 +41,7 @@ public class AccountServiceTests
     }
 
     [Fact]
-    public async Task AddAccount_ShouldThrowDuplicateAccountException_WhenAccountExists()
+    public async Task AddAccount_ShouldThrowDuplicateException_WhenAccountExists()
     {
         // Arrange
         string accountName = _TestAccount0.AccountName;
@@ -54,7 +54,7 @@ public class AccountServiceTests
         async Task act() => await _accountService.AddAccount(accountName, accountType, startingBalance);
 
         // Assert
-        await Assert.ThrowsAsync<DuplicateAccountException>(act);
+        await Assert.ThrowsAsync<DuplicateException>(act);
         _MoMoneyDbMock.Verify(db => db.AccountsCountAsync(accountName), Times.Once);
     }
 
@@ -76,7 +76,7 @@ public class AccountServiceTests
     }
 
     [Fact]
-    public async Task AddAccounts_ShouldThrowDuplicateAccountException_WhenAccountsExist()
+    public async Task AddAccounts_ShouldThrowDuplicateException_WhenAccountsExist()
     {
         // Arrange
         List<Account> existingAccounts = [_TestAccount0, _TestAccount1];
@@ -87,7 +87,7 @@ public class AccountServiceTests
         async Task act() => await _accountService.AddAccounts(newAccounts);
 
         // Assert
-        await Assert.ThrowsAsync<DuplicateAccountException>(act);
+        await Assert.ThrowsAsync<DuplicateException>(act);
         _MoMoneyDbMock.Verify(db => db.AccountsToList(), Times.Exactly(2));
     }
 
@@ -125,7 +125,7 @@ public class AccountServiceTests
     }
 
     [Fact]
-    public async Task UpdateBalance_ShouldThrowAccountNotFoundException_WhenAccountDoesNotExist()
+    public async Task UpdateBalance_ShouldThrowNotFoundException_WhenAccountDoesNotExist()
     {
         // Arrange
         int accountID = _TestAccount0.AccountID;
@@ -137,7 +137,7 @@ public class AccountServiceTests
         async Task act() => await _accountService.UpdateBalance(accountID, amount);
 
         // Assert
-        await Assert.ThrowsAsync<AccountNotFoundException>(act);
+        await Assert.ThrowsAsync<NotFoundException>(act);
         _MoMoneyDbMock.Verify(db => db.AccountsToList(), Times.Once);
     }
 
@@ -204,7 +204,7 @@ public class AccountServiceTests
         async Task act() => await _accountService.GetAccount(accountID, false);
 
         // Assert
-        await Assert.ThrowsAsync<AccountNotFoundException>(act);
+        await Assert.ThrowsAsync<NotFoundException>(act);
         _MoMoneyDbMock.Verify(db => db.AccountsToList(), Times.Once);
         _MoMoneyDbMock.Verify(db => db.FirstOrDefaultAccountAsync(accountID), Times.Once);
     }

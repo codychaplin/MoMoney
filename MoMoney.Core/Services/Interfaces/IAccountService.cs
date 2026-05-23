@@ -16,14 +16,14 @@ public interface IAccountService
     /// <param name="accountName"></param>
     /// <param name="accountType"></param>
     /// <param name="startingBalance"></param>
-    /// <exception cref="DuplicateAccountException"></exception>
+    /// <exception cref="DuplicateException"></exception>
     Task<int> AddAccount(string accountName, string? accountType, decimal? startingBalance);
 
     /// <summary>
     /// Inserts multiple Account objects into Accounts table.
     /// </summary>
     /// <param name="accounts"></param>
-    /// <exception cref="DuplicateAccountException"></exception>
+    /// <exception cref="DuplicateException"></exception>
     Task<int> AddAccounts(List<Account> accounts);
 
     /// <summary>
@@ -37,7 +37,7 @@ public interface IAccountService
     /// </summary>
     /// <param name="ID"></param>
     /// <param name="amount"></param>
-    /// <exception cref="AccountNotFoundException"></exception>
+    /// <exception cref="NotFoundException"></exception>
     Task<int> UpdateBalance(int ID, decimal amount);
 
     /// <summary>
@@ -57,7 +57,7 @@ public interface IAccountService
     /// <param name="ID"></param>
     /// <param name="tryGet"></param>
     /// <returns>Account object</returns>
-    /// <exception cref="AccountNotFoundException"></exception>
+    /// <exception cref="NotFoundException"></exception>
     Task<Account?> GetAccount(int ID, bool tryGet = false);
 
     /// <summary>

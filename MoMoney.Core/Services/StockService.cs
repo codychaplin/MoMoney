@@ -27,7 +27,7 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
 
             var count = await momoney.db.Table<Stock>().CountAsync(s => s.Symbol == symbol && s.Market == market);
             if (count > 0)
-                throw new DuplicateStockException($"Stock symbol'{symbol}:{market}' already exists");
+                throw new DuplicateException($"Stock symbol'{symbol}:{market}' already exists");
 
             var stock = new Stock(symbol, market, quantity, cost, cost);
 
@@ -47,7 +47,7 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
             // checks if names of any new stocks matches any names from db and throw exception if true
             bool containsDuplicates = stocks.Any(s => dbStocks.Select(dbs => dbs.FullName).Contains(s.FullName));
             if (containsDuplicates)
-                throw new DuplicateStockException("Imported stocks contained duplicates. Please try again");
+                throw new DuplicateException("Imported stocks contained duplicates. Please try again");
 
             // adds stocks to db and dictionary
             await momoney.db.InsertAllAsync(stocks);
@@ -103,7 +103,7 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
 
         var stk = await momoney.db.Table<Stock>().FirstOrDefaultAsync(s => s.StockID == ID);
         if (stk is null)
-            throw new StockNotFoundException($"Could not find Stock #{ID}.");
+            throw new NotFoundException($"Could not find Stock #{ID}.");
         else
             return stk;
     }
@@ -139,18 +139,18 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
     /// <param name="quantity"></param>
     /// <param name="cost"></param>
     /// <param name="marketPrice"></param>
-    /// <exception cref="InvalidStockException"></exception>
-    static void ValidateStock(string symbol, string market, decimal? quantity, decimal? cost, decimal? marketPrice)
+    /// <exception cref="InvalidException"></exception>
+    static void ValidateStock(string symbol, string? market, decimal? quantity, decimal? cost, decimal? marketPrice)
     {
         if (string.IsNullOrEmpty(symbol))
-            throw new InvalidStockException("Invalid symbol");
+            throw new InvalidException("Invalid symbol");
         if (string.IsNullOrEmpty(market))
-            throw new InvalidStockException("Invalid market");
+            throw new InvalidException("Invalid market");
         if (quantity < 0)
-            throw new InvalidStockException("Quantity must be > 0");
+            throw new InvalidException("Quantity must be > 0");
         if (cost <= 0)
-            throw new InvalidStockException("Cost must be > 0");
+            throw new InvalidException("Cost must be > 0");
         if (marketPrice < 0)
-            throw new InvalidStockException("Market Price must be >= 0");
+            throw new InvalidException("Market Price must be >= 0");
     }
 }

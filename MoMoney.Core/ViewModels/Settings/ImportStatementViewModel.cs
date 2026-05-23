@@ -246,7 +246,7 @@ public partial class ImportStatementViewModel : ObservableObject
         catch (TypeConverterException ex)
         {
             string errorMessage = $"Transaction {i}: '{ex.Text}' is not a valid value for '{ex.MemberMapData.Member?.Name}'";
-            throw new InvalidStatementException(errorMessage);
+            throw new InvalidException(errorMessage);
         }
         finally
         {

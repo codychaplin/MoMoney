@@ -52,7 +52,7 @@ public interface ILoggerService<T>
     /// </summary>
     /// <param name="ID"></param>
     /// <returns>Log object</returns>
-    /// <exception cref="LogNotFoundException"></exception>
+    /// <exception cref="NotFoundException"></exception>
     Task<Log> GetLog(int ID);
 
     /// <summary>

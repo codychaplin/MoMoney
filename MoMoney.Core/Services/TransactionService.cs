@@ -115,7 +115,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
     {
         var transaction = await momoney.db.Table<Transaction>().FirstOrDefaultAsync(t => t.TransactionID == ID);
         return transaction is null
-            ? throw new TransactionNotFoundException($"Could not find Transaction with ID '{ID}'.")
+            ? throw new NotFoundException($"Could not find Transaction with ID '{ID}'.")
             : new Transaction(transaction);
     }
 
@@ -253,28 +253,28 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
     /// <param name="subcategoryID"></param>
     /// <param name="payee"></param>
     /// <param name="transferID"></param>
-    /// <exception cref="InvalidTransactionException"></exception>
-    void ValidateTransaction(DateTime date, int accountID, decimal amount, int categoryID,
+    /// <exception cref="InvalidException"></exception>
+    static void ValidateTransaction(DateTime date, int accountID, decimal amount, int categoryID,
         int subcategoryID, string payee, int? transferID)
     {
         if (date.Year < 2000)
-            throw new InvalidTransactionException("Invalid Date");
+            throw new InvalidException("Invalid Date");
         if (accountID < 1)
-            throw new InvalidTransactionException("Invalid Account");
+            throw new InvalidException("Invalid Account");
         if (amount == 0)
-            throw new InvalidTransactionException("Amount cannot be 0");
+            throw new InvalidException("Amount cannot be 0");
         if (categoryID < 1)
-            throw new InvalidTransactionException("Invalid Category");
+            throw new InvalidException("Invalid Category");
         if (subcategoryID < 1)
-            throw new InvalidTransactionException("Invalid Subcategory");
+            throw new InvalidException("Invalid Subcategory");
         if (categoryID != Constants.TRANSFER_ID && string.IsNullOrEmpty(payee))
-            throw new InvalidTransactionException("Payee cannot be blank");
+            throw new InvalidException("Payee cannot be blank");
         if (categoryID == Constants.TRANSFER_ID)
         {
             if (transferID < 1)
-                throw new InvalidTransactionException("Invalid Transfer Account");
+                throw new InvalidException("Invalid Transfer Account");
             if (accountID == transferID)
-                throw new InvalidTransactionException("Cannot transfer to the same account.");
+                throw new InvalidException("Cannot transfer to the same account.");
         }
     }
 }

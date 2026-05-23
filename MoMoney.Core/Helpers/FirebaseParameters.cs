@@ -56,6 +56,10 @@ public class FirebaseParameters
     public static string EVENT_EXPORT_LOGS => "Export_Logs";
     public static string EVENT_REMOVE_ALL_LOGS => "Remove_All_Logs";
 
+    public static string EVENT_IMPORT_MAPPING_RULES => "Import_Mapping_Rules";
+    public static string EVENT_EXPORT_MAPPING_RULES => "Export_Mapping_Rules";
+    public static string EVENT_REMOVE_ALL_MAPPING_RULES => "Remove_All_Mapping_Rules";
+
     public static string EVENT_REMOVE_ALL_DATA => "Remove_All_Data";
 
     public static Dictionary<string, string> GetFirebaseParameters(Exception? ex = null, string? functionName = null, string? className = null)

@@ -102,7 +102,7 @@ public class LoggerService<T> : ILoggerService<T>
     {
         var log = await momoney.db.Table<Log>().FirstOrDefaultAsync(l => l.LogId == ID);
         if (log is null)
-            throw new LogNotFoundException($"Could not find Log with ID '{ID}'.");
+            throw new NotFoundException($"Could not find Log with ID '{ID}'.");
         else
             return log;
     }

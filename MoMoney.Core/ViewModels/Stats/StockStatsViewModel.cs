@@ -115,14 +115,14 @@ public partial class StockStatsViewModel : ObservableObject
                         break;
                 }
                 if (priceElement is null)
-                    throw new StockNotFoundException($"Could not find '{Stocks[i].FullName}'. Please ensure the name and market are correct");
+                    throw new NotFoundException($"Could not find '{Stocks[i].FullName}'. Please ensure the name and market are correct");
 
                 // validate price
                 string raw = priceElement.InnerText;
                 int dollarIdx = raw.IndexOf('$');
                 string price = dollarIdx >= 0 ? raw[(dollarIdx + 1)..] : raw;
                 if (string.IsNullOrEmpty(price))
-                    throw new InvalidStockException("Updated price not found.");
+                    throw new InvalidException("Updated price not found.");
                 if (decimal.TryParse(price, out decimal newPrice))
                 {
                     // if price has changed, update values
@@ -143,7 +143,7 @@ public partial class StockStatsViewModel : ObservableObject
                 }
                 else
                 {
-                    throw new InvalidStockException($"{price} is not a valid number");
+                    throw new InvalidException($"{price} is not a valid number");
                 }
             }
         }
@@ -152,16 +152,16 @@ public partial class StockStatsViewModel : ObservableObject
             await logger.LogError(nameof(GetUpdatedStockPrices), ex);
             await Shell.Current.DisplayAlertAsync("HTTP Error", ex.Message, "OK");
         }
-        catch (InvalidStockException ex)
+        catch (InvalidException ex)
         {
             await logger.LogError(nameof(GetUpdatedStockPrices), ex);
-            await Shell.Current.DisplayAlertAsync("Parse Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Parsing Error", ex.Message, "OK");
         }
 
-        catch (StockNotFoundException ex)
+        catch (NotFoundException ex)
         {
             await logger.LogError(nameof(GetUpdatedStockPrices), ex);
-            await Shell.Current.DisplayAlertAsync("Stock not found", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Stock Not Found", ex.Message, "OK");
         }
         catch (InvalidOperationException)
         {

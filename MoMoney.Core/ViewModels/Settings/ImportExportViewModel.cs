@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text.Json;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -6,6 +7,7 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
 using MoMoney.Core.Models;
+using MoMoney.Core.Models.Statements;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Converters;
@@ -19,17 +21,19 @@ public partial class ImportExportViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
+    readonly IMappingRuleService mappingRuleService;
     readonly ILoggerService<ImportExportViewModel> logger;
 
     readonly IFileSaver fileSaver;
 
     public ImportExportViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService,
-        IStockService _stockService, ILoggerService<ImportExportViewModel> _logger, IFileSaver _fileSaver)
+        IStockService _stockService, IMappingRuleService _mappingRuleService, ILoggerService<ImportExportViewModel> _logger, IFileSaver _fileSaver)
     {
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
         stockService = _stockService;
+        mappingRuleService = _mappingRuleService;
         logger = _logger;
         fileSaver = _fileSaver;
     }
@@ -68,7 +72,7 @@ public partial class ImportExportViewModel : ObservableObject
             catch (TypeConverterException ex)
             {
                 string errorMessage = $"Account {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member?.Name}";
-                throw new InvalidAccountException(errorMessage);
+                throw new InvalidException(errorMessage);
             }
 
             await accountService.AddAccounts(accounts);
@@ -78,12 +82,12 @@ public partial class ImportExportViewModel : ObservableObject
             await logger.LogInfo($"Imported {accounts.Count} accounts from '{result.FileName}'.");
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_ACCOUNTS, FirebaseParameters.GetFirebaseParameters());
         }
-        catch (InvalidAccountException ex)
+        catch (InvalidException ex)
         {
             await logger.LogWarning(nameof(ImportAccountsCSV), ex);
             await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
         }
-        catch (DuplicateAccountException ex)
+        catch (DuplicateException ex)
         {
             await logger.LogError(nameof(ImportAccountsCSV), ex);
             await Shell.Current.DisplayAlertAsync("Duplicate Error", ex.Message, "OK");
@@ -129,7 +133,7 @@ public partial class ImportExportViewModel : ObservableObject
                     {
                         var parentCat = await categoryService.GetParentCategoryByName(parent, true);
                         if (parentCat == null && !categories.Select(c => c.CategoryName).Contains(parent))
-                            throw new InvalidCategoryException($"'{parent}' is not an existing parent category.");
+                            throw new InvalidException($"'{parent}' is not an existing parent category.");
                     }
 
                     categories.Add(category);
@@ -139,7 +143,7 @@ public partial class ImportExportViewModel : ObservableObject
             catch (TypeConverterException ex)
             {
                 string errorMessage = $"Category {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member?.Name}";
-                throw new InvalidCategoryException(errorMessage);
+                throw new InvalidException(errorMessage);
             }
 
             // split into parents and children
@@ -167,12 +171,12 @@ public partial class ImportExportViewModel : ObservableObject
             await logger.LogInfo($"Imported {categories.Count} categories from '{result.FileName}'.");
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_CATEGORIES, FirebaseParameters.GetFirebaseParameters());
         }
-        catch (InvalidCategoryException ex)
+        catch (InvalidException ex)
         {
             await logger.LogWarning(nameof(ImportCategoriesCSV), ex);
             await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
         }
-        catch (DuplicateCategoryException ex)
+        catch (DuplicateException ex)
         {
             await logger.LogError(nameof(ImportCategoriesCSV), ex);
             await Shell.Current.DisplayAlertAsync("Duplicate Error", ex.Message, "OK");
@@ -231,7 +235,7 @@ public partial class ImportExportViewModel : ObservableObject
             catch (TypeConverterException ex)
             {
                 string errorMessage = $"Transaction {i}: '{ex.Text}' is not a valid value for '{ex.MemberMapData.Member?.Name}'";
-                throw new InvalidTransactionException(errorMessage);
+                throw new InvalidException(errorMessage);
             }
 
             await transactionService.AddTransactions(transactions);
@@ -242,7 +246,7 @@ public partial class ImportExportViewModel : ObservableObject
             await logger.LogInfo($"Imported {transactions.Count} transactions from '{result.FileName}'.");
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_TRANSACTIONS, FirebaseParameters.GetFirebaseParameters());
         }
-        catch (InvalidTransactionException ex)
+        catch (InvalidException ex)
         {
             await logger.LogWarning(nameof(ImportTransactionsCSV), ex);
             await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
@@ -289,7 +293,7 @@ public partial class ImportExportViewModel : ObservableObject
             catch (TypeConverterException ex)
             {
                 string errorMessage = $"Stock {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member?.Name}";
-                throw new InvalidStockException(errorMessage);
+                throw new InvalidException(errorMessage);
             }
 
             await stockService.AddStocks(stocks);
@@ -299,12 +303,12 @@ public partial class ImportExportViewModel : ObservableObject
             await logger.LogInfo($"Imported {stocks.Count} stocks from '{result.FileName}'.");
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_STOCKS, FirebaseParameters.GetFirebaseParameters());
         }
-        catch (InvalidStockException ex)
+        catch (InvalidException ex)
         {
             await logger.LogWarning(nameof(ImportStocksCSV), ex);
             await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
         }
-        catch (DuplicateStockException ex)
+        catch (DuplicateException ex)
         {
             await logger.LogError(nameof(ImportStocksCSV), ex);
             await Shell.Current.DisplayAlertAsync("Duplicate Error", ex.Message, "OK");
@@ -351,7 +355,7 @@ public partial class ImportExportViewModel : ObservableObject
             catch (TypeConverterException ex)
             {
                 string errorMessage = $"Log {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member?.Name}";
-                throw new InvalidStockException(errorMessage);
+                throw new InvalidException(errorMessage);
             }
 
             await logger.AddLogs(logs);
@@ -364,6 +368,103 @@ public partial class ImportExportViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(ImportLogsCSV), ex);
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Prompts the user to open a CSV file. Valid MappingRules are then added to the database.
+    /// </summary>
+    [RelayCommand]
+    async Task ImportMappingRulesCSV()
+    {
+        try
+        {
+            IsBusy = true;
+            var result = await SelectFile();
+            if (result == null)
+                return;
+
+            var categories = await categoryService.GetCategoriesAsNameDict();
+            var accounts = await accountService.GetAccountsAsNameDict();
+
+            List<MappingRule> rules = [];
+            int i = 1;
+
+            try
+            {
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+                using var sr = new StreamReader(result.FullPath);
+                using var csv = new CsvReader(sr, config);
+                await foreach (var row in csv.GetRecordsAsync<MappingRuleCsvRow>())
+                {
+                    if (!Enum.TryParse<BankType>(row.BankType, out var bankType))
+                        throw new InvalidException($"Mapping rule {i}: '{row.BankType}' is not a valid BankType.");
+
+                    var mapping = new Dictionary<string, string>();
+                    if (row.Skip)
+                    {
+                        mapping["Skip"] = "true";
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(row.Category))
+                        {
+                            if (!categories.TryGetValue($"{row.Category},", out int catId))
+                                throw new InvalidException($"Mapping rule {i}: category '{row.Category}' not found.");
+                            mapping["Category"] = catId.ToString();
+                        }
+                        if (!string.IsNullOrEmpty(row.Subcategory) && !string.IsNullOrEmpty(row.Category))
+                        {
+                            if (!categories.TryGetValue($"{row.Subcategory},{row.Category}", out int subId))
+                                throw new InvalidException($"Mapping rule {i}: subcategory '{row.Subcategory}' under '{row.Category}' not found.");
+                            mapping["Subcategory"] = subId.ToString();
+                        }
+                        if (!string.IsNullOrEmpty(row.TransferAccount))
+                        {
+                            if (!accounts.TryGetValue(row.TransferAccount, out int accId))
+                                throw new InvalidException($"Mapping rule {i}: account '{row.TransferAccount}' not found.");
+                            mapping["TransferAccount"] = accId.ToString();
+                        }
+                        if (!string.IsNullOrEmpty(row.Payee))
+                            mapping["Payee"] = row.Payee;
+                    }
+
+                    rules.Add(new MappingRule(row.Name, bankType)
+                    {
+                        Pattern = row.Pattern,
+                        MappingJson = JsonSerializer.Serialize(mapping)
+                    });
+                    i++;
+                }
+            }
+            catch (TypeConverterException ex)
+            {
+                string errorMessage = $"Mapping rule {i}: {ex.Text} is not a valid value for {ex.MemberMapData.Member?.Name}";
+                throw new InvalidException(errorMessage);
+            }
+
+            foreach (var rule in rules)
+                await mappingRuleService.InsertOrReplaceRule(rule);
+
+            string message = i == 2 ? "1 mapping rule has been added." : $"{i - 1} mapping rules have been added";
+            _ = Shell.Current.DisplayAlertAsync("Success", message, "OK");
+
+            await logger.LogInfo($"Imported {rules.Count} mapping rules from '{result.FileName}'.");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_IMPORT_MAPPING_RULES, FirebaseParameters.GetFirebaseParameters());
+        }
+        catch (InvalidException ex)
+        {
+            await logger.LogWarning(nameof(ImportMappingRulesCSV), ex);
+            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(ImportMappingRulesCSV), ex);
             await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
@@ -505,6 +606,70 @@ public partial class ImportExportViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(ExportStocksCSV), ex);
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Exports MappingRules from database to a CSV file.
+    /// </summary>
+    [RelayCommand]
+    async Task ExportMappingRulesCSV()
+    {
+        try
+        {
+            IsBusy = true;
+            var rules = await mappingRuleService.GetRules();
+            var rows = rules.Select(rule =>
+            {
+                var row = new MappingRuleCsvRow
+                {
+                    BankType = rule.BankType.ToString(),
+                    Name = rule.Name,
+                    Pattern = rule.Pattern
+                };
+
+                if (string.IsNullOrEmpty(rule.MappingJson))
+                    return row;
+
+                var mapping = JsonSerializer.Deserialize<Dictionary<string, string>>(rule.MappingJson);
+                if (mapping == null)
+                    return row;
+
+                if (mapping.TryGetValue("Skip", out string? skip) && skip == "true")
+                {
+                    row.Skip = true;
+                    return row;
+                }
+
+                if (mapping.TryGetValue("Category", out string? catStr) && int.TryParse(catStr, out int catId)
+                    && categoryService.Categories.TryGetValue(catId, out var cat))
+                    row.Category = cat.CategoryName;
+
+                if (mapping.TryGetValue("Subcategory", out string? subStr) && int.TryParse(subStr, out int subId)
+                    && categoryService.Categories.TryGetValue(subId, out var sub))
+                    row.Subcategory = sub.CategoryName;
+
+                if (mapping.TryGetValue("TransferAccount", out string? accStr) && int.TryParse(accStr, out int accId)
+                    && accountService.Accounts.TryGetValue(accId, out var acc))
+                    row.TransferAccount = acc.AccountName;
+
+                if (mapping.TryGetValue("Payee", out string? payee))
+                    row.Payee = payee;
+
+                return row;
+            });
+
+            await ExportData(rows, "mapping_rules.csv", "mapping rule", "mapping rules", FirebaseParameters.EVENT_EXPORT_MAPPING_RULES);
+        }
+        catch (TaskCanceledException) { }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(ExportMappingRulesCSV), ex);
             await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally

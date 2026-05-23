@@ -42,4 +42,14 @@ public class MappingRuleService : IMappingRuleService
     {
         return await momoney.db.DeleteAsync<MappingRule>(ID);
     }
+
+    public async Task<int> GetMappingRuleCount()
+    {
+        return await momoney.db.Table<MappingRule>().CountAsync();
+    }
+
+    public async Task RemoveAllRules()
+    {
+        await momoney.db.DeleteAllAsync<MappingRule>();
+    }
 }

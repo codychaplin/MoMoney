@@ -28,7 +28,7 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
         {
             var count = await momoney.AccountsCountAsync(accountName);
             if (count > 0)
-                throw new DuplicateAccountException($"Account named '{accountName}' already exists");
+                throw new DuplicateException($"Account named '{accountName}' already exists");
 
             ValidateAccount(accountName, accountType, startingBalance);
 
@@ -63,7 +63,7 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
             // checks if names of any new accounts matches any names from dbAccounts and throw exception if true
             bool containsDuplicates = accounts.Any(a => dbAccounts.Select(dba => dba.AccountName).Contains(a.AccountName));
             if (containsDuplicates)
-                throw new DuplicateAccountException("Imported accounts contained duplicates. Please try again");
+                throw new DuplicateException("Imported accounts contained duplicates. Please try again");
 
             // adds accounts to db and dictionary
             numRows = await momoney.db.InsertAllAsync(accounts);
@@ -104,7 +104,7 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
         {
             numRows = await momoney.db.ExecuteAsync($"UPDATE Account SET CurrentBalance=CurrentBalance + {amount} WHERE AccountID={ID}");
             if (numRows == 0)
-                throw new AccountNotFoundException($"Could not find Account with ID '{ID}'.");
+                throw new NotFoundException($"Could not find Account with ID '{ID}'.");
 
             decimal balanceBefore = Math.Round(Accounts[ID].CurrentBalance, 2);
             Accounts[ID].CurrentBalance += amount;
@@ -157,7 +157,7 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
 
         var account = await momoney.FirstOrDefaultAccountAsync(ID);
         return account is null && !tryGet
-            ? throw new AccountNotFoundException($"Could not find Account with ID '{ID}'.")
+            ? throw new NotFoundException($"Could not find Account with ID '{ID}'.")
             : account;
     }
 
@@ -214,13 +214,20 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
         return accounts.ToDictionary(a => a.AccountID, a => a);
     }
 
+    /// <summary>
+    /// Validates account
+    /// </summary>
+    /// <param name="accountName"></param>
+    /// <param name="accountType"></param>
+    /// <param name="startingBalance"></param>
+    /// <exception cref="InvalidException"></exception>
     static void ValidateAccount(string accountName, string? accountType, decimal? startingBalance)
     {
         if (string.IsNullOrEmpty(accountName))
-            throw new InvalidStockException("Invalid name");
+            throw new InvalidException("Invalid name");
         if (string.IsNullOrEmpty(accountType))
-            throw new InvalidStockException("Invalid type");
+            throw new InvalidException("Invalid type");
         if (!startingBalance.HasValue)
-            throw new InvalidStockException("Account must have a startin balance");
+            throw new InvalidException("Account must have a startin balance");
     }
 }

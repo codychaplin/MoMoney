@@ -108,7 +108,7 @@ Requires signing credentials configured in `MoMoney.csproj` (Release build uses 
 
 - **Nullable Reference Types**: Enabled across all projects
 - **CSV Mapping**: Always use `ClassMap<T>` for import/export, override converters for IDs ↔ names
-- **Error Handling**: Services throw domain exceptions (`TransactionNotFoundException`, `DuplicateAccountException`); UI catches and displays alerts
+- **Error Handling**: Services throw custom exceptions (`NotFoundException`, `DuplicateException`); UI catches and displays alerts
 - **Async/Await**: All DB operations are async via `SQLiteAsyncConnection`
 - **Sensitive Values Toggle**: `Utilities.ShowValue` hides monetary values; check in ViewModels before binding
 

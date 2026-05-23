@@ -255,7 +255,7 @@ public partial class BulkEditingViewModel : ObservableObject
 
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_BULK_REPLACE, FirebaseParameters.GetFirebaseParameters());
         }
-        catch (InvalidTransactionException ex)
+        catch (InvalidException ex)
         {
             await logger.LogWarning(nameof(BulkReplace), ex);
             await Shell.Current.DisplayAlertAsync("Validation Error", ex.Message, "OK");

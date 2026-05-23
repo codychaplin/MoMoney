@@ -74,21 +74,6 @@ public partial class EditTransactionViewModel : ObservableObject
                         InitialTransferAccount = await accountService.GetAccount(Transaction.TransferID.Value);
                 }
             }
-            catch (TransactionNotFoundException ex)
-            {
-                await logger.LogError(nameof(GetTransaction), ex);
-                await Shell.Current.DisplayAlertAsync("Transaction Error", ex.Message, "OK");
-            }
-            catch (AccountNotFoundException ex)
-            {
-                await logger.LogError(nameof(GetTransaction), ex);
-                await Shell.Current.DisplayAlertAsync("Account Error", ex.Message, "OK");
-            }
-            catch (CategoryNotFoundException ex)
-            {
-                await logger.LogError(nameof(GetTransaction), ex);
-                await Shell.Current.DisplayAlertAsync("Category Error", ex.Message, "OK");
-            }
             catch (Exception ex)
             {
                 await logger.LogError(nameof(GetTransaction), ex);
@@ -142,11 +127,6 @@ public partial class EditTransactionViewModel : ObservableObject
             Subcategories.Clear();
             Category = InitialCategory;
         }
-        catch (CategoryNotFoundException ex)
-        {
-            await logger.LogError(nameof(GetIncomeCategory), ex);
-            await Shell.Current.DisplayAlertAsync("Category Not Found Error", ex.Message, "OK");
-        }
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetIncomeCategory), ex);
@@ -167,11 +147,6 @@ public partial class EditTransactionViewModel : ObservableObject
                 Categories.Add(transfer);
             Subcategories.Clear();
             Category = InitialCategory;
-        }
-        catch (CategoryNotFoundException ex)
-        {
-            await logger.LogError(nameof(GetTransferCategory), ex);
-            await Shell.Current.DisplayAlertAsync("Category Not Found Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {

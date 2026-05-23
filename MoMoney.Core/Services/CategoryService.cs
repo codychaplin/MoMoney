@@ -25,7 +25,7 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
         {
             var count = await momoney.db.Table<Category>().CountAsync(c => c.CategoryName == categoryName && c.ParentCategoryID == parentCategoryID);
             if (count > 0)
-                throw new DuplicateCategoryException($"Category '{categoryName}' already exists");
+                throw new DuplicateException($"Category '{categoryName}' already exists");
 
             var category = new Category
             {
@@ -51,7 +51,7 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
             bool containsDuplicates = categories.Any(a =>
                  dbCategories.Any(dba => dba.CategoryName == a.CategoryName && dba.ParentCategoryID == a.ParentCategoryID));
             if (containsDuplicates)
-                throw new DuplicateCategoryException("Imported categories contained duplicates. Please try again");
+                throw new DuplicateException("Imported categories contained duplicates. Please try again");
 
             // adds Categories to db and dictionary
             await momoney.db.InsertAllAsync(categories);
@@ -107,7 +107,7 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
 
         var cat = await momoney.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryID == ID);
         return cat is null && !tryGet
-            ? throw new CategoryNotFoundException($"Could not find Category with ID '{ID}'.")
+            ? throw new NotFoundException($"Could not find Category with ID '{ID}'.")
             : cat;
     }
 
@@ -120,7 +120,7 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
 
         var cat = await momoney.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryName == name && c.ParentCategoryID == null);
         return cat is null && !tryGet
-            ? throw new CategoryNotFoundException($"Could not find Category with name '{name}'.")
+            ? throw new NotFoundException($"Could not find Category with name '{name}'.")
             : cat;
     }
 
@@ -133,7 +133,7 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
 
         var cat = await momoney.db.Table<Category>().FirstOrDefaultAsync(c => c.CategoryID == parentCategoryID && c.ParentCategoryID == null);
         return cat is null && !tryGet
-            ? throw new CategoryNotFoundException("Could not find Category.")
+            ? throw new NotFoundException("Could not find Category.")
             : cat;
     }
 

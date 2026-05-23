@@ -9,7 +9,7 @@ public interface IMappingRuleService
     /// Creates new MappingRule object and inserts into MappingRules table.
     /// </summary>
     /// <param name="rule"></param>
-    /// <exception cref="DuplicateMappingRuleException"></exception>
+    /// <exception cref="DuplicateException"></exception>
     Task<int> InsertOrReplaceRule(MappingRule rule);
 
     /// <summary>
@@ -24,7 +24,7 @@ public interface IMappingRuleService
     /// <param name="ID"></param>
     /// <param name="tryGet"></param>
     /// <returns>MappingRule object</returns>
-    /// <exception cref="DuplicateMappingRuleException"></exception>
+    /// <exception cref="DuplicateException"></exception>
     Task<MappingRule?> GetRule(int ID, bool tryGet = false);
 
     /// <summary>
@@ -32,4 +32,14 @@ public interface IMappingRuleService
     /// </summary>
     /// <returns>List of MappingRule objects</returns>
     Task<List<MappingRule>> GetRules(BankType? bankType = null);
+
+    /// <summary>
+    /// Gets count of rules in MappingRules table.
+    /// </summary>
+    Task<int> GetMappingRuleCount();
+
+    /// <summary>
+    /// Removes all rules from MappingRules table.
+    /// </summary>
+    Task RemoveAllRules();
 }

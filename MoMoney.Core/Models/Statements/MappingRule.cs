@@ -27,3 +27,15 @@ public partial class MappingRule : ObservableObject
         BankType = bankType;
     }
 }
+
+public class MappingRuleCsvRow
+{
+    public string BankType { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Pattern { get; set; } = string.Empty;
+    public bool Skip { get; set; }
+    public string Category { get; set; } = string.Empty;
+    public string Subcategory { get; set; } = string.Empty;
+    public string Payee { get; set; } = string.Empty;
+    public string TransferAccount { get; set; } = string.Empty;
+}

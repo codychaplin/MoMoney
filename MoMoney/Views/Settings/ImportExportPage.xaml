@@ -17,6 +17,7 @@
             <components:AlignedButton Command="{Binding ImportCategoriesCSVCommand}" Text="Import Categories from CSV" />
             <components:AlignedButton Command="{Binding ImportStocksCSVCommand}" Text="Import Stocks from CSV" />
             <components:AlignedButton Command="{Binding ImportTransactionsCSVCommand}" Text="Import Transactions from CSV" />
+            <components:AlignedButton Command="{Binding ImportMappingRulesCSVCommand}" Text="Import Mapping Rules from CSV" />
             <components:AlignedButton Command="{Binding ImportLogsCSVCommand}" Text="Import Logs from CSV" />
 
             <!--  export  -->
@@ -25,6 +26,7 @@
             <components:AlignedButton Command="{Binding ExportCategoriesCSVCommand}" Text="Export Categories to CSV" />
             <components:AlignedButton Command="{Binding ExportStocksCSVCommand}" Text="Export Stocks to CSV" />
             <components:AlignedButton Command="{Binding ExportTransactionsCSVCommand}" Text="Export Transactions to CSV" />
+            <components:AlignedButton Command="{Binding ExportMappingRulesCSVCommand}" Text="Export Mapping Rules to CSV" />
             <components:AlignedButton Command="{Binding ExportLogsCSVCommand}" Text="Export Logs to CSV" />
 
         </VerticalStackLayout>

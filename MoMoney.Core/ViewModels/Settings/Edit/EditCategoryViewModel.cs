@@ -38,11 +38,6 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
             if (Category.ParentCategoryID.HasValue)
                 Parent = await service.GetParentCategoryByID(Category.ParentCategoryID.Value);
         }
-        catch (CategoryNotFoundException ex)
-        {
-            await logger.LogError(nameof(ApplyQueryAttributes), ex);
-            await Shell.Current.DisplayAlertAsync("Category Not Found Error", ex.Message, "OK");
-        }
         catch (Exception ex)
         {
             await logger.LogError(nameof(ApplyQueryAttributes), ex);
@@ -86,7 +81,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
 
             await Shell.Current.GoToAsync("..");
         }
-        catch (DuplicateCategoryException ex)
+        catch (DuplicateException ex)
         {
             await logger.LogWarning(nameof(Add), ex);
             await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");

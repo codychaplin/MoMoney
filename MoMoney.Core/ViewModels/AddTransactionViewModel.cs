@@ -91,7 +91,7 @@ public partial class AddTransactionViewModel : ObservableObject
 
             transactionType = TransactionType.Income;
         }
-        catch (CategoryNotFoundException ex)
+        catch (NotFoundException ex)
         {
             await logger.LogWarning(nameof(GetIncomeCategory), ex);
             await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
@@ -121,7 +121,7 @@ public partial class AddTransactionViewModel : ObservableObject
 
             transactionType = TransactionType.Transfer;
         }
-        catch (CategoryNotFoundException ex)
+        catch (NotFoundException ex)
         {
             await logger.LogWarning(nameof(GetTransferCategory), ex);
             await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
@@ -387,7 +387,7 @@ public partial class AddTransactionViewModel : ObservableObject
 
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_TRANSACTION, FirebaseParameters.GetFirebaseParameters());
         }
-        catch (InvalidTransactionException ex)
+        catch (InvalidException ex)
         {
             await logger.LogWarning(nameof(AddTransaction), ex);
             await Shell.Current.DisplayAlertAsync("Validation Error", ex.Message, "OK");

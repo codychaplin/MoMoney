@@ -47,7 +47,7 @@ public interface ITransactionService
     /// </summary>
     /// <param name="ID"></param>
     /// <returns>Transaction object</returns>
-    /// <exception cref="TransactionNotFoundException"></exception>
+    /// <exception cref="NotFoundException"></exception>
     Task<Transaction> GetTransaction(int ID);
 
     /// <summary>

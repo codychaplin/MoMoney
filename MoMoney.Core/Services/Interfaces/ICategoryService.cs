@@ -15,14 +15,14 @@ public interface ICategoryService
     /// </summary>
     /// <param name="categoryName"></param>
     /// <param name="parentCategoryID"></param>
-    /// <exception cref="DuplicateCategoryException"></exception>
+    /// <exception cref="DuplicateException"></exception>
     Task AddCategory(string categoryName, int? parentCategoryID);
 
     /// <summary>
     /// Inserts multiple Category objects into Categories table.
     /// </summary>
     /// <param name="categories"></param>
-    /// <exception cref="DuplicateCategoryException"></exception>
+    /// <exception cref="DuplicateException"></exception>
     Task AddCategories(List<Category> categories);
 
     /// <summary>
@@ -48,7 +48,7 @@ public interface ICategoryService
     /// <param name="ID"></param>
     /// <param name="tryGet"></param>
     /// <returns>Category object</returns>
-    /// <exception cref="CategoryNotFoundException"></exception>
+    /// <exception cref="NotFoundException"></exception>
     Task<Category?> GetCategory(int ID, bool tryGet = false);
 
     /// <summary>
@@ -57,7 +57,7 @@ public interface ICategoryService
     /// <param name="name"></param>
     /// <param name="tryGet"></param>
     /// <returns>Category object</returns>
-    /// <exception cref="CategoryNotFoundException"></exception>
+    /// <exception cref="NotFoundException"></exception>
     Task<Category?> GetParentCategoryByName(string name, bool tryGet = false);
 
     /// <summary>
@@ -66,7 +66,7 @@ public interface ICategoryService
     /// <param name="parentCategoryID"></param>
     /// <param name="tryGet"></param>
     /// <returns>Category object</returns>
-    /// <exception cref="CategoryNotFoundException"></exception>
+    /// <exception cref="NotFoundException"></exception>
     Task<Category?> GetParentCategoryByID(int parentCategoryID, bool tryGet = false);
 
     /// <summary>
