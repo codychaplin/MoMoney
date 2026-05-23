@@ -102,11 +102,25 @@ public partial class StockStatsViewModel : ObservableObject
                 // parse content to html, find element using xpath
                 HtmlDocument document = new();
                 document.LoadHtml(htmlContent);
-                HtmlNode priceElement = document.DocumentNode.SelectSingleNode("//div[@class='YMlKec fxKbKc']") 
-                   ?? throw new StockNotFoundException($"Could not find '{Stocks[i].FullName}'. Please ensure the name and market are correct");
+                string[] xpaths =
+                [
+                    "//div[@class='N6SYTe']//span//span",
+                    "//div[@class='YMlKec fxKbKc']"
+                ];
+                HtmlNode? priceElement = null;
+                foreach (var xpath in xpaths)
+                {
+                    priceElement = document.DocumentNode.SelectSingleNode(xpath);
+                    if (priceElement != null)
+                        break;
+                }
+                if (priceElement is null)
+                    throw new StockNotFoundException($"Could not find '{Stocks[i].FullName}'. Please ensure the name and market are correct");
 
                 // validate price
-                string price = priceElement.InnerHtml[1..];
+                string raw = priceElement.InnerText;
+                int dollarIdx = raw.IndexOf('$');
+                string price = dollarIdx >= 0 ? raw[(dollarIdx + 1)..] : raw;
                 if (string.IsNullOrEmpty(price))
                     throw new InvalidStockException("Updated price not found.");
                 if (decimal.TryParse(price, out decimal newPrice))

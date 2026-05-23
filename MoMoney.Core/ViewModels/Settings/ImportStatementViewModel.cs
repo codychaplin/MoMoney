@@ -90,7 +90,7 @@ public partial class ImportStatementViewModel : ObservableObject
     {
         try
         {
-            var accounts = await accountService.GetOrderedAccounts();
+            var accounts = await accountService.GetActiveAccounts();
             Accounts.Clear();
             foreach (var account in accounts)
                 Accounts.Add(account);
@@ -113,7 +113,8 @@ public partial class ImportStatementViewModel : ObservableObject
     [RelayCommand]
     async Task GoToEditMappingRules()
     {
-        await Shell.Current.GoToAsync("EditMappingRulesPage");
+        var param = SelectedBankType != null ? $"?bank={SelectedBankType}" : "";
+        await Shell.Current.GoToAsync($"EditMappingRulesPage{param}");
     }
 
     [RelayCommand]

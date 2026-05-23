@@ -41,6 +41,12 @@ public partial class SettingsViewModel
         await Shell.Current.GoToAsync("StocksPage");
     }
 
+    [RelayCommand]
+    async Task GoToMappingRules()
+    {
+        await Shell.Current.GoToAsync("EditMappingRulesPage");
+    }
+
     /// <summary>
     /// Goes to GoToImportStatement.xaml.
     /// </summary>

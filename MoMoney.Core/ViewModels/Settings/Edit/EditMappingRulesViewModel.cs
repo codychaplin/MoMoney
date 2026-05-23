@@ -43,8 +43,11 @@ public partial class EditMappingRulesViewModel : ObservableObject
         logger = _logger;
     }
 
-    public async Task LoadData()
+    public async Task LoadData(string? bank = null)
     {
+        if (bank != null)
+            SelectedBankType = bank;
+
         try
         {
             var categories = await categoryService.GetAllParentCategories();
@@ -62,6 +65,7 @@ public partial class EditMappingRulesViewModel : ObservableObject
 
             var rules = await mappingRuleService.GetRules();
             allMappingRules = rules;
+            SetMappingRules();
         }
         catch (Exception ex)
         {

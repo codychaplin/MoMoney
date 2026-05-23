@@ -31,6 +31,10 @@
                 Command="{Binding GoToStocksCommand}"
                 ShowArrow="True"
                 Text="Stocks" />
+            <components:AlignedButton
+                Command="{Binding GoToMappingRulesCommand}"
+                ShowArrow="True"
+                Text="Mapping Rules" />
 
             <!--  import/export  -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Import/Export" />

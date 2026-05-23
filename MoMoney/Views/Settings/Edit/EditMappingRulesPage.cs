@@ -2,9 +2,12 @@ using MoMoney.Core.ViewModels.Settings.Edit;
 
 namespace MoMoney.Views.Settings.Edit;
 
+[QueryProperty(nameof(Bank), "bank")]
 public partial class EditMappingRulesPage : ContentPage
 {
     EditMappingRulesViewModel vm;
+
+    public string? Bank { get; set; }
 
 	public EditMappingRulesPage(EditMappingRulesViewModel _vm)
 	{
@@ -16,7 +19,7 @@ public partial class EditMappingRulesPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await vm.LoadData();
+        await vm.LoadData(Bank);
     }
 
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args)
