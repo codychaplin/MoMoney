@@ -26,6 +26,7 @@
             <converters:IdToCategoryConverter x:Key="IdToCategoryConverter" />
             <converters:NullToVisibleConverter x:Key="NullToVisibleConverter" />
             <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+            <converters:PayeeOrTransferConverter x:Key="PayeeOrTransferConverter" />
 
             <!--  title  -->
             <Style x:Key="lblTitle" TargetType="Label">
@@ -134,16 +135,16 @@
             <DataTemplate x:Key="TransactionFrame" x:DataType="models:Transaction">
                 <Border
                     Margin="10,5"
-                    Padding="5,10,10,10"
+                    Padding="5,5,10,5"
                     BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
                                                       Dark={StaticResource Gray700}}"
-                    HeightRequest="65">
+                    HeightRequest="75">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding Path=GoToEditTransactionCommand, Source={x:Reference MoMoneyApp}}" CommandParameter="{Binding TransactionID}" />
                     </Border.GestureRecognizers>
-                    <Grid ColumnDefinitions="30,*">
+                    <Grid ColumnDefinitions="30,*,Auto" RowDefinitions="*,*,*">
                         <!--  icon  -->
-                        <Image Scale="0.75">
+                        <Image Grid.RowSpan="3" Scale="0.75" VerticalOptions="Center">
                             <Image.Source>
                                 <MultiBinding Converter="{StaticResource IconConverter}">
                                     <Binding Path="CategoryID" />
@@ -151,44 +152,59 @@
                                 </MultiBinding>
                             </Image.Source>
                         </Image>
-                        <!--  subcategory  -->
+                        <!--  category - subcategory  -->
                         <Label
                             Grid.Column="1"
-                            FontSize="18"
-                            HorizontalOptions="Start"
-                            HorizontalTextAlignment="Start"
-                            MinimumWidthRequest="180"
+                            FontSize="16"
                             Style="{StaticResource lblTile}"
-                            Text="{Binding SubcategoryID, Converter={StaticResource IdToCategoryConverter}}"
-                            VerticalOptions="Start" />
+                            Text="{Binding SubcategoryID, Converter={StaticResource IdToCategoryConverter}}" />
+
                         <!--  account  -->
                         <Label
+                            Grid.Row="1"
                             Grid.Column="1"
-                            HorizontalOptions="Start"
-                            HorizontalTextAlignment="Start"
-                            MinimumWidthRequest="150"
+                            FontSize="14"
                             Style="{StaticResource lblTile}"
                             Text="{Binding AccountID, Converter={StaticResource IdToAccountConverter}}"
                             TextColor="{AppThemeBinding Light={StaticResource Gray500},
-                                                        Dark={StaticResource Gray300}}"
-                            VerticalOptions="End" />
+                                                        Dark={StaticResource Gray300}}" />
+
+                        <!--  payee or transfer account  -->
+                        <Label
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            FontSize="14"
+                            Style="{StaticResource lblTile}"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray500},
+                                                        Dark={StaticResource Gray300}}">
+                            <Label.Text>
+                                <MultiBinding Converter="{StaticResource PayeeOrTransferConverter}">
+                                    <Binding Path="CategoryID" />
+                                    <Binding Path="TransferID" />
+                                    <Binding Path="Payee" />
+                                </MultiBinding>
+                            </Label.Text>
+                        </Label>
+
                         <!--  amount  -->
                         <Label
-                            Grid.Column="1"
+                            Grid.RowSpan="2"
+                            Grid.Column="2"
                             FontSize="18"
                             HorizontalOptions="End"
                             HorizontalTextAlignment="End"
-                            MinimumWidthRequest="100"
                             Style="{StaticResource lblTile}"
                             Text="{Binding Amount, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
                             TextColor="{Binding CategoryID, Converter={StaticResource AmountColourConverter}}"
-                            VerticalOptions="Start" />
+                            VerticalOptions="Center" />
+
                         <!--  date  -->
                         <Label
-                            Grid.Column="1"
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            FontSize="14"
                             HorizontalOptions="End"
                             HorizontalTextAlignment="End"
-                            MinimumWidthRequest="100"
                             Style="{StaticResource lblTile}"
                             Text="{Binding Date, StringFormat='{0:yyyy-MM-dd}'}"
                             TextColor="{AppThemeBinding Light={StaticResource Gray500},
