@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
-    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
@@ -63,16 +63,16 @@
                 Title="Date"
                 Date="{Binding Date}"
                 Format="MMMM d yyyy"
-                Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Calendar_month}}" />
+                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                       Glyph={x:Static m:MaterialOutlined.Calendar_month}}" />
 
             <!--  Account  -->
             <material:PickerField
                 x:Name="pckAccount"
                 Title="Account"
                 x:DataType="models:Account"
-                Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Credit_card}}"
+                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                       Glyph={x:Static m:MaterialOutlined.Credit_card}}"
                 ItemDisplayBinding="{Binding AccountName}"
                 ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                 SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
@@ -81,8 +81,8 @@
             <material:TextField
                 x:Name="txtAmount"
                 Title="Amount"
-                Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Paid}}"
+                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                       Glyph={x:Static m:MaterialOutlined.Paid}}"
                 Keyboard="Numeric"
                 Text="{Binding Amount}" />
 
@@ -91,7 +91,7 @@
                 x:Name="pckCategory"
                 Title="Category"
                 x:DataType="models:Category"
-                Icon="{FontImageSource FontFamily=MaterialOutlined,
+                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
                                        Glyph={x:Static m:MaterialOutlined.Category}}"
                 ItemDisplayBinding="{Binding CategoryName}"
                 ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
@@ -104,8 +104,8 @@
                 Title="Subcategory"
                 Grid.Column="1"
                 x:DataType="models:Category"
-                Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRound.Category}}"
+                Icon="{FontImageSource FontFamily=MaterialRounded,
+                                       Glyph={x:Static m:MaterialOutlined.Category}}"
                 ItemDisplayBinding="{Binding CategoryName}"
                 ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                 SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
@@ -115,7 +115,7 @@
                     Margin="11,3,0,0"
                     ColumnDefinitions="20,*"
                     ColumnSpacing="2">
-                    <Image Source="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
+                    <Image Source="{FontImageSource FontFamily=MaterialRoundedFilled, Glyph={x:Static m:MaterialOutlined.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                     <input:SfAutocomplete
                         x:Name="entPayee"
                         Grid.Column="1"
@@ -144,8 +144,8 @@
             <material:AutoCompleteTextField
                 x:Name="entPayee"
                 Title="Payee"
-                Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRound.Account_circle}}"
+                Icon="{FontImageSource FontFamily=MaterialOutlined,
+                                       Glyph={x:Static m:MaterialOutlined.Account_circle}}"
                 ItemsSource="{Binding Payees}"
                 Text="{Binding Payee, Mode=TwoWay}"
                 TextColor="{AppThemeBinding Light={StaticResource Black},
@@ -156,8 +156,8 @@
                 x:Name="pckTransferAccount"
                 Title="Transfer Account"
                 x:DataType="models:Account"
-                Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRound.Account_circle}}"
+                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                       Glyph={x:Static m:MaterialOutlined.Account_circle}}"
                 IsVisible="False"
                 ItemDisplayBinding="{Binding AccountName}"
                 ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
@@ -187,10 +187,10 @@
                     BorderWidth="1.5"
                     Command="{Binding RecordCommand}"
                     CommandParameter="{x:Reference btnRecord}"
-                    FontFamily="MaterialRound"
+                    FontFamily="MaterialRounded"
                     FontSize="30"
                     IsVisible="{Binding TransactionDictationEnabled}"
-                    Text="{x:Static m:MaterialRound.Mic}"
+                    Text="{x:Static m:MaterialOutlined.Mic}"
                     WidthRequest="70">
                     <Button.Triggers>
                         <DataTrigger

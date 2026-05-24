@@ -27,7 +27,7 @@ public partial class SettingsPage : ContentView
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void swShowValues_Toggled(object sender, ToggledEventArgs e)
+    private void swShowValues_Toggled(object? sender, ToggledEventArgs e)
     {
         Utilities.ShowValue = swShowValues.IsToggled;
         WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());

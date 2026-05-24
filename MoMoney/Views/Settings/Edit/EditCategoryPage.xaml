@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
-    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:model="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
@@ -31,7 +31,7 @@
         <material:TextField
             x:Name="txtName"
             Title="Category Name"
-            Icon="{FontImageSource FontFamily=MaterialOutlined,
+            Icon="{FontImageSource FontFamily=MaterialRounded,
                                    Glyph={x:Static m:MaterialOutlined.Category}}"
             Text="{Binding Category.CategoryName}" />
 
@@ -40,8 +40,8 @@
             x:Name="pckParent"
             Title="Select a Parent"
             x:DataType="model:Category"
-            Icon="{FontImageSource FontFamily=MaterialRegular,
-                                   Glyph={x:Static m:MaterialRound.Category}}"
+            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                   Glyph={x:Static m:MaterialOutlined.Category}}"
             ItemDisplayBinding="{Binding CategoryName}"
             ItemsSource="{Binding Path=Parents, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}"
             SelectedItem="{Binding Path=Parent, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}" />

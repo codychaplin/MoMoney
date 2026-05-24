@@ -11,9 +11,9 @@ public class EnumToDescriptionConverter : IValueConverter
         if (value == null)
             return string.Empty;
         
-        string valueToString = value.ToString();
+        string valueToString = value?.ToString() ?? string.Empty;
 
-        var type = value.GetType();
+        var type = value!.GetType();
         var name = Enum.GetName(type, value);
         if (name == null)
             return valueToString;

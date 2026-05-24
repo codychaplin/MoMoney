@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
-    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
@@ -32,16 +32,16 @@
         <material:TextField
             x:Name="txtName"
             Title="Account Name"
-            Icon="{FontImageSource FontFamily=MaterialRegular,
-                                   Glyph={x:Static m:MaterialRegular.Account_circle}}"
+            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                   Glyph={x:Static m:MaterialOutlined.Account_circle}}"
             Text="{Binding Account.AccountName}" />
 
         <!--  account type with predefined values  -->
         <material:PickerField
             x:Name="pckType"
             Title="Select a type"
-            Icon="{FontImageSource FontFamily=MaterialRegular,
-                                   Glyph={x:Static m:MaterialRegular.Savings}}"
+            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                   Glyph={x:Static m:MaterialOutlined.Savings}}"
             SelectedItem="{Binding Account.AccountType}">
             <material:PickerField.Items>
                 <x:String>Checkings</x:String>
@@ -56,8 +56,8 @@
             <material:TextField
                 x:Name="txtStartingBalance"
                 Title="Starting Balance"
-                Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Paid}}"
+                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                       Glyph={x:Static m:MaterialOutlined.Paid}}"
                 Keyboard="Numeric"
                 Text="{Binding Account.StartingBalance}" />
             <Switch

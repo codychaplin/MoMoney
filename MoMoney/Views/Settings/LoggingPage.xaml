@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:converters="clr-namespace:MoMoney.Converters"
-    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:selectors="clr-namespace:MoMoney.Selectors"
@@ -13,7 +13,7 @@
     Title="Logs"
     x:DataType="viewmodel:LoggingViewModel">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding ToggleExpandCommand}" IconImageSource="{FontImageSource FontFamily=MaterialRegular, Color={AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}, Glyph={x:Static m:MaterialRegular.Tune}}" />
+        <ToolbarItem Command="{Binding ToggleExpandCommand}" IconImageSource="{FontImageSource FontFamily=MaterialRoundedFilled, Color={AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}, Glyph={x:Static m:MaterialOutlined.Tune}}" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Resources>
@@ -163,7 +163,6 @@
             Margin="0,5,0,0"
             Padding="0">
             <CollectionView
-                x:Name="listview"
                 ItemTemplate="{StaticResource LogDataTemplateSelector}"
                 ItemsSource="{Binding LoadedLogs}"
                 RemainingItemsThreshold="0"
@@ -180,6 +179,8 @@
                 </CollectionView.EmptyView>
             </CollectionView>
         </Border>
+
+        <ActivityIndicator Grid.RowSpan="2" IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" />
     </Grid>
 
 </ContentPage>

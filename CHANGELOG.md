@@ -8,6 +8,10 @@
 * Gracefully try to edit opposite side of transfers
 * Add easy date pickers to home page
 
+### Fixes
+
+* Fixed stock price parsing
+
 # MoMoney v1.0.1
 
 ### Fixes

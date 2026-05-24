@@ -6,8 +6,7 @@
     xmlns:chart="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
     xmlns:converters="clr-namespace:MoMoney.Converters"
     xmlns:data="clr-namespace:Syncfusion.Maui.DataSource;assembly=Syncfusion.Maui.DataSource"
-    xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
-    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:tabView="clr-namespace:Syncfusion.Maui.Toolkit.TabView;assembly=Syncfusion.Maui.Toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
@@ -24,37 +23,36 @@
         <converters:ShowValueConverter x:Key="ShowValueConverter" />
         <converters:DateConverter x:Key="DateConverter" />
 
-        <!--  SfListView Item Template  -->
-        <DataTemplate x:Key="ListView" x:DataType="models:BreakdownData">
-            <ViewCell>
-                <Grid
-                    Padding="10,0"
-                    ColumnDefinitions="45,*,*"
-                    ColumnSpacing="10">
-                    <Border
-                        Margin="0"
-                        Padding="0"
-                        Background="{Binding Color}"
-                        HeightRequest="30"
-                        WidthRequest="45">
-                        <Label
-                            HorizontalOptions="Center"
-                            Text="{Binding Percentage, StringFormat='{0:P0}'}"
-                            TextColor="White"
-                            VerticalOptions="Center" />
-                    </Border>
+        <!--  CollectionView Item Template  -->
+        <DataTemplate x:Key="BreakdownItem" x:DataType="models:BreakdownData">
+            <Grid
+                Padding="10,0"
+                ColumnDefinitions="45,*,*"
+                ColumnSpacing="10"
+                HeightRequest="45">
+                <Border
+                    Margin="0"
+                    Padding="0"
+                    Background="{Binding Color}"
+                    HeightRequest="30"
+                    WidthRequest="45">
                     <Label
-                        Grid.Column="1"
-                        HorizontalOptions="Start"
-                        Text="{Binding Category}"
+                        HorizontalOptions="Center"
+                        Text="{Binding Percentage, StringFormat='{0:P0}'}"
+                        TextColor="White"
                         VerticalOptions="Center" />
-                    <Label
-                        Grid.Column="2"
-                        HorizontalOptions="End"
-                        Text="{Binding ActualAmount, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
-                        VerticalOptions="Center" />
-                </Grid>
-            </ViewCell>
+                </Border>
+                <Label
+                    Grid.Column="1"
+                    HorizontalOptions="Start"
+                    Text="{Binding Category}"
+                    VerticalOptions="Center" />
+                <Label
+                    Grid.Column="2"
+                    HorizontalOptions="End"
+                    Text="{Binding ActualAmount, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
+                    VerticalOptions="Center" />
+            </Grid>
         </DataTemplate>
 
     </ContentPage.Resources>
@@ -70,7 +68,7 @@
                     <Setter Property="BackgroundColor" Value="Transparent" />
                     <Setter Property="TextColor" Value="{AppThemeBinding Light=Black, Dark=White}" />
                     <Setter Property="FontSize" Value="30" />
-                    <Setter Property="FontFamily" Value="MaterialRegular" />
+                    <Setter Property="FontFamily" Value="MaterialRoundedFilled" />
                     <Setter Property="Padding" Value="5" />
                     <Setter Property="Margin" Value="10,0,10,0" />
                 </Style>
@@ -78,7 +76,7 @@
             <Button
                 Command="{Binding DecrementCommand}"
                 HorizontalOptions="Start"
-                Text="{x:Static m:MaterialRegular.Chevron_left}" />
+                Text="{x:Static m:MaterialOutlined.Chevron_left}" />
             <Label
                 FontAttributes="Bold"
                 FontSize="20"
@@ -94,7 +92,7 @@
             <Button
                 Command="{Binding IncrementCommand}"
                 HorizontalOptions="End"
-                Text="{x:Static m:MaterialRegular.Chevron_right}" />
+                Text="{x:Static m:MaterialOutlined.Chevron_right}" />
         </Grid>
 
         <tabView:SfTabView
@@ -164,12 +162,11 @@
                         Grid.Row="1"
                         Margin="0,10"
                         Padding="0">
-                        <ListView
-                            ItemTemplate="{StaticResource ListView}"
+                        <CollectionView
+                            ItemTemplate="{StaticResource BreakdownItem}"
                             ItemsSource="{Binding ExpenseData}"
-                            RowHeight="45"
                             SelectionMode="None"
-                            SeparatorVisibility="Default" />
+                            VerticalScrollBarVisibility="Default" />
                     </Border>
                 </Grid>
             </tabView:SfTabItem>
@@ -210,12 +207,11 @@
                         Grid.Row="1"
                         Margin="0,10"
                         Padding="0">
-                        <ListView
-                            ItemTemplate="{StaticResource ListView}"
+                        <CollectionView
+                            ItemTemplate="{StaticResource BreakdownItem}"
                             ItemsSource="{Binding IncomeData}"
-                            RowHeight="45"
                             SelectionMode="None"
-                            SeparatorVisibility="Default" />
+                            VerticalScrollBarVisibility="Default" />
                     </Border>
                 </Grid>
             </tabView:SfTabItem>

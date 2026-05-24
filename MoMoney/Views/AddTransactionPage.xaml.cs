@@ -51,7 +51,7 @@ public partial class AddTransactionPage : ContentView
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void btnIncome_Clicked(object sender, EventArgs e)
+    private void btnIncome_Clicked(object? sender, EventArgs e)
     {
         ChangeButtonColour(sender as Button);
         pckSubcategory.ClearValue(PickerField.SelectedItemProperty);
@@ -64,7 +64,7 @@ public partial class AddTransactionPage : ContentView
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void btnExpense_Clicked(object sender, EventArgs e)
+    private void btnExpense_Clicked(object? sender, EventArgs e)
     {
         ChangeButtonColour(sender as Button);
         pckCategory.ClearValue(PickerField.SelectedItemProperty);
@@ -78,7 +78,7 @@ public partial class AddTransactionPage : ContentView
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void btnTransfer_Clicked(object sender, EventArgs e)
+    private void btnTransfer_Clicked(object? sender, EventArgs e)
     {
         ChangeButtonColour(sender as Button);
         EnableEntries(false, false, true);
@@ -161,7 +161,7 @@ public partial class AddTransactionPage : ContentView
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void btnClear_Clicked(object sender, EventArgs e)
+    private void btnClear_Clicked(object? sender, EventArgs e)
     {
         Clear();
         EnableEntries(false, false, false);
@@ -180,7 +180,7 @@ public partial class AddTransactionPage : ContentView
         MakePayeeVisible(true);
     }
 
-    private void btnEnter_Clicked(object sender, EventArgs e)
+    private void btnEnter_Clicked(object? sender, EventArgs e)
     {
         vm?.ClearAfterAdd();
         txtAmount.Text = "";

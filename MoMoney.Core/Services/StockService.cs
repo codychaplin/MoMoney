@@ -19,7 +19,7 @@ public class StockService : BaseService<StockService, UpdateStocksMessage, strin
             Stocks = await GetStocksAsDict();
     }
 
-    public async Task AddStock(string symbol, string market, decimal? quantity, decimal? cost)
+    public async Task AddStock(string symbol, string? market, decimal? quantity, decimal? cost)
     {
         await DbOperation(async () =>
         {

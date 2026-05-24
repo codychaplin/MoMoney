@@ -25,7 +25,7 @@ public partial class HomePage : ContentView
         };
     }
 
-    void OnRangeSelectionChanged(object sender, Syncfusion.Maui.Toolkit.SegmentedControl.SelectionChangedEventArgs e)
+    void OnRangeSelectionChanged(object? sender, Syncfusion.Maui.Toolkit.SegmentedControl.SelectionChangedEventArgs e)
     {
         if (BindingContext is HomeViewModel vm)
         {

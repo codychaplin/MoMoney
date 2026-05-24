@@ -24,7 +24,7 @@ public partial class EditTransactionPage : ContentPage
         await vm.GetPayees();
 
         // get corresponding categories
-        switch (vm.InitialCategory.CategoryID)
+        switch (vm.InitialCategory?.CategoryID)
         {
             case Constants.INCOME_ID:
                 await vm.GetIncomeCategory();
@@ -64,7 +64,7 @@ public partial class EditTransactionPage : ContentPage
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void btnClear_Clicked(object sender, EventArgs e)
+    private void btnClear_Clicked(object? sender, EventArgs e)
     {
         Clear();
     }
@@ -74,7 +74,7 @@ public partial class EditTransactionPage : ContentPage
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void btnEnter_Clicked(object sender, EventArgs e)
+    private void btnEnter_Clicked(object? sender, EventArgs e)
     {
         Clear();
     }

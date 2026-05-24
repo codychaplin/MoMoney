@@ -26,6 +26,8 @@ public partial class ImportExportViewModel : ObservableObject
 
     readonly IFileSaver fileSaver;
 
+    [ObservableProperty] bool isBusy;
+
     public ImportExportViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService,
         IStockService _stockService, IMappingRuleService _mappingRuleService, ILoggerService<ImportExportViewModel> _logger, IFileSaver _fileSaver)
     {
@@ -37,9 +39,6 @@ public partial class ImportExportViewModel : ObservableObject
         logger = _logger;
         fileSaver = _fileSaver;
     }
-
-    [ObservableProperty]
-    bool isBusy;
 
     /// <summary>
     /// Prompts the user to open a CSV file. Valid Accounts are then added to the database.

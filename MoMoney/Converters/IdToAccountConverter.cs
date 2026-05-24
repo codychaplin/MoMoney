@@ -33,7 +33,7 @@ public class IdToAccountConverter : IValueConverter
                     var task = Task.Run(async () => await accountService.GetAccount(ID));
                     task.Wait();
                     var acc = task.Result;
-                    return acc.AccountName;
+                    return acc?.AccountName ?? "";
                 }
                 catch (Exception ex)
                 {

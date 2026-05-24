@@ -15,6 +15,8 @@ public partial class HomeViewModel : ObservableObject
     readonly ITransactionService transactionService;
     readonly ILoggerService<HomeViewModel> logger;
 
+    [ObservableProperty] bool isBusy = false;
+
     [ObservableProperty] ObservableCollection<Transaction> recentTransactions = [];
 
     [ObservableProperty] decimal networthAtEndDate = 0;
@@ -57,7 +59,7 @@ public partial class HomeViewModel : ObservableObject
         try
         {
             if (showLoading)
-                Shell.Current.IsBusy = true;
+                IsBusy = true;
                 
             ShowValue = Utilities.ShowValue ? "$0,k" : "$?";
 
@@ -87,7 +89,7 @@ public partial class HomeViewModel : ObservableObject
         finally
         {
             if (showLoading)
-                Shell.Current.IsBusy = false;
+                IsBusy = false;
         }
     }
 
@@ -106,7 +108,7 @@ public partial class HomeViewModel : ObservableObject
             .GroupBy(acc => acc.AccountType)
             .Select(group => new AccountTotalModel
             {
-                AccountType = group.Key.ToString(),
+                AccountType = group.Key!.ToString(),
                 Total = Utilities.ShowValue ? group.Sum(acc => acc.CurrentBalance) : 0
             })
             .Where(acc => acc != null).ToList();

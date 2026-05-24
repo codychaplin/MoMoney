@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:behavior="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
-    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:tabView="clr-namespace:Syncfusion.Maui.Toolkit.TabView;assembly=Syncfusion.Maui.Toolkit"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
@@ -39,7 +39,7 @@
                             <VisualState x:Name="Selected">
                                 <VisualState.Setters>
                                     <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
-                                    <Setter Property="Scale" Value="1.3" />
+                                    <Setter Property="Scale" Value="1.6" />
                                 </VisualState.Setters>
                             </VisualState>
                         </VisualStateGroup>
@@ -53,8 +53,8 @@
             <tabView:SfTabItem x:Name="HomePageTab">
                 <tabView:SfTabItem.ImageSource>
                     <FontImageSource
-                        FontFamily="MaterialRound"
-                        Glyph="{x:Static m:MaterialRound.Home}"
+                        FontFamily="MaterialRoundedFilled"
+                        Glyph="{x:Static m:MaterialOutlined.Home}"
                         Color="{Binding Source={x:Reference HomePageTab}, Path=TextColor}" />
                 </tabView:SfTabItem.ImageSource>
                 <tabView:SfTabItem.Content>
@@ -66,8 +66,8 @@
             <tabView:SfTabItem x:Name="TransactionsPageTab">
                 <tabView:SfTabItem.ImageSource>
                     <FontImageSource
-                        FontFamily="MaterialRound"
-                        Glyph="{x:Static m:MaterialRound.Article}"
+                        FontFamily="MaterialRoundedFilled"
+                        Glyph="{x:Static m:MaterialOutlined.Article}"
                         Color="{Binding Source={x:Reference TransactionsPageTab}, Path=TextColor}" />
                 </tabView:SfTabItem.ImageSource>
                 <tabView:SfTabItem.Content>
@@ -79,8 +79,8 @@
             <tabView:SfTabItem x:Name="AddTransactionPageTab">
                 <tabView:SfTabItem.ImageSource>
                     <FontImageSource
-                        FontFamily="MaterialRound"
-                        Glyph="{x:Static m:MaterialRound.Add_circle}"
+                        FontFamily="MaterialRoundedFilled"
+                        Glyph="{x:Static m:MaterialOutlined.Add_circle}"
                         Color="{Binding Source={x:Reference AddTransactionPageTab}, Path=TextColor}" />
                 </tabView:SfTabItem.ImageSource>
                 <tabView:SfTabItem.Content>
@@ -92,8 +92,8 @@
             <tabView:SfTabItem x:Name="StatsPageTab">
                 <tabView:SfTabItem.ImageSource>
                     <FontImageSource
-                        FontFamily="MaterialRound"
-                        Glyph="{x:Static m:MaterialRound.Donut_small}"
+                        FontFamily="MaterialRoundedFilled"
+                        Glyph="{x:Static m:MaterialOutlined.Donut_small}"
                         Color="{Binding Source={x:Reference StatsPageTab}, Path=TextColor}" />
                 </tabView:SfTabItem.ImageSource>
                 <tabView:SfTabItem.Content>
@@ -105,8 +105,8 @@
             <tabView:SfTabItem x:Name="SettingsPageTab">
                 <tabView:SfTabItem.ImageSource>
                     <FontImageSource
-                        FontFamily="MaterialRound"
-                        Glyph="{x:Static m:MaterialRound.Settings}"
+                        FontFamily="MaterialRoundedFilled"
+                        Glyph="{x:Static m:MaterialOutlined.Settings}"
                         Color="{Binding Source={x:Reference SettingsPageTab}, Path=TextColor}" />
                 </tabView:SfTabItem.ImageSource>
                 <tabView:SfTabItem.Content>

@@ -6,7 +6,7 @@
     xmlns:converters="clr-namespace:MoMoney.Converters"
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
-    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:slider="clr-namespace:Syncfusion.Maui.Sliders;assembly=Syncfusion.Maui.Sliders"
@@ -26,10 +26,10 @@
             <toolkit:Expander.Header>
                 <components:PageHeader 
                         Title="Transactions" 
-                        ImageSource="{FontImageSource FontFamily=MaterialRegular,
+                        ImageSource="{FontImageSource FontFamily=MaterialRoundedFilled,
                                                      Color={AppThemeBinding Light={StaticResource Black},
                                                                             Dark={StaticResource White}},
-                                                     Glyph={x:Static m:MaterialRegular.Tune}}" />
+                                                     Glyph={x:Static m:MaterialOutlined.Tune}}" />
             </toolkit:Expander.Header>
 
             <!--  filters  -->
@@ -45,8 +45,8 @@
                             <Image
                                 Margin="10,0,0,0"
                                 HeightRequest="20"
-                                Source="{FontImageSource FontFamily=MaterialRegular,
-                                                         Glyph={x:Static m:MaterialRegular.Calendar_month},
+                                Source="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                                         Glyph={x:Static m:MaterialOutlined.Calendar_month},
                                                          Color={AppThemeBinding Light={StaticResource Gray600},
                                                                                 Dark={StaticResource Gray400}}}"
                                 WidthRequest="20" />
@@ -65,8 +65,8 @@
                     <material:PickerField
                         Title="Account"
                         x:DataType="models:Account"
-                        Icon="{FontImageSource FontFamily=MaterialRegular,
-                                               Glyph={x:Static m:MaterialRegular.Credit_card}}"
+                        Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                               Glyph={x:Static m:MaterialOutlined.Credit_card}}"
                         ItemDisplayBinding="{Binding AccountName}"
                         ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
                         SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
@@ -89,8 +89,8 @@
                             <Image
                                 Margin="10,0,0,0"
                                 HeightRequest="20"
-                                Source="{FontImageSource FontFamily=MaterialRegular,
-                                                         Glyph={x:Static m:MaterialRegular.Paid},
+                                Source="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                                         Glyph={x:Static m:MaterialOutlined.Paid},
                                                          Color={AppThemeBinding Light={StaticResource Gray600},
                                                                                 Dark={StaticResource Gray400}}}"
                                 WidthRequest="20" />
@@ -132,7 +132,7 @@
                         x:Name="pckCategory"
                         Title="Category"
                         x:DataType="models:Category"
-                        Icon="{FontImageSource FontFamily=MaterialOutlined,
+                        Icon="{FontImageSource FontFamily=MaterialRounded,
                                                Glyph={x:Static m:MaterialOutlined.Category}}"
                         ItemDisplayBinding="{Binding CategoryName}"
                         ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
@@ -144,8 +144,8 @@
                     <material:PickerField
                         Title="Subcategory"
                         x:DataType="models:Category"
-                        Icon="{FontImageSource FontFamily=MaterialRegular,
-                                               Glyph={x:Static m:MaterialRound.Category}}"
+                        Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                               Glyph={x:Static m:MaterialOutlined.Category}}"
                         ItemDisplayBinding="{Binding CategoryName}"
                         ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
                         SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
@@ -158,7 +158,7 @@
                             Margin="11,3,0,0"
                             ColumnDefinitions="20,*"
                             ColumnSpacing="2">
-                            <Image Source="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
+                            <Image Source="{FontImageSource FontFamily=MaterialRoundedFilled, Glyph={x:Static m:MaterialOutlined.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                             <input:SfAutocomplete
                                 Grid.Column="1"
                                 BackgroundColor="Transparent"
@@ -200,7 +200,7 @@
 
         <!--  list of transactions  -->
         <CollectionView
-            x:Name="listView"
+            x:Name="collectionView"
             Grid.Row="1"
             Margin="0,5"
             ItemTemplate="{StaticResource TransactionFrame}"

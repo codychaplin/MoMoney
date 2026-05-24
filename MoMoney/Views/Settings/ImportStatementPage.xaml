@@ -6,7 +6,7 @@
              xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
              x:DataType="viewmodel:ImportStatementViewModel"
              xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
-             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
              xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              xmlns:segmentedControl="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
              xmlns:converters="clr-namespace:MoMoney.Converters"
@@ -95,13 +95,13 @@
                                                                                         Dark={StaticResource PrimaryDark}}" />
                             <Setter Property="TextColor" Value="{AppThemeBinding Light=Black, Dark=White}" />
                             <Setter Property="FontSize" Value="25" />
-                            <Setter Property="FontFamily" Value="MaterialRegular" />
+                            <Setter Property="FontFamily" Value="MaterialRoundedFilled" />
                             <Setter Property="Padding" Value="0" />
                         </Style>
                     </Grid.Resources>
 
                     <!--  Left button  -->
-                    <Button Command="{Binding DecrementTransactionCommand}" Text="{x:Static m:MaterialRegular.Chevron_left}" />
+                    <Button Command="{Binding DecrementTransactionCommand}" Text="{x:Static m:MaterialOutlined.Chevron_left}" />
 
                      <!--  CSV Record title  -->
                     <Label
@@ -122,7 +122,7 @@
                         FontAttributes="Bold" />
 
                     <!--  Right button  -->
-                    <Button Grid.Column="3" Command="{Binding IncrementTransactionCommand}" Text="{x:Static m:MaterialRegular.Chevron_right}" />
+                    <Button Grid.Column="3" Command="{Binding IncrementTransactionCommand}" Text="{x:Static m:MaterialOutlined.Chevron_right}" />
                 </Grid>
                     
                 <!-- text field that needs mapping from CSV -->
@@ -194,7 +194,7 @@
                         Title="Subcategory"
                         IsEnabled="{Binding SelectedRecord.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
                         x:DataType="models:Category"
-                        Icon="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Category}}"
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Category}}"
                         ItemDisplayBinding="{Binding CategoryName}"
                         ItemsSource="{Binding Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
                         SelectedItem="{Binding Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}" />
@@ -210,7 +210,7 @@
                             Margin="11,3,0,0"
                             ColumnDefinitions="20,*"
                             ColumnSpacing="2">
-                            <Image Source="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
+                            <Image Source="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                             <input:SfAutocomplete
                                 x:Name="entPayee"
                                 Grid.Column="1"
@@ -242,7 +242,7 @@
                         Grid.ColumnSpan="2"
                         Title="Transfer Account"
                         x:DataType="models:Account"
-                        Icon="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRound.Account_circle}}"
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Account_circle}}"
                         IsEnabled="{Binding Path=SelectedRecord.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
                         IsVisible="{Binding SelectedRecord.IsTransfer, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
                         ItemDisplayBinding="{Binding AccountName}"

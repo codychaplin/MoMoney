@@ -37,8 +37,7 @@ public static class MauiProgram
                .UseMauiCommunityToolkit()
                .ConfigureFonts(fonts =>
                {
-                   fonts.AddFont("MaterialIcons-Regular.ttf", "Material");
-                   fonts.AddMaterialIconFonts();
+                   fonts.AddMaterialSymbolsFonts();
                })
                .ConfigureEssentials(essentials =>
                {

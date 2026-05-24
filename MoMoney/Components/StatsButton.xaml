@@ -11,7 +11,7 @@
     StrokeShape="RoundRectangle 10">
     <Grid RowDefinitions="*,30">
         <Label
-            FontFamily="MaterialRegular"
+            FontFamily="MaterialRoundedFilled"
             FontSize="65"
             HeightRequest="65"
             HorizontalTextAlignment="Center"

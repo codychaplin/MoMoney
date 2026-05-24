@@ -61,8 +61,11 @@ public partial class TransactionsViewModel : ObservableObject
     /// <summary>
     /// Depending on CRUD operation, update Transactions collection.
     /// </summary>
-    public async Task Refresh(TransactionEventArgs e)
+    public async Task Refresh(TransactionEventArgs? e)
     {
+        if (e is null)
+            return;
+        
         switch (e.Type)
         {
             case TransactionEventArgs.CRUD.Create:

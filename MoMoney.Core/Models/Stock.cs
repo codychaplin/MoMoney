@@ -32,7 +32,7 @@ public partial class Stock : ObservableObject
 
     public Stock() { }
 
-    public Stock(string symbol, string market, decimal? quantity, decimal? cost, decimal? marketPrice)
+    public Stock(string symbol, string? market, decimal? quantity, decimal? cost, decimal? marketPrice)
     {
         Symbol = symbol;
         Market = market;

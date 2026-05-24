@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
-using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings;
@@ -13,6 +12,8 @@ namespace MoMoney.Core.ViewModels.Settings;
 public partial class LoggingViewModel : ObservableObject
 {
     readonly ILoggerService<LoggingViewModel> logger;
+
+    [ObservableProperty] bool isBusy = false;
 
     [ObservableProperty] bool isExpanded = false;
     [ObservableProperty] bool isChecked = true;
@@ -82,11 +83,11 @@ public partial class LoggingViewModel : ObservableObject
     /// </summary>
     async Task UpdateFilter()
     {
-        Shell.Current.IsBusy = true;
+        IsBusy = true;
         Logs = await logger.GetFilteredLogs(Level, ClassName, ExceptionType);
         LoadedLogs.Clear();
         await LoadMoreItems();
-        Shell.Current.IsBusy = false;
+        IsBusy = false;
     }
 
 

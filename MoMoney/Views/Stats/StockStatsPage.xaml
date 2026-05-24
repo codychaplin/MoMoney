@@ -6,7 +6,6 @@
     xmlns:chart="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
     xmlns:converters="clr-namespace:MoMoney.Converters"
     xmlns:data="clr-namespace:Syncfusion.Maui.DataSource;assembly=Syncfusion.Maui.DataSource"
-    xmlns:listview="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
     Title="Stocks"
@@ -66,22 +65,23 @@
             </Border>
 
             <!--  stock list  -->
-            <Border Padding="5,5,5,0">
-                <listview:SfListView
-                    ItemSpacing="0,0,0,5"
+            <Border Padding="5">
+                <CollectionView
                     ItemsSource="{Binding Stocks}"
+                    SelectionMode="None"
                     VerticalOptions="Start">
-                    <listview:SfListView.EmptyView>
-                        <ContentView>
-                            <Label
-                                Margin="0,10,0,0"
-                                FontSize="16"
-                                HorizontalOptions="Center"
-                                Text="No stocks found"
-                                VerticalOptions="Start" />
-                        </ContentView>
-                    </listview:SfListView.EmptyView>
-                    <listview:SfListView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <Label
+                            Margin="0,10,0,0"
+                            FontSize="16"
+                            HorizontalOptions="Center"
+                            Text="No stocks found"
+                            VerticalOptions="Start" />
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Stock">
                             <Border
                                 Padding="10,5"
@@ -117,8 +117,8 @@
                                 </Grid>
                             </Border>
                         </DataTemplate>
-                    </listview:SfListView.ItemTemplate>
-                </listview:SfListView>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
             </Border>
 
             <!--  chart  -->

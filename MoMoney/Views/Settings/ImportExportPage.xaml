@@ -6,29 +6,32 @@
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
     Title="Import &amp; Export"
-    x:DataType="viewmodels:ImportExportViewModel"
-    IsBusy="{Binding IsBusy}">
-    <ScrollView>
-        <VerticalStackLayout>
+    x:DataType="viewmodels:ImportExportViewModel">
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout>
 
-            <!--  import  -->
-            <Label Style="{StaticResource SettingsSubtitle}" Text="Import" />
-            <components:AlignedButton Command="{Binding ImportAccountsCSVCommand}" Text="Import Accounts from CSV" />
-            <components:AlignedButton Command="{Binding ImportCategoriesCSVCommand}" Text="Import Categories from CSV" />
-            <components:AlignedButton Command="{Binding ImportStocksCSVCommand}" Text="Import Stocks from CSV" />
-            <components:AlignedButton Command="{Binding ImportTransactionsCSVCommand}" Text="Import Transactions from CSV" />
-            <components:AlignedButton Command="{Binding ImportMappingRulesCSVCommand}" Text="Import Mapping Rules from CSV" />
-            <components:AlignedButton Command="{Binding ImportLogsCSVCommand}" Text="Import Logs from CSV" />
+                <!--  import  -->
+                <Label Style="{StaticResource SettingsSubtitle}" Text="Import" />
+                <components:AlignedButton Command="{Binding ImportAccountsCSVCommand}" Text="Import Accounts from CSV" />
+                <components:AlignedButton Command="{Binding ImportCategoriesCSVCommand}" Text="Import Categories from CSV" />
+                <components:AlignedButton Command="{Binding ImportStocksCSVCommand}" Text="Import Stocks from CSV" />
+                <components:AlignedButton Command="{Binding ImportTransactionsCSVCommand}" Text="Import Transactions from CSV" />
+                <components:AlignedButton Command="{Binding ImportMappingRulesCSVCommand}" Text="Import Mapping Rules from CSV" />
+                <components:AlignedButton Command="{Binding ImportLogsCSVCommand}" Text="Import Logs from CSV" />
 
-            <!--  export  -->
-            <Label Style="{StaticResource SettingsSubtitle}" Text="Export" />
-            <components:AlignedButton Command="{Binding ExportAccountsCSVCommand}" Text="Export Accounts to CSV" />
-            <components:AlignedButton Command="{Binding ExportCategoriesCSVCommand}" Text="Export Categories to CSV" />
-            <components:AlignedButton Command="{Binding ExportStocksCSVCommand}" Text="Export Stocks to CSV" />
-            <components:AlignedButton Command="{Binding ExportTransactionsCSVCommand}" Text="Export Transactions to CSV" />
-            <components:AlignedButton Command="{Binding ExportMappingRulesCSVCommand}" Text="Export Mapping Rules to CSV" />
-            <components:AlignedButton Command="{Binding ExportLogsCSVCommand}" Text="Export Logs to CSV" />
+                <!--  export  -->
+                <Label Style="{StaticResource SettingsSubtitle}" Text="Export" />
+                <components:AlignedButton Command="{Binding ExportAccountsCSVCommand}" Text="Export Accounts to CSV" />
+                <components:AlignedButton Command="{Binding ExportCategoriesCSVCommand}" Text="Export Categories to CSV" />
+                <components:AlignedButton Command="{Binding ExportStocksCSVCommand}" Text="Export Stocks to CSV" />
+                <components:AlignedButton Command="{Binding ExportTransactionsCSVCommand}" Text="Export Transactions to CSV" />
+                <components:AlignedButton Command="{Binding ExportMappingRulesCSVCommand}" Text="Export Mapping Rules to CSV" />
+                <components:AlignedButton Command="{Binding ExportLogsCSVCommand}" Text="Export Logs to CSV" />
 
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" />
+    </Grid>
 </ContentPage>

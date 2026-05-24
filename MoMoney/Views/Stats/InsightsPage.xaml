@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:chart="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
     xmlns:converters="clr-namespace:MoMoney.Converters"
-    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
     Title="Insights"
@@ -24,8 +24,8 @@
         <material:PickerField
             Title="Select a Year"
             AllowClear="False"
-            Icon="{FontImageSource FontFamily=MaterialRegular,
-                                   Glyph={x:Static m:MaterialRegular.Calendar_month}}"
+            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                   Glyph={x:Static m:MaterialOutlined.Calendar_month}}"
             ItemsSource="{Binding Years}"
             SelectedItem="{Binding SelectedYear}"
             SelectedValueChangedCommand="{Binding RefreshCommand}"
@@ -141,8 +141,8 @@
                     <Image
                         HeightRequest="40"
                         HorizontalOptions="Center"
-                        Source="{FontImageSource FontFamily=MaterialRegular,
-                                                 Glyph={x:Static m:MaterialRegular.Trending_up},
+                        Source="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                                 Glyph={x:Static m:MaterialOutlined.Trending_up},
                                                  Color={AppThemeBinding Light={StaticResource Primary},
                                                                         Dark={StaticResource PrimaryDark}}}"
                         VerticalOptions="Center" />
@@ -165,8 +165,8 @@
                     <Image
                         HeightRequest="40"
                         HorizontalOptions="Center"
-                        Source="{FontImageSource FontFamily=MaterialRegular,
-                                                 Glyph={x:Static m:MaterialRegular.Trending_down},
+                        Source="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                                 Glyph={x:Static m:MaterialOutlined.Trending_down},
                                                  Color={StaticResource Red}}"
                         VerticalOptions="Center" />
                     <Label
