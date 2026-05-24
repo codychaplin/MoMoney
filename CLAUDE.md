@@ -79,16 +79,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Prerequisites
 - .NET 10 SDK
 - Android SDK (API 29+) for compilation
-- Visual Studio or Rider
-
-### Build
-```bash
-# Debug (all projects)
-dotnet build MoMoney.sln
-
-# Release (Android)
-dotnet publish -f net10.0-android36.0 -c Release MoMoney/MoMoney.csproj
-```
+- Visual Studio/Rider/VSCode
 
 ### Run Tests
 ```bash
@@ -98,9 +89,6 @@ dotnet test MoMoney.Tests/MoMoney.Tests.csproj
 # Single test
 dotnet test MoMoney.Tests/MoMoney.Tests.csproj --filter "AccountServiceTests"
 ```
-
-### Deploy to Android
-Requires signing credentials configured in `MoMoney.csproj` (Release build uses keystore at `pherda-apps.keystore`).
 
 ## Development Notes
 

@@ -8,7 +8,6 @@
              xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
              xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
-             xmlns:segmentedControl="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
              xmlns:converters="clr-namespace:MoMoney.Converters"
              Title="Import Statement">
     <ScrollView>

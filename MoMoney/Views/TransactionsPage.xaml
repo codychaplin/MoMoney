@@ -132,7 +132,7 @@
                         x:Name="pckCategory"
                         Title="Category"
                         x:DataType="models:Category"
-                        Icon="{FontImageSource FontFamily=MaterialRounded,
+                        Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
                                                Glyph={x:Static m:MaterialOutlined.Category}}"
                         ItemDisplayBinding="{Binding CategoryName}"
                         ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
@@ -144,7 +144,7 @@
                     <material:PickerField
                         Title="Subcategory"
                         x:DataType="models:Category"
-                        Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                        Icon="{FontImageSource FontFamily=MaterialRounded,
                                                Glyph={x:Static m:MaterialOutlined.Category}}"
                         ItemDisplayBinding="{Binding CategoryName}"
                         ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"

@@ -84,7 +84,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
         catch (DuplicateException ex)
         {
             await logger.LogWarning(nameof(Add), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
         }
         catch (Exception ex)
         {

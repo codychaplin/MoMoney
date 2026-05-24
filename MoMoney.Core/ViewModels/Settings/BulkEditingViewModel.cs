@@ -258,7 +258,7 @@ public partial class BulkEditingViewModel : ObservableObject
         catch (InvalidException ex)
         {
             await logger.LogWarning(nameof(BulkReplace), ex);
-            await Shell.Current.DisplayAlertAsync("Validation Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
         }
         catch (Exception ex)
         {

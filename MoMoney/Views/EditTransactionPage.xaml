@@ -51,6 +51,7 @@
                 x:DataType="models:Category"
                 Icon="{FontImageSource FontFamily=MaterialRounded,
                                        Glyph={x:Static m:MaterialOutlined.Category}}"
+                IsEnabled="{Binding Path=IsCategoryEnabled, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
                 ItemDisplayBinding="{Binding CategoryName}"
                 ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
                 SelectedItem="{Binding Path=Category, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
@@ -64,11 +65,14 @@
                 x:DataType="models:Category"
                 Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
                                        Glyph={x:Static m:MaterialOutlined.Category}}"
+                IsEnabled="{Binding Path=IsSubcategoryEnabled, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
                 ItemDisplayBinding="{Binding CategoryName}"
                 ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
                 SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}" />
 
-            <material:InputField x:Name="entPayeeParent">
+            <material:InputField
+                x:Name="entPayeeParent"
+                IsVisible="{Binding Path=IsPayeeVisible, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}">
                 <Grid
                     Margin="11,3,0,0"
                     ColumnDefinitions="20,*"
@@ -116,10 +120,10 @@
                 x:DataType="models:Account"
                 Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
                                        Glyph={x:Static m:MaterialOutlined.Account_circle}}"
-                IsVisible="False"
+                IsVisible="{Binding Path=IsTransferAccountVisible, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
                 ItemDisplayBinding="{Binding AccountName}"
                 ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                SelectedItem="{Binding Path=PayeeAccount, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}" />
+                SelectedItem="{Binding Path=TransferAccount, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}" />
 
             <!--  delete/clear/enter buttons  -->
             <Grid
@@ -131,7 +135,7 @@
                     Grid.Column="0"
                     BackgroundColor="{AppThemeBinding Light={StaticResource LightBlue},
                                                       Dark={StaticResource Blue}}"
-                    Clicked="btnClear_Clicked"
+                    Command="{Binding ClearCommand}"
                     HeightRequest="45"
                     Text="Clear" />
                 <Button

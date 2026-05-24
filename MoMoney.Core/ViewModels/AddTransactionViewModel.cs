@@ -27,7 +27,7 @@ public partial class AddTransactionViewModel : ObservableObject
     
     [ObservableProperty] DateTime date;
     [ObservableProperty] Account? account;
-    [ObservableProperty] decimal amount;
+    [ObservableProperty] decimal? amount;
     [ObservableProperty] Category? category;
     [ObservableProperty] Category? subcategory;
     [ObservableProperty] string payee = string.Empty;
@@ -36,6 +36,12 @@ public partial class AddTransactionViewModel : ObservableObject
     [ObservableProperty] bool isWaitingForTranscription = false; // activity indicator runs while this is true
 
     [ObservableProperty] bool transactionDictationEnabled = false;
+
+    [ObservableProperty] bool areFieldsEnabled = false;
+    [ObservableProperty] bool isCategoryEnabled = false;
+    [ObservableProperty] bool isSubcategoryEnabled = false;
+    [ObservableProperty] bool isPayeeVisible = true;
+    [ObservableProperty] bool isTransferAccountVisible = false;
 
     public TransactionType transactionType = TransactionType.None;
 
@@ -53,6 +59,24 @@ public partial class AddTransactionViewModel : ObservableObject
 
         TransactionDictationEnabled = Utilities.TransactionDictationEnabled;
         WeakReferenceMessenger.Default.Register<UpdateTransactionDictationMessage>(this, (_, m) => TransactionDictationEnabled = m.Value);
+        WeakReferenceMessenger.Default.Register<UpdateAccountsMessage>(this, async (_, _) => await GetAccounts());
+        WeakReferenceMessenger.Default.Register<UpdateCategoriesMessage>(this, async (_, _) =>
+        {
+            if (transactionType == TransactionType.Income)
+                await GetIncomeCategory();
+            else if (transactionType == TransactionType.Expense)
+                await GetExpenseCategories();
+            else if (transactionType == TransactionType.Transfer)
+                await GetTransferCategory();
+        });
+    }
+
+    public async Task Init()
+    {
+        Date = DateTime.Today.AddDays(-1); // workaround until https://github.com/enisn/UraniumUI/pull/996 is fixed
+        await GetPayees();
+        await GetAccounts();
+        Date = DateTime.Today;
     }
 
     /// <summary>
@@ -85,16 +109,21 @@ public partial class AddTransactionViewModel : ObservableObject
             Subcategory = null;
             Category = income;
 
-            // re-add selected Subcategory if not null
-            if (subcategory is not null)
+            // re-add selected Subcategory if it belongs to income
+            if (subcategory?.ParentCategoryID == income?.CategoryID)
                 Subcategory = subcategory;
 
             transactionType = TransactionType.Income;
+            AreFieldsEnabled = true;
+            IsCategoryEnabled = false;
+            IsSubcategoryEnabled = true;
+            IsPayeeVisible = true;
+            IsTransferAccountVisible = false;
         }
         catch (NotFoundException ex)
         {
             await logger.LogWarning(nameof(GetIncomeCategory), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
         }
         catch (Exception ex)
         {
@@ -120,11 +149,16 @@ public partial class AddTransactionViewModel : ObservableObject
             Category = transfer;
 
             transactionType = TransactionType.Transfer;
+            AreFieldsEnabled = true;
+            IsCategoryEnabled = false;
+            IsSubcategoryEnabled = false;
+            IsPayeeVisible = false;
+            IsTransferAccountVisible = true;
         }
         catch (NotFoundException ex)
         {
             await logger.LogWarning(nameof(GetTransferCategory), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
         }
         catch (Exception ex)
         {
@@ -150,6 +184,11 @@ public partial class AddTransactionViewModel : ObservableObject
             Subcategory = null;
 
             transactionType = TransactionType.Expense;
+            AreFieldsEnabled = true;
+            IsCategoryEnabled = true;
+            IsSubcategoryEnabled = true;
+            IsPayeeVisible = true;
+            IsTransferAccountVisible = false;
         }
         catch (Exception ex)
         {
@@ -253,7 +292,7 @@ public partial class AddTransactionViewModel : ObservableObject
                     Date = transactionResponse.Date.Value;
 
                 if (transactionResponse.Amount.HasValue)
-                    Amount = transactionResponse.Amount.Value;
+                    Amount = transactionResponse.Amount;
 
                 if (!string.IsNullOrEmpty(transactionResponse.Account))
                 {
@@ -336,9 +375,39 @@ public partial class AddTransactionViewModel : ObservableObject
     {
         try
         {
-            if (Account is null || Category is null || Subcategory is null ||
-                (Category.CategoryID == Constants.TRANSFER_ID && TransferAccount is null))
+            if (Account is null)
+            {
+                await Utilities.DisplayToast("Please Select an Account");
                 return;
+            }
+            if (Amount is null)
+            {
+                await Utilities.DisplayToast("Please Enter an Amount");
+                return;
+            }
+            if (Category is null)
+            {
+                await Utilities.DisplayToast("Please Select a Category");
+                return;
+            }
+            if (Subcategory is null)
+            {
+                await Utilities.DisplayToast("Please Select a Subcategory");
+                return;
+            }
+            if (Category.CategoryID == Constants.TRANSFER_ID)
+            {
+                if (TransferAccount is null)
+                {
+                    await Utilities.DisplayToast("Please Select a Transfer Account");
+                    return;    
+                }
+            }
+            else if (string.IsNullOrEmpty(Payee))
+            {
+                await Utilities.DisplayToast("Please Enter a Payee");
+                return;
+            }
 
             // add payee to Payees if not already in list
             if (!Payees.Contains(Payee))
@@ -347,14 +416,14 @@ public partial class AddTransactionViewModel : ObservableObject
             int ID = -1;
             if (Category.CategoryID == Constants.INCOME_ID) // income = regular
             {
-                ID = await transactionService.AddTransaction(Date, Account.AccountID, Amount, Category.CategoryID, Subcategory.CategoryID, Payee, null);
+                ID = await transactionService.AddTransaction(Date, Account.AccountID, Amount.Value, Category.CategoryID, Subcategory.CategoryID, Payee, null);
             }
             else if (Category.CategoryID == Constants.TRANSFER_ID) // transfer = 2 transactions
             {
                 // must cache observable properties because they reset after being added to db
                 DateTime _date = Date;
                 int _accountID = Account.AccountID;
-                decimal _amount = Amount;
+                decimal _amount = Amount.Value;
                 int _categoryID = Category.CategoryID;
                 int _transferID = TransferAccount!.AccountID;
                 ID = await transactionService.AddTransaction(_date, _accountID, -_amount, _categoryID, Constants.DEBIT_ID, string.Empty, _transferID);
@@ -362,7 +431,7 @@ public partial class AddTransactionViewModel : ObservableObject
             }
             else if (Category.CategoryID >= Constants.EXPENSE_ID) // expense = negative amount
             {
-                ID = await transactionService.AddTransaction(Date, Account.AccountID, -Amount, Category.CategoryID, Subcategory.CategoryID, Payee, null);
+                ID = await transactionService.AddTransaction(Date, Account.AccountID, -Amount.Value, Category.CategoryID, Subcategory.CategoryID, Payee, null);
             }
 
             if (ID != -1 && responseIDs != null)
@@ -390,7 +459,7 @@ public partial class AddTransactionViewModel : ObservableObject
         catch (InvalidException ex)
         {
             await logger.LogWarning(nameof(AddTransaction), ex);
-            await Shell.Current.DisplayAlertAsync("Validation Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
         }
         catch (Exception ex)
         {
@@ -401,7 +470,7 @@ public partial class AddTransactionViewModel : ObservableObject
 
     public void ClearAfterAdd()
     {
-        Amount = 0;
+        Amount = null;
         TransferAccount = null;
     }
 
@@ -409,14 +478,21 @@ public partial class AddTransactionViewModel : ObservableObject
     {
         Date = DateTime.Today;
         Account = null;
-        Amount = 0;
+        Amount = null;
         Category = null;
         Subcategory = null;
         TransferAccount = null;
+        Payee = string.Empty;
         transactionType = TransactionType.None;
 
         Categories.Clear();
         Subcategories.Clear();
+
+        AreFieldsEnabled = false;
+        IsCategoryEnabled = false;
+        IsSubcategoryEnabled = false;
+        IsPayeeVisible = true;
+        IsTransferAccountVisible = false;
 
         responseIDs = null;
 

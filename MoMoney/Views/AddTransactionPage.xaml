@@ -8,6 +8,7 @@
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+    xmlns:segmentedControl="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
     x:DataType="viewmodel:AddTransactionViewModel"
@@ -20,51 +21,45 @@
 
             <!--  title  -->
             <components:PageHeader 
-                Margin="-10,0"
+                Margin="-10,0,-10,5"
                 Title="Add Transaction" />
 
             <!--  transaction type buttons  -->
-            <Border
-                Margin="0,5,0,0"
-                Padding="0"
-                HeightRequest="46">
-                <Grid x:Name="grdTransactionTypeButtons" ColumnDefinitions="*,*,*">
-                    <Grid.Resources>
-                        <Style TargetType="Button">
-                            <Setter Property="HeightRequest" Value="45" />
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" />
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                        </Style>
-                    </Grid.Resources>
-                    <Button
-                        x:Name="btnIncome"
-                        Grid.Column="0"
-                        Clicked="btnIncome_Clicked"
-                        Command="{Binding GetIncomeCategoryCommand}"
-                        Text="Income" />
-                    <Button
-                        x:Name="btnExpense"
-                        Grid.Column="1"
-                        Clicked="btnExpense_Clicked"
-                        Command="{Binding GetExpenseCategoriesCommand}"
-                        Text="Expense" />
-                    <Button
-                        x:Name="btnTransfer"
-                        Grid.Column="2"
-                        Clicked="btnTransfer_Clicked"
-                        Command="{Binding GetTransferCategoryCommand}"
-                        Text="Transfer" />
-                </Grid>
-            </Border>
+            <segmentedControl:SfSegmentedControl
+                x:Name="segTransactionType"
+                SelectedIndex="-1"
+                CornerRadius="10"
+                SelectionChanged="OnTransactionTypeChanged"
+                SegmentCornerRadius="10"
+                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                Stroke="Transparent">
+                <segmentedControl:SfSegmentedControl.TextStyle>
+                    <segmentedControl:SegmentTextStyle FontSize="14" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}" />
+                </segmentedControl:SfSegmentedControl.TextStyle>
+                <segmentedControl:SfSegmentedControl.SelectionIndicatorSettings>
+                    <segmentedControl:SelectionIndicatorSettings
+                        SelectionIndicatorPlacement="Fill"
+                        TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                        Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                </segmentedControl:SfSegmentedControl.SelectionIndicatorSettings>
+                <segmentedControl:SfSegmentedControl.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Income</x:String>
+                        <x:String>Expense</x:String>
+                        <x:String>Transfer</x:String>
+                    </x:Array>
+                </segmentedControl:SfSegmentedControl.ItemsSource>
+            </segmentedControl:SfSegmentedControl>
 
             <!--  Date  -->
             <material:DatePickerField
-                x:Name="dtpDate"
                 Title="Date"
                 Date="{Binding Date}"
                 Format="MMMM d yyyy"
+                AllowClear="False"
                 Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                       Glyph={x:Static m:MaterialOutlined.Calendar_month}}" />
+                                       Glyph={x:Static m:MaterialOutlined.Calendar_month}}"
+                IsEnabled="{Binding AreFieldsEnabled}" />
 
             <!--  Account  -->
             <material:PickerField
@@ -73,6 +68,7 @@
                 x:DataType="models:Account"
                 Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
                                        Glyph={x:Static m:MaterialOutlined.Credit_card}}"
+                IsEnabled="{Binding Path=AreFieldsEnabled, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                 ItemDisplayBinding="{Binding AccountName}"
                 ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                 SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
@@ -83,6 +79,7 @@
                 Title="Amount"
                 Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
                                        Glyph={x:Static m:MaterialOutlined.Paid}}"
+                IsEnabled="{Binding AreFieldsEnabled}"
                 Keyboard="Numeric"
                 Text="{Binding Amount}" />
 
@@ -93,6 +90,7 @@
                 x:DataType="models:Category"
                 Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
                                        Glyph={x:Static m:MaterialOutlined.Category}}"
+                IsEnabled="{Binding Path=IsCategoryEnabled, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                 ItemDisplayBinding="{Binding CategoryName}"
                 ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                 SelectedItem="{Binding Path=Category, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
@@ -106,14 +104,18 @@
                 x:DataType="models:Category"
                 Icon="{FontImageSource FontFamily=MaterialRounded,
                                        Glyph={x:Static m:MaterialOutlined.Category}}"
+                IsEnabled="{Binding Path=IsSubcategoryEnabled, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                 ItemDisplayBinding="{Binding CategoryName}"
                 ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                 SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
 
-            <material:InputField x:Name="entPayeeParent">
+            <material:InputField
+                x:Name="entPayeeParent"
+                IsEnabled="{Binding AreFieldsEnabled}"
+                IsVisible="{Binding IsPayeeVisible}">
                 <Grid
                     Margin="11,3,0,0"
-                    ColumnDefinitions="20,*"
+                    ColumnDefinitions="16,*"
                     ColumnSpacing="2">
                     <Image Source="{FontImageSource FontFamily=MaterialRoundedFilled, Glyph={x:Static m:MaterialOutlined.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                     <input:SfAutocomplete
@@ -158,7 +160,8 @@
                 x:DataType="models:Account"
                 Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
                                        Glyph={x:Static m:MaterialOutlined.Account_circle}}"
-                IsVisible="False"
+                IsEnabled="{Binding Path=AreFieldsEnabled, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
+                IsVisible="{Binding Path=IsTransferAccountVisible, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                 ItemDisplayBinding="{Binding AccountName}"
                 ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
                 SelectedItem="{Binding Path=TransferAccount, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />

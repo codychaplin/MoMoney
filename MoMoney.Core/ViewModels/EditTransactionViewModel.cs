@@ -29,7 +29,12 @@ public partial class EditTransactionViewModel : ObservableObject
     [ObservableProperty] Account? transferAccount;
 
     [ObservableProperty] Transaction? transaction;
-    
+
+    [ObservableProperty] bool isCategoryEnabled = true;
+    [ObservableProperty] bool isSubcategoryEnabled = true;
+    [ObservableProperty] bool isPayeeVisible = true;
+    [ObservableProperty] bool isTransferAccountVisible = false;
+
     public Account? InitialAccount { get; private set; }
     public Category? InitialCategory { get; private set; }
     public Category? InitialSubcategory { get; private set; }
@@ -44,6 +49,56 @@ public partial class EditTransactionViewModel : ObservableObject
         accountService = _accountService;
         categoryService = _categoryService;
         logger = _logger;
+    }
+
+    /// <summary>
+    /// Initializes the page: loads transaction, accounts, payees, categories, and subcategories.
+    /// </summary>
+    public async Task Init()
+    {
+        await GetTransaction();
+        await GetAccounts();
+        await GetPayees();
+
+        switch (InitialCategory?.CategoryID)
+        {
+            case Constants.INCOME_ID:
+                await GetIncomeCategory();
+                IsCategoryEnabled = false;
+                break;
+            case Constants.TRANSFER_ID:
+                await GetTransferCategory();
+                IsCategoryEnabled = false;
+                IsSubcategoryEnabled = false;
+                IsPayeeVisible = false;
+                IsTransferAccountVisible = true;
+                break;
+            default:
+                await GetExpenseCategories();
+                break;
+        }
+
+        await GetSubcategories();
+    }
+
+    /// <summary>
+    /// Resets input fields.
+    /// </summary>
+    [RelayCommand]
+    void Clear()
+    {
+        if (Category?.CategoryID == Constants.TRANSFER_ID)
+            return;
+
+        IsCategoryEnabled = true;
+        IsSubcategoryEnabled = true;
+
+        Transaction?.Payee = string.Empty;
+        Transaction = new Transaction { Date = DateTime.Now };
+        Account = null;
+        TransferAccount = null;
+        Category = null;
+        Subcategory = null;
     }
 
     /// <summary>
@@ -125,7 +180,7 @@ public partial class EditTransactionViewModel : ObservableObject
             if (income != null)
                 Categories.Add(income);
             Subcategories.Clear();
-            Category = InitialCategory;
+            Category = Categories.FirstOrDefault(c => c.CategoryID == InitialCategory?.CategoryID);
         }
         catch (Exception ex)
         {
@@ -146,7 +201,7 @@ public partial class EditTransactionViewModel : ObservableObject
             if (transfer != null)
                 Categories.Add(transfer);
             Subcategories.Clear();
-            Category = InitialCategory;
+            Category = Categories.FirstOrDefault(c => c.CategoryID == InitialCategory?.CategoryID);
         }
         catch (Exception ex)
         {
@@ -167,7 +222,7 @@ public partial class EditTransactionViewModel : ObservableObject
             foreach (var category in categories)
                 Categories.Add(category);
             Subcategories.Clear();
-            Category = InitialCategory;
+            Category = Categories.FirstOrDefault(c => c.CategoryID == InitialCategory?.CategoryID);
         }
         catch (Exception ex)
         {
@@ -192,7 +247,7 @@ public partial class EditTransactionViewModel : ObservableObject
                     Subcategories.Add(subcategory);
             }
 
-            Subcategory = InitialSubcategory;
+            Subcategory = Subcategories.FirstOrDefault(s => s.CategoryID == InitialSubcategory?.CategoryID);
         }
         catch (Exception ex)
         {
