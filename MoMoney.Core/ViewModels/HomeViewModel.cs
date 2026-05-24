@@ -26,6 +26,7 @@ public partial class HomeViewModel : ObservableObject
     [ObservableProperty] ObservableCollection<BalanceOverTimeData> data = [];
 
     [ObservableProperty] string showValue = "$0,k";
+    [ObservableProperty] DateRange selectedRange = DateRange.Y1;
 
     bool firstLoad = true;
     DateTime latestTransactionDate = DateTime.Today;
@@ -39,8 +40,7 @@ public partial class HomeViewModel : ObservableObject
         categoryService = _categoryService;
         logger = _logger;
 
-        // first two months, show 1 year, starting March show YTD
-        StartDate = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
+        StartDate = DateTime.Today.AddYears(-1);
         EndDate = DateTime.Today;
 
         logger.LogFirebaseEvent(FirebaseParameters.EVENT_OPEN_APP, FirebaseParameters.GetFirebaseParameters());
@@ -52,10 +52,13 @@ public partial class HomeViewModel : ObservableObject
     /// Refreshes the page with updated data.
     /// </summary>
     /// <returns></returns>
-    public async Task Refresh()
+    public async Task Refresh(bool showLoading = false)
     {
         try
         {
+            if (showLoading)
+                Shell.Current.IsBusy = true;
+                
             ShowValue = Utilities.ShowValue ? "$0,k" : "$?";
 
             var transactions = await transactionService.GetTransactionsFromTo(StartDate, EndDate);
@@ -80,6 +83,11 @@ public partial class HomeViewModel : ObservableObject
         {
             await logger.LogError(nameof(Refresh), ex);
             await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            if (showLoading)
+                Shell.Current.IsBusy = false;
         }
     }
 
@@ -190,9 +198,40 @@ public partial class HomeViewModel : ObservableObject
         }
     }
 
+    partial void OnSelectedRangeChanged(DateRange value)
+    {
+        var today = DateTime.Today;
+        StartDate = value switch
+        {
+            DateRange.D1  => today.AddDays(-1),
+            DateRange.W1  => today.AddDays(-7),
+            DateRange.M1  => today.AddMonths(-1),
+            DateRange.M3  => today.AddMonths(-3),
+            DateRange.M6  => today.AddMonths(-6),
+            DateRange.YTD => new DateTime(today.Year, 1, 1),
+            DateRange.Y1  => today.AddYears(-1),
+            DateRange.ALL => DateTime.MinValue,
+            _             => StartDate
+        };
+        EndDate = today;
+        _ = Refresh(true);
+    }
+
     [RelayCommand]
     public void ViewAllStats() => WeakReferenceMessenger.Default.Send(new ChangeTabMessage(3));
 
     [RelayCommand]
     public void ViewAllTransactions() => WeakReferenceMessenger.Default.Send(new ChangeTabMessage(1));
+}
+
+public enum DateRange
+{
+    D1,
+    W1,
+    M1,
+    M3,
+    M6,
+    YTD,
+    Y1,
+    ALL
 }
