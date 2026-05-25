@@ -44,49 +44,7 @@
                 </VerticalStackLayout.Resources>
 
                 <!--  title  -->
-                <toolkit:Expander x:Name="ExpTitle">
-                    <toolkit:Expander.Header>
-                        <components:PageHeader 
-                            Title="Dashboard" 
-                            ImageSource="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                                        Color={AppThemeBinding Light={StaticResource Black},
-                                                                                Dark={StaticResource White}},
-                                                        Glyph={x:Static m:MaterialOutlined.Calendar_month}}" />
-                    </toolkit:Expander.Header>
-
-                    <!--  date range picker  -->
-                    <Border
-                        x:Name="frDates"
-                        Margin="0,10,0,0"
-                        Padding="10,0"
-                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
-                                                        Dark={StaticResource Gray700}}"
-                        HeightRequest="50"
-                        HorizontalOptions="Center">
-                        <HorizontalStackLayout Spacing="5">
-                            <Image
-                                HeightRequest="25"
-                                Source="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                                        Color={AppThemeBinding Light={StaticResource Black},
-                                                                                Dark={StaticResource White}},
-                                                        Glyph={x:Static m:MaterialOutlined.Calendar_month}}"
-                                VerticalOptions="Center" />
-                            <DatePicker
-                                x:Name="dtFrom"
-                                Date="{Binding StartDate}"
-                                HeightRequest="45" />
-                            <Label
-                                FontAttributes="Bold"
-                                FontSize="16"
-                                Text="to"
-                                VerticalOptions="Center" />
-                            <DatePicker
-                                x:Name="dtTo"
-                                Date="{Binding EndDate}"
-                                HeightRequest="45" />
-                        </HorizontalStackLayout>
-                    </Border>
-                </toolkit:Expander>
+                <components:PageHeader Title="Dashboard" />
 
                 <!--  chart title  -->
                 <Label
@@ -99,27 +57,26 @@
                     Margin="10,0"
                     Padding="5,0,5,5"
                     BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                                    Dark={StaticResource PrimaryDark}}"
+                                                      Dark={StaticResource PrimaryDark}}"
                     HeightRequest="220">
                     <Grid>
-                        <chart:SfCartesianChart
-                            x:Name="chrtBalance"
-                            Title=""
-                            Margin="0">
+                        <chart:SfCartesianChart Title="" Margin="0">
 
                             <!--  X axis  -->
                             <chart:SfCartesianChart.XAxes>
                                 <chart:DateTimeAxis
-                                    x:Name="XAxis"
-                                    Interval="1"
-                                    IntervalType="Months"
+                                    IntervalType="{Binding XIntervalType}"
                                     MinorTicksPerInterval="1"
-                                    ShowMajorGridLines="False"
+                                    ShowMajorGridLines="True"
                                     ShowMinorGridLines="False">
                                     <!--  label  -->
                                     <chart:DateTimeAxis.LabelStyle>
-                                        <chart:ChartAxisLabelStyle LabelFormat="MMM" TextColor="White" />
+                                        <chart:ChartAxisLabelStyle LabelFormat="{Binding XLabelFormat}" TextColor="White" />
                                     </chart:DateTimeAxis.LabelStyle>
+                                    <!--  vertical grid lines  -->
+                                    <chart:DateTimeAxis.MajorGridLineStyle>
+                                        <chart:ChartLineStyle Stroke="#55ffffff" />
+                                    </chart:DateTimeAxis.MajorGridLineStyle>
                                     <!--  axis lines  -->
                                     <chart:DateTimeAxis.AxisLineStyle>
                                         <chart:ChartLineStyle StrokeWidth="0" />
@@ -133,7 +90,7 @@
 
                             <!--  Y axis  -->
                             <chart:SfCartesianChart.YAxes>
-                                <chart:NumericalAxis ShowMajorGridLines="True" ShowMinorGridLines="False">
+                                <chart:NumericalAxis>
                                     <!--  label  -->
                                     <chart:NumericalAxis.LabelStyle>
                                         <chart:ChartAxisLabelStyle LabelFormat="{Binding ShowValue}" TextColor="White" />

@@ -29,6 +29,9 @@ public partial class HomeViewModel : ObservableObject
 
     [ObservableProperty] string showValue = "$0,k";
     [ObservableProperty] DateRange selectedRange = DateRange.Y1;
+    [ObservableProperty] string xLabelFormat = "MMM";
+    [ObservableProperty] double xInterval = 1;
+    [ObservableProperty] string xIntervalType = "Months";
 
     bool firstLoad = true;
     DateTime latestTransactionDate = DateTime.Today;
@@ -155,33 +158,53 @@ public partial class HomeViewModel : ObservableObject
     /// </summary>
     void GetChartData(IEnumerable<Transaction> transactions)
     {
-        // if the date range is > 1 year, group results by Month, if < 1 year, group by day
+        // group by year if range > 1Y, by month if range > 1M, otherwise by day
         // get non-transfer transactions, group by date, and select date and sum of amounts on each date
-        bool isLong = (EndDate - StartDate).TotalDays > 365;
+        double totalDays = (EndDate - StartDate).TotalDays;
         decimal runningTotal = NetworthAtEndDate;
 
-        if (isLong)
+        IEnumerable<BalanceOverTimeData> data;
+        if (totalDays > 365)
         {
-            var data = transactions
+            XLabelFormat = "yyyy";
+            XIntervalType = "Years";
+            data = transactions
                 .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
-                .GroupBy(trans => trans.Date.Month)
+                .GroupBy(trans => trans.Date.Year)
                 .Select(group =>
                 {
                     var balanceData = new BalanceOverTimeData
                     {
-                        Date = group.First().Date,
+                        Date = new DateTime(group.Key, 1, 1),
                         Balance = runningTotal
                     };
                     runningTotal -= group.Sum(t => t.Amount);
                     return balanceData;
                 });
-            Data.Clear();
-            foreach (var d in data)
-                Data.Add(d);
+        }
+        else if (totalDays > 93)
+        {
+            XLabelFormat = "MMM-yy";
+            XIntervalType = "Months";
+            data = transactions
+                .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
+                .GroupBy(trans => new { trans.Date.Year, trans.Date.Month })
+                .Select(group =>
+                {
+                    var balanceData = new BalanceOverTimeData
+                    {
+                        Date = new DateTime(group.Key.Year, group.Key.Month, 1),
+                        Balance = runningTotal
+                    };
+                    runningTotal -= group.Sum(t => t.Amount);
+                    return balanceData;
+                });
         }
         else
         {
-            var data = transactions
+            XLabelFormat = "dd-MMM";
+            XIntervalType = "Days";
+            data = transactions
                 .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
                 .GroupBy(trans => trans.Date)
                 .Select(group =>
@@ -194,10 +217,11 @@ public partial class HomeViewModel : ObservableObject
                     runningTotal -= group.Sum(t => t.Amount);
                     return balanceData;
                 });
-            Data.Clear();
-            foreach (var d in data)
-                Data.Add(d);
         }
+
+        Data.Clear();
+        foreach (var d in data)
+            Data.Add(d);
     }
 
     partial void OnSelectedRangeChanged(DateRange value)

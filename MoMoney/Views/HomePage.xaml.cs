@@ -18,10 +18,6 @@ public partial class HomePage : ContentView
             BindingContext = vm;
 
             await vm.Refresh(true);
-
-            // refresh when dates change, or when it is triggered by UpdateHomePageMessage
-            dtFrom.DateSelected += (s, e) => WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
-            dtTo.DateSelected += (s, e) => WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
         };
     }
 
