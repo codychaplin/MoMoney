@@ -9,8 +9,7 @@
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
-    xmlns:slider="clr-namespace:Syncfusion.Maui.Sliders;assembly=Syncfusion.Maui.Sliders"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:toolkit="clr-namespace:Syncfusion.Maui.Toolkit.Accordion;assembly=Syncfusion.Maui.Toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
     x:DataType="viewmodel:TransactionsViewModel"
     BackgroundColor="{AppThemeBinding Light={StaticResource White},
@@ -20,183 +19,147 @@
     <Grid RowDefinitions="Auto,*">
 
         <!--  filters  -->
-        <toolkit:Expander>
+        <toolkit:SfAccordion AnimationDuration="250" ExpandMode="SingleOrNone" HeaderIconPosition="None">
+            <toolkit:SfAccordion.Items>
+                <toolkit:AccordionItem>
 
-            <!--  title  -->
-            <toolkit:Expander.Header>
-                <components:PageHeader 
-                        Title="Transactions" 
-                        ImageSource="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                                     Color={AppThemeBinding Light={StaticResource Black},
-                                                                            Dark={StaticResource White}},
-                                                     Glyph={x:Static m:MaterialOutlined.Tune}}" />
-            </toolkit:Expander.Header>
+                    <!--  title  -->
+                    <toolkit:AccordionItem.Header>
+                        <components:PageHeader
+                                Title="Transactions"
+                                ImageSource="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                                             Color={AppThemeBinding Light={StaticResource Black},
+                                                                                    Dark={StaticResource White}},
+                                                             Glyph={x:Static m:MaterialOutlined.Tune}}" />
+                    </toolkit:AccordionItem.Header>
 
-            <!--  filters  -->
-            <Grid>
-                <VerticalStackLayout Margin="0,10,0,0" Spacing="5">
-
-                    <!--  date range picker  -->
-                    <material:InputField
-                        Title="Date"
-                        HasValue="True"
-                        WidthRequest="250">
-                        <HorizontalStackLayout Padding="0,5" Spacing="5">
-                            <Image
-                                Margin="10,0,0,0"
-                                HeightRequest="20"
-                                Source="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                                         Glyph={x:Static m:MaterialOutlined.Calendar_month},
-                                                         Color={AppThemeBinding Light={StaticResource Gray600},
-                                                                                Dark={StaticResource Gray400}}}"
-                                WidthRequest="20" />
-                            <DatePicker x:Name="dtFrom" Date="{Binding From}" />
-                            <Label
-                                Margin="3,0"
-                                FontAttributes="Bold"
-                                FontSize="16"
-                                Text="to"
-                                VerticalOptions="Center" />
-                            <DatePicker x:Name="dtTo" Date="{Binding To}" />
-                        </HorizontalStackLayout>
-                    </material:InputField>
-
-                    <!--  account picker  -->
-                    <material:PickerField
-                        Title="Account"
-                        x:DataType="models:Account"
-                        Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                               Glyph={x:Static m:MaterialOutlined.Credit_card}}"
-                        ItemDisplayBinding="{Binding AccountName}"
-                        ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                        SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                        SelectedValueChangedCommand="{Binding Path=UpdateFilterCommand, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                        WidthRequest="250" />
-
-                    <!--  amount slider frame  -->
-                    <material:InputField
-                        Title="Amount"
-                        HasValue="True"
-                        VerticalOptions="Center"
-                        WidthRequest="250">
-                        <Grid Padding="0,0,5,0" ColumnDefinitions="30,35,*,35">
-                            <Grid.Resources>
-                                <Style TargetType="Label">
-                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray100}}" />
-                                    <Setter Property="VerticalTextAlignment" Value="Center" />
-                                </Style>
-                            </Grid.Resources>
-                            <Image
-                                Margin="10,0,0,0"
-                                HeightRequest="20"
-                                Source="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                                         Glyph={x:Static m:MaterialOutlined.Paid},
-                                                         Color={AppThemeBinding Light={StaticResource Gray600},
-                                                                                Dark={StaticResource Gray400}}}"
-                                WidthRequest="20" />
-                            <Label
-                                Grid.Column="1"
-                                HorizontalTextAlignment="End"
-                                Text="{Binding AmountRangeStart, StringFormat='{0:C0}'}" />
-                            <slider:SfRangeSlider
-                                Grid.Column="2"
-                                Margin="-5,0"
-                                BackgroundColor="Transparent"
-                                DragCompletedCommand="{Binding AmountDragCompletedCommand}"
-                                Interval="100"
-                                Maximum="500"
-                                Minimum="0"
-                                RangeEnd="{Binding AmountRangeEnd}"
-                                RangeStart="{Binding AmountRangeStart}"
-                                StepSize="5">
-                                <slider:SfRangeSlider.TrackStyle>
-                                    <slider:SliderTrackStyle
-                                        ActiveFill="{AppThemeBinding Light={StaticResource Primary},
-                                                                     Dark={StaticResource PrimaryDark}}"
-                                        ActiveSize="3"
-                                        InactiveFill="{StaticResource Gray500}" />
-                                </slider:SfRangeSlider.TrackStyle>
-                                <slider:SfRangeSlider.ThumbStyle>
-                                    <slider:SliderThumbStyle Fill="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Radius="7" />
-                                </slider:SfRangeSlider.ThumbStyle>
-                            </slider:SfRangeSlider>
-                            <Label
-                                Grid.Column="3"
-                                HorizontalTextAlignment="Start"
-                                Text="{Binding AmountRangeEnd, StringFormat='{0:C0}'}" />
-                        </Grid>
-                    </material:InputField>
-
-                    <!--  category picker  -->
-                    <material:PickerField
-                        x:Name="pckCategory"
-                        Title="Category"
-                        x:DataType="models:Category"
-                        Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                               Glyph={x:Static m:MaterialOutlined.Category}}"
-                        ItemDisplayBinding="{Binding CategoryName}"
-                        ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                        SelectedItem="{Binding Path=Category, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                        SelectedValueChangedCommand="{Binding Path=CategoryChangedCommand, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                        WidthRequest="250" />
-
-                    <!--  subcategory picker  -->
-                    <material:PickerField
-                        Title="Subcategory"
-                        x:DataType="models:Category"
-                        Icon="{FontImageSource FontFamily=MaterialRounded,
-                                               Glyph={x:Static m:MaterialOutlined.Category}}"
-                        ItemDisplayBinding="{Binding CategoryName}"
-                        ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                        SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                        SelectedValueChangedCommand="{Binding Path=UpdateFilterCommand, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
-                        WidthRequest="250" />
-
-                    <!--  payee search bar  -->
-                    <material:InputField WidthRequest="250">
+                    <!--  filters  -->
+                    <toolkit:AccordionItem.Content>
                         <Grid
-                            Margin="11,3,0,0"
-                            ColumnDefinitions="20,*"
-                            ColumnSpacing="2">
-                            <Image Source="{FontImageSource FontFamily=MaterialRoundedFilled, Glyph={x:Static m:MaterialOutlined.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
-                            <input:SfAutocomplete
-                                Grid.Column="1"
-                                BackgroundColor="Transparent"
-                                ClearButtonIconColor="{AppThemeBinding Light={StaticResource Black},
-                                                                       Dark={StaticResource White}}"
-                                DropDownBackground="{AppThemeBinding Light={StaticResource White},
-                                                                     Dark={StaticResource Gray950}}"
-                                DropDownItemTextColor="{AppThemeBinding Light={StaticResource Black},
-                                                                        Dark={StaticResource White}}"
-                                IsClearButtonVisible="{Binding Payee.Length}"
+                            RowDefinitions="*,*,*,*,*"
+                            ColumnDefinitions="*,*"
+                            ColumnSpacing="5"
+                            RowSpacing="5"
+                            Margin="20,5">
+                        <!--  date range pickers  -->
+                        <material:DatePickerField
+                            Title="From"
+                            AllowClear="False"
+                            Date="{Binding From}"
+                            Format="MMM d yyyy"
+                            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                                    Glyph={x:Static m:MaterialOutlined.Calendar_month}}" />
+                        <material:DatePickerField
+                            Grid.Column="1"
+                            Title="To"
+                            AllowClear="False"
+                            Date="{Binding To}"
+                            Format="MMM d yyyy"
+                            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                                    Glyph={x:Static m:MaterialOutlined.Calendar_month}}" />
+
+                        <!--  account picker  -->
+                        <material:PickerField
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Title="Account"
+                            x:DataType="models:Account"
+                            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                                    Glyph={x:Static m:MaterialOutlined.Credit_card}}"
+                            ItemDisplayBinding="{Binding AccountName}"
+                            ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                            SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                            SelectedValueChangedCommand="{Binding Path=UpdateFilterCommand, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}" />
+
+                        <!--  amount range fields  -->
+                        <material:TextField
+                            Grid.Row="2"
+                            Title="Min"
+                            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                                    Glyph={x:Static m:MaterialOutlined.Paid}}"
+                            Keyboard="Numeric"
+                            ReturnCommand="{Binding Path=UpdateFilterCommand, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                            Text="{Binding AmountRangeStart}" />
+                        <material:TextField
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Title="Max"
+                            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                                    Glyph={x:Static m:MaterialOutlined.Paid}}"
+                            Keyboard="Numeric"
+                            ReturnCommand="{Binding Path=UpdateFilterCommand, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                            Text="{Binding AmountRangeEnd}" />
+
+                        <!--  category and subcategory pickers  -->
+                        <material:PickerField
+                            Grid.Row="3"
+                            x:Name="pckCategory"
+                            Title="Category"
+                            x:DataType="models:Category"
+                            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                                    Glyph={x:Static m:MaterialOutlined.Category}}"
+                            ItemDisplayBinding="{Binding CategoryName}"
+                            ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                            SelectedItem="{Binding Path=Category, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                            SelectedValueChangedCommand="{Binding Path=CategoryChangedCommand, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}" />
+                        <material:PickerField
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Title="Subcategory"
+                            x:DataType="models:Category"
+                            Icon="{FontImageSource FontFamily=MaterialRounded,
+                                                    Glyph={x:Static m:MaterialOutlined.Category}}"
+                            ItemDisplayBinding="{Binding CategoryName}"
+                            ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                            SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}"
+                            SelectedValueChangedCommand="{Binding Path=UpdateFilterCommand, Source={RelativeSource AncestorType={x:Type viewmodel:TransactionsViewModel}}}" />
+
+                        <!--  payee search bar  -->
+                        <material:InputField Grid.Row="4" Grid.ColumnSpan="2">
+                            <Grid
+                                Margin="11,3,0,0"
+                                ColumnDefinitions="20,*"
+                                ColumnSpacing="2">
+                                <Image Source="{FontImageSource FontFamily=MaterialRoundedFilled, Glyph={x:Static m:MaterialOutlined.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
+                                <input:SfAutocomplete
+                                    Grid.Column="1"
+                                    BackgroundColor="Transparent"
+                                    ClearButtonIconColor="{AppThemeBinding Light={StaticResource Black},
+                                                                            Dark={StaticResource White}}"
+                                    DropDownBackground="{AppThemeBinding Light={StaticResource White},
+                                                                            Dark={StaticResource Gray950}}"
+                                    DropDownItemTextColor="{AppThemeBinding Light={StaticResource Black},
+                                                                            Dark={StaticResource White}}"
+                                    IsClearButtonVisible="{Binding Payee.Length}"
+                                    ItemsSource="{Binding Payees}"
+                                    MaxDropDownHeight="250"
+                                    Placeholder="Payee"
+                                    PlaceholderColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                                        Dark={StaticResource Gray200}}"
+                                    SelectionTextHighlightColor="#7742ba96"
+                                    Stroke="Transparent"
+                                    Text="{Binding Payee, Mode=TwoWay}"
+                                    TextColor="{AppThemeBinding Light={StaticResource Black},
+                                                                Dark={StaticResource White}}"
+                                    TextSearchMode="Contains" />
+                            </Grid>
+                        </material:InputField>
+                            <!--  payee search bar
+                            <material:AutoCompleteTextField
+                                x:Name="entPayee"
+                                Title="Payee"
+                                Icon="{FontImageSource FontFamily=MaterialRegular,
+                                                        Glyph={x:Static m:MaterialRound.Account_circle}}"
                                 ItemsSource="{Binding Payees}"
-                                MaxDropDownHeight="250"
-                                Placeholder="Payee"
-                                PlaceholderColor="{AppThemeBinding Light={StaticResource Gray600},
-                                                                   Dark={StaticResource Gray200}}"
-                                SelectionTextHighlightColor="#7742ba96"
-                                Stroke="Transparent"
-                                Text="{Binding Payee, Mode=TwoWay}"
+                                Text="{Binding Payee}"
                                 TextColor="{AppThemeBinding Light={StaticResource Black},
                                                             Dark={StaticResource White}}"
-                                TextSearchMode="Contains" />
+                                WidthRequest="250" />-->
                         </Grid>
-                    </material:InputField>
-                    <!--  payee search bar
-                    <material:AutoCompleteTextField
-                        x:Name="entPayee"
-                        Title="Payee"
-                        Icon="{FontImageSource FontFamily=MaterialRegular,
-                                               Glyph={x:Static m:MaterialRound.Account_circle}}"
-                        ItemsSource="{Binding Payees}"
-                        Text="{Binding Payee}"
-                        TextColor="{AppThemeBinding Light={StaticResource Black},
-                                                    Dark={StaticResource White}}"
-                        WidthRequest="250" />-->
-
-                </VerticalStackLayout>
-            </Grid>
-        </toolkit:Expander>
+                    </toolkit:AccordionItem.Content>
+                </toolkit:AccordionItem>
+            </toolkit:SfAccordion.Items>
+        </toolkit:SfAccordion>
 
         <!--  list of transactions  -->
         <CollectionView

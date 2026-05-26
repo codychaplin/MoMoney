@@ -20,8 +20,5 @@ public partial class TransactionsPage : ContentView
             _ = vm.Load();
             WeakReferenceMessenger.Default.Register<UpdateTransactionsMessage>(this, async (r, m) => await vm.Refresh(m.Value));
         };
-
-        dtFrom.DateSelected += (s,e) => WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read)));
-        dtTo.DateSelected += (s,e) => WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read)));
     }
 }

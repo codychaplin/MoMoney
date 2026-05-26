@@ -55,7 +55,7 @@
                 <!--  balance over time chart  -->
                 <Border
                     Margin="10,0"
-                    Padding="5,0,5,5"
+                    Padding="5"
                     BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
                                                       Dark={StaticResource PrimaryDark}}"
                     HeightRequest="220">

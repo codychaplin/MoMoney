@@ -22,15 +22,21 @@ public partial class TransactionsViewModel : ObservableObject
 
     [ObservableProperty] Account? account;
 
-    [ObservableProperty] int amountRangeStart = 0;
-    [ObservableProperty] int amountRangeEnd = 500;
+    [ObservableProperty] decimal? amountRangeStart = null;
+    async partial void OnAmountRangeStartChanged(decimal? value) => await UpdateFilterDebounced(true, value);
+    [ObservableProperty] decimal? amountRangeEnd = null;
+    async partial void OnAmountRangeEndChanged(decimal? value) => await UpdateFilterDebounced(false, value);
+
+    CancellationTokenSource amountDebounce = new();
 
     [ObservableProperty] Category? category;
     [ObservableProperty] Category? subcategory;
     [ObservableProperty] string payee = "";
 
-    [ObservableProperty] static DateTime from = new();
-    [ObservableProperty] static DateTime to = new();
+    [ObservableProperty] DateTime from;
+    async partial void OnFromChanged(DateTime value) => await UpdateFilter();
+    [ObservableProperty] DateTime to;
+    async partial void OnToChanged(DateTime value) => await UpdateFilter();
 
     List<Transaction> Transactions = [];
 
@@ -43,9 +49,7 @@ public partial class TransactionsViewModel : ObservableObject
         accountService = _accountService;
         categoryService = _categoryService;
 
-        // first two months, show 1 year, starting March show YTD
-        From = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
-        To = DateTime.Today;
+        From = new(DateTime.Today.Year, 1, 1);
     }
 
     /// <summary>
@@ -53,8 +57,10 @@ public partial class TransactionsViewModel : ObservableObject
     /// </summary>
     public async Task Load()
     {
+        To = DateTime.Today.AddDays(-1); // workaround until https://github.com/enisn/UraniumUI/pull/996 is fixed
         await GetAccounts();
         await GetParentCategories();
+        To = DateTime.Today;
         await Refresh(new(null, TransactionEventArgs.CRUD.Read));
     }
 
@@ -129,7 +135,7 @@ public partial class TransactionsViewModel : ObservableObject
             // workaround for triggering converter
             if (LoadedTransactions.Any())
                 foreach (var trans in LoadedTransactions)
-                    trans.Amount = (Utilities.ShowValue) ? trans.Amount + 0.0001m : trans.Amount - 0.0001m;
+                    trans.Amount = Utilities.ShowValue ? trans.Amount + 0.0001m : trans.Amount - 0.0001m;
         }
 
         showValue = Utilities.ShowValue;
@@ -180,7 +186,7 @@ public partial class TransactionsViewModel : ObservableObject
     /// <param name="e"></param>
     void Delete(TransactionEventArgs e)
     {
-        Transaction? trans = Transactions.Where(t => t.TransactionID == e.Transaction?.TransactionID).FirstOrDefault();
+        Transaction? trans = Transactions.FirstOrDefault(t => t.TransactionID == e.Transaction?.TransactionID);
         if (trans is not null)
         {
             Transactions.Remove(trans);
@@ -243,25 +249,50 @@ public partial class TransactionsViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Calls UpdateFilter().
-    /// </summary>
-    [RelayCommand]
-    async Task AmountDragCompleted()
-    {
-        await UpdateFilter();
-    }
-
-    /// <summary>
     /// Updates Transactions Filter.
     /// </summary>
     [RelayCommand]
     async Task UpdateFilter()
     {
         Transactions = await transactionService.GetFilteredTransactions(
-            from, to, Account?.AccountID, AmountRangeStart, AmountRangeEnd,
+            From, To, Account?.AccountID, AmountRangeStart, AmountRangeEnd,
             Category?.CategoryID, Subcategory?.CategoryID, Payee);
         LoadedTransactions.Clear();
         await LoadMoreItems();
+    }
+
+    /// <summary>
+    /// Updates Transactions Filter after debounce.
+    /// </summary>
+    async Task UpdateFilterDebounced(bool isStart, decimal? newValue)
+    {
+        amountDebounce.Cancel();
+        amountDebounce = new();
+        var token = amountDebounce.Token;
+        try
+        {
+            await Task.Delay(600, token);
+            if (isStart)
+            {
+                if (newValue is not null && newValue > AmountRangeEnd)
+                {
+                    AmountRangeStart = null;
+                    await Utilities.DisplayToast("Start amount must be less than the end amount.");
+                    return;
+                }
+            }
+            else
+            {
+                if (newValue is not null && newValue < AmountRangeStart)
+                {
+                    AmountRangeEnd = null;
+                    await Utilities.DisplayToast("End amount must be greater than the start amount.");
+                    return;
+                }
+            }
+            await UpdateFilter();
+        }
+        catch (OperationCanceledException) { }
     }
 
     /// <summary>

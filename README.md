@@ -37,6 +37,3 @@ Works on Android 10.0 and later.
 * Syncfusion.Maui.Toolkit
 * UraniumUI
 * OpenAI API
-
-## Publish as Android app
-`dotnet publish -f net10.0-android36.0 -c Release -p:AndroidKeyStore=true -p:AndroidSigningKeyAlias=momoney-key -p:AndroidSigningKeyPass=apps-pherda -p:AndroidSigningStorePass=apps-pherda`
