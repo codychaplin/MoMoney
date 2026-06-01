@@ -15,20 +15,15 @@ using MoMoney.Core.Models.Statements;
 
 namespace MoMoney.Core.ViewModels.Settings;
 
-public partial class ImportStatementViewModel : ObservableObject
+public partial class ImportStatementViewModel : BaseCategoryViewModel
 {
     // services
-    readonly IAccountService accountService;
-    readonly ITransactionService transactionService;
     readonly IMappingRuleService mappingRuleService;
-    readonly ICategoryService categoryService;
     readonly ILoggerService<ImportStatementViewModel> logger;
 
     // first section
     [ObservableProperty] ObservableCollection<BankType> bankTypes = [];
     [ObservableProperty] string? selectedBankType;
-    [ObservableProperty] ObservableCollection<Account> accounts = [];
-    [ObservableProperty] Account? account;
 
     [ObservableProperty] bool fileUploaded = false;
     [ObservableProperty] bool isCommitButtonEnabled = false;
@@ -40,13 +35,6 @@ public partial class ImportStatementViewModel : ObservableObject
     [ObservableProperty] RecordTransactionPair? selectedRecord;
 
     // source data fields
-    [ObservableProperty] ObservableCollection<Category> categories = [];
-    [ObservableProperty] Category? category;
-    [ObservableProperty] ObservableCollection<Category> subcategories = [];
-    [ObservableProperty] Category? subcategory;
-    [ObservableProperty] ObservableCollection<string> payees = [];
-    [ObservableProperty] string payee = string.Empty;
-    [ObservableProperty] Account? transferAccount;
 
     // progress tracking info
     List<RecordTransactionPair> uploadedRecords = [];
@@ -73,13 +61,13 @@ public partial class ImportStatementViewModel : ObservableObject
     [ObservableProperty] string manuallySkippedCount = string.Empty;
 
     public ImportStatementViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService, IMappingRuleService _mappingRuleService, ILoggerService<ImportStatementViewModel> _logger)
+        : base(_transactionService, _accountService, _categoryService)
     {
-        transactionService = _transactionService;
-        accountService = _accountService;
-        categoryService = _categoryService;
         mappingRuleService = _mappingRuleService;
         logger = _logger;
     }
+
+    protected override async Task LogError(string method, Exception ex) => await logger.LogError(method, ex);
 
     [ObservableProperty] bool isBusy;
 
@@ -90,23 +78,13 @@ public partial class ImportStatementViewModel : ObservableObject
     {
         try
         {
-            var accounts = await accountService.GetActiveAccounts();
-            Accounts.Clear();
-            foreach (var account in accounts)
-                Accounts.Add(account);
-
-            var categories = await categoryService.GetAllParentCategories();
-            Categories.Clear();
-            foreach (var category in categories)
-                Categories.Add(category);
-
-            var payees = await transactionService.GetPayeesFromTransactions();
-            Payees = new(payees);
+            await GetAccounts();
+            await GetAllParentCategories();
+            await GetPayees();
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(LoadData), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await HandleError(nameof(LoadData), ex);
         }
     }
 
@@ -154,8 +132,7 @@ public partial class ImportStatementViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(Reload), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await HandleError(nameof(Reload), ex);
         }
     }
 
@@ -171,8 +148,7 @@ public partial class ImportStatementViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(ImportStatement), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await HandleError(nameof(ImportStatement), ex);
         }
     }
 
@@ -277,11 +253,8 @@ public partial class ImportStatementViewModel : ObservableObject
         }
 
         SelectedRecord?.IsTransfer = Category.CategoryID == Constants.TRANSFER_ID;
-
-        var subcategories = await categoryService.GetSubcategories(Category);
-        Subcategories.Clear();
-        foreach (var subcategory in subcategories)
-            Subcategories.Add(subcategory);
+        
+        await GetSubcategories();
     }
 
     async partial void OnSelectedRecordChanged(RecordTransactionPair? value)
@@ -582,8 +555,7 @@ public partial class ImportStatementViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(CommitImport), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await HandleError(nameof(CommitImport), ex);
         }
     }
 }

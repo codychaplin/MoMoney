@@ -7,6 +7,7 @@
 * Connect subcategories to parents by ID instead of name
 * Gracefully try to edit opposite side of transfers
 * Add easy date pickers to home page
+* Consolidated transaction view/editing logic
 
 ### Fixes
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -9,39 +9,17 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
-public partial class AddTransactionViewModel : ObservableObject
+public partial class AddTransactionViewModel : BaseTransactionViewModel
 {
-    readonly IAccountService accountService;
-    readonly ICategoryService categoryService;
-    readonly ITransactionService transactionService;
     readonly ILoggerService<AddTransactionViewModel> logger;
-
     readonly IOpenAIService openAIService;
-
     readonly IRecordAudioService recorder;
 
-    [ObservableProperty] ObservableCollection<Account> accounts = [];
-    [ObservableProperty] ObservableCollection<Category> categories = [];
-    [ObservableProperty] ObservableCollection<Category> subcategories = [];
-    [ObservableProperty] ObservableCollection<string> payees = [];
-    
     [ObservableProperty] DateTime date;
-    [ObservableProperty] Account? account;
     [ObservableProperty] decimal? amount;
-    [ObservableProperty] Category? category;
-    [ObservableProperty] Category? subcategory;
-    [ObservableProperty] string payee = string.Empty;
-    [ObservableProperty] Account? transferAccount;
 
-    [ObservableProperty] bool isWaitingForTranscription = false; // activity indicator runs while this is true
-
+    [ObservableProperty] bool isWaitingForTranscription = false;
     [ObservableProperty] bool transactionDictationEnabled = false;
-
-    [ObservableProperty] bool areFieldsEnabled = false;
-    [ObservableProperty] bool isCategoryEnabled = false;
-    [ObservableProperty] bool isSubcategoryEnabled = false;
-    [ObservableProperty] bool isPayeeVisible = true;
-    [ObservableProperty] bool isTransferAccountVisible = false;
 
     public TransactionType transactionType = TransactionType.None;
 
@@ -49,14 +27,13 @@ public partial class AddTransactionViewModel : ObservableObject
 
     public AddTransactionViewModel(ITransactionService _transactionService, IAccountService _accountService, ICategoryService _categoryService,
         ILoggerService<AddTransactionViewModel> _logger, IOpenAIService _openAIService, IRecordAudioService _recordAudioService)
+        : base(_transactionService, _accountService, _categoryService)
     {
-        transactionService = _transactionService;
-        accountService = _accountService;
-        categoryService = _categoryService;
         openAIService = _openAIService;
         logger = _logger;
         recorder = _recordAudioService;
 
+        AreFieldsEnabled = false;
         TransactionDictationEnabled = Utilities.TransactionDictationEnabled;
         WeakReferenceMessenger.Default.Register<UpdateTransactionDictationMessage>(this, (_, m) => TransactionDictationEnabled = m.Value);
         WeakReferenceMessenger.Default.Register<UpdateAccountsMessage>(this, async (_, _) => await GetAccounts());
@@ -79,33 +56,17 @@ public partial class AddTransactionViewModel : ObservableObject
         Date = DateTime.Today;
     }
 
-    /// <summary>
-    /// Gets accounts from database and refreshes Accounts collection.
-    /// </summary>
-    public async Task GetAccounts()
-    {
-        var accounts = await accountService.GetActiveAccounts();
-        Accounts.Clear();
-        foreach (var account in accounts)
-            Accounts.Add(account);
-    }
+    protected override async Task LogError(string method, Exception ex) => await logger.LogError(method, ex);
+    protected override async Task LogWarning(string method, Exception ex) => await logger.LogWarning(method, ex);
 
-    /// <summary>
-    /// Gets income category from database and refreshes Categories collection.
-    /// </summary>
     [RelayCommand]
-    async Task GetIncomeCategory()
+    protected override async Task<Category?> GetIncomeCategory()
     {
+        Category? income = null;
         try
         {
-            // cache selected Subcategory
             var subcategory = Subcategory;
-
-            var income = await categoryService.GetCategory(Constants.INCOME_ID);
-            Categories.Clear();
-            Subcategories.Clear();
-            if (income != null)
-                Categories.Add(income);
+            income = await base.GetIncomeCategory();
             Subcategory = null;
             Category = income;
 
@@ -120,31 +81,19 @@ public partial class AddTransactionViewModel : ObservableObject
             IsPayeeVisible = true;
             IsTransferAccountVisible = false;
         }
-        catch (NotFoundException ex)
-        {
-            await logger.LogWarning(nameof(GetIncomeCategory), ex);
-            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
-        }
-        catch (Exception ex)
-        {
-            await logger.LogError(nameof(GetIncomeCategory), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
-        }
+        catch (NotFoundException ex) { await HandleWarning(nameof(GetIncomeCategory), ex); }
+        catch (Exception ex) { await HandleError(nameof(GetIncomeCategory), ex); }
+
+        return income;
     }
 
-    /// <summary>
-    /// Gets transfer category from database and refreshes Categories collection.
-    /// </summary>
     [RelayCommand]
-    async Task GetTransferCategory()
+    protected override async Task<Category?> GetTransferCategory()
     {
+        Category? transfer = null;
         try
         {
-            var transfer = await categoryService.GetCategory(Constants.TRANSFER_ID);
-            Categories.Clear();
-            Subcategories.Clear();
-            if (transfer != null)
-                Categories.Add(transfer);
+            transfer = await base.GetTransferCategory();
             Subcategory = null;
             Category = transfer;
 
@@ -157,29 +106,22 @@ public partial class AddTransactionViewModel : ObservableObject
         }
         catch (NotFoundException ex)
         {
-            await logger.LogWarning(nameof(GetTransferCategory), ex);
-            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
+            await HandleWarning(nameof(GetTransferCategory), ex);
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(GetTransferCategory), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await HandleError(nameof(GetTransferCategory), ex);
         }
+
+        return transfer;
     }
 
-    /// <summary>
-    /// Gets updated expense categories from database and refreshes Categories collection.
-    /// </summary>
     [RelayCommand]
-    async Task GetExpenseCategories()
+    protected override async Task GetExpenseCategories()
     {
         try
         {
-            var categories = await categoryService.GetExpenseCategories();
-            Categories.Clear();
-            foreach (var category in categories)
-                Categories.Add(category);
-            Subcategories.Clear();
+            await base.GetExpenseCategories();
             Category = null;
             Subcategory = null;
 
@@ -192,60 +134,23 @@ public partial class AddTransactionViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(GetExpenseCategories), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
-        }
-    }
-
-    /// <summary>
-    /// Updates Subcategories based on selected parent Category.
-    /// </summary>
-    /// <param name="parentCategory"></param>
-    async Task GetSubcategories(Category parentCategory)
-    {
-        try
-        {
-            if (parentCategory is null)
-                return;
-
-            var subcategories = await categoryService.GetSubcategories(parentCategory);
-            Subcategories.Clear();
-            foreach (var subcategory in subcategories)
-                Subcategories.Add(subcategory);
-        }
-        catch (Exception ex)
-        {
-            await logger.LogError(nameof(GetSubcategories), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
-        }
-    }
-
-    public async Task GetPayees()
-    {
-        try
-        {
-            var payees = await transactionService.GetPayeesFromTransactions();
-            Payees = new(payees);
-            //Payees.ReplaceRange(payees);
-        }
-        catch (Exception ex)
-        {
-            await logger.LogError(nameof(GetPayees), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await HandleError(nameof(GetExpenseCategories), ex);
         }
     }
 
     [RelayCommand]
     async Task CategoryChanged()
     {
-        // check if Category is null, update subcategories
-        if (Category is null)
-            return;
-        await GetSubcategories(Category);
-
-        // if transfer, auto-select "Debit"
-        if (Category.CategoryID == Constants.TRANSFER_ID && Subcategories.Count > 0)
-            Subcategory = Subcategories.First();
+        try
+        {
+            await GetSubcategories();
+            if (Category?.CategoryID == Constants.TRANSFER_ID && Subcategories.Count > 0)
+                Subcategory = Subcategories.First();
+        }
+        catch (Exception ex)
+        {
+            await HandleError(nameof(CategoryChanged), ex);
+        }
     }
 
     [RelayCommand]
@@ -400,7 +305,7 @@ public partial class AddTransactionViewModel : ObservableObject
                 if (TransferAccount is null)
                 {
                     await Utilities.DisplayToast("Please Select a Transfer Account");
-                    return;    
+                    return;
                 }
             }
             else if (string.IsNullOrEmpty(Payee))
@@ -458,13 +363,11 @@ public partial class AddTransactionViewModel : ObservableObject
         }
         catch (InvalidException ex)
         {
-            await logger.LogWarning(nameof(AddTransaction), ex);
-            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
+            await HandleWarning(nameof(AddTransaction), ex);
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(AddTransaction), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await HandleError(nameof(AddTransaction), ex);
         }
     }
 

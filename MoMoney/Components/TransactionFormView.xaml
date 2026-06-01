@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="MoMoney.Components.TransactionFormView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:MoMoney.Components"
+    x:DataType="components:TransactionFormView"
+    x:Name="self">
+
+    <VerticalStackLayout Spacing="5">
+
+        <!--  Date  -->
+        <components:DateField
+            Date="{Binding Date, Source={x:Reference self}}"
+            IsEnabled="{Binding AreFieldsEnabled, Source={x:Reference self}}" />
+
+        <!--  Amount  -->
+        <components:AmountField
+            IsEnabled="{Binding AreFieldsEnabled, Source={x:Reference self}}"
+            Text="{Binding Amount, Source={x:Reference self}}" />
+
+        <!--  Account  -->
+        <components:AccountField
+            IsEnabled="{Binding AreFieldsEnabled, Source={x:Reference self}}"
+            ItemsSource="{Binding Accounts, Source={x:Reference self}}"
+            SelectedItem="{Binding Account, Source={x:Reference self}, Mode=TwoWay}" />
+
+        <!--  Category + Subcategory  -->
+        <components:CategorySubcategoryField
+            Categories="{Binding Categories, Source={x:Reference self}}"
+            Category="{Binding Category, Source={x:Reference self}, Mode=TwoWay}"
+            CategoryChangedCommand="{Binding CategoryChangedCommand, Source={x:Reference self}}"
+            IsCategoryEnabled="{Binding IsCategoryEnabled, Source={x:Reference self}}"
+            IsSubcategoryEnabled="{Binding IsSubcategoryEnabled, Source={x:Reference self}}"
+            Subcategories="{Binding Subcategories, Source={x:Reference self}}"
+            Subcategory="{Binding Subcategory, Source={x:Reference self}, Mode=TwoWay}" />
+
+        <!--  Payee / Transfer Account  -->
+        <components:PayeeField
+            Accounts="{Binding Accounts, Source={x:Reference self}}"
+            IsEnabled="{Binding AreFieldsEnabled, Source={x:Reference self}}"
+            IsTransferAccountVisible="{Binding IsTransferAccountVisible, Source={x:Reference self}}"
+            PayeeText="{Binding PayeeText, Source={x:Reference self}, Mode=TwoWay}"
+            Payees="{Binding Payees, Source={x:Reference self}}"
+            TransferAccount="{Binding TransferAccount, Source={x:Reference self}, Mode=TwoWay}" />
+
+    </VerticalStackLayout>
+
+</ContentView>

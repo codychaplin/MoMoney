@@ -1,4 +1,3 @@
-using UraniumUI.Material.Controls;
 using MoMoney.Core.ViewModels;
 
 namespace MoMoney.Views;
@@ -42,13 +41,11 @@ public partial class AddTransactionPage : ContentView
     private void btnClear_Clicked(object? sender, EventArgs e)
     {
         vm?.Clear();
-        txtAmount.ClearValue();
         segTransactionType.SelectedIndex = -1;
     }
 
     private void btnEnter_Clicked(object? sender, EventArgs e)
     {
         vm?.ClearAfterAdd();
-        txtAmount.Text = "";
     }
 }

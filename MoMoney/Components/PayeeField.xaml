@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="MoMoney.Components.PayeeField"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:MoMoney.Components"
+    xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+    x:DataType="components:PayeeField"
+    x:Name="self">
+
+    <Grid>
+        <!--  Payee autocomplete  -->
+        <material:InputField
+            IsEnabled="{Binding IsEnabled, Source={x:Reference self}}"
+            IsVisible="{Binding IsTransferAccountVisible, Source={x:Reference self}, Converter={StaticResource InverseBoolConverter}}">
+            <Grid
+                Margin="11,3,0,0"
+                ColumnDefinitions="16,*"
+                ColumnSpacing="2">
+                <Image Source="{FontImageSource FontFamily=MaterialRoundedFilled, Glyph={x:Static m:MaterialOutlined.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
+                <input:SfAutocomplete
+                    Grid.Column="1"
+                    BackgroundColor="Transparent"
+                    ClearButtonIconColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                    DropDownBackground="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}"
+                    DropDownItemTextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                    IsClearButtonVisible="{Binding PayeeText.Length, Source={x:Reference self}}"
+                    ItemsSource="{Binding Payees, Source={x:Reference self}}"
+                    MaxDropDownHeight="250"
+                    Placeholder="Payee"
+                    PlaceholderColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}"
+                    SelectionTextHighlightColor="#7742ba96"
+                    Stroke="Transparent"
+                    Text="{Binding PayeeText, Source={x:Reference self}, Mode=TwoWay}"
+                    TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                    TextSearchMode="Contains" />
+            </Grid>
+        </material:InputField>
+
+        <!--  Transfer Account picker  -->
+        <material:PickerField
+            Title="Transfer Account"
+            x:DataType="models:Account"
+            Icon="{FontImageSource FontFamily=MaterialRoundedFilled, Glyph={x:Static m:MaterialOutlined.Account_circle}}"
+            IsEnabled="{Binding IsEnabled, Source={x:Reference self}}"
+            IsVisible="{Binding Path=IsTransferAccountVisible, Source={x:Reference self}}"
+            ItemDisplayBinding="{Binding AccountName}"
+            ItemsSource="{Binding Path=Accounts, Source={x:Reference self}}"
+            SelectedItem="{Binding Path=TransferAccount, Source={x:Reference self}, Mode=TwoWay}" />
+    </Grid>
+
+</ContentView>

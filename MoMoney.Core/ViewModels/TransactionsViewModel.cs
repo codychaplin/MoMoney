@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
@@ -7,20 +7,11 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
-public partial class TransactionsViewModel : ObservableObject
+public partial class TransactionsViewModel : BaseCategoryViewModel
 {
-    readonly IAccountService accountService;
-    readonly ICategoryService categoryService;
-    readonly ITransactionService transactionService;
+    readonly ILoggerService<TransactionsViewModel> logger;
 
     [ObservableProperty] ObservableCollection<Transaction> loadedTransactions = [];
-
-    [ObservableProperty] ObservableCollection<Account> accounts = [];
-    [ObservableProperty] ObservableCollection<Category> categories = [];
-    [ObservableProperty] ObservableCollection<Category> subcategories = [];
-    [ObservableProperty] ObservableCollection<string> payees = [];
-
-    [ObservableProperty] Account? account;
 
     [ObservableProperty] decimal? amountRangeStart = null;
     async partial void OnAmountRangeStartChanged(decimal? value) => await UpdateFilterDebounced(true, value);
@@ -28,10 +19,6 @@ public partial class TransactionsViewModel : ObservableObject
     async partial void OnAmountRangeEndChanged(decimal? value) => await UpdateFilterDebounced(false, value);
 
     CancellationTokenSource amountDebounce = new();
-
-    [ObservableProperty] Category? category;
-    [ObservableProperty] Category? subcategory;
-    [ObservableProperty] string payee = "";
 
     [ObservableProperty] DateTime from;
     async partial void OnFromChanged(DateTime value) => await UpdateFilter();
@@ -43,14 +30,14 @@ public partial class TransactionsViewModel : ObservableObject
     bool showValue = true;
 
     public TransactionsViewModel(ITransactionService _transactionService, IAccountService _accountService,
-        ICategoryService _categoryService)
+        ICategoryService _categoryService, ILoggerService<TransactionsViewModel> _logger)
+        : base(_transactionService, _accountService, _categoryService)
     {
-        transactionService = _transactionService;
-        accountService = _accountService;
-        categoryService = _categoryService;
-
+        logger = _logger;
         From = new(DateTime.Today.Year, 1, 1);
     }
+
+    protected override async Task LogError(string method, Exception ex) => await logger.LogError(method, ex);
 
     /// <summary>
     /// Loads data into filter pickers.
@@ -59,7 +46,8 @@ public partial class TransactionsViewModel : ObservableObject
     {
         To = DateTime.Today.AddDays(-1); // workaround until https://github.com/enisn/UraniumUI/pull/996 is fixed
         await GetAccounts();
-        await GetParentCategories();
+        await GetAllParentCategories();
+        await GetPayees();
         To = DateTime.Today;
         await Refresh(new(null, TransactionEventArgs.CRUD.Read));
     }
@@ -71,7 +59,7 @@ public partial class TransactionsViewModel : ObservableObject
     {
         if (e is null)
             return;
-        
+
         switch (e.Type)
         {
             case TransactionEventArgs.CRUD.Create:
@@ -107,7 +95,6 @@ public partial class TransactionsViewModel : ObservableObject
         string payee = e.Transaction.Payee;
         if (!string.IsNullOrEmpty(payee) && !Payees.Contains(payee))
             Payees.Add(payee);
-
     }
 
     /// <summary>
@@ -194,58 +181,20 @@ public partial class TransactionsViewModel : ObservableObject
         }
     }
 
-    /// <summary>
-    /// Gets accounts from database.
-    /// </summary>
-    /// <returns></returns>
-    public async Task GetAccounts()
-    {
-        var accounts = await accountService.GetActiveAccounts();
-        Accounts.Clear();
-        foreach (var account in accounts)
-            Accounts.Add(account);
-    }
-
-    /// <summary>
-    /// Gets all parent categories from database.
-    /// </summary>
-    public async Task GetParentCategories()
-    {
-        var categories = await categoryService.GetAllParentCategories();
-        Categories.Clear();
-        foreach (var category in categories)
-            Categories.Add(category);
-    }
-
     [RelayCommand]
     async Task CategoryChanged()
     {
-        if (Category != null)
-        {
-            await GetSubcategories(Category);
-            await UpdateFilter();
-        }
-        else
+        if (Category is null)
         {
             Subcategory = null;
             Subcategories.Clear();
-            await UpdateFilter();
         }
-    }
-
-    /// <summary>
-    /// Updates Subcategories based on selected parent Category.
-    /// </summary>
-    /// <param name="parentCategory"></param>
-    public async Task GetSubcategories(Category parentCategory)
-    {
-        if (parentCategory != null)
+        else
         {
-            var subcategories = await categoryService.GetSubcategories(parentCategory);
-            Subcategories.Clear();
-            foreach (var subcategory in subcategories)
-                Subcategories.Add(subcategory);
+            await GetSubcategories();
         }
+        
+        await UpdateFilter();
     }
 
     /// <summary>
@@ -264,6 +213,8 @@ public partial class TransactionsViewModel : ObservableObject
     /// <summary>
     /// Updates Transactions Filter after debounce.
     /// </summary>
+    /// <param name="isStart"></param>
+    /// <param name="newValue"></param>
     async Task UpdateFilterDebounced(bool isStart, decimal? newValue)
     {
         amountDebounce.Cancel();

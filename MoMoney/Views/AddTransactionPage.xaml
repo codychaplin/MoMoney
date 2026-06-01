@@ -4,10 +4,8 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
-    xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-    xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:segmentedControl="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
@@ -20,7 +18,7 @@
         <VerticalStackLayout Padding="10,0" Spacing="5">
 
             <!--  title  -->
-            <components:PageHeader 
+            <components:PageHeader
                 Margin="-10,0,-10,5"
                 Title="Add Transaction" />
 
@@ -51,120 +49,26 @@
                 </segmentedControl:SfSegmentedControl.ItemsSource>
             </segmentedControl:SfSegmentedControl>
 
-            <!--  Date  -->
-            <material:DatePickerField
-                Title="Date"
-                Date="{Binding Date}"
-                Format="MMMM d yyyy"
-                AllowClear="False"
-                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                       Glyph={x:Static m:MaterialOutlined.Calendar_month}}"
-                IsEnabled="{Binding AreFieldsEnabled}" />
-
-            <!--  Account  -->
-            <material:PickerField
-                x:Name="pckAccount"
-                Title="Account"
-                x:DataType="models:Account"
-                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                       Glyph={x:Static m:MaterialOutlined.Credit_card}}"
-                IsEnabled="{Binding Path=AreFieldsEnabled, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
-                ItemDisplayBinding="{Binding AccountName}"
-                ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
-                SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
-
-            <!--  Amount  -->
-            <material:TextField
-                x:Name="txtAmount"
-                Title="Amount"
-                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                       Glyph={x:Static m:MaterialOutlined.Paid}}"
-                IsEnabled="{Binding AreFieldsEnabled}"
-                Keyboard="Numeric"
-                Text="{Binding Amount}" />
-
-            <!--  Category  -->
-            <material:PickerField
-                x:Name="pckCategory"
-                Title="Category"
-                x:DataType="models:Category"
-                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                       Glyph={x:Static m:MaterialOutlined.Category}}"
-                IsEnabled="{Binding Path=IsCategoryEnabled, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
-                ItemDisplayBinding="{Binding CategoryName}"
-                ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
-                SelectedItem="{Binding Path=Category, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
-                SelectedValueChangedCommand="{Binding Path=CategoryChangedCommand, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
-
-            <!--  Subcategory  -->
-            <material:PickerField
-                x:Name="pckSubcategory"
-                Title="Subcategory"
-                Grid.Column="1"
-                x:DataType="models:Category"
-                Icon="{FontImageSource FontFamily=MaterialRounded,
-                                       Glyph={x:Static m:MaterialOutlined.Category}}"
-                IsEnabled="{Binding Path=IsSubcategoryEnabled, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
-                ItemDisplayBinding="{Binding CategoryName}"
-                ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
-                SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
-
-            <material:InputField
-                x:Name="entPayeeParent"
-                IsEnabled="{Binding AreFieldsEnabled}"
-                IsVisible="{Binding IsPayeeVisible}">
-                <Grid
-                    Margin="11,3,0,0"
-                    ColumnDefinitions="16,*"
-                    ColumnSpacing="2">
-                    <Image Source="{FontImageSource FontFamily=MaterialRoundedFilled, Glyph={x:Static m:MaterialOutlined.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
-                    <input:SfAutocomplete
-                        x:Name="entPayee"
-                        Grid.Column="1"
-                        BackgroundColor="Transparent"
-                        ClearButtonIconColor="{AppThemeBinding Light={StaticResource Black},
-                                                               Dark={StaticResource White}}"
-                        DropDownBackground="{AppThemeBinding Light={StaticResource White},
-                                                             Dark={StaticResource Gray950}}"
-                        DropDownItemTextColor="{AppThemeBinding Light={StaticResource Black},
-                                                                Dark={StaticResource White}}"
-                        IsClearButtonVisible="{Binding Payee.Length}"
-                        ItemsSource="{Binding Payees}"
-                        MaxDropDownHeight="250"
-                        Placeholder="Payee"
-                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray600},
-                                                           Dark={StaticResource Gray200}}"
-                        SelectionTextHighlightColor="#7742ba96"
-                        Stroke="Transparent"
-                        Text="{Binding Payee, Mode=TwoWay}"
-                        TextColor="{AppThemeBinding Light={StaticResource Black},
-                                                    Dark={StaticResource White}}"
-                        TextSearchMode="Contains" />
-                </Grid>
-            </material:InputField>
-            <!--  Payee
-            <material:AutoCompleteTextField
-                x:Name="entPayee"
-                Title="Payee"
-                Icon="{FontImageSource FontFamily=MaterialOutlined,
-                                       Glyph={x:Static m:MaterialOutlined.Account_circle}}"
-                ItemsSource="{Binding Payees}"
-                Text="{Binding Payee, Mode=TwoWay}"
-                TextColor="{AppThemeBinding Light={StaticResource Black},
-                                            Dark={StaticResource White}}" />-->
-
-            <!--  Transfer Payee Account  -->
-            <material:PickerField
-                x:Name="pckTransferAccount"
-                Title="Transfer Account"
-                x:DataType="models:Account"
-                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                       Glyph={x:Static m:MaterialOutlined.Account_circle}}"
-                IsEnabled="{Binding Path=AreFieldsEnabled, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
-                IsVisible="{Binding Path=IsTransferAccountVisible, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
-                ItemDisplayBinding="{Binding AccountName}"
-                ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}"
-                SelectedItem="{Binding Path=TransferAccount, Source={RelativeSource AncestorType={x:Type viewmodel:AddTransactionViewModel}}}" />
+            <!--  shared form: Date, Amount, Account, Category, Subcategory, Payee, Transfer Account  -->
+            <components:TransactionFormView
+                x:Name="transactionForm"
+                Date="{Binding Date, Mode=TwoWay}"
+                Account="{Binding Account, Mode=TwoWay}"
+                Amount="{Binding Amount, Mode=TwoWay}"
+                Category="{Binding Category, Mode=TwoWay}"
+                Subcategory="{Binding Subcategory, Mode=TwoWay}"
+                PayeeText="{Binding Payee, Mode=TwoWay}"
+                TransferAccount="{Binding TransferAccount, Mode=TwoWay}"
+                Accounts="{Binding Accounts}"
+                Categories="{Binding Categories}"
+                Subcategories="{Binding Subcategories}"
+                Payees="{Binding Payees}"
+                CategoryChangedCommand="{Binding CategoryChangedCommand}"
+                AreFieldsEnabled="{Binding AreFieldsEnabled}"
+                IsCategoryEnabled="{Binding IsCategoryEnabled}"
+                IsSubcategoryEnabled="{Binding IsSubcategoryEnabled}"
+                IsPayeeVisible="{Binding IsPayeeVisible}"
+                IsTransferAccountVisible="{Binding IsTransferAccountVisible}" />
 
             <!--  clear/enter buttons  -->
             <Grid
@@ -190,7 +94,7 @@
                     BorderWidth="1.5"
                     Command="{Binding RecordCommand}"
                     CommandParameter="{x:Reference btnRecord}"
-                    FontFamily="MaterialRounded"
+                    FontFamily="MaterialRoundedFilled"
                     FontSize="30"
                     IsVisible="{Binding TransactionDictationEnabled}"
                     Text="{x:Static m:MaterialOutlined.Mic}"

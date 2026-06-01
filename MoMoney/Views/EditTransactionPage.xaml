@@ -3,10 +3,9 @@
     x:Class="MoMoney.Views.EditTransactionPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+    xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-    xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
     Title="Edit Transaction"
     x:DataType="viewmodel:EditTransactionViewModel">
@@ -15,115 +14,25 @@
     <ScrollView>
         <VerticalStackLayout Margin="10" Spacing="10">
 
-            <!--  Date  -->
-            <material:DatePickerField
-                x:Name="dtpDate"
-                Title="Date"
-                Date="{Binding Transaction.Date}"
-                Format="MMMM d yyyy"
-                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                       Glyph={x:Static m:MaterialOutlined.Calendar_month}}" />
-
-            <!--  Account  -->
-            <material:PickerField
-                x:Name="pckAccount"
-                Title="Account"
-                x:DataType="models:Account"
-                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                       Glyph={x:Static m:MaterialOutlined.Credit_card}}"
-                ItemDisplayBinding="{Binding AccountName}"
-                ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}" />
-
-            <!--  Amount  -->
-            <material:TextField
-                x:Name="txtAmount"
-                Title="Amount"
-                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                       Glyph={x:Static m:MaterialOutlined.Paid}}"
-                Keyboard="Numeric"
-                Text="{Binding Transaction.Amount}" />
-
-            <!--  Category  -->
-            <material:PickerField
-                x:Name="pckCategory"
-                Title="Category"
-                x:DataType="models:Category"
-                Icon="{FontImageSource FontFamily=MaterialRounded,
-                                       Glyph={x:Static m:MaterialOutlined.Category}}"
-                IsEnabled="{Binding Path=IsCategoryEnabled, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                ItemDisplayBinding="{Binding CategoryName}"
-                ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                SelectedItem="{Binding Path=Category, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                SelectedValueChangedCommand="{Binding Path=GetSubcategoriesCommand, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}" />
-
-            <!--  Subcategory  -->
-            <material:PickerField
-                x:Name="pckSubcategory"
-                Title="Subcategory"
-                Grid.Column="1"
-                x:DataType="models:Category"
-                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                       Glyph={x:Static m:MaterialOutlined.Category}}"
-                IsEnabled="{Binding Path=IsSubcategoryEnabled, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                ItemDisplayBinding="{Binding CategoryName}"
-                ItemsSource="{Binding Path=Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                SelectedItem="{Binding Path=Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}" />
-
-            <material:InputField
-                x:Name="entPayeeParent"
-                IsVisible="{Binding Path=IsPayeeVisible, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}">
-                <Grid
-                    Margin="11,3,0,0"
-                    ColumnDefinitions="20,*"
-                    ColumnSpacing="2">
-                    <Image Source="{FontImageSource FontFamily=MaterialRoundedFilled, Glyph={x:Static m:MaterialOutlined.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
-                    <input:SfAutocomplete
-                        x:Name="entPayee"
-                        Grid.Column="1"
-                        BackgroundColor="Transparent"
-                        ClearButtonIconColor="{AppThemeBinding Light={StaticResource Black},
-                                                               Dark={StaticResource White}}"
-                        DropDownBackground="{AppThemeBinding Light={StaticResource White},
-                                                             Dark={StaticResource Gray950}}"
-                        DropDownItemTextColor="{AppThemeBinding Light={StaticResource Black},
-                                                                Dark={StaticResource White}}"
-                        IsClearButtonVisible="{Binding Transaction.Payee.Length}"
-                        ItemsSource="{Binding Payees}"
-                        MaxDropDownHeight="250"
-                        Placeholder="Payee"
-                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray600},
-                                                           Dark={StaticResource Gray200}}"
-                        SelectionTextHighlightColor="#7742ba96"
-                        Stroke="Transparent"
-                        Text="{Binding Transaction.Payee, Mode=TwoWay}"
-                        TextColor="{AppThemeBinding Light={StaticResource Black},
-                                                    Dark={StaticResource White}}"
-                        TextSearchMode="Contains" />
-                </Grid>
-            </material:InputField>
-            <!--  Payee
-            <material:AutoCompleteTextField
-                x:Name="entPayee"
-                Title="Payee"
-                Icon="{FontImageSource FontFamily=MaterialOutlined,
-                                       Glyph={x:Static m:MaterialOutlined.Account_circle}}"
-                ItemsSource="{Binding Payees}"
-                Text="{Binding Transaction.Payee}"
-                TextColor="{AppThemeBinding Light={StaticResource Black},
-                                            Dark={StaticResource White}}" />-->
-
-            <!--  Transfer Payee Account  -->
-            <material:PickerField
-                x:Name="pckTransferAccount"
-                Title="Transfer Account"
-                x:DataType="models:Account"
-                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                       Glyph={x:Static m:MaterialOutlined.Account_circle}}"
-                IsVisible="{Binding Path=IsTransferAccountVisible, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                ItemDisplayBinding="{Binding AccountName}"
-                ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}"
-                SelectedItem="{Binding Path=TransferAccount, Source={RelativeSource AncestorType={x:Type viewmodel:EditTransactionViewModel}}}" />
+            <!--  shared form: Date, Amount, Account, Category, Subcategory, Payee, Transfer Account  -->
+            <components:TransactionFormView
+                x:Name="transactionForm"
+                Date="{Binding Transaction.Date, Mode=TwoWay}"
+                Account="{Binding Account, Mode=TwoWay}"
+                Amount="{Binding Transaction.Amount, Mode=TwoWay}"
+                Category="{Binding Category, Mode=TwoWay}"
+                Subcategory="{Binding Subcategory, Mode=TwoWay}"
+                PayeeText="{Binding Transaction.Payee, Mode=TwoWay}"
+                TransferAccount="{Binding TransferAccount, Mode=TwoWay}"
+                Accounts="{Binding Accounts}"
+                Categories="{Binding Categories}"
+                Subcategories="{Binding Subcategories}"
+                Payees="{Binding Payees}"
+                CategoryChangedCommand="{Binding CategoryChangedCommand}"
+                IsCategoryEnabled="{Binding IsCategoryEnabled}"
+                IsSubcategoryEnabled="{Binding IsSubcategoryEnabled}"
+                IsPayeeVisible="{Binding IsPayeeVisible}"
+                IsTransferAccountVisible="{Binding IsTransferAccountVisible}" />
 
             <!--  delete/clear/enter buttons  -->
             <Grid
@@ -152,7 +61,7 @@
                     BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
                                                       Dark={StaticResource PrimaryDark}}"
                     Command="{Binding EditTransactionCommand}"
-                    CommandParameter="{Binding Source={x:Reference entPayee}, Path=Text}"
+                    CommandParameter="{Binding Path=PayeeText, Source={x:Reference transactionForm}}"
                     HeightRequest="45"
                     Text="Update" />
             </Grid>

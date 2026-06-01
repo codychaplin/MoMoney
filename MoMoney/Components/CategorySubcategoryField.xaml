@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="MoMoney.Components.CategorySubcategoryField"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:MoMoney.Components"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+    x:DataType="components:CategorySubcategoryField"
+    x:Name="self">
+
+    <Grid x:Name="gridRoot" ColumnSpacing="5" RowSpacing="5">
+        <!--  Category  -->
+        <material:PickerField
+            x:Name="pckCategory"
+            Title="Category"
+            x:DataType="models:Category"
+            Icon="{FontImageSource FontFamily=MaterialRoundedFilled, Glyph={x:Static m:MaterialOutlined.Category}}"
+            IsEnabled="{Binding IsCategoryEnabled, Source={x:Reference self}}"
+            ItemDisplayBinding="{Binding CategoryName}"
+            ItemsSource="{Binding Categories, Source={x:Reference self}}"
+            SelectedItem="{Binding Category, Source={x:Reference self}, Mode=TwoWay}"
+            SelectedValueChangedCommand="{Binding CategoryChangedCommand, Source={x:Reference self}}" />
+
+        <!--  Subcategory  -->
+        <material:PickerField
+            x:Name="pckSubcategory"
+            Title="Subcategory"
+            x:DataType="models:Category"
+            Icon="{FontImageSource FontFamily=MaterialRoundedFilled, Glyph={x:Static m:MaterialOutlined.Category}}"
+            IsEnabled="{Binding IsSubcategoryEnabled, Source={x:Reference self}}"
+            ItemDisplayBinding="{Binding CategoryName}"
+            ItemsSource="{Binding Subcategories, Source={x:Reference self}}"
+            SelectedItem="{Binding Subcategory, Source={x:Reference self}, Mode=TwoWay}"
+            SelectedValueChangedCommand="{Binding SubcategoryChangedCommand, Source={x:Reference self}}" />
+    </Grid>
+
+</ContentView>

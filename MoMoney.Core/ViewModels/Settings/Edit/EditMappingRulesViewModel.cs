@@ -9,12 +9,9 @@ using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
-public partial class EditMappingRulesViewModel : ObservableObject
+public partial class EditMappingRulesViewModel : BaseCategoryViewModel
 {
     readonly IMappingRuleService mappingRuleService;
-    readonly ICategoryService categoryService;
-    readonly IAccountService accountService;
-    readonly ITransactionService transactionService;
     readonly ILoggerService<EditMappingRulesViewModel> logger;
 
     [ObservableProperty] string? selectedBankType;
@@ -23,25 +20,17 @@ public partial class EditMappingRulesViewModel : ObservableObject
     [ObservableProperty] ObservableCollection<MappingRule> mappingRules = [];
     [ObservableProperty] MappingRule? selectedMappingRule;
 
-    [ObservableProperty] ObservableCollection<Category> categories = [];
-    [ObservableProperty] Category? category;
-    [ObservableProperty] ObservableCollection<Category> subcategories = [];
-    [ObservableProperty] Category? subcategory;
-    [ObservableProperty] ObservableCollection<Account> accounts = [];
-    [ObservableProperty] Account? transferAccount;
     [ObservableProperty] bool isTransfer;
-    [ObservableProperty] ObservableCollection<string> payees = [];
-    [ObservableProperty] string payee = string.Empty;
     [ObservableProperty] bool isSkipRule = false;
 
     public EditMappingRulesViewModel(IMappingRuleService _mappingRuleService, ICategoryService _categoryService, IAccountService _accountService, ITransactionService _transactionService, ILoggerService<EditMappingRulesViewModel> _logger)
+        : base(_transactionService, _accountService, _categoryService)
     {
         mappingRuleService = _mappingRuleService;
-        categoryService = _categoryService;
-        accountService = _accountService;
-        transactionService = _transactionService;
         logger = _logger;
     }
+
+    protected override async Task LogError(string method, Exception ex) => await logger.LogError(method, ex);
 
     public async Task LoadData(string? bank = null)
     {
@@ -50,18 +39,9 @@ public partial class EditMappingRulesViewModel : ObservableObject
 
         try
         {
-            var categories = await categoryService.GetAllParentCategories();
-            Categories.Clear();
-            foreach (var category in categories)
-                Categories.Add(category);
-
-            var accounts = await accountService.GetActiveAccounts();
-            Accounts.Clear();
-            foreach (var account in accounts)
-                Accounts.Add(account);
-
-            var payees = await transactionService.GetPayeesFromTransactions();
-            Payees = new(payees);
+            await GetAllParentCategories();
+            await GetAccounts();
+            await GetPayees();
 
             var rules = await mappingRuleService.GetRules();
             allMappingRules = rules;
@@ -69,8 +49,7 @@ public partial class EditMappingRulesViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(LoadData), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await HandleError(nameof(LoadData), ex);
         }
     }
 
@@ -102,8 +81,7 @@ public partial class EditMappingRulesViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(SelectedBankTypeChanged), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await HandleError(nameof(SelectedBankTypeChanged), ex);
         }
     }
 
@@ -119,11 +97,8 @@ public partial class EditMappingRulesViewModel : ObservableObject
         }
 
         IsTransfer = Category.CategoryID == Constants.TRANSFER_ID;
-
-        var subcategories = await categoryService.GetSubcategories(Category);
-        Subcategories.Clear();
-        foreach (var subcategory in subcategories)
-            Subcategories.Add(subcategory);
+        
+        await GetSubcategories();
     }
 
     async partial void OnSelectedMappingRuleChanged(MappingRule? value)
@@ -174,7 +149,7 @@ public partial class EditMappingRulesViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(OnSelectedMappingRuleChanged), ex);
+            await LogError(nameof(OnSelectedMappingRuleChanged), ex);
         }
     }
 
@@ -213,8 +188,7 @@ public partial class EditMappingRulesViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(ClearRule), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await HandleError(nameof(ClearRule), ex);
         }
     }
 
@@ -260,8 +234,7 @@ public partial class EditMappingRulesViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(InsertOrReplaceRule), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await HandleError(nameof(InsertOrReplaceRule), ex);
         }
     }
 
@@ -288,8 +261,7 @@ public partial class EditMappingRulesViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(RemoveRule), ex);
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await HandleError(nameof(RemoveRule), ex);
         }
     }
 }
