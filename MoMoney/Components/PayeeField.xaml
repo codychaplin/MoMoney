@@ -13,6 +13,13 @@
 
     <Grid>
         <!--  Payee autocomplete  -->
+        <components:PayeeAutocompleteField
+            ItemsSource="{Binding Payees, Source={x:Reference self}}"
+            AllowClear="true"
+            Text="{Binding PayeeText, Source={x:Reference self}, Mode=TwoWay}"
+            IsEnabled="{Binding IsEnabled, Source={x:Reference self}}"
+            IsVisible="{Binding IsTransferAccountVisible, Source={x:Reference self}, Converter={StaticResource InverseBoolConverter}}" />
+        <!--  Payee autocomplete  
         <material:InputField
             IsEnabled="{Binding IsEnabled, Source={x:Reference self}}"
             IsVisible="{Binding IsTransferAccountVisible, Source={x:Reference self}, Converter={StaticResource InverseBoolConverter}}">
@@ -38,7 +45,7 @@
                     TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
                     TextSearchMode="Contains" />
             </Grid>
-        </material:InputField>
+        </material:InputField>-->
 
         <!--  Transfer Account picker  -->
         <material:PickerField

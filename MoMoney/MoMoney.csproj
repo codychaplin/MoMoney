@@ -113,6 +113,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Components\TransactionFormView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Components\PayeeField.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Components\CategorySubcategoryField.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Components\AlignedButton.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
