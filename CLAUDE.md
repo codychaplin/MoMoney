@@ -65,7 +65,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Key Dependencies
 
 - **MAUI**: Microsoft.Maui.Controls
-- **UI Components**: Syncfusion.Maui (Inputs, Sliders, Toolkit), UraniumUI.Material
+- **UI Components**: Syncfusion.Maui.Toolkit, UraniumUI.Material
 - **MVVM**: CommunityToolkit.Mvvm (source-gen ObservableProperty)
 - **Database**: sqlite-net-base + SQLite3MC (encryption)
 - **AI**: Azure.AI.OpenAI
@@ -109,7 +109,6 @@ dotnet test MoMoney.Tests/MoMoney.Tests.csproj --filter "AccountServiceTests"
 
 ### Secrets & Configuration
 
-- **Syncfusion License**: Must be declared in `Secret.cs` as `SfLicenseKey` (not in repo, managed per developer)
 - **Firebase**: Configured via `google-services.json` (Android-specific, not in repo)
 - **Database Encryption Key**: Auto-generated on first launch, stored in `SecureStorage`
 - **OpenAI API Key**: Expected to be set via Secret.cs; used by `OpenAIService`

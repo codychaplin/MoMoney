@@ -19,33 +19,6 @@
             Text="{Binding PayeeText, Source={x:Reference self}, Mode=TwoWay}"
             IsEnabled="{Binding IsEnabled, Source={x:Reference self}}"
             IsVisible="{Binding IsTransferAccountVisible, Source={x:Reference self}, Converter={StaticResource InverseBoolConverter}}" />
-        <!--  Payee autocomplete  
-        <material:InputField
-            IsEnabled="{Binding IsEnabled, Source={x:Reference self}}"
-            IsVisible="{Binding IsTransferAccountVisible, Source={x:Reference self}, Converter={StaticResource InverseBoolConverter}}">
-            <Grid
-                Margin="11,3,0,0"
-                ColumnDefinitions="16,*"
-                ColumnSpacing="2">
-                <Image Source="{FontImageSource FontFamily=MaterialRoundedFilled, Glyph={x:Static m:MaterialOutlined.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
-                <input:SfAutocomplete
-                    Grid.Column="1"
-                    BackgroundColor="Transparent"
-                    ClearButtonIconColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                    DropDownBackground="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}"
-                    DropDownItemTextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                    IsClearButtonVisible="{Binding PayeeText.Length, Source={x:Reference self}}"
-                    ItemsSource="{Binding Payees, Source={x:Reference self}}"
-                    MaxDropDownHeight="250"
-                    Placeholder="Payee"
-                    PlaceholderColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}"
-                    SelectionTextHighlightColor="#7742ba96"
-                    Stroke="Transparent"
-                    Text="{Binding PayeeText, Source={x:Reference self}, Mode=TwoWay}"
-                    TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                    TextSearchMode="Contains" />
-            </Grid>
-        </material:InputField>-->
 
         <!--  Transfer Account picker  -->
         <material:PickerField

@@ -90,8 +90,7 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="sqlite-net-base" Version="1.11.272-beta" />
 		<PackageReference Include="SQLite3MC.PCLRaw.bundle" Version="2.3.4" />
-		<PackageReference Include="Syncfusion.Maui.Inputs" Version="33.1.49" />
-		<PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.9" />
+		<PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.10" />
 		<PackageReference Include="UraniumUI.Icons.MaterialSymbols" Version="2.15.0" />
 		<PackageReference Include="UraniumUI.Material" Version="2.15.0" />
 		<PackageReference Include="Xamarin.AndroidX.Preference" Version="1.2.1.17" />

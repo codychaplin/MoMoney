@@ -1,7 +1,6 @@
 ﻿using Microsoft.Maui.LifecycleEvents;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
-using Syncfusion.Maui.Core.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
 using UraniumUI;
 using MoMoney.Views;
@@ -25,7 +24,6 @@ public static class MauiProgram
 	{
 		var builder = MauiApp.CreateBuilder();
         builder.UseMauiApp<App>()
-               .ConfigureSyncfusionCore()
                .ConfigureSyncfusionToolkit()
                .RegisterPages()
                .RegisterViewModels()

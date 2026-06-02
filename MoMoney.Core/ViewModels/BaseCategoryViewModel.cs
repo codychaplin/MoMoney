@@ -21,6 +21,7 @@ public abstract partial class BaseCategoryViewModel : ObservableObject
     [ObservableProperty] Category? subcategory;
     [ObservableProperty] Account? transferAccount;
     [ObservableProperty] string payee = string.Empty;
+    async partial void OnPayeeChanged(string value) => await OnPayeeChangedCore(value);
 
     protected BaseCategoryViewModel(ITransactionService transactionService, IAccountService accountService, ICategoryService categoryService)
     {
@@ -28,6 +29,8 @@ public abstract partial class BaseCategoryViewModel : ObservableObject
         this.accountService = accountService;
         this.categoryService = categoryService;
     }
+    
+    protected virtual Task OnPayeeChangedCore(string value) => Task.CompletedTask;
 
     protected virtual async Task GetAccounts()
     {

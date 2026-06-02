@@ -21,7 +21,7 @@
             <!--  title  -->
             <toolkit:Expander.Header>
                 <components:PageHeader
-                    Title="Transactions"
+                    Title="{Binding PageTitle}"
                     ImageSource="{FontImageSource FontFamily=MaterialRoundedFilled,
                                                   Color={AppThemeBinding Light={StaticResource Black},
                                                                          Dark={StaticResource White}},
@@ -82,6 +82,7 @@
                     Grid.Row="4"
                     Grid.ColumnSpan="2"
                     PayeeText="{Binding Payee, Mode=TwoWay}"
+                    IsTransferAccountVisible="False"
                     Payees="{Binding Payees}" />
             </Grid>
         </toolkit:Expander>

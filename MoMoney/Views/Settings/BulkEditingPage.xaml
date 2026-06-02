@@ -3,10 +3,8 @@
     x:Class="MoMoney.Views.Settings.BulkEditingPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:converters="clr-namespace:MoMoney.Converters"
-    xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+    xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-    xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
     Title="Bulk Editing"
     x:DataType="viewmodels:BulkEditingViewModel">
@@ -46,66 +44,24 @@
                     VerticalTextAlignment="Center" />
             </Border>
 
-            <!--  find account picker  -->
-            <material:PickerField
-                x:Name="PckFindAccount"
-                Title="Account"
-                Grid.ColumnSpan="2"
-                x:DataType="models:Account"
-                ItemDisplayBinding="{Binding AccountName}"
-                ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                SelectedItem="{Binding Path=FindAccount, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                Style="{StaticResource OddPicker}" />
+            <!--  find account  -->
+            <components:AccountField
+                Style="{StaticResource OddPicker}"
+                ItemsSource="{Binding Accounts}"
+                SelectedItem="{Binding FindAccount, Mode=TwoWay}" />
 
-            <!--  find category picker  -->
-            <material:PickerField
-                x:Name="PckFindCategory"
-                Title="Category"
-                x:DataType="models:Category"
-                ItemDisplayBinding="{Binding CategoryName}"
-                ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                SelectedItem="{Binding Path=FindCategory, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                Style="{StaticResource EvenPicker}" />
+            <!--  find category / subcategory  -->
+            <components:CategorySubcategoryField
+                Categories="{Binding Categories}"
+                Category="{Binding FindCategory, Mode=TwoWay}"
+                CategoryChangedCommand="{Binding FindCategoryChangedCommand}"
+                Subcategories="{Binding FindSubcategories}"
+                Subcategory="{Binding FindSubcategory, Mode=TwoWay}" />
 
-            <!--  find subcategory picker  -->
-            <material:PickerField
-                Title="Subcategory"
-                x:DataType="models:Category"
-                ItemDisplayBinding="{Binding CategoryName}"
-                ItemsSource="{Binding Path=FindSubcategories, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                SelectedItem="{Binding Path=FindSubcategory, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                Style="{StaticResource OddPicker}" />
-
-            <material:InputField x:Name="entPayeeParent">
-                <input:SfAutocomplete
-                    x:Name="FindPayee"
-                    Margin="10,5,0,0"
-                    BackgroundColor="Transparent"
-                    ClearButtonIconColor="{AppThemeBinding Light={StaticResource Black},
-                                                           Dark={StaticResource White}}"
-                    DropDownBackground="{AppThemeBinding Light={StaticResource White},
-                                                         Dark={StaticResource Gray950}}"
-                    DropDownItemTextColor="{AppThemeBinding Light={StaticResource Black},
-                                                            Dark={StaticResource White}}"
-                    IsClearButtonVisible="{Binding FindPayee.Length}"
-                    ItemsSource="{Binding Payees}"
-                    MaxDropDownHeight="250"
-                    Placeholder="Payee"
-                    PlaceholderColor="{AppThemeBinding Light={StaticResource Gray600},
-                                                       Dark={StaticResource Gray200}}"
-                    SelectedItem="{Binding FindPayee}"
-                    SelectionTextHighlightColor="#7742ba96"
-                    Stroke="Transparent"
-                    TextColor="{AppThemeBinding Light={StaticResource Black},
-                                                Dark={StaticResource White}}"
-                    TextSearchMode="Contains" />
-            </material:InputField>
-            <!--  find payee search bar
-            <material:AutoCompleteTextField
-                x:Name="FindPayee"
-                Title="Payee"
-                ItemsSource="{Binding Payees}"
-                SelectedText="{Binding FindPayee}" />-->
+            <!--  find payee  -->
+            <components:PayeeField
+                PayeeText="{Binding FindPayee, Mode=TwoWay}"
+                Payees="{Binding Payees}" />
         </VerticalStackLayout>
 
         <!--  replace values  -->
@@ -120,39 +76,22 @@
                     VerticalTextAlignment="Center" />
             </Border>
 
-            <!--  replace account picker  -->
-            <material:PickerField
-                x:Name="PckReplaceAccount"
-                Title="Account"
-                Grid.ColumnSpan="2"
-                x:DataType="models:Account"
-                ItemDisplayBinding="{Binding AccountName}"
-                ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                SelectedItem="{Binding Path=ReplaceAccount, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                Style="{StaticResource OddPicker}" />
+            <!--  replace account  -->
+            <components:AccountField
+                Style="{StaticResource OddPicker}"
+                ItemsSource="{Binding Accounts}"
+                SelectedItem="{Binding ReplaceAccount, Mode=TwoWay}" />
 
-            <!--  replace category picker  -->
-            <material:PickerField
-                x:Name="PckReplaceCategory"
-                Title="Category"
-                x:DataType="models:Category"
-                ItemDisplayBinding="{Binding CategoryName}"
-                ItemsSource="{Binding Path=Categories, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                SelectedItem="{Binding Path=ReplaceCategory, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                Style="{StaticResource EvenPicker}" />
+            <!--  replace category / subcategory  -->
+            <components:CategorySubcategoryField
+                Categories="{Binding Categories}"
+                Category="{Binding ReplaceCategory, Mode=TwoWay}"
+                CategoryChangedCommand="{Binding ReplaceCategoryChangedCommand}"
+                Subcategories="{Binding ReplaceSubcategories}"
+                Subcategory="{Binding ReplaceSubcategory, Mode=TwoWay}" />
 
-            <!--  replace subcategory picker  -->
-            <material:PickerField
-                Title="Subcategory"
-                x:DataType="models:Category"
-                ItemDisplayBinding="{Binding CategoryName}"
-                ItemsSource="{Binding Path=ReplaceSubcategories, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                SelectedItem="{Binding Path=Replaceubcategory, Source={RelativeSource AncestorType={x:Type viewmodels:BulkEditingViewModel}}}"
-                Style="{StaticResource OddPicker}" />
-
-            <!--  replace payee search bar  -->
+            <!--  replace payee  -->
             <material:TextField
-                x:Name="ReplacePayee"
                 Title="Payee"
                 Style="{StaticResource EvenPicker}"
                 Text="{Binding ReplacePayee}" />

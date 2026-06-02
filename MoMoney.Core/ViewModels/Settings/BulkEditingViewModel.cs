@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using UraniumUI.Material.Controls;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
@@ -19,11 +18,15 @@ public partial class BulkEditingViewModel : ObservableObject
 
     [ObservableProperty] ObservableCollection<Account> accounts = [];
     [ObservableProperty] Account? findAccount;
+    partial void OnFindAccountChanged(Account? value) { if (value == null) Clear(); }
     [ObservableProperty] Account? replaceAccount;
+    partial void OnReplaceAccountChanged(Account? value) { if (value == null) Clear(); }
 
     [ObservableProperty] ObservableCollection<Category> categories = [];
     [ObservableProperty] Category? findCategory;
+    partial void OnFindCategoryChanged(Category? value) { if (value == null) Clear(); }
     [ObservableProperty] Category? replaceCategory;
+    partial void OnReplaceCategoryChanged(Category? value) { if (value == null) Clear(); }
 
     [ObservableProperty] ObservableCollection<Category> findSubcategories = [];
     [ObservableProperty] ObservableCollection<Category> replaceSubcategories = [];
@@ -32,7 +35,9 @@ public partial class BulkEditingViewModel : ObservableObject
 
     [ObservableProperty] ObservableCollection<string> payees = [];
     [ObservableProperty] string? findPayee;
+    async partial void OnFindPayeeChanged(string? value) { if (value == null) Clear(); }
     [ObservableProperty] string? replacePayee;
+    partial void OnReplacePayeeChanged(string? value) { if (value == null) Clear(); }
     [ObservableProperty] string info = string.Empty;
 
     List<Transaction> FoundTransactions { get; set; } = [];
@@ -124,70 +129,42 @@ public partial class BulkEditingViewModel : ObservableObject
         }
     }
 
-    /// <summary>
-    /// Gets subcategories from database and refreshes FindSubcategories collection.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="newValue"></param>
-    public async void GetFindSubcategories(object? sender, object newValue)
+    [RelayCommand]
+    async Task FindCategoryChanged()
     {
+        FindSubcategories.Clear();
+        FindSubcategory = null;
+        if (FindCategory is null)
+            return;
         try
         {
-            FindSubcategories.Clear();
-            FindSubcategory = null;
-
-            // event might fire before SelectedItem updates in vm
-            if (FindCategory is null)
-            {
-                if (sender is not Picker pckCategories)
-                    return;
-                var category = pckCategories.SelectedItem as Category;
-                FindCategory = category;
-                if (FindCategory is null)
-                    return;
-            }
-
             var subcategories = await categoryService.GetSubcategories(FindCategory);
             foreach (var subcategory in subcategories)
                 FindSubcategories.Add(subcategory);
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(GetFindSubcategories), ex);
+            await logger.LogError(nameof(FindCategoryChanged), ex);
             await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
-    /// <summary>
-    /// Gets subcategories from database and refreshes ReplaceSubcategories collection.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="newValue"></param>
-    public async void GetReplaceSubcategories(object? sender, object newValue)
+    [RelayCommand]
+    async Task ReplaceCategoryChanged()
     {
+        ReplaceSubcategories.Clear();
+        ReplaceSubcategory = null;
+        if (ReplaceCategory is null)
+            return;
         try
         {
-            ReplaceSubcategories.Clear();
-            ReplaceSubcategory = null;
-
-            // event might fire before SelectedItem updates in vm
-            if (ReplaceCategory is null)
-            {
-                if (sender is not Picker pckCategories)
-                    return;
-                var category = pckCategories.SelectedItem as Category;
-                ReplaceCategory = category;
-                if (ReplaceCategory is null)
-                    return;
-            }
-
             var subcategories = await categoryService.GetSubcategories(ReplaceCategory);
             foreach (var subcategory in subcategories)
                 ReplaceSubcategories.Add(subcategory);
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(GetReplaceSubcategories), ex);
+            await logger.LogError(nameof(ReplaceCategoryChanged), ex);
             await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }

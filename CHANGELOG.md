@@ -8,6 +8,7 @@
 * Gracefully try to edit opposite side of transfers
 * Add easy date pickers to home page
 * Consolidated transaction view/editing logic
+* Removed Syncfusion license dependency
 
 ### Fixes
 

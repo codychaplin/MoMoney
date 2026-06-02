@@ -2,12 +2,12 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:components="clr-namespace:MoMoney.Components"
              x:Class="MoMoney.Views.ImportStatementPage"
              xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
              x:DataType="viewmodel:ImportStatementViewModel"
              xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
-             xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              xmlns:converters="clr-namespace:MoMoney.Converters"
              Title="Import Statement">
     <ScrollView>
@@ -175,80 +175,26 @@
                         IsEnabled="False" />
                 </Grid>
 
-                <Grid ColumnDefinitions="*,*" RowDefinitions="*,*,*" RowSpacing="5" ColumnSpacing="5" IsVisible="{Binding FilteredRecords.Count}">
-                    <!--  Category  -->
-                    <material:PickerField
-                        Title="Category"
-                        IsEnabled="{Binding SelectedRecord.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
-                        x:DataType="models:Category"
-                        Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Category}}"
-                        ItemDisplayBinding="{Binding CategoryName}"
-                        ItemsSource="{Binding Categories, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
-                        SelectedItem="{Binding Category, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
-                        SelectedValueChangedCommand="{Binding CategoryChangedCommand, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}" />
+                <VerticalStackLayout IsVisible="{Binding FilteredRecords.Count}" Spacing="5">
+                    <components:CategorySubcategoryField
+                        Categories="{Binding Categories}"
+                        Category="{Binding Category, Mode=TwoWay}"
+                        CategoryChangedCommand="{Binding CategoryChangedCommand}"
+                        IsCategoryEnabled="{Binding SelectedRecord.CanEdit}"
+                        IsSubcategoryEnabled="{Binding SelectedRecord.CanEdit}"
+                        Orientation="Horizontal"
+                        Subcategories="{Binding Subcategories}"
+                        Subcategory="{Binding Subcategory, Mode=TwoWay}" />
 
-                    <!--  Subcategory  -->
-                    <material:PickerField
-                        Grid.Column="1"
-                        Title="Subcategory"
-                        IsEnabled="{Binding SelectedRecord.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
-                        x:DataType="models:Category"
-                        Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Category}}"
-                        ItemDisplayBinding="{Binding CategoryName}"
-                        ItemsSource="{Binding Subcategories, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
-                        SelectedItem="{Binding Subcategory, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}" />
-                    
-                    <!--  Payee  -->
-                    <material:InputField
-                        Grid.Row="1"
-                        Grid.ColumnSpan="2"
-                        x:Name="entPayeeParent"
-                        IsVisible="{Binding SelectedRecord.IsTransfer, Converter={StaticResource InverseBoolConverter}}"
-                        IsEnabled="{Binding Path=SelectedRecord.CanEdit}">
-                        <Grid
-                            Margin="11,3,0,0"
-                            ColumnDefinitions="20,*"
-                            ColumnSpacing="2">
-                            <Image Source="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Account_circle}, Color={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
-                            <input:SfAutocomplete
-                                x:Name="entPayee"
-                                Grid.Column="1"
-                                BackgroundColor="Transparent"
-                                ClearButtonIconColor="{AppThemeBinding Light={StaticResource Black},
-                                                                    Dark={StaticResource White}}"
-                                DropDownBackground="{AppThemeBinding Light={StaticResource White},
-                                                                    Dark={StaticResource Gray950}}"
-                                DropDownItemTextColor="{AppThemeBinding Light={StaticResource Black},
-                                                                        Dark={StaticResource White}}"
-                                IsClearButtonVisible="{Binding Payee.Length}"
-                                ItemsSource="{Binding Payees}"
-                                MaxDropDownHeight="250"
-                                Placeholder="Payee"
-                                PlaceholderColor="{AppThemeBinding Light={StaticResource Gray600},
-                                                                Dark={StaticResource Gray200}}"
-                                SelectionTextHighlightColor="#7742ba96"
-                                Stroke="Transparent"
-                                Text="{Binding Payee, Mode=TwoWay}"
-                                TextColor="{AppThemeBinding Light={StaticResource Black},
-                                                            Dark={StaticResource White}}"
-                                TextSearchMode="Contains" />
-                        </Grid>
-                    </material:InputField>
+                    <components:PayeeField
+                        IsEnabled="{Binding SelectedRecord.CanEdit}"
+                        Accounts="{Binding Accounts}"
+                        IsTransferAccountVisible="{Binding SelectedRecord.IsTransfer}"
+                        PayeeText="{Binding Payee, Mode=TwoWay}"
+                        Payees="{Binding Payees}"
+                        TransferAccount="{Binding TransferAccount, Mode=TwoWay}" />
 
-                    <!--  Transfer Account -->
-                    <material:PickerField
-                        Grid.Row="1"
-                        Grid.ColumnSpan="2"
-                        Title="Transfer Account"
-                        x:DataType="models:Account"
-                        Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Account_circle}}"
-                        IsEnabled="{Binding Path=SelectedRecord.CanEdit, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
-                        IsVisible="{Binding SelectedRecord.IsTransfer, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
-                        ItemDisplayBinding="{Binding AccountName}"
-                        ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
-                        SelectedItem="{Binding Path=TransferAccount, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}" />
-
-                    <Grid Grid.Row="2" Grid.ColumnSpan="2" ColumnDefinitions="*,*,*" ColumnSpacing="10" Margin="0,5,0,0">
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" Margin="0,5,0,0">
                         <!--  Edit button  -->
                         <HorizontalStackLayout>
                             <Label FontSize="16" Text="Manual Edit" VerticalOptions="Center" />
@@ -273,7 +219,7 @@
                             IsEnabled="{Binding SelectedRecord.CanEdit}"
                             Command="{Binding ApproveTransactionCommand}" />
                     </Grid>
-                </Grid>
+                </VerticalStackLayout>
 
                 <BoxView Style="{StaticResource separator}"/>
 

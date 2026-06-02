@@ -19,7 +19,6 @@ Works on Android 10.0 and later.
 
 ## How to Use
 * Accounts and categories are needed before transactions are added
-* Must have a Syncfusion license key declared in `Secret.cs` called `SfLicenseKey`
 * See below for import formats
 
 ## How to Import Data

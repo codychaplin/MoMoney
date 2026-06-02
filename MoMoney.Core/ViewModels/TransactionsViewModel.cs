@@ -9,14 +9,25 @@ namespace MoMoney.Core.ViewModels;
 
 public partial class TransactionsViewModel : BaseCategoryViewModel
 {
+    enum FilterType
+    {
+        AmountStart,
+        AmountEnd,
+        Payee
+    }
+
     readonly ILoggerService<TransactionsViewModel> logger;
 
     [ObservableProperty] ObservableCollection<Transaction> loadedTransactions = [];
 
+    public string PageTitle => $"Transactions - {LoadedTransactions.Count}/{Transactions.Count}";
+
+    void NotifyPageTitle() => OnPropertyChanged(nameof(PageTitle));
+
     [ObservableProperty] decimal? amountRangeStart = null;
-    async partial void OnAmountRangeStartChanged(decimal? value) => await UpdateFilterDebounced(true, value);
+    async partial void OnAmountRangeStartChanged(decimal? value) => await UpdateFilterDebounced(FilterType.AmountStart, value);
     [ObservableProperty] decimal? amountRangeEnd = null;
-    async partial void OnAmountRangeEndChanged(decimal? value) => await UpdateFilterDebounced(false, value);
+    async partial void OnAmountRangeEndChanged(decimal? value) => await UpdateFilterDebounced(FilterType.AmountEnd, value);
 
     CancellationTokenSource amountDebounce = new();
 
@@ -24,6 +35,8 @@ public partial class TransactionsViewModel : BaseCategoryViewModel
     async partial void OnFromChanged(DateTime value) => await UpdateFilter();
     [ObservableProperty] DateTime to;
     async partial void OnToChanged(DateTime value) => await UpdateFilter();
+
+    protected override async Task OnPayeeChangedCore(string value) => await UpdateFilterDebounced(FilterType.Payee, value);
 
     List<Transaction> Transactions = [];
 
@@ -77,19 +90,18 @@ public partial class TransactionsViewModel : BaseCategoryViewModel
             default:
                 break;
         }
+
+        await UpdateFilter();
+        NotifyPageTitle();
     }
 
     /// <summary>
-    /// Adds new Transaction to [Loaded]Transactions list.
+    /// Handles transaction create event: Add payee to list if new.
     /// </summary>
-    /// <param name="e"></param>
     void Create(TransactionEventArgs e)
     {
         if (e.Transaction is null)
             return;
-
-        Transactions.Insert(0, e.Transaction);
-        LoadedTransactions.Insert(0, e.Transaction);
 
         // add payee if new (transfers don't have a payee)
         string payee = e.Transaction.Payee;
@@ -98,25 +110,17 @@ public partial class TransactionsViewModel : BaseCategoryViewModel
     }
 
     /// <summary>
-    /// Get transactions from db, if count has changed, refresh Transactions collection.
+    /// Handles read event: Gets transactions from db and refresh payees.
     /// </summary>
     async Task Read()
     {
         var transactions = await transactionService.GetTransactionsFromTo(From, To);
-        if (transactions.Count != Transactions.Count)
-        {
-            // update transactions
-            Transactions.Clear();
-            Transactions = new(transactions);
-            LoadedTransactions.Clear();
-            await LoadMoreItems();
 
-            // update payees
-            var payees = transactions.Select(t => t.Payee).Distinct();
-            Payees.Clear();
-            foreach (var payee in payees)
-                Payees.Add(payee);
-        }
+        var payees = transactions.Select(t => t.Payee).Distinct();
+        Payees.Clear();
+        foreach (var payee in payees)
+            Payees.Add(payee);
+
         if (showValue != Utilities.ShowValue)
         {
             // workaround for triggering converter
@@ -129,56 +133,31 @@ public partial class TransactionsViewModel : BaseCategoryViewModel
     }
 
     /// <summary>
-    /// Finds transaction via ID and update values.
+    /// Handles update event: Updates Payees list if payee changed.
     /// </summary>
-    /// <param name="e"></param>
     void Update(TransactionEventArgs e)
     {
         if (e.Transaction is null)
             return;
 
         Transaction transaction = e.Transaction;
-        foreach (var trans in Transactions.Where(t => t.TransactionID == transaction.TransactionID))
+        var existing = Transactions.FirstOrDefault(t => t.TransactionID == transaction.TransactionID);
+        if (existing is not null && existing.Payee != transaction.Payee)
         {
-            // if payee has changed, update in Payees
-            if (trans.Payee != transaction.Payee)
-            {
-                Payees.Remove(trans.Payee);
+            Payees.Remove(existing.Payee);
+            if (!string.IsNullOrEmpty(transaction.Payee) && !Payees.Contains(transaction.Payee))
                 Payees.Add(transaction.Payee);
-            }
-
-            trans.Date = transaction.Date;
-            trans.AccountID = transaction.AccountID;
-            trans.Amount = transaction.Amount;
-            trans.CategoryID = transaction.CategoryID;
-            trans.SubcategoryID = transaction.SubcategoryID;
-            trans.Payee = transaction.Payee;
-            trans.TransferID = transaction.TransferID;
-        }
-        foreach (var trans in LoadedTransactions.Where(t => t.TransactionID == transaction.TransactionID))
-        {
-            trans.Date = transaction.Date;
-            trans.AccountID = transaction.AccountID;
-            trans.Amount = transaction.Amount;
-            trans.CategoryID = transaction.CategoryID;
-            trans.SubcategoryID = transaction.SubcategoryID;
-            trans.Payee = transaction.Payee;
-            trans.TransferID = transaction.TransferID;
         }
     }
 
     /// <summary>
-    /// Removes transaction from collection.
+    /// Handles delete event: Currently does nothing.
     /// </summary>
     /// <param name="e"></param>
     void Delete(TransactionEventArgs e)
     {
-        Transaction? trans = Transactions.FirstOrDefault(t => t.TransactionID == e.Transaction?.TransactionID);
-        if (trans is not null)
-        {
-            Transactions.Remove(trans);
-            LoadedTransactions.Remove(trans);
-        }
+        if (e.Transaction is null)
+            return;
     }
 
     [RelayCommand]
@@ -213,9 +192,9 @@ public partial class TransactionsViewModel : BaseCategoryViewModel
     /// <summary>
     /// Updates Transactions Filter after debounce.
     /// </summary>
-    /// <param name="isStart"></param>
+    /// <param name="type"></param>
     /// <param name="newValue"></param>
-    async Task UpdateFilterDebounced(bool isStart, decimal? newValue)
+    async Task UpdateFilterDebounced(FilterType type, object? newValue)
     {
         amountDebounce.Cancel();
         amountDebounce = new();
@@ -223,23 +202,28 @@ public partial class TransactionsViewModel : BaseCategoryViewModel
         try
         {
             await Task.Delay(600, token);
-            if (isStart)
+            if (type == FilterType.AmountStart && newValue is decimal startValue)
             {
-                if (newValue is not null && newValue > AmountRangeEnd)
+                if (newValue is not null && startValue > AmountRangeEnd)
                 {
                     AmountRangeStart = null;
                     await Utilities.DisplayToast("Start amount must be less than the end amount.");
                     return;
                 }
             }
-            else
+            else if (type == FilterType.AmountEnd && newValue is decimal endValue)
             {
-                if (newValue is not null && newValue < AmountRangeStart)
+                if (newValue is not null && endValue < AmountRangeStart)
                 {
                     AmountRangeEnd = null;
                     await Utilities.DisplayToast("End amount must be greater than the start amount.");
                     return;
                 }
+            }
+            else if (type == FilterType.Payee && newValue is string payeeValue)
+            {
+                if (!string.IsNullOrEmpty(payeeValue) && !Payees.Contains(payeeValue))
+                    return;
             }
             await UpdateFilter();
         }
@@ -259,5 +243,6 @@ public partial class TransactionsViewModel : BaseCategoryViewModel
         var transactions = Transactions.Skip(index).Take(count);
         foreach (var transaction in transactions)
             LoadedTransactions.Add(transaction);
+        NotifyPageTitle();
     }
 }
