@@ -22,9 +22,9 @@ public partial class Stock : ObservableObject
     [CsvHelper.Configuration.Attributes.Ignore]
     public string FullName => $"{Symbol}:{Market}";
     [CsvHelper.Configuration.Attributes.Ignore]
-    public decimal MarketValue => MarketPrice ?? 0 * Quantity ?? 0;
+    public decimal MarketValue => (MarketPrice ?? 0) * (Quantity ?? 0);
     [CsvHelper.Configuration.Attributes.Ignore]
-    public decimal BookValue => Quantity ?? 0 * Cost ?? 0;
+    public decimal BookValue => (Quantity ?? 0) * (Cost ?? 0);
     [CsvHelper.Configuration.Attributes.Ignore]
     public decimal Change => MarketValue - BookValue;
     [CsvHelper.Configuration.Attributes.Ignore]

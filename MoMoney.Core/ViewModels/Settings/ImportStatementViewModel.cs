@@ -103,12 +103,14 @@ public partial class ImportStatementViewModel : BaseCategoryViewModel
             var result = await Shell.Current.DisplayAlertAsync("Clear", "Are you sure you want to clear the data?", "Yes", "No");
             if (!result)
                 return;
+            FileUploaded = false;
+            Account = null;
+            SelectedBankType = null;
         }
-
+        
         uploadedRecords.Clear();
         SelectedRecord = null;
         SelectedTransactionIndex = -1;
-        FileUploaded = false;
         IsCommitButtonEnabled = false;
         ProgressText = string.Empty;
         ShowVerified = false;
@@ -464,6 +466,9 @@ public partial class ImportStatementViewModel : BaseCategoryViewModel
 
         SelectedRecord.Status = ImportStatus.ManuallyApproved;
         SelectedRecord.CanEdit = false;
+
+        IncrementTransaction();
+        
         UpdateProgress();
     }
 
@@ -475,10 +480,13 @@ public partial class ImportStatementViewModel : BaseCategoryViewModel
 
         SelectedRecord.Status = ImportStatus.ManuallySkipped;
         SelectedRecord.CanEdit = false;
+
+        IncrementTransaction();
+
         UpdateProgress();
     }
 
-    void UpdateProgressText(int value) =>ProgressText = FilteredRecords.Count > 0 ? $"{value + 1}/{FilteredRecords.Count}" : "";
+    void UpdateProgressText(int value) => ProgressText = FilteredRecords.Count > 0 ? $"{value + 1}/{FilteredRecords.Count}" : "";
 
     void UpdateProgress()
     {

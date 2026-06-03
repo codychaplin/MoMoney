@@ -34,6 +34,9 @@ public abstract partial class BaseCategoryViewModel : ObservableObject
 
     protected virtual async Task GetAccounts()
     {
+        if (Accounts.Any())
+            return;
+
         var accounts = await accountService.GetActiveAccounts();
         Accounts.Clear();
         foreach (var account in accounts)

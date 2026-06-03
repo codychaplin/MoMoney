@@ -74,10 +74,13 @@
                     Grid.Row="1"
                     Grid.Column="1"
                     Text="Clear"
-                    IsEnabled="{Binding FileUploaded}"
                     BackgroundColor="{AppThemeBinding Light={StaticResource LightRed},
                                                     Dark={StaticResource Red}}"
-                    Command="{Binding ClearCommand}" />
+                    Command="{Binding ClearCommand}">
+                    <Button.CommandParameter>
+                        <x:Boolean>True</x:Boolean>
+                    </Button.CommandParameter>
+            </Button>
             </Grid>
 
             <VerticalStackLayout IsVisible="{Binding FileUploaded}" Spacing="5">
