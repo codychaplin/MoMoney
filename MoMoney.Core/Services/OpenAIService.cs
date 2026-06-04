@@ -2,7 +2,6 @@
 using System.ClientModel;
 using OpenAI;
 using OpenAI.Chat;
-using OpenAI.Audio;
 using System.Text.Json.Schema;
 using MoMoney.Core.Data;
 using MoMoney.Core.Models;
@@ -23,7 +22,7 @@ public class OpenAIService : IOpenAIService
     readonly ILoggerService<OpenAIService> logger;
     
     readonly ChatClient chatClient;
-    readonly AudioClient audioClient;
+    readonly HttpClient httpClient;
 
     readonly string _jsonSchema;
 
@@ -38,12 +37,18 @@ public class OpenAIService : IOpenAIService
         transactionService = _transactionService;
         logger = _logger;
 
-        var openAIClient = new OpenAIClient(Secret.OpenAIAPIKey);
-        chatClient = openAIClient.GetChatClient(Constants.CHAT_MODEL);
-        audioClient = openAIClient.GetAudioClient(Constants.AUDIO_MODEL);
+        var creds = new ApiKeyCredential(Secret.OpenRouterAPIKey);
+        var options = new OpenAIClientOptions() { Endpoint = new Uri("https://openrouter.ai/api/v1") };
+        chatClient = new(
+            model: Constants.CHAT_MODEL,
+            credential: creds,
+            options: options
+        );
+        httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {Secret.OpenRouterAPIKey}");
 
-        JsonSerializerOptions options = JsonSerializerOptions.Default;
-        JsonNode schema = options.GetJsonSchemaAsNode(typeof(TransactionResponse));
+        JsonSerializerOptions jsonOptions = JsonSerializerOptions.Default;
+        JsonNode schema = jsonOptions.GetJsonSchemaAsNode(typeof(TransactionResponse));
         _jsonSchema = schema.ToString();
     }
 
@@ -65,11 +70,11 @@ public class OpenAIService : IOpenAIService
             }
 
             // transcribe the audio
-            var audioTranscription = await CallWhisper(audioData);
-            var whisperResponse = new WhisperResponse((decimal)audioTranscription.Value.Duration!.Value.TotalMinutes, audioTranscription.Value.Text);
+            var (transcribedText, durationMinutes) = await CallWhisper(audioData);
+            var whisperResponse = new WhisperResponse(durationMinutes, transcribedText);
 
             // map the transcription to a transaction
-            var chatCompletion = await CallChat(type, audioTranscription.Value.Text);
+            var chatCompletion = await CallChat(type, transcribedText);
             var chatResponse = new ChatResponse(chatCompletion.Value.Content[0].Text, chatCompletion.Value.Usage.InputTokenCount, chatCompletion.Value.Usage.OutputTokenCount);
 
             // total cost in cents
@@ -121,13 +126,25 @@ public class OpenAIService : IOpenAIService
     /// </summary>
     /// <param name="audioData"></param>
     /// <returns>AudioTransaction response</returns>
-    async Task<ClientResult<AudioTranscription>> CallWhisper(BinaryData audioData)
+    async Task<(string Text, decimal DurationMinutes)> CallWhisper(BinaryData audioData)
     {
-        return await audioClient.TranscribeAudioAsync(audioData.ToStream(), Constants.AUDIO_FILE_NAME, new AudioTranscriptionOptions()
+        string base64Audio = Convert.ToBase64String(audioData.ToArray());
+        string format = Path.GetExtension(Constants.AUDIO_FILE_NAME).TrimStart('.');
+
+        var payload = new
         {
-            ResponseFormat = AudioTranscriptionFormat.Verbose,
-            Language = "en"
-        });
+            model = Constants.AUDIO_MODEL,
+            input_audio = new { data = base64Audio, format }
+        };
+
+        var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+        var response = await httpClient.PostAsync("https://openrouter.ai/api/v1/audio/transcriptions", content);
+        response.EnsureSuccessStatusCode();
+
+        var json = JsonNode.Parse(await response.Content.ReadAsStringAsync());
+        string text = json?["text"]?.GetValue<string>() ?? "";
+        decimal durationSeconds = json?["usage"]?["seconds"]?.GetValue<decimal>() ?? 0;
+        return (text, durationSeconds / 60);
     }
 
     /// <summary>

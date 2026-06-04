@@ -27,10 +27,10 @@ public static class Constants
 
     // OpenAI
     public const string AUDIO_FILE_NAME = "recording.ogg";
-    public const string AUDIO_MODEL = "whisper-1";
+    public const string AUDIO_MODEL = "openai/whisper-1";
     public const decimal WHISPER_COST = 0.006m; // per minute
-    public const string CHAT_MODEL = "gpt-4o-mini"; // "gpt-3.5-turbo-0125";
-    public const decimal CHAT_INPUT_COST = 0.15m;// per 1M tokens // 0.0005m; per 1000 tokens
-    public const decimal CHAT_OUTPUT_COST = 0.075m;// per 1M tokens // 0.0015m; per 1000 tokens
+    public const string CHAT_MODEL = "google/gemma-4-31b-it";
+    public const decimal CHAT_INPUT_COST = 0.12m;// per 1M tokens
+    public const decimal CHAT_OUTPUT_COST = 0.37m;// per 1M tokens
     public const int MAX_TOKENS = 500;
 }

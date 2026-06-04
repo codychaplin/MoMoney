@@ -9,6 +9,8 @@
 * Add easy date pickers to home page
 * Consolidated transaction view/editing logic
 * Removed Syncfusion license dependency
+* Add payees for recent transactions in prompt for more accurate responses
+* Switch to OpenRouter for AI features
 
 ### Fixes
 
