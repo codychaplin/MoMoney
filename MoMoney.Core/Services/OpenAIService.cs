@@ -90,7 +90,7 @@ public class OpenAIService : IOpenAIService
                 transactionResponse.ResponseIDs = new ResponseIDs(responseID, whisperID);
 
             // log the cost and the event to Firebase
-            await logger.LogInfo($"{type} Transcription Cost: {totalCost:0.00##}\u00A2");
+            await logger.LogInfo($"{type} Transcription Cost: ${totalCost:0.00##}");
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_OPENAI_CALL, FirebaseParameters.GetFirebaseParameters());
             
             return transactionResponse;

@@ -8,9 +8,9 @@ public class ChatResponse : OpenAIResponse
 
     public int CompletionTokens { get; set; }
 
-    public decimal PromptCost { get; set; } // in cents
+    public decimal PromptCost { get; set; } // in dollars
 
-    public decimal CompletionCost { get; set; } // in cents
+    public decimal CompletionCost { get; set; } // in dollars
 
     public ChatResponse() { }
 
@@ -18,7 +18,7 @@ public class ChatResponse : OpenAIResponse
     {
         PromptTokens = promptTokens;
         CompletionTokens = completionTokens;
-        PromptCost = decimal.Round(PromptTokens / 1_000_000m * Constants.CHAT_INPUT_COST * 100, 5);
-        CompletionCost = decimal.Round(CompletionTokens / 1_000_000m * Constants.CHAT_OUTPUT_COST * 100, 5);
+        PromptCost = decimal.Round(PromptTokens / 1_000_000m * Constants.CHAT_INPUT_COST, 5);
+        CompletionCost = decimal.Round(CompletionTokens / 1_000_000m * Constants.CHAT_OUTPUT_COST, 5);
     } 
 }
