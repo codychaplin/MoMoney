@@ -8,9 +8,7 @@
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
-    x:DataType="viewmodel:TransactionsViewModel"
-    BackgroundColor="{AppThemeBinding Light={StaticResource White},
-                                      Dark={StaticResource Gray950}}">
+    x:DataType="viewmodel:TransactionsViewModel">
 
     <!--  main page  -->
     <Grid RowDefinitions="Auto,*">
@@ -23,8 +21,8 @@
                 <components:PageHeader
                     Title="{Binding PageTitle}"
                     ImageSource="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                                  Color={AppThemeBinding Light={StaticResource Black},
-                                                                         Dark={StaticResource White}},
+                                                  Color={AppThemeBinding Light={StaticResource onPrimaryContainer},
+                                                                         Dark={StaticResource onPrimaryDark}},
                                                   Glyph={x:Static m:MaterialOutlined.Tune}}" />
             </toolkit:Expander.Header>
 

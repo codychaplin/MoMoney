@@ -13,7 +13,13 @@
     Title="Logs"
     x:DataType="viewmodel:LoggingViewModel">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding ToggleExpandCommand}" IconImageSource="{FontImageSource FontFamily=MaterialRoundedFilled, Color={AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}, Glyph={x:Static m:MaterialOutlined.Tune}}" />
+        <ToolbarItem
+            Command="{Binding ToggleExpandCommand}"
+            IconImageSource="{
+                FontImageSource FontFamily=MaterialRoundedFilled,
+                Color={AppThemeBinding Light={StaticResource onPrimaryContainer},
+                Dark={StaticResource onPrimaryDark}},
+                Glyph={x:Static m:MaterialOutlined.Tune}}" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Resources>
@@ -24,22 +30,20 @@
         <DataTemplate x:Key="Small" x:DataType="models:Log">
             <Grid
                 Padding="10,3"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
-                                                  Dark={StaticResource Gray700}}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainerHighest},
+                                                  Dark={StaticResource surfaceContainerHighestDark}}"
                 RowDefinitions="*,*">
                 <Grid.Resources>
                     <Style TargetType="Label">
                         <Setter Property="FontSize" Value="12" />
-                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource outlineDark}}" />
                     </Style>
                 </Grid.Resources>
                 <Label
                     FontAttributes="Bold"
                     HorizontalOptions="Start"
                     MinimumWidthRequest="170"
-                    Text="{Binding Message}"
-                    TextColor="{AppThemeBinding Light={StaticResource Black},
-                                                Dark={StaticResource White}}" />
+                    Text="{Binding Message}" />
                 <Label
                     Grid.Row="1"
                     HorizontalOptions="Start"
@@ -58,8 +62,8 @@
         <DataTemplate x:Key="Large" x:DataType="models:Log">
             <Grid
                 Padding="10,5"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
-                                                  Dark={StaticResource Gray700}}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainerHighest},
+                                                  Dark={StaticResource surfaceContainerHighestDark}}"
                 RowDefinitions="*,*,*">
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding Path=OpenPopupCommand, Source={RelativeSource AncestorType={x:Type viewmodel:LoggingViewModel}}}" CommandParameter="{Binding LogId}" />
@@ -67,7 +71,7 @@
                 <Grid.Resources>
                     <Style TargetType="Label">
                         <Setter Property="FontSize" Value="12" />
-                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource outlineDark}}" />
                     </Style>
                 </Grid.Resources>
                 <Label
@@ -82,9 +86,7 @@
                 <Label
                     Grid.Row="1"
                     HorizontalOptions="Start"
-                    Text="{Binding Message}"
-                    TextColor="{AppThemeBinding Light={StaticResource Black},
-                                                Dark={StaticResource White}}" />
+                    Text="{Binding Message}" />
                 <Label
                     Grid.Row="2"
                     HorizontalOptions="Start"
@@ -116,11 +118,11 @@
 
                 <Border
                     Padding="15,0,0,0"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource White},
-                                                      Dark={StaticResource Gray700}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainerHighest},
+                                                      Dark={StaticResource surfaceContainerHighestDark}}"
                     HeightRequest="50"
-                    Stroke="{AppThemeBinding Light={StaticResource Gray600},
-                                             Dark={StaticResource Gray400}}"
+                    Stroke="{AppThemeBinding Light={StaticResource outline},
+                                             Dark={StaticResource outline}}"
                     WidthRequest="250">
                     <material:CheckBox
                         x:Name="ChkTileSize"
@@ -129,10 +131,10 @@
                         IsChecked="{Binding IsChecked}"
                         LabelPosition="Before"
                         Text="Large Tiles"
-                        TextColor="{AppThemeBinding Light={StaticResource Black},
-                                                    Dark={StaticResource White}}"
-                        Color="{AppThemeBinding Light={StaticResource Primary},
-                                                Dark={StaticResource PrimaryDark}}" />
+                        TextColor="{AppThemeBinding Light={StaticResource onSurface},
+                                                    Dark={StaticResource onSurfaceDark}}"
+                        Color="{AppThemeBinding Light={StaticResource primary},
+                                                Dark={StaticResource primaryDark}}" />
                 </Border>
 
                 <!--  filters  -->

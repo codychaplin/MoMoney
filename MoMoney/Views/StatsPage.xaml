@@ -7,9 +7,7 @@
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
-    x:DataType="viewmodel:StatsViewModel"
-    BackgroundColor="{AppThemeBinding Light={StaticResource White},
-                                      Dark={StaticResource Gray950}}">
+    x:DataType="viewmodel:StatsViewModel">
 
     <!--  main page  -->
     <VerticalStackLayout>

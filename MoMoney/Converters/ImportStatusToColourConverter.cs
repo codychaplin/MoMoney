@@ -17,11 +17,11 @@ public class ImportStatusToColourConverter : IValueConverter
                 ImportStatus.NeedsVerification => Utilities.GetColour("Red"),
                 ImportStatus.AutoSkipped => Utilities.GetColour("Purple"),
                 ImportStatus.ManuallySkipped => Utilities.GetColour("Orange"),
-                _ => Utilities.GetColour("Gray")
+                _ => Utilities.GetColour("outline")
             };
         }
 
-        return Utilities.GetColour("Gray");
+        return Utilities.GetColour("outline");
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

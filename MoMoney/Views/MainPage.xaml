@@ -18,8 +18,8 @@
     <!--  tab bar  -->
     <tabView:SfTabView
         x:Name="MainTabView"
-        IndicatorBackground="{AppThemeBinding Light={StaticResource Primary},
-                                              Dark={StaticResource PrimaryDark}}"
+        IndicatorBackground="{AppThemeBinding Light={StaticResource primary},
+                                              Dark={StaticResource primaryDark}}"
         TabBarPlacement="Bottom">
 
         <!--  header  -->
@@ -32,13 +32,13 @@
                         <VisualStateGroup>
                             <VisualState x:Name="Normal">
                                 <VisualState.Setters>
-                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray200}}" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurfaceVariant}, Dark={StaticResource onSurfaceVariantDark}}" />
                                     <Setter Property="Scale" Value="1.1" />
                                 </VisualState.Setters>
                             </VisualState>
                             <VisualState x:Name="Selected">
                                 <VisualState.Setters>
-                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource primary}, Dark={StaticResource primaryDark}}" />
                                     <Setter Property="Scale" Value="1.6" />
                                 </VisualState.Setters>
                             </VisualState>

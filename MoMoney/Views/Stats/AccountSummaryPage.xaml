@@ -39,18 +39,19 @@
                             <Setter Property="FontSize" Value="16" />
                             <Setter Property="FontAttributes" Value="None" />
                             <Setter Property="VerticalOptions" Value="Center" />
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}" />
                         </Style>
                     </Grid.Resources>
                     <!--  name  -->
                     <Label
                         Grid.Column="0"
                         HorizontalOptions="Start"
+                        TextColor="{AppThemeBinding Light={StaticResource onSurfaceVariant}, Dark={StaticResource onSurfaceVariantDark}}"
                         Text="{Binding AccountName}" />
                     <!--  current balance  -->
                     <Label
                         Grid.Column="1"
                         HorizontalOptions="End"
+                        TextColor="{AppThemeBinding Light={StaticResource onSurfaceVariant}, Dark={StaticResource onSurfaceVariantDark}}"
                         Text="{Binding CurrentBalance, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
                 </Grid>
             </DataTemplate>
@@ -62,7 +63,7 @@
         <VerticalStackLayout>
             <VerticalStackLayout.Resources>
                 <Style CanCascade="True" TargetType="Border">
-                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
+                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource surfaceContainerHighest}, Dark={StaticResource surfaceContainerHighestDark}}" />
                     <Setter Property="StrokeShape" Value="RoundRectangle 10" />
                     <Setter Property="Padding" Value="5,5,10,5" />
                     <Setter Property="Margin" Value="10,0,10,20" />
@@ -79,10 +80,12 @@
                         Margin="0"
                         FontSize="20"
                         Style="{StaticResource lblTitle}"
+                        TextColor="{AppThemeBinding Light={StaticResource onSurfaceVariant}, Dark={StaticResource onSurfaceVariantDark}}"
                         Text="Net Worth" />
                     <Label
                         Margin="0"
                         FontSize="20"
+                        TextColor="{AppThemeBinding Light={StaticResource onSurfaceVariant}, Dark={StaticResource onSurfaceVariantDark}}"
                         Style="{StaticResource lblAccountName}"
                         Text="{Binding Networth, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
                 </Grid>

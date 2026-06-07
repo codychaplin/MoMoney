@@ -41,13 +41,11 @@
                 Text="Experimental Features" />
             <Grid
                 Padding="10,0"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
-                                                  Dark={StaticResource Gray900}}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainer},
+                                                  Dark={StaticResource surfaceContainerDark}}"
                 IsVisible="{Binding IsAdmin}">
                 <Label
                     Text="Transaction Dictation"
-                    TextColor="{AppThemeBinding Light={StaticResource Black},
-                                                Dark={StaticResource White}}"
                     VerticalOptions="Center" />
                 <Switch HorizontalOptions="End" IsToggled="{Binding TransactionDictationEnabled}" />
             </Grid>

@@ -244,7 +244,6 @@ public partial class AddTransactionViewModel : BaseTransactionViewModel
                 recorder.StartRecord();
 
                 btnRecord.TextColor = Colors.Red;
-                btnRecord.BorderColor = Colors.Red;
                 btnRecord.Animate("pulse", (d) => btnRecord.FontSize = d, 32, 28, 16, 1000, Easing.Linear, (d, b) => btnRecord.FontSize = 30, () => recorder.IsRecording);
             }
         }
@@ -269,7 +268,6 @@ public partial class AddTransactionViewModel : BaseTransactionViewModel
     void ResetButtonColour(Button button)
     {
         button.SetAppTheme(Button.TextColorProperty, Colors.Black, Colors.White);
-        button.SetAppTheme(Button.BorderColorProperty, Utilities.GetColour("Gray400"), Utilities.GetColour("Gray200"));
     }
 
     /// <summary>

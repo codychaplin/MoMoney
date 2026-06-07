@@ -11,9 +11,7 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
     xmlns:segmentedControl="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
-    x:DataType="viewmodel:HomeViewModel"
-    BackgroundColor="{AppThemeBinding Light={StaticResource White},
-                                      Dark={StaticResource Gray950}}">
+    x:DataType="viewmodel:HomeViewModel">
 
     <!--  converters  -->
     <ContentView.Resources>
@@ -25,21 +23,24 @@
         <ScrollView>
             <VerticalStackLayout Padding="0,0,0,10" Spacing="10">
 
-                <!--  view all button style  -->
                 <VerticalStackLayout.Resources>
-
+                    <!--  view all button style  -->
                     <Style TargetType="Button" x:Key="btnViewAll">
                         <Setter Property="FontSize" Value="12" />
                         <Setter Property="Margin" Value="0,5" />
                         <Setter Property="Padding" Value="5,0" />
                         <Setter Property="BackgroundColor" Value="Transparent" />
-                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource Gray300}}" />
                         <Setter Property="HorizontalOptions" Value="End" />
                         <Style.Triggers>
                             <Trigger TargetType="Button" Property="IsPressed" Value="True">
-                                <Setter Property="TextColor" Value="{StaticResource White}" />
+                                <Setter Property="TextColor" Value="{StaticResource onSurfaceDark}" />
                             </Trigger>
                         </Style.Triggers>
+                    </Style>
+
+                    <!--  secion title style  -->
+                    <Style TargetType="Label" x:Key="lblSectionTitle" BasedOn="{StaticResource lblTitle}">
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onBackground}, Dark={StaticResource onBackgroundDark}}" />
                     </Style>
                 </VerticalStackLayout.Resources>
 
@@ -49,15 +50,15 @@
                 <!--  chart title  -->
                 <Label
                     Margin="10,0"
-                    Style="{StaticResource lblTitle}"
+                    Style="{StaticResource lblSectionTitle}"
                     Text="Running Balance" />
 
                 <!--  balance over time chart  -->
                 <Border
                     Margin="10,0"
                     Padding="5"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                                      Dark={StaticResource PrimaryDark}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource primaryContainer},
+                                                      Dark={StaticResource primaryDark}}"
                     HeightRequest="220">
                     <Grid>
                         <chart:SfCartesianChart Title="" Margin="0">
@@ -71,11 +72,16 @@
                                     ShowMinorGridLines="False">
                                     <!--  label  -->
                                     <chart:DateTimeAxis.LabelStyle>
-                                        <chart:ChartAxisLabelStyle LabelFormat="{Binding XLabelFormat}" TextColor="White" />
+                                        <chart:ChartAxisLabelStyle
+                                            LabelFormat="{Binding XLabelFormat}"
+                                            TextColor="{AppThemeBinding Light={StaticResource onPrimaryContainer},
+                                                                        Dark={StaticResource onPrimaryDark}}" />
                                     </chart:DateTimeAxis.LabelStyle>
                                     <!--  vertical grid lines  -->
                                     <chart:DateTimeAxis.MajorGridLineStyle>
-                                        <chart:ChartLineStyle Stroke="#55ffffff" />
+                                        <chart:ChartLineStyle
+                                            Stroke="{AppThemeBinding Light={StaticResource primary},
+                                                                     Dark={StaticResource tertiaryContainerDark}}" />
                                     </chart:DateTimeAxis.MajorGridLineStyle>
                                     <!--  axis lines  -->
                                     <chart:DateTimeAxis.AxisLineStyle>
@@ -93,15 +99,19 @@
                                 <chart:NumericalAxis>
                                     <!--  label  -->
                                     <chart:NumericalAxis.LabelStyle>
-                                        <chart:ChartAxisLabelStyle LabelFormat="{Binding ShowValue}" TextColor="White" />
+                                        <chart:ChartAxisLabelStyle
+                                            LabelFormat="{Binding ShowValue}"
+                                            TextColor="{AppThemeBinding Light={StaticResource onPrimaryContainer},
+                                                                        Dark={StaticResource onPrimaryDark}}" />
                                     </chart:NumericalAxis.LabelStyle>
-                                    <!--  label  -->
+                                    <!--  horizontal grid lines  -->
                                     <chart:NumericalAxis.MajorGridLineStyle>
-                                        <chart:ChartLineStyle Stroke="#55ffffff" />
+                                        <chart:ChartLineStyle Stroke="{AppThemeBinding Light={StaticResource primary},
+                                                                        Dark={StaticResource tertiaryContainerDark}}" />
                                     </chart:NumericalAxis.MajorGridLineStyle>
-                                    <!--  axis lines  -->
+                                    <!--  Axis line  -->
                                     <chart:NumericalAxis.AxisLineStyle>
-                                        <chart:ChartLineStyle Stroke="#55ffffff" StrokeWidth="1" />
+                                        <chart:ChartLineStyle StrokeWidth="0" />
                                     </chart:NumericalAxis.AxisLineStyle>
                                     <!--  tick lines  -->
                                     <chart:NumericalAxis.MajorTickStyle>
@@ -112,7 +122,8 @@
 
                             <!--  series  -->
                             <chart:SplineSeries
-                                Fill="White"
+                                Fill="{AppThemeBinding Light={StaticResource onPrimaryContainer},
+                                                       Dark={StaticResource onPrimaryDark}}"
                                 ItemsSource="{Binding Data}"
                                 StrokeWidth="2"
                                 Type="Cardinal"
@@ -133,16 +144,18 @@
                     SegmentHeight="25"
                     Stroke="Transparent">
                     <segmentedControl:SfSegmentedControl.TextStyle>
-                        <segmentedControl:SegmentTextStyle FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray700},
-                                                                                Dark={StaticResource Gray400}}"/>
+                        <segmentedControl:SegmentTextStyle
+                            FontSize="12"
+                            TextColor="{AppThemeBinding Light={StaticResource onSurface},
+                                                        Dark={StaticResource outline}}"/>
                     </segmentedControl:SfSegmentedControl.TextStyle>
                     <segmentedControl:SfSegmentedControl.SelectionIndicatorSettings>
                         <segmentedControl:SelectionIndicatorSettings
                             SelectionIndicatorPlacement="Fill"
-                            TextColor="{AppThemeBinding Light={StaticResource Black},
-                                                        Dark={StaticResource White}}"
-                            Background="{AppThemeBinding Light={StaticResource Gray400},
-                                                        Dark={StaticResource Gray600}}"/>
+                            TextColor="{AppThemeBinding Light={StaticResource onSurface},
+                                                        Dark={StaticResource onSecondaryContainerDark}}"
+                            Background="{AppThemeBinding Light={StaticResource outlineVariant},
+                                                        Dark={StaticResource secondaryContainerDark}}"/>
                     </segmentedControl:SfSegmentedControl.SelectionIndicatorSettings>
                     <segmentedControl:SfSegmentedControl.ItemsSource>
                         <x:Array Type="{x:Type x:String}">
@@ -160,7 +173,7 @@
 
                 <!--  stats title  -->
                 <Grid Margin="10,0">
-                    <Label Style="{StaticResource lblTitle}" Text="Statistics" />
+                    <Label Style="{StaticResource lblSectionTitle}" Text="Statistics" />
                     <Button Style="{StaticResource btnViewAll}" Command="{Binding ViewAllStatsCommand}" Text="View All" />
                 </Grid>
 
@@ -169,9 +182,7 @@
                         <Label
                             FontSize="16"
                             HorizontalTextAlignment="Center"
-                            Text="Net Worth"
-                            TextColor="{AppThemeBinding Light={StaticResource Gray700},
-                                                        Dark={StaticResource Gray200}}" />
+                            Text="Net Worth" />
                         <Label
                             FontAttributes="Bold"
                             FontSize="30"
@@ -203,7 +214,7 @@
 
                 <!--  transactions title  -->
                 <Grid Margin="10,0">
-                    <Label Style="{StaticResource lblTitle}" Text="Transactions" />
+                    <Label Style="{StaticResource lblSectionTitle}" Text="Transactions" />
                     <Button Style="{StaticResource btnViewAll}" Command="{Binding ViewAllTransactionsCommand}" Text="View All" />
                 </Grid>
 

@@ -17,7 +17,7 @@
                 <DataTemplate x:DataType="models:Stock">
 
                     <!--  template  -->
-                    <Border BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" Style="{StaticResource SmallTileFrame}">
+                    <Border BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainerHighest}, Dark={StaticResource surfaceContainerHighestDark}}" Style="{StaticResource SmallTileFrame}">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Path=GoToEditStockCommand, Source={RelativeSource AncestorType={x:Type viewmodel:StocksViewModel}}}" CommandParameter="{Binding .}" />
                         </Border.GestureRecognizers>

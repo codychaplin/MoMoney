@@ -4,7 +4,6 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
-    xmlns:input="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
@@ -17,6 +16,7 @@
             ItemsSource="{Binding Payees, Source={x:Reference self}}"
             AllowClear="true"
             Text="{Binding PayeeText, Source={x:Reference self}, Mode=TwoWay}"
+            TextColor="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}"
             IsEnabled="{Binding IsEnabled, Source={x:Reference self}}"
             IsVisible="{Binding IsTransferAccountVisible, Source={x:Reference self}, Converter={StaticResource InverseBoolConverter}}" />
 

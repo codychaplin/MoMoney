@@ -19,16 +19,10 @@
             <Style TargetType="Border">
                 <Setter Property="Padding" Value="0" />
                 <Setter Property="StrokeShape" Value="RoundRectangle 10" />
-                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource surfaceContainerHighest}, Dark={StaticResource surfaceContainerHighestDark}}" />
             </Style>
             <Style TargetType="VerticalStackLayout">
                 <Setter Property="Spacing" Value="5" />
-            </Style>
-            <Style x:Key="OddPicker" TargetType="material:PickerField">
-                <Setter Property="InputBackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray150}, Dark={StaticResource Gray600}}" />
-            </Style>
-            <Style x:Key="EvenPicker" TargetType="material:PickerField">
-                <Setter Property="InputBackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray700}}" />
             </Style>
         </Grid.Resources>
 
@@ -46,7 +40,6 @@
 
             <!--  find account  -->
             <components:AccountField
-                Style="{StaticResource OddPicker}"
                 ItemsSource="{Binding Accounts}"
                 SelectedItem="{Binding FindAccount, Mode=TwoWay}" />
 
@@ -78,7 +71,6 @@
 
             <!--  replace account  -->
             <components:AccountField
-                Style="{StaticResource OddPicker}"
                 ItemsSource="{Binding Accounts}"
                 SelectedItem="{Binding ReplaceAccount, Mode=TwoWay}" />
 
@@ -93,14 +85,15 @@
             <!--  replace payee  -->
             <material:TextField
                 Title="Payee"
-                Style="{StaticResource EvenPicker}"
                 Text="{Binding ReplacePayee}" />
         </VerticalStackLayout>
 
         <Button
             Grid.Row="1"
-            BackgroundColor="{AppThemeBinding Light={StaticResource LightBlue},
-                                              Dark={StaticResource Blue}}"
+            BackgroundColor="{AppThemeBinding Light={StaticResource tertiary},
+                                              Dark={StaticResource tertiaryDark}}"
+            TextColor="{AppThemeBinding Light={StaticResource onTertiary},
+                                        Dark={StaticResource onTertiaryDark}}"
             Command="{Binding BulkFindCommand}"
             Text="Find">
             <Button.CommandParameter>
@@ -111,8 +104,10 @@
         <Button
             Grid.Row="1"
             Grid.Column="1"
-            BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                              Dark={StaticResource PrimaryDark}}"
+            BackgroundColor="{AppThemeBinding Light={StaticResource primary},
+                                              Dark={StaticResource primaryDark}}"
+            TextColor="{AppThemeBinding Light={StaticResource onPrimary},
+                                        Dark={StaticResource onPrimaryDark}}"
             Command="{Binding BulkReplaceCommand}"
             Text="Replace" />
 

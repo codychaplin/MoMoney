@@ -4,7 +4,6 @@
 		<item name="colorPrimary">@color/Black</item>
 		<item name="android:actionMenuTextColor">@color/Black</item>
 		<item name="alertDialogTheme">@style/MauiAlertDialogTheme</item>
-		<item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
 	</style>
 	
 	<style name="MauiAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">

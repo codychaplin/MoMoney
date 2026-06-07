@@ -19,7 +19,7 @@
                     <Style TargetType="Label" x:Key="SectionTitle">
                         <Setter Property="FontSize" Value="18" />
                         <Setter Property="FontAttributes" Value="Bold" />
-                        <Setter Property="TextColor" Value="{AppThemeBinding Light=Black, Dark=White}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
                     </Style>
                 </ResourceDictionary>
             </VerticalStackLayout.Resources>
@@ -48,16 +48,20 @@
                 <!--  Upload file button  -->
                 <Button
                     Text="Upload File"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                                    Dark={StaticResource PrimaryDark}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource primary},
+                                                      Dark={StaticResource primaryDark}}"
+                    TextColor="{AppThemeBinding Light={StaticResource onPrimary},
+                                                Dark={StaticResource onPrimaryDark}}"
                     Command="{Binding ImportStatementCommand}" />
 
                 <!--  Update rules button  -->
                 <Button
                     Grid.Column="1"
                     Text="Update Rules"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray600},
-                                                    Dark={StaticResource Gray500}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource secondary},
+                                                      Dark={StaticResource secondaryDark}}"
+                    TextColor="{AppThemeBinding Light={StaticResource onSecondary},
+                                                Dark={StaticResource onSecondaryDark}}"
                     Command="{Binding GoToEditMappingRulesCommand}" />
 
                 <!--  Reload button  -->
@@ -65,8 +69,10 @@
                     Grid.Row="1"
                     Text="Run Again"
                     IsEnabled="{Binding FileUploaded}"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBlue},
-                                                    Dark={StaticResource Blue}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource tertiary},
+                                                      Dark={StaticResource tertiaryDark}}"
+                    TextColor="{AppThemeBinding Light={StaticResource onTertiary},
+                                                Dark={StaticResource onTertiaryDark}}"
                     Command="{Binding ReloadCommand}" />
 
                 <!--  Clear button  -->
@@ -74,8 +80,10 @@
                     Grid.Row="1"
                     Grid.Column="1"
                     Text="Clear"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource LightRed},
-                                                    Dark={StaticResource Red}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource error},
+                                                    Dark={StaticResource errorDark}}"
+                    TextColor="{AppThemeBinding Light={StaticResource onError},
+                                                Dark={StaticResource onErrorDark}}"
                     Command="{Binding ClearCommand}">
                     <Button.CommandParameter>
                         <x:Boolean>True</x:Boolean>
@@ -93,9 +101,9 @@
                             <Setter Property="WidthRequest" Value="30" />
                             <Setter Property="HeightRequest" Value="30" />
                             <Setter Property="CornerRadius" Value="10" />
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary},
-                                                                                        Dark={StaticResource PrimaryDark}}" />
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light=Black, Dark=White}" />
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource primary},
+                                                                                        Dark={StaticResource primaryDark}}" />
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
                             <Setter Property="FontSize" Value="25" />
                             <Setter Property="FontFamily" Value="MaterialRoundedFilled" />
                             <Setter Property="Padding" Value="0" />
@@ -103,7 +111,11 @@
                     </Grid.Resources>
 
                     <!--  Left button  -->
-                    <Button Command="{Binding DecrementTransactionCommand}" Text="{x:Static m:MaterialOutlined.Chevron_left}" />
+                    <Button
+                        Command="{Binding DecrementTransactionCommand}"
+                        TextColor="{AppThemeBinding Light={StaticResource onPrimary},
+                                                    Dark={StaticResource onPrimaryDark}}"
+                        Text="{x:Static m:MaterialOutlined.Chevron_left}" />
 
                      <!--  CSV Record title  -->
                     <Label
@@ -124,7 +136,12 @@
                         FontAttributes="Bold" />
 
                     <!--  Right button  -->
-                    <Button Grid.Column="3" Command="{Binding IncrementTransactionCommand}" Text="{x:Static m:MaterialOutlined.Chevron_right}" />
+                    <Button
+                        Grid.Column="3"
+                        Command="{Binding IncrementTransactionCommand}"
+                        TextColor="{AppThemeBinding Light={StaticResource onPrimary},
+                                                    Dark={StaticResource onPrimaryDark}}"
+                        Text="{x:Static m:MaterialOutlined.Chevron_right}" />
                 </Grid>
                     
                 <!-- text field that needs mapping from CSV -->
@@ -133,8 +150,7 @@
                     Title="Text"
                     Text="{Binding SelectedRecord.RawData.FullText}"
                     IsReadOnly="True"
-                    IsVisible="{Binding FilteredRecords.Count}"
-                    IsEnabled="False" />
+                    IsVisible="{Binding FilteredRecords.Count}" />
 
                 <BoxView Style="{StaticResource separator}"/>
 
@@ -208,16 +224,20 @@
                         <Button
                             Margin="5,0,0,0"
                             Grid.Column="1"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource Gray600},
-                                                            Dark={StaticResource Gray500}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource secondary},
+                                                              Dark={StaticResource secondaryDark}}"
+                            TextColor="{AppThemeBinding Light={StaticResource onSecondary},
+                                                        Dark={StaticResource onSecondaryDark}}"
                             Text="Skip"
                             Command="{Binding SkipTransactionCommand}" />
 
                         <!--  Approve button  -->
                         <Button
                             Grid.Column="2"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                                            Dark={StaticResource PrimaryDark}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource primary},
+                                                            Dark={StaticResource primaryDark}}"
+                            TextColor="{AppThemeBinding Light={StaticResource onPrimary},
+                                                        Dark={StaticResource onPrimaryDark}}"
                             Text="Approve"
                             IsEnabled="{Binding SelectedRecord.CanEdit}"
                             Command="{Binding ApproveTransactionCommand}" />
@@ -260,8 +280,10 @@
                     Margin="0,5,0,0"
                     Text="Commit"
                     IsEnabled="{Binding IsCommitButtonEnabled}"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                                      Dark={StaticResource PrimaryDark}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource primary},
+                                                      Dark={StaticResource primaryDark}}"
+                    TextColor="{AppThemeBinding Light={StaticResource onPrimary},
+                                                Dark={StaticResource onPrimaryDark}}"
                     Command="{Binding CommitImportCommand}" />
                     
             </VerticalStackLayout>

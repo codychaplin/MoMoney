@@ -9,18 +9,14 @@
     xmlns:segmentedControl="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
-    x:DataType="viewmodel:AddTransactionViewModel"
-    BackgroundColor="{AppThemeBinding Light={StaticResource White},
-                                      Dark={StaticResource Gray950}}">
+    x:DataType="viewmodel:AddTransactionViewModel">
 
     <!--  main page  -->
     <ScrollView>
         <VerticalStackLayout Padding="10,0" Spacing="5">
 
             <!--  title  -->
-            <components:PageHeader
-                Margin="-10,0,-10,5"
-                Title="Add Transaction" />
+            <components:PageHeader Margin="-10,0,-10,5" Title="Add Transaction" />
 
             <!--  transaction type buttons  -->
             <segmentedControl:SfSegmentedControl
@@ -29,16 +25,16 @@
                 CornerRadius="10"
                 SelectionChanged="OnTransactionTypeChanged"
                 SegmentCornerRadius="10"
-                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource secondaryContainer}, Dark={StaticResource secondaryContainerDark}}"
                 Stroke="Transparent">
                 <segmentedControl:SfSegmentedControl.TextStyle>
-                    <segmentedControl:SegmentTextStyle FontSize="14" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}" />
+                    <segmentedControl:SegmentTextStyle FontSize="14" TextColor="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
                 </segmentedControl:SfSegmentedControl.TextStyle>
                 <segmentedControl:SfSegmentedControl.SelectionIndicatorSettings>
                     <segmentedControl:SelectionIndicatorSettings
                         SelectionIndicatorPlacement="Fill"
-                        TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                        Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                        TextColor="{AppThemeBinding Light={StaticResource onPrimary}, Dark={StaticResource onPrimaryDark}}"
+                        Background="{AppThemeBinding Light={StaticResource primary}, Dark={StaticResource primaryDark}}" />
                 </segmentedControl:SfSegmentedControl.SelectionIndicatorSettings>
                 <segmentedControl:SfSegmentedControl.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
@@ -79,19 +75,20 @@
                 <Button
                     x:Name="btnClear"
                     Margin="0,0,5,0"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBlue},
-                                                      Dark={StaticResource Blue}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource tertiary},
+                                                      Dark={StaticResource tertiaryDark}}"
+                    TextColor="{AppThemeBinding Light={StaticResource onTertiary},
+                                                      Dark={StaticResource onTertiaryDark}}"
                     Clicked="btnClear_Clicked"
                     Text="Clear" />
                 <Button
                     x:Name="btnRecord"
                     Grid.Column="1"
                     Margin="5,0"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
-                                                      Dark={StaticResource Gray700}}"
-                    BorderColor="{AppThemeBinding Light={StaticResource Gray400},
-                                                  Dark={StaticResource Gray200}}"
-                    BorderWidth="1.5"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource secondaryContainer},
+                                                      Dark={StaticResource secondaryContainerDark}}"
+                    TextColor="{AppThemeBinding Light={StaticResource onSecondaryContainer},
+                                                Dark={StaticResource onSecondaryContainerDark}}"
                     Command="{Binding RecordCommand}"
                     CommandParameter="{x:Reference btnRecord}"
                     FontFamily="MaterialRoundedFilled"
@@ -120,8 +117,10 @@
                     x:Name="btnEnter"
                     Grid.Column="2"
                     Margin="5,0,0,0"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                                      Dark={StaticResource PrimaryDark}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource primary},
+                                                      Dark={StaticResource primaryDark}}"
+                    TextColor="{AppThemeBinding Light={StaticResource onPrimary},
+                                                      Dark={StaticResource onPrimaryDark}}"
                     Clicked="btnEnter_Clicked"
                     Command="{Binding AddTransactionCommand}"
                     Text="Accept" />

@@ -17,6 +17,8 @@
         <!--  Amount  -->
         <components:AmountField
             IsEnabled="{Binding AreFieldsEnabled, Source={x:Reference self}}"
+            TextColor="{AppThemeBinding Light={StaticResource onSurface},
+                                        Dark={StaticResource onSurfaceDark}}"
             Text="{Binding Amount, Source={x:Reference self}}" />
 
         <!--  Account  -->

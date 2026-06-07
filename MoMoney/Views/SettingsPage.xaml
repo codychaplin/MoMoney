@@ -6,9 +6,7 @@
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
-    x:DataType="viewmodel:SettingsViewModel"
-    BackgroundColor="{AppThemeBinding Light={StaticResource White},
-                                      Dark={StaticResource Gray950}}">
+    x:DataType="viewmodel:SettingsViewModel">
 
     <!--  main page  -->
     <ScrollView>
@@ -49,11 +47,9 @@
 
             <!--  privacy  -->
             <Label Style="{StaticResource SettingsSubtitle}" Text="Privacy" />
-            <Grid Padding="10,0" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+            <Grid Padding="10,0" BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainer}, Dark={StaticResource surfaceContainerDark}}">
                 <Label
                     Text="Show Sensitive Values"
-                    TextColor="{AppThemeBinding Light={StaticResource Black},
-                                                Dark={StaticResource White}}"
                     VerticalOptions="Center" />
                 <Switch
                     x:Name="swShowValues"
@@ -73,8 +69,8 @@
             <Label
                 x:Name="lblVersion"
                 Margin="10,20"
-                TextColor="{AppThemeBinding Light={StaticResource Gray600},
-                                            Dark={StaticResource Gray300}}">
+                TextColor="{AppThemeBinding Light={StaticResource outline},
+                                            Dark={StaticResource outlineDark}}">
                 <Label.Behaviors>
                     <toolkit:TouchBehavior
                         BindingContext="{Binding Path=BindingContext, Source={x:Reference lblVersion}, x:DataType=HorizontalStackLayout}"

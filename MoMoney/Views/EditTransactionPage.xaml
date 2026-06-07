@@ -42,24 +42,30 @@
                 <Button
                     x:Name="btnClear"
                     Grid.Column="0"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBlue},
-                                                      Dark={StaticResource Blue}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource tertiary},
+                                                      Dark={StaticResource tertiaryDark}}"
+                    TextColor="{AppThemeBinding Light={StaticResource onTertiary},
+                                                Dark={StaticResource onTertiaryDark}}"
                     Command="{Binding ClearCommand}"
                     HeightRequest="45"
                     Text="Clear" />
                 <Button
                     x:Name="btnDelete"
                     Grid.Column="1"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource LightRed},
-                                                      Dark={StaticResource Red}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource error},
+                                                      Dark={StaticResource errorDark}}"
+                    TextColor="{AppThemeBinding Light={StaticResource onError},
+                                                Dark={StaticResource onErrorDark}}"
                     Command="{Binding RemoveTransactionCommand}"
                     HeightRequest="45"
                     Text="Delete" />
                 <Button
                     x:Name="btnEnter"
                     Grid.Column="2"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                                      Dark={StaticResource PrimaryDark}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource primary},
+                                                      Dark={StaticResource primaryDark}}"
+                    TextColor="{AppThemeBinding Light={StaticResource onPrimary},
+                                                      Dark={StaticResource onPrimaryDark}}"
                     Command="{Binding EditTransactionCommand}"
                     CommandParameter="{Binding Path=PayeeText, Source={x:Reference transactionForm}}"
                     HeightRequest="45"

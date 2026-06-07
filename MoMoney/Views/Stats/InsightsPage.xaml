@@ -54,7 +54,7 @@
                         ShowMajorGridLines="False">
                         <!--  axis line  -->
                         <chart:CategoryAxis.AxisLineStyle>
-                            <chart:ChartLineStyle Stroke="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                            <chart:ChartLineStyle Stroke="{AppThemeBinding Light={StaticResource outlineVariant}, Dark={StaticResource tertiaryContainerDark}}" />
                         </chart:CategoryAxis.AxisLineStyle>
                         <!--  tick  -->
                         <chart:CategoryAxis.MajorTickStyle>
@@ -62,7 +62,7 @@
                         </chart:CategoryAxis.MajorTickStyle>
                         <!--  label  -->
                         <chart:CategoryAxis.LabelStyle>
-                            <chart:ChartAxisLabelStyle TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                            <chart:ChartAxisLabelStyle TextColor="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
                         </chart:CategoryAxis.LabelStyle>
                     </chart:CategoryAxis>
                 </chart:SfCartesianChart.XAxes>
@@ -71,7 +71,7 @@
                     <chart:NumericalAxis IsVisible="False" RangePadding="AppendInterval">
                         <!--  grid lines  -->
                         <chart:NumericalAxis.MajorGridLineStyle>
-                            <chart:ChartLineStyle Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
+                            <chart:ChartLineStyle Stroke="{AppThemeBinding Light={StaticResource outlineVariant}, Dark={StaticResource tertiaryContainerDark}}" />
                         </chart:NumericalAxis.MajorGridLineStyle>
                         <!--  tick  -->
                         <chart:NumericalAxis.MajorTickStyle>
@@ -83,8 +83,8 @@
                 <!--  income series  -->
                 <chart:ColumnSeries
                     Width="0.8"
-                    Fill="{AppThemeBinding Light={StaticResource Primary},
-                                           Dark={StaticResource PrimaryDark}}"
+                    Fill="{AppThemeBinding Light={StaticResource primary},
+                                           Dark={StaticResource primaryDark}}"
                     ItemsSource="{Binding IncomeData}"
                     ShowDataLabels="True"
                     XBindingPath="Month"
@@ -97,8 +97,8 @@
                                     Background="#00ffffff"
                                     FontSize="11"
                                     LabelFormat="$0"
-                                    TextColor="{AppThemeBinding Light={StaticResource Primary},
-                                                                Dark={StaticResource PrimaryDark}}" />
+                                    TextColor="{AppThemeBinding Light={StaticResource primary},
+                                                                Dark={StaticResource primaryDark}}" />
                             </chart:CartesianDataLabelSettings.LabelStyle>
                         </chart:CartesianDataLabelSettings>
                     </chart:ColumnSeries.DataLabelSettings>
@@ -106,7 +106,7 @@
                 <!--  expense series  -->
                 <chart:ColumnSeries
                     Width="0.8"
-                    Fill="{StaticResource Red}"
+                    Fill="{StaticResource errorVariantDark}"
                     ItemsSource="{Binding ExpenseData}"
                     ShowDataLabels="True"
                     XBindingPath="Month"
@@ -120,7 +120,8 @@
                                     FontSize="11"
                                     LabelFormat="$0"
                                     LabelPadding="5"
-                                    TextColor="{StaticResource SubtleRed}" />
+                                    TextColor="{AppThemeBinding Light={StaticResource error},
+                                                                Dark={StaticResource errorDark}}" />
                             </chart:CartesianDataLabelSettings.LabelStyle>
                         </chart:CartesianDataLabelSettings>
                     </chart:ColumnSeries.DataLabelSettings>
@@ -143,8 +144,8 @@
                         HorizontalOptions="Center"
                         Source="{FontImageSource FontFamily=MaterialRoundedFilled,
                                                  Glyph={x:Static m:MaterialOutlined.Trending_up},
-                                                 Color={AppThemeBinding Light={StaticResource Primary},
-                                                                        Dark={StaticResource PrimaryDark}}}"
+                                                 Color={AppThemeBinding Light={StaticResource primary},
+                                                                        Dark={StaticResource primaryDark}}}"
                         VerticalOptions="Center" />
                     <Label
                         Grid.Column="1"
@@ -167,7 +168,8 @@
                         HorizontalOptions="Center"
                         Source="{FontImageSource FontFamily=MaterialRoundedFilled,
                                                  Glyph={x:Static m:MaterialOutlined.Trending_down},
-                                                 Color={StaticResource Red}}"
+                                                 Color={AppThemeBinding Light={StaticResource errorVariant},
+                                                                        Dark={StaticResource errorVariantDark}}}"
                         VerticalOptions="Center" />
                     <Label
                         Grid.Column="1"

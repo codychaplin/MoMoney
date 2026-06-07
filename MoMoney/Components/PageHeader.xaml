@@ -9,11 +9,12 @@
         </ResourceDictionary>
     </ContentView.Resources>
 
-    <Grid Padding="10,10,10,10"
-          BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                              Dark={StaticResource PrimaryDark}}">
+    <Grid Padding="10"
+          BackgroundColor="{AppThemeBinding Light={StaticResource primaryContainer},
+                                              Dark={StaticResource primaryDark}}">
         <Label HorizontalOptions="Start"
                Style="{StaticResource lblTitle}"
+               TextColor="{AppThemeBinding Light={StaticResource onPrimaryContainer}, Dark={StaticResource onPrimaryDark}}"
                Text="{Binding Title, Source={RelativeSource AncestorType={x:Type ContentView}}}"
                VerticalOptions="Center" />
         

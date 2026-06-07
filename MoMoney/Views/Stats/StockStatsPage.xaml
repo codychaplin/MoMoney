@@ -5,7 +5,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:chart="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
     xmlns:converters="clr-namespace:MoMoney.Converters"
-    xmlns:data="clr-namespace:Syncfusion.Maui.DataSource;assembly=Syncfusion.Maui.DataSource"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
     Title="Stocks"
@@ -85,8 +84,8 @@
                         <DataTemplate x:DataType="models:Stock">
                             <Border
                                 Padding="10,5"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource Gray150},
-                                                                  Dark={StaticResource Gray700}}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainerHighest},
+                                                                  Dark={StaticResource surfaceContainerHighestDark}}"
                                 HeightRequest="55">
                                 <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,*">
                                     <Label
@@ -98,8 +97,8 @@
                                         Grid.Row="1"
                                         HorizontalOptions="Start"
                                         Text="{Binding MarketValue, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
-                                        TextColor="{AppThemeBinding Light={StaticResource Gray900},
-                                                                    Dark={StaticResource Gray200}}"
+                                        TextColor="{AppThemeBinding Light={StaticResource onSurfaceVariant},
+                                                                    Dark={StaticResource onSurfaceVariantDark}}"
                                         VerticalOptions="Center" />
                                     <Label
                                         Grid.Column="1"

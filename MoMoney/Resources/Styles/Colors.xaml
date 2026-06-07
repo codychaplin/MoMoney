@@ -1,36 +1,66 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <?xaml-comp compile="true" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <Color x:Key="Primary">#63DBA2</Color>
-    <Color x:Key="PrimaryDark">#42ba96</Color>
-    <Color x:Key="Secondary">#C7E0D9</Color>
-    <Color x:Key="Tertiary">#004632</Color>
-    <Color x:Key="White">White</Color>
-    <Color x:Key="Black">Black</Color>
-    <Color x:Key="Gray100">#F1F1F1</Color>
-    <Color x:Key="Gray150">#E1E1E1</Color>
-    <Color x:Key="Gray200">#C8C8C8</Color>
-    <Color x:Key="Gray300">#ACACAC</Color>
-    <Color x:Key="Gray400">#919191</Color>
-    <Color x:Key="Gray500">#6E6E6E</Color>
-    <Color x:Key="Gray600">#404040</Color>
-    <Color x:Key="Gray700">#313131</Color>
-    <Color x:Key="Gray900">#212121</Color>
-    <Color x:Key="Gray950">#141414</Color>
+    <!--  light scheme  -->
+    <Color x:Key="primary">#246A4B</Color>
+    <Color x:Key="onPrimary">#FFFFFF</Color>
+    <Color x:Key="primaryContainer">#ABF2CA</Color>
+    <Color x:Key="onPrimaryContainer">#005234</Color>
+    <Color x:Key="secondary">#4D6356</Color>
+    <Color x:Key="onSecondary">#FFFFFF</Color>
+    <Color x:Key="secondaryContainer">#D0E8D7</Color>
+    <Color x:Key="onSecondaryContainer">#364B3F</Color>
+    <Color x:Key="tertiary">#3C6472</Color>
+    <Color x:Key="onTertiary">#FFFFFF</Color>
+    <Color x:Key="tertiaryContainer">#C0E9FA</Color>
+    <Color x:Key="onTertiaryContainer">#234C5A</Color>
+    <Color x:Key="error">#BA1A1A</Color>
+    <Color x:Key="onError">#FFFFFF</Color>
+    <Color x:Key="errorVariant">#e54949</Color>
+    <Color x:Key="errorContainer">#FFDAD6</Color>
+    <Color x:Key="onErrorContainer">#93000A</Color>
+    <Color x:Key="background">#F5FBF4</Color>
+    <Color x:Key="onBackground">#171D19</Color>
+    <Color x:Key="surface">#F5FBF4</Color>
+    <Color x:Key="onSurface">#171D19</Color>
+    <Color x:Key="onSurfaceVariant">#404943</Color>
+    <Color x:Key="surfaceContainer">#eaefe9</Color>
+    <Color x:Key="surfaceContainerHighest">#DEE4DE</Color>
+    <Color x:Key="outline">#707972</Color>
+    <Color x:Key="outlineVariant">#C0C9C1</Color>
 
-    <Color x:Key="Yellow100Accent">#F7B548</Color>
-    <Color x:Key="Yellow200Accent">#FFD590</Color>
-    <Color x:Key="Yellow300Accent">#FFE5B9</Color>
-    <Color x:Key="Cyan100Accent">#28C2D1</Color>
-    <Color x:Key="Cyan200Accent">#7BDDEF</Color>
-    <Color x:Key="Cyan300Accent">#C3F2F4</Color>
-    <Color x:Key="Blue100Accent">#3E8EED</Color>
-    <Color x:Key="Blue200Accent">#72ACF1</Color>
-    <Color x:Key="Blue300Accent">#A7CBF6</Color>
+    <!--  dark scheme  -->
+    <Color x:Key="primaryDark">#89D6B9</Color>
+    <Color x:Key="onPrimaryDark">#003823</Color>
+    <Color x:Key="primaryContainerDark">#005234</Color>
+    <Color x:Key="onPrimaryContainerDark">#ABF2CA</Color>
+    <Color x:Key="secondaryDark">#B4CCBC</Color>
+    <Color x:Key="onSecondaryDark">#203529</Color>
+    <Color x:Key="secondaryContainerDark">#364B3F</Color>
+    <Color x:Key="onSecondaryContainerDark">#D0E8D7</Color>
+    <Color x:Key="tertiaryDark">#a4cddd</Color>
+    <Color x:Key="onTertiaryDark">#053542</Color>
+    <Color x:Key="tertiaryContainerDark">#4B7381</Color>
+    <Color x:Key="onTertiaryContainerDark">#FFFFFF</Color>
+    <Color x:Key="errorDark">#FFB4AB</Color>
+    <Color x:Key="onErrorDark">#690005</Color>
+    <Color x:Key="errorVariantDark">#e43e3e</Color>
+    <Color x:Key="errorContainerDark">#93000A</Color>
+    <Color x:Key="onErrorContainerDark">#FFDAD6</Color>
+    <Color x:Key="backgroundDark">#0F1511</Color>
+    <Color x:Key="onBackgroundDark">#DEE4DE</Color>
+    <Color x:Key="surfaceDark">#0F1511</Color>
+    <Color x:Key="onSurfaceDark">#DEE4DE</Color>
+    <Color x:Key="onSurfaceVariantDark">#c0c9c1</Color>
+    <Color x:Key="surfaceContainerDark">#1B211E</Color>
+    <Color x:Key="surfaceContainerHighestDark">#303632</Color>
+    <Color x:Key="outlineDark">#8A938C</Color>
+    <Color x:Key="outlineVariantDark">#404943</Color>
 
-    <!--  custom colours  -->
-    <Color x:Key="LightRed">#FF6779</Color>
+    <!--  app-specific semantic colours (not theme-dependent)  -->
+    <Color x:Key="Black">#000000</Color>
+    <Color x:Key="White">#FFFFFF</Color>
     <Color x:Key="Red">#df4759</Color>
     <Color x:Key="SubtleRed">#FFBBBB</Color>
     <Color x:Key="Blue">#3B74C5</Color>

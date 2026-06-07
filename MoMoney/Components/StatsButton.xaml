@@ -6,8 +6,8 @@
     xmlns:local="clr-namespace:MoMoney.Components"
     x:Name="this"
     Padding="10"
-    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
-                                      Dark={StaticResource Gray700}}"
+    BackgroundColor="{AppThemeBinding Light={StaticResource secondaryContainer},
+                                      Dark={StaticResource secondaryContainerDark}}"
     StrokeShape="RoundRectangle 10">
     <Grid RowDefinitions="*,30">
         <Label
@@ -16,8 +16,8 @@
             HeightRequest="65"
             HorizontalTextAlignment="Center"
             Text="{Binding Source={x:Reference this}, Path=Icon}"
-            TextColor="{AppThemeBinding Light={StaticResource Gray600},
-                                        Dark={StaticResource White}}"
+            TextColor="{AppThemeBinding Light={StaticResource onSecondaryContainer},
+                                        Dark={StaticResource onSecondaryContainerDark}}"
             VerticalOptions="End"
             VerticalTextAlignment="Center"
             WidthRequest="65" />
