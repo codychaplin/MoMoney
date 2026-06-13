@@ -48,20 +48,14 @@
                 <!--  Upload file button  -->
                 <Button
                     Text="Upload File"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource primary},
-                                                      Dark={StaticResource primaryDark}}"
-                    TextColor="{AppThemeBinding Light={StaticResource onPrimary},
-                                                Dark={StaticResource onPrimaryDark}}"
+                    Style="{StaticResource BtnPrimary}"
                     Command="{Binding ImportStatementCommand}" />
 
                 <!--  Update rules button  -->
                 <Button
                     Grid.Column="1"
                     Text="Update Rules"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource secondary},
-                                                      Dark={StaticResource secondaryDark}}"
-                    TextColor="{AppThemeBinding Light={StaticResource onSecondary},
-                                                Dark={StaticResource onSecondaryDark}}"
+                    Style="{StaticResource BtnSecondary}"
                     Command="{Binding GoToEditMappingRulesCommand}" />
 
                 <!--  Reload button  -->
@@ -69,10 +63,7 @@
                     Grid.Row="1"
                     Text="Run Again"
                     IsEnabled="{Binding FileUploaded}"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource tertiary},
-                                                      Dark={StaticResource tertiaryDark}}"
-                    TextColor="{AppThemeBinding Light={StaticResource onTertiary},
-                                                Dark={StaticResource onTertiaryDark}}"
+                    Style="{StaticResource BtnTertiary}"
                     Command="{Binding ReloadCommand}" />
 
                 <!--  Clear button  -->
@@ -80,10 +71,7 @@
                     Grid.Row="1"
                     Grid.Column="1"
                     Text="Clear"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource error},
-                                                    Dark={StaticResource errorDark}}"
-                    TextColor="{AppThemeBinding Light={StaticResource onError},
-                                                Dark={StaticResource onErrorDark}}"
+                    Style="{StaticResource BtnError}"
                     Command="{Binding ClearCommand}">
                     <Button.CommandParameter>
                         <x:Boolean>True</x:Boolean>
@@ -224,20 +212,14 @@
                         <Button
                             Margin="5,0,0,0"
                             Grid.Column="1"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource secondary},
-                                                              Dark={StaticResource secondaryDark}}"
-                            TextColor="{AppThemeBinding Light={StaticResource onSecondary},
-                                                        Dark={StaticResource onSecondaryDark}}"
+                            Style="{StaticResource BtnTertiary}"
                             Text="Skip"
                             Command="{Binding SkipTransactionCommand}" />
 
                         <!--  Approve button  -->
                         <Button
                             Grid.Column="2"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource primary},
-                                                            Dark={StaticResource primaryDark}}"
-                            TextColor="{AppThemeBinding Light={StaticResource onPrimary},
-                                                        Dark={StaticResource onPrimaryDark}}"
+                            Style="{StaticResource BtnPrimary}"
                             Text="Approve"
                             IsEnabled="{Binding SelectedRecord.CanEdit}"
                             Command="{Binding ApproveTransactionCommand}" />
@@ -280,10 +262,7 @@
                     Margin="0,5,0,0"
                     Text="Commit"
                     IsEnabled="{Binding IsCommitButtonEnabled}"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource primary},
-                                                      Dark={StaticResource primaryDark}}"
-                    TextColor="{AppThemeBinding Light={StaticResource onPrimary},
-                                                Dark={StaticResource onPrimaryDark}}"
+                    Style="{StaticResource BtnPrimary}"
                     Command="{Binding CommitImportCommand}" />
                     
             </VerticalStackLayout>

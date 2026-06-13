@@ -42,30 +42,21 @@
                 <Button
                     x:Name="btnClear"
                     Grid.Column="0"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource tertiary},
-                                                      Dark={StaticResource tertiaryDark}}"
-                    TextColor="{AppThemeBinding Light={StaticResource onTertiary},
-                                                Dark={StaticResource onTertiaryDark}}"
+                    Style="{DynamicResource BtnTertiary}"
                     Command="{Binding ClearCommand}"
                     HeightRequest="45"
                     Text="Clear" />
                 <Button
                     x:Name="btnDelete"
                     Grid.Column="1"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource error},
-                                                      Dark={StaticResource errorDark}}"
-                    TextColor="{AppThemeBinding Light={StaticResource onError},
-                                                Dark={StaticResource onErrorDark}}"
+                    Style="{DynamicResource BtnError}"
                     Command="{Binding RemoveTransactionCommand}"
                     HeightRequest="45"
                     Text="Delete" />
                 <Button
                     x:Name="btnEnter"
                     Grid.Column="2"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource primary},
-                                                      Dark={StaticResource primaryDark}}"
-                    TextColor="{AppThemeBinding Light={StaticResource onPrimary},
-                                                      Dark={StaticResource onPrimaryDark}}"
+                    Style="{DynamicResource BtnPrimary}"
                     Command="{Binding EditTransactionCommand}"
                     CommandParameter="{Binding Path=PayeeText, Source={x:Reference transactionForm}}"
                     HeightRequest="45"

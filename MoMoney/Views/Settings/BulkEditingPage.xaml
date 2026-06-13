@@ -90,10 +90,7 @@
 
         <Button
             Grid.Row="1"
-            BackgroundColor="{AppThemeBinding Light={StaticResource tertiary},
-                                              Dark={StaticResource tertiaryDark}}"
-            TextColor="{AppThemeBinding Light={StaticResource onTertiary},
-                                        Dark={StaticResource onTertiaryDark}}"
+            Style="{StaticResource BtnTertiary}"
             Command="{Binding BulkFindCommand}"
             Text="Find">
             <Button.CommandParameter>
@@ -104,10 +101,7 @@
         <Button
             Grid.Row="1"
             Grid.Column="1"
-            BackgroundColor="{AppThemeBinding Light={StaticResource primary},
-                                              Dark={StaticResource primaryDark}}"
-            TextColor="{AppThemeBinding Light={StaticResource onPrimary},
-                                        Dark={StaticResource onPrimaryDark}}"
+            Style="{StaticResource BtnPrimary}"
             Command="{Binding BulkReplaceCommand}"
             Text="Replace" />
 

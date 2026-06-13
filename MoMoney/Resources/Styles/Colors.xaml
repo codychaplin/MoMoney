@@ -30,7 +30,7 @@
     <Color x:Key="outlineVariant">#C0C9C1</Color>
 
     <!--  dark scheme  -->
-    <Color x:Key="primaryDark">#89D6B9</Color>
+    <Color x:Key="primaryDark">#90D5AF</Color>
     <Color x:Key="onPrimaryDark">#003823</Color>
     <Color x:Key="primaryContainerDark">#005234</Color>
     <Color x:Key="onPrimaryContainerDark">#ABF2CA</Color>

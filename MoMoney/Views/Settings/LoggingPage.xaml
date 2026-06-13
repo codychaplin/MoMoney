@@ -36,7 +36,7 @@
                 <Grid.Resources>
                     <Style TargetType="Label">
                         <Setter Property="FontSize" Value="12" />
-                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource outlineDark}}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
                     </Style>
                 </Grid.Resources>
                 <Label
@@ -71,7 +71,7 @@
                 <Grid.Resources>
                     <Style TargetType="Label">
                         <Setter Property="FontSize" Value="12" />
-                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource outlineDark}}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
                     </Style>
                 </Grid.Resources>
                 <Label

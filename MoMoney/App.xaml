@@ -28,6 +28,54 @@
             <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
             <converters:PayeeOrTransferConverter x:Key="PayeeOrTransferConverter" />
 
+            <!--  primary button  -->
+            <Style x:Key="BtnPrimary" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={DynamicResource primary}, Dark={DynamicResource primaryDark}}" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onPrimary}, Dark={DynamicResource onPrimaryDark}}" />
+            </Style>
+
+            <!--  primary container button  -->
+            <Style x:Key="BtnPrimaryContainer" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={DynamicResource primaryContainer}, Dark={DynamicResource primaryContainerDark}}" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onPrimaryContainer}, Dark={DynamicResource onPrimaryContainerDark}}" />
+            </Style>
+
+            <!--  secondary button  -->
+            <Style x:Key="BtnSecondary" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={DynamicResource secondary}, Dark={DynamicResource secondaryDark}}" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onSecondary}, Dark={DynamicResource onSecondaryDark}}" />
+            </Style>
+
+            <!--  secondary container button  -->
+            <Style x:Key="BtnSecondaryContainer" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={DynamicResource secondaryContainer}, Dark={DynamicResource secondaryContainerDark}}" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onSecondaryContainer}, Dark={DynamicResource onSecondaryContainerDark}}" />
+            </Style>
+
+            <!--  tertiary button  -->
+            <Style x:Key="BtnTertiary" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={DynamicResource tertiary}, Dark={DynamicResource tertiaryDark}}" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onTertiary}, Dark={DynamicResource onTertiaryDark}}" />
+            </Style>
+
+            <!--  tertiary container button  -->
+            <Style x:Key="BtnTertiaryContainer" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={DynamicResource tertiaryContainer}, Dark={DynamicResource tertiaryContainerDark}}" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onTertiaryContainer}, Dark={DynamicResource onTertiaryContainerDark}}" />
+            </Style>
+
+            <!-- error button -->
+            <Style x:Key="BtnError" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={DynamicResource error}, Dark={DynamicResource errorDark}}" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onError}, Dark={DynamicResource onErrorDark}}" />
+            </Style>
+            
+            <!-- error container button -->
+            <Style x:Key="BtnErrorContainer" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={DynamicResource errorContainer}, Dark={DynamicResource errorContainerDark}}" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onErrorContainer}, Dark={DynamicResource onErrorContainerDark}}" />
+            </Style>
+
             <!--  title  -->
             <Style x:Key="lblTitle" TargetType="Label">
                 <Setter Property="FontSize" Value="18" />
@@ -122,13 +170,13 @@
                 <Setter Property="WidthRequest" Value="50" />
                 <Setter Property="Margin" Value="20" />
                 <Setter Property="Padding" Value="0" />
-                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={DynamicResource primaryContainer}, Dark={DynamicResource primaryDark}}" />
+                <Setter Property="BackgroundColor" Value="{DynamicResource primaryContainer}" />
                 <Setter Property="FontFamily" Value="MaterialRounded" />
                 <Setter Property="FontSize" Value="40" />
                 <Setter Property="VerticalOptions" Value="End" />
                 <Setter Property="HorizontalOptions" Value="End" />
                 <Setter Property="Text" Value="{x:Static m:MaterialOutlined.Add}" />
-                <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onPrimaryContainer}, Dark={DynamicResource onPrimaryDark}}" />
+                <Setter Property="TextColor" Value="{DynamicResource onPrimaryContainer}" />
             </Style>
 
             <!--  transaction template  -->
