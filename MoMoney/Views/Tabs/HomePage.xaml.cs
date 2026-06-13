@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels;
 
-namespace MoMoney.Views;
+namespace MoMoney.Views.Tabs;
 
 public partial class HomePage : ContentView
 {

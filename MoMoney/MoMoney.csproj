@@ -55,15 +55,9 @@
 
 		<!-- Fonts -->
    		<MauiFont Include="Resources\Fonts\*" />
-	</ItemGroup>
 
-	<ItemGroup>
-		<AndroidResource Remove="Resources\Raw\**" />
-		<Compile Remove="Resources\Raw\**" />
-		<EmbeddedResource Remove="Resources\Raw\**" />
-		<MauiCss Remove="Resources\Raw\**" />
-		<MauiXaml Remove="Resources\Raw\**" />
-		<None Remove="Resources\Raw\**" />
+		<!-- Resources -->
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
 	<ItemGroup>

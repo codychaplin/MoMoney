@@ -1,5 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using MoMoney.Core;
+﻿using System.Text.Json;
+using CommunityToolkit.Mvvm.Input;
+using MoMoney.Core.Helpers;
 using MoMoney.Views;
 
 namespace MoMoney;
@@ -9,8 +10,9 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
+        Utilities.ApplyTheme(Utilities.CurrentTheme);
     }
-
+    
     protected override Window CreateWindow(IActivationState? activationState)
     {
         return new Window(new AppShell());

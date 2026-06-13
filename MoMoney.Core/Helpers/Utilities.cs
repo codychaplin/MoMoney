@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui.Core;
+﻿using System.Text.Json;
+using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Alerts;
 
 namespace MoMoney.Core.Helpers;
@@ -22,6 +23,12 @@ public static class Utilities
         set { Preferences.Set("TransactionDictationEnabled", value); }
     }
 
+    public static string CurrentTheme
+    {
+        get { return Preferences.Get("CurrentTheme", "green"); }
+        set { Preferences.Set("CurrentTheme", value); }
+    }
+
     public static Color GetColour(string lightColour, string darkColour) => UraniumUI.Resources.ColorResource.GetColor(lightColour, darkColour);
     public static Color GetColour(string colour) => UraniumUI.Resources.ColorResource.GetColor(colour);
 
@@ -34,6 +41,36 @@ public static class Utilities
         var toast = Toast.Make(message, duration, fontSize);
         await toast.Show();
     }
+
+    public static void ApplyTheme(string themeName)
+    {
+        using var stream = FileSystem.OpenAppPackageFileAsync("themes.json").GetAwaiter().GetResult();
+        using var reader = new StreamReader(stream);
+        using var doc = JsonDocument.Parse(reader.ReadToEnd());
+        var root = doc.RootElement;
+
+        if (!root.TryGetProperty(themeName, out var themeEl))
+            return;
+
+        var res = Application.Current!.Resources;
+
+        if (themeEl.TryGetProperty("light", out var light))
+            foreach (var prop in light.EnumerateObject())
+                if (Color.TryParse(prop.Value.GetString(), out var c))
+                    res[prop.Name] = c;
+
+        if (themeEl.TryGetProperty("dark", out var dark))
+            foreach (var prop in dark.EnumerateObject())
+                if (Color.TryParse(prop.Value.GetString(), out var c))
+                    res[prop.Name + "Dark"] = c;
+    }
+
+}
+
+public class ThemeInfo(string name, Color colour)
+{
+    public string Name { get; } = name;
+    public Color Colour { get; } = colour;
 }
 
 /// <summary>

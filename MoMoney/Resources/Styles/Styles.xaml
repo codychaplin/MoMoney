@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<?xaml-comp compile="true" ?>
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -126,7 +125,7 @@
 
     <Style TargetType="Border">
         <Setter Property="Stroke" Value="Transparent" />
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource surfaceContainer}, Dark={StaticResource surfaceContainerDark}}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={DynamicResource surfaceContainer}, Dark={DynamicResource surfaceContainerDark}}" />
         <Setter Property="StrokeShape" Value="RoundRectangle 10" />
         <Setter Property="StrokeThickness" Value="1" />
     </Style>
@@ -259,7 +258,7 @@
     </Style>
 
     <Style TargetType="Label">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onSurface}, Dark={DynamicResource onSurfaceDark}}" />
         <Setter Property="FontFamily" Value="Roboto" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -268,7 +267,7 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource outlineDark}, Dark={StaticResource outline}}" />
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource outlineDark}, Dark={DynamicResource outline}}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -426,7 +425,7 @@
     </Style>
 
     <Style TargetType="Switch">
-        <Setter Property="OnColor" Value="{StaticResource Green}" />
+        <Setter Property="OnColor" Value="{AppThemeBinding Light={DynamicResource secondary}, Dark={DynamicResource secondaryDark}}" />
         <Setter Property="ThumbColor" Value="{AppThemeBinding Light={StaticResource primary}, Dark={StaticResource primaryDark}}" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
@@ -434,19 +433,19 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="OnColor" Value="{AppThemeBinding Light={StaticResource outlineDark}, Dark={StaticResource outline}}" />
-                            <Setter Property="ThumbColor" Value="{AppThemeBinding Light={StaticResource outlineDark}, Dark={StaticResource outline}}" />
+                            <Setter Property="OnColor" Value="{AppThemeBinding Light={DynamicResource outlineDark}, Dark={DynamicResource outline}}" />
+                            <Setter Property="ThumbColor" Value="{AppThemeBinding Light={DynamicResource outlineDark}, Dark={DynamicResource outline}}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="On">
                         <VisualState.Setters>
-                            <Setter Property="OnColor" Value="{StaticResource Green}" />
-                            <Setter Property="ThumbColor" Value="{AppThemeBinding Light={StaticResource primary}, Dark={StaticResource primaryDark}}" />
+                            <Setter Property="OnColor" Value="{AppThemeBinding Light={DynamicResource secondary}, Dark={DynamicResource secondaryDark}}" />
+                            <Setter Property="ThumbColor" Value="{AppThemeBinding Light={DynamicResource primary}, Dark={DynamicResource primaryDark}}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Off">
                         <VisualState.Setters>
-                            <Setter Property="ThumbColor" Value="{AppThemeBinding Light={StaticResource outline}, Dark={StaticResource outlineDark}}" />
+                            <Setter Property="ThumbColor" Value="{AppThemeBinding Light={DynamicResource outline}, Dark={DynamicResource outlineDark}}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -479,9 +478,9 @@
     </Style>
 
     <Style ApplyToDerivedTypes="True" TargetType="Shell">
-        <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={StaticResource primaryContainer}, Dark={StaticResource primaryDark}}" />
-        <Setter Property="Shell.ForegroundColor" Value="{OnPlatform WinUI={StaticResource onSurface}, Default={AppThemeBinding Light={StaticResource onPrimaryContainer}, Dark={StaticResource onPrimaryDark}}}" />
-        <Setter Property="Shell.TitleColor" Value="{AppThemeBinding Light={StaticResource onPrimaryContainer}, Dark={StaticResource onPrimaryDark}}" />
+        <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={DynamicResource primaryContainer}, Dark={DynamicResource primaryDark}}" />
+        <Setter Property="Shell.ForegroundColor" Value="{AppThemeBinding Light={DynamicResource onPrimaryContainer}, Dark={DynamicResource onPrimaryDark}}" />
+        <Setter Property="Shell.TitleColor" Value="{AppThemeBinding Light={DynamicResource onPrimaryContainer}, Dark={DynamicResource onPrimaryDark}}" />
         <Setter Property="Shell.DisabledColor" Value="{AppThemeBinding Light={StaticResource outlineDark}, Dark={StaticResource surfaceDark}}" />
         <Setter Property="Shell.UnselectedColor" Value="{AppThemeBinding Light={StaticResource outlineDark}, Dark={StaticResource outlineDark}}" />
         <Setter Property="Shell.FlyoutBehavior" Value="Disabled" />

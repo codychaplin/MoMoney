@@ -4,6 +4,7 @@ using CommunityToolkit.Maui.Storage;
 using Syncfusion.Maui.Toolkit.Hosting;
 using UraniumUI;
 using MoMoney.Views;
+using MoMoney.Views.Tabs;
 using MoMoney.Views.Stats;
 using MoMoney.Views.Settings;
 using MoMoney.Views.Settings.Edit;

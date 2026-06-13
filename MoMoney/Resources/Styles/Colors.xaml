@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<?xaml-comp compile="true" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <!--  light scheme  -->
@@ -62,6 +61,7 @@
     <Color x:Key="Black">#000000</Color>
     <Color x:Key="White">#FFFFFF</Color>
     <Color x:Key="Red">#df4759</Color>
+    <Color x:Key="LightRed">#FFFF8290</Color>
     <Color x:Key="SubtleRed">#FFBBBB</Color>
     <Color x:Key="Blue">#3B74C5</Color>
     <Color x:Key="LightBlue">#75AEFF</Color>
@@ -69,6 +69,7 @@
     <Color x:Key="Orange">#B1723E</Color>
     <Color x:Key="Yellow">#ffc107</Color>
     <Color x:Key="Green">#42ba96</Color>
+    <Color x:Key="LightGreen">#FF53F4C4</Color>
     <Color x:Key="SubtleGreen">#9942ba96</Color>
 
 </ResourceDictionary>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView
-    x:Class="MoMoney.Views.HomePage"
+    x:Class="MoMoney.Views.Tabs.HomePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:chart="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
@@ -33,14 +33,14 @@
                         <Setter Property="HorizontalOptions" Value="End" />
                         <Style.Triggers>
                             <Trigger TargetType="Button" Property="IsPressed" Value="True">
-                                <Setter Property="TextColor" Value="{StaticResource onSurfaceDark}" />
+                                <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onSurface}, Dark={DynamicResource onSurfaceDark}}" />
                             </Trigger>
                         </Style.Triggers>
                     </Style>
 
                     <!--  secion title style  -->
                     <Style TargetType="Label" x:Key="lblSectionTitle" BasedOn="{StaticResource lblTitle}">
-                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onBackground}, Dark={StaticResource onBackgroundDark}}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onBackground}, Dark={DynamicResource onBackgroundDark}}" />
                     </Style>
                 </VerticalStackLayout.Resources>
 
@@ -57,8 +57,8 @@
                 <Border
                     Margin="10,0"
                     Padding="5"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource primaryContainer},
-                                                      Dark={StaticResource primaryDark}}"
+                    BackgroundColor="{AppThemeBinding Light={DynamicResource primaryContainer},
+                                                      Dark={DynamicResource primaryDark}}"
                     HeightRequest="220">
                     <Grid>
                         <chart:SfCartesianChart Title="" Margin="0">
@@ -74,14 +74,14 @@
                                     <chart:DateTimeAxis.LabelStyle>
                                         <chart:ChartAxisLabelStyle
                                             LabelFormat="{Binding XLabelFormat}"
-                                            TextColor="{AppThemeBinding Light={StaticResource onPrimaryContainer},
-                                                                        Dark={StaticResource onPrimaryDark}}" />
+                                            TextColor="{AppThemeBinding Light={DynamicResource onPrimaryContainer},
+                                                                        Dark={DynamicResource onPrimaryDark}}" />
                                     </chart:DateTimeAxis.LabelStyle>
                                     <!--  vertical grid lines  -->
                                     <chart:DateTimeAxis.MajorGridLineStyle>
                                         <chart:ChartLineStyle
-                                            Stroke="{AppThemeBinding Light={StaticResource primary},
-                                                                     Dark={StaticResource tertiaryContainerDark}}" />
+                                            Stroke="{AppThemeBinding Light={DynamicResource primary},
+                                                                     Dark={DynamicResource tertiaryContainerDark}}" />
                                     </chart:DateTimeAxis.MajorGridLineStyle>
                                     <!--  axis lines  -->
                                     <chart:DateTimeAxis.AxisLineStyle>
@@ -101,13 +101,13 @@
                                     <chart:NumericalAxis.LabelStyle>
                                         <chart:ChartAxisLabelStyle
                                             LabelFormat="{Binding ShowValue}"
-                                            TextColor="{AppThemeBinding Light={StaticResource onPrimaryContainer},
-                                                                        Dark={StaticResource onPrimaryDark}}" />
+                                            TextColor="{AppThemeBinding Light={DynamicResource onPrimaryContainer},
+                                                                        Dark={DynamicResource onPrimaryDark}}" />
                                     </chart:NumericalAxis.LabelStyle>
                                     <!--  horizontal grid lines  -->
                                     <chart:NumericalAxis.MajorGridLineStyle>
-                                        <chart:ChartLineStyle Stroke="{AppThemeBinding Light={StaticResource primary},
-                                                                        Dark={StaticResource tertiaryContainerDark}}" />
+                                        <chart:ChartLineStyle Stroke="{AppThemeBinding Light={DynamicResource primary},
+                                                                        Dark={DynamicResource tertiaryContainerDark}}" />
                                     </chart:NumericalAxis.MajorGridLineStyle>
                                     <!--  Axis line  -->
                                     <chart:NumericalAxis.AxisLineStyle>
@@ -122,8 +122,8 @@
 
                             <!--  series  -->
                             <chart:SplineSeries
-                                Fill="{AppThemeBinding Light={StaticResource onPrimaryContainer},
-                                                       Dark={StaticResource onPrimaryDark}}"
+                                Fill="{AppThemeBinding Light={DynamicResource onPrimaryContainer},
+                                                       Dark={DynamicResource onPrimaryDark}}"
                                 ItemsSource="{Binding Data}"
                                 StrokeWidth="2"
                                 Type="Cardinal"
@@ -146,16 +146,16 @@
                     <segmentedControl:SfSegmentedControl.TextStyle>
                         <segmentedControl:SegmentTextStyle
                             FontSize="12"
-                            TextColor="{AppThemeBinding Light={StaticResource onSurface},
-                                                        Dark={StaticResource outline}}"/>
+                            TextColor="{AppThemeBinding Light={DynamicResource onSurface},
+                                                        Dark={DynamicResource outline}}"/>
                     </segmentedControl:SfSegmentedControl.TextStyle>
                     <segmentedControl:SfSegmentedControl.SelectionIndicatorSettings>
                         <segmentedControl:SelectionIndicatorSettings
                             SelectionIndicatorPlacement="Fill"
-                            TextColor="{AppThemeBinding Light={StaticResource onSurface},
-                                                        Dark={StaticResource onSecondaryContainerDark}}"
-                            Background="{AppThemeBinding Light={StaticResource outlineVariant},
-                                                        Dark={StaticResource secondaryContainerDark}}"/>
+                            TextColor="{AppThemeBinding Light={DynamicResource onSurface},
+                                                        Dark={DynamicResource onSecondaryContainerDark}}"
+                            Background="{AppThemeBinding Light={DynamicResource outlineVariant},
+                                                        Dark={DynamicResource secondaryContainerDark}}"/>
                     </segmentedControl:SfSegmentedControl.SelectionIndicatorSettings>
                     <segmentedControl:SfSegmentedControl.ItemsSource>
                         <x:Array Type="{x:Type x:String}">

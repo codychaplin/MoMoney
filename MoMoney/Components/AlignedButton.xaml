@@ -9,8 +9,8 @@
     x:Name="this"
     x:DataType="components:AlignedButton">
     <Grid
-        BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainer},
-                                          Dark={StaticResource surfaceContainerDark}}"
+        BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainer},
+                                          Dark={DynamicResource surfaceContainerDark}}"
         BindingContext="{x:Reference this}">
         <Button
             BackgroundColor="Transparent"
@@ -29,7 +29,7 @@
             IsVisible="{Binding ShowArrow, FallbackValue=false}"
             Source="{FontImageSource FontFamily=MaterialRoundedFilled,
                                      Glyph={x:Static m:MaterialOutlined.Chevron_right},
-                                     Color={AppThemeBinding Light={StaticResource onSurface},
-                                                            Dark={StaticResource onSurfaceDark}}}" />
+                                     Color={AppThemeBinding Light={DynamicResource onSurface},
+                                                            Dark={DynamicResource onSurfaceDark}}}" />
     </Grid>
 </ContentView>

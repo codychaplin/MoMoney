@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView
-    x:Class="MoMoney.Views.TransactionsPage"
+    x:Class="MoMoney.Views.Tabs.TransactionsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
@@ -21,8 +21,8 @@
                 <components:PageHeader
                     Title="{Binding PageTitle}"
                     ImageSource="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                                  Color={AppThemeBinding Light={StaticResource onPrimaryContainer},
-                                                                         Dark={StaticResource onPrimaryDark}},
+                                                  Color={AppThemeBinding Light={DynamicResource onPrimaryContainer},
+                                                                         Dark={DynamicResource onPrimaryDark}},
                                                   Glyph={x:Static m:MaterialOutlined.Tune}}" />
             </toolkit:Expander.Header>
 

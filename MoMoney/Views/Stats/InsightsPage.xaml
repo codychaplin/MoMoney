@@ -83,8 +83,8 @@
                 <!--  income series  -->
                 <chart:ColumnSeries
                     Width="0.8"
-                    Fill="{AppThemeBinding Light={StaticResource primary},
-                                           Dark={StaticResource primaryDark}}"
+                    Fill="{AppThemeBinding Light={StaticResource Green},
+                                           Dark={StaticResource LightGreen}}"
                     ItemsSource="{Binding IncomeData}"
                     ShowDataLabels="True"
                     XBindingPath="Month"
@@ -97,8 +97,8 @@
                                     Background="#00ffffff"
                                     FontSize="11"
                                     LabelFormat="$0"
-                                    TextColor="{AppThemeBinding Light={StaticResource primary},
-                                                                Dark={StaticResource primaryDark}}" />
+                                    TextColor="{AppThemeBinding Light={StaticResource Green},
+                                                                Dark={StaticResource LightGreen}}" />
                             </chart:CartesianDataLabelSettings.LabelStyle>
                         </chart:CartesianDataLabelSettings>
                     </chart:ColumnSeries.DataLabelSettings>
@@ -106,7 +106,7 @@
                 <!--  expense series  -->
                 <chart:ColumnSeries
                     Width="0.8"
-                    Fill="{StaticResource errorVariantDark}"
+                    Fill="{StaticResource Red}"
                     ItemsSource="{Binding ExpenseData}"
                     ShowDataLabels="True"
                     XBindingPath="Month"
@@ -120,8 +120,8 @@
                                     FontSize="11"
                                     LabelFormat="$0"
                                     LabelPadding="5"
-                                    TextColor="{AppThemeBinding Light={StaticResource error},
-                                                                Dark={StaticResource errorDark}}" />
+                                    TextColor="{AppThemeBinding Light={StaticResource Red},
+                                                                Dark={StaticResource LightRed}}" />
                             </chart:CartesianDataLabelSettings.LabelStyle>
                         </chart:CartesianDataLabelSettings>
                     </chart:ColumnSeries.DataLabelSettings>
@@ -137,6 +137,7 @@
             Text="Totals" />
 
         <VerticalStackLayout Grid.Row="4" Spacing="10">
+            <!-- Income totals -->
             <Border Padding="5,5,10,5">
                 <Grid ColumnDefinitions="40,*,*">
                     <Image
@@ -144,8 +145,8 @@
                         HorizontalOptions="Center"
                         Source="{FontImageSource FontFamily=MaterialRoundedFilled,
                                                  Glyph={x:Static m:MaterialOutlined.Trending_up},
-                                                 Color={AppThemeBinding Light={StaticResource primary},
-                                                                        Dark={StaticResource primaryDark}}}"
+                                                 Color={AppThemeBinding Light={StaticResource Green},
+                                                                        Dark={StaticResource LightGreen}}}"
                         VerticalOptions="Center" />
                     <Label
                         Grid.Column="1"
@@ -161,6 +162,8 @@
                         VerticalOptions="Center" />
                 </Grid>
             </Border>
+
+            <!-- Expense totals -->
             <Border Padding="5,5,10,5">
                 <Grid ColumnDefinitions="40,*,*">
                     <Image
@@ -168,8 +171,8 @@
                         HorizontalOptions="Center"
                         Source="{FontImageSource FontFamily=MaterialRoundedFilled,
                                                  Glyph={x:Static m:MaterialOutlined.Trending_down},
-                                                 Color={AppThemeBinding Light={StaticResource errorVariant},
-                                                                        Dark={StaticResource errorVariantDark}}}"
+                                                 Color={AppThemeBinding Light={StaticResource Red},
+                                                                        Dark={StaticResource LightRed}}}"
                         VerticalOptions="Center" />
                     <Label
                         Grid.Column="1"

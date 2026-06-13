@@ -9,9 +9,34 @@ public partial class SettingsViewModel
 {
     readonly ILoggerService<SettingsViewModel> logger;
 
+    public List<ThemeInfo> Themes { get; } =
+    [
+        new("green",  Color.FromArgb("#63DBA2")),
+        new("blue",   Color.FromArgb("#5B9BD5")),
+        new("teal",   Color.FromArgb("#4AC4C4")),
+        new("purple", Color.FromArgb("#9B6DD5")),
+        new("yellow", Color.FromArgb("#FFDE3F")),
+        new("red",    Color.FromArgb("#E85A5A")),
+    ];
+
     public SettingsViewModel(ILoggerService<SettingsViewModel> _logger)
     {
         logger = _logger;
+    }
+
+    /// <summary>
+    /// Selects a theme and applies it immediately.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    [RelayCommand]
+    static async Task SelectTheme(string name)
+    {
+        if (name == Utilities.CurrentTheme)
+            return;
+        
+        Utilities.ApplyTheme(name);
+        Utilities.CurrentTheme = name;
     }
 
     /// <summary>
