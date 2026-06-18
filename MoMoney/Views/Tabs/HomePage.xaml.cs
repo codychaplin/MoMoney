@@ -19,6 +19,15 @@ public partial class HomePage : ContentView
 
             await vm.Refresh(true);
         };
+
+        WeakReferenceMessenger.Default.Register<UpdateThemeMessage>(this, (r, m) => UpdateGradient());
+    }
+
+    // workaround for gradient not updating on theme change
+    void UpdateGradient()
+    {
+        var colour = Utilities.GetColour("primaryTransparent", "primaryTransparentDark");
+        ChartGradientStop.Color = colour;
     }
 
     void OnRangeSelectionChanged(object? sender, Syncfusion.Maui.Toolkit.SegmentedControl.SelectionChangedEventArgs e)

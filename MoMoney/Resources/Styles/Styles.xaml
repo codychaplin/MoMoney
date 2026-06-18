@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -478,9 +479,9 @@
     </Style>
 
     <Style ApplyToDerivedTypes="True" TargetType="Shell">
-        <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={DynamicResource primaryContainer}, Dark={DynamicResource primaryDark}}" />
-        <Setter Property="Shell.ForegroundColor" Value="{AppThemeBinding Light={DynamicResource onPrimaryContainer}, Dark={DynamicResource onPrimaryDark}}" />
-        <Setter Property="Shell.TitleColor" Value="{AppThemeBinding Light={DynamicResource onPrimaryContainer}, Dark={DynamicResource onPrimaryDark}}" />
+        <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={DynamicResource secondaryContainer}, Dark={DynamicResource secondaryContainerDark}}" />
+        <Setter Property="Shell.ForegroundColor" Value="{AppThemeBinding Light={DynamicResource onSecondaryContainer}, Dark={DynamicResource onSecondaryContainerDark}}" />
+        <Setter Property="Shell.TitleColor" Value="{AppThemeBinding Light={DynamicResource onSecondaryContainer}, Dark={DynamicResource onSecondaryContainerDark}}" />
         <Setter Property="Shell.DisabledColor" Value="{AppThemeBinding Light={StaticResource outlineDark}, Dark={StaticResource surfaceDark}}" />
         <Setter Property="Shell.UnselectedColor" Value="{AppThemeBinding Light={StaticResource outlineDark}, Dark={StaticResource outlineDark}}" />
         <Setter Property="Shell.FlyoutBehavior" Value="Disabled" />

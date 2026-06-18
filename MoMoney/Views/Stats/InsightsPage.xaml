@@ -54,7 +54,7 @@
                         ShowMajorGridLines="False">
                         <!--  axis line  -->
                         <chart:CategoryAxis.AxisLineStyle>
-                            <chart:ChartLineStyle Stroke="{AppThemeBinding Light={StaticResource outlineVariant}, Dark={StaticResource tertiaryContainerDark}}" />
+                            <chart:ChartLineStyle Stroke="{AppThemeBinding Light={StaticResource outlineVariant}, Dark={StaticResource secondaryContainerDark}}" />
                         </chart:CategoryAxis.AxisLineStyle>
                         <!--  tick  -->
                         <chart:CategoryAxis.MajorTickStyle>
@@ -71,7 +71,7 @@
                     <chart:NumericalAxis IsVisible="False" RangePadding="AppendInterval">
                         <!--  grid lines  -->
                         <chart:NumericalAxis.MajorGridLineStyle>
-                            <chart:ChartLineStyle Stroke="{AppThemeBinding Light={StaticResource outlineVariant}, Dark={StaticResource tertiaryContainerDark}}" />
+                            <chart:ChartLineStyle Stroke="{AppThemeBinding Light={StaticResource outlineVariant}, Dark={StaticResource secondaryContainerDark}}" />
                         </chart:NumericalAxis.MajorGridLineStyle>
                         <!--  tick  -->
                         <chart:NumericalAxis.MajorTickStyle>

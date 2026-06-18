@@ -21,8 +21,8 @@
                 <components:PageHeader
                     Title="{Binding PageTitle}"
                     ImageSource="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                                  Color={AppThemeBinding Light={DynamicResource onPrimaryContainer},
-                                                                         Dark={DynamicResource onPrimaryDark}},
+                                                  Color={AppThemeBinding Light={DynamicResource onSurface},
+                                                                         Dark={DynamicResource onSurfaceDark}},
                                                   Glyph={x:Static m:MaterialOutlined.Tune}}" />
             </toolkit:Expander.Header>
 

@@ -57,8 +57,8 @@
                 <Border
                     Margin="10,0"
                     Padding="5"
-                    BackgroundColor="{AppThemeBinding Light={DynamicResource primaryContainer},
-                                                      Dark={DynamicResource primaryDark}}"
+                    BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainer},
+                                                      Dark={DynamicResource surfaceContainerDark}}"
                     HeightRequest="220">
                     <Grid>
                         <chart:SfCartesianChart Title="" Margin="0">
@@ -74,23 +74,27 @@
                                     <chart:DateTimeAxis.LabelStyle>
                                         <chart:ChartAxisLabelStyle
                                             LabelFormat="{Binding XLabelFormat}"
-                                            TextColor="{AppThemeBinding Light={DynamicResource onPrimaryContainer},
-                                                                        Dark={DynamicResource onPrimaryDark}}" />
+                                            TextColor="{AppThemeBinding Light={DynamicResource onSurface},
+                                                                        Dark={DynamicResource onSurfaceDark}}" />
                                     </chart:DateTimeAxis.LabelStyle>
                                     <!--  vertical grid lines  -->
                                     <chart:DateTimeAxis.MajorGridLineStyle>
                                         <chart:ChartLineStyle
                                             Stroke="{AppThemeBinding Light={DynamicResource primary},
-                                                                     Dark={DynamicResource tertiaryContainerDark}}" />
+                                                                     Dark={DynamicResource secondaryContainerDark}}" />
                                     </chart:DateTimeAxis.MajorGridLineStyle>
                                     <!--  axis lines  -->
                                     <chart:DateTimeAxis.AxisLineStyle>
                                         <chart:ChartLineStyle StrokeWidth="0" />
                                     </chart:DateTimeAxis.AxisLineStyle>
-                                    <!--  tick lines  -->
+                                    <!--  major tick lines  -->
                                     <chart:DateTimeAxis.MajorTickStyle>
                                         <chart:ChartAxisTickStyle StrokeWidth="0" />
                                     </chart:DateTimeAxis.MajorTickStyle>
+                                    <!--  minor tick lines  -->
+                                    <chart:DateTimeAxis.MinorTickStyle>
+                                        <chart:ChartAxisTickStyle StrokeWidth="0" />
+                                    </chart:DateTimeAxis.MinorTickStyle>
                                 </chart:DateTimeAxis>
                             </chart:SfCartesianChart.XAxes>
 
@@ -101,34 +105,44 @@
                                     <chart:NumericalAxis.LabelStyle>
                                         <chart:ChartAxisLabelStyle
                                             LabelFormat="{Binding ShowValue}"
-                                            TextColor="{AppThemeBinding Light={DynamicResource onPrimaryContainer},
-                                                                        Dark={DynamicResource onPrimaryDark}}" />
+                                            TextColor="{AppThemeBinding Light={DynamicResource onSurface},
+                                                                        Dark={DynamicResource onSurfaceDark}}" />
                                     </chart:NumericalAxis.LabelStyle>
                                     <!--  horizontal grid lines  -->
                                     <chart:NumericalAxis.MajorGridLineStyle>
                                         <chart:ChartLineStyle Stroke="{AppThemeBinding Light={DynamicResource primary},
-                                                                        Dark={DynamicResource tertiaryContainerDark}}" />
+                                                                        Dark={DynamicResource secondaryContainerDark}}" />
                                     </chart:NumericalAxis.MajorGridLineStyle>
                                     <!--  Axis line  -->
                                     <chart:NumericalAxis.AxisLineStyle>
                                         <chart:ChartLineStyle StrokeWidth="0" />
                                     </chart:NumericalAxis.AxisLineStyle>
-                                    <!--  tick lines  -->
+                                    <!--  major tick lines  -->
                                     <chart:NumericalAxis.MajorTickStyle>
                                         <chart:ChartAxisTickStyle StrokeWidth="0" />
                                     </chart:NumericalAxis.MajorTickStyle>
+                                    <!--  minor tick lines  -->
+                                    <chart:NumericalAxis.MinorTickStyle>
+                                        <chart:ChartAxisTickStyle StrokeWidth="0" />
+                                    </chart:NumericalAxis.MinorTickStyle>
                                 </chart:NumericalAxis>
                             </chart:SfCartesianChart.YAxes>
 
                             <!--  series  -->
-                            <chart:SplineSeries
-                                Fill="{AppThemeBinding Light={DynamicResource onPrimaryContainer},
-                                                       Dark={DynamicResource onPrimaryDark}}"
+                            <chart:SplineAreaSeries
                                 ItemsSource="{Binding Data}"
-                                StrokeWidth="2"
+                                Stroke="{AppThemeBinding Light={DynamicResource primary}, Dark={DynamicResource primaryDark}}"
+                                StrokeWidth="3"
                                 Type="Cardinal"
                                 XBindingPath="Date"
-                                YBindingPath="Balance" />
+                                YBindingPath="Balance">
+                                <chart:SplineAreaSeries.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop x:Name="ChartGradientStop" Offset="0" Color="{AppThemeBinding Light={DynamicResource primaryTransparent}, Dark={DynamicResource primaryTransparentDark}}" />
+                                        <GradientStop Offset="1" Color="Transparent" />
+                                    </LinearGradientBrush>
+                                </chart:SplineAreaSeries.Fill>
+                            </chart:SplineAreaSeries>
 
                         </chart:SfCartesianChart>
                     </Grid>

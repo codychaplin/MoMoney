@@ -6,18 +6,18 @@
     xmlns:local="clr-namespace:MoMoney.Components"
     x:Name="this"
     Padding="10"
-    BackgroundColor="{AppThemeBinding Light={DynamicResource secondaryContainer},
-                                      Dark={DynamicResource secondaryContainerDark}}"
+    BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainerHighest},
+                                      Dark={DynamicResource surfaceContainerHighestDark}}"
     StrokeShape="RoundRectangle 10">
-    <Grid RowDefinitions="*,30">
+    <Grid RowDefinitions="*,30" RowSpacing="3">
         <Label
             FontFamily="MaterialRoundedFilled"
             FontSize="65"
             HeightRequest="65"
             HorizontalTextAlignment="Center"
             Text="{Binding Source={x:Reference this}, Path=Icon}"
-            TextColor="{AppThemeBinding Light={DynamicResource onSecondaryContainer},
-                                        Dark={DynamicResource onSecondaryContainerDark}}"
+            TextColor="{AppThemeBinding Light={DynamicResource onSurface},
+                                        Dark={DynamicResource onSurfaceDark}}"
             VerticalOptions="End"
             VerticalTextAlignment="Center"
             WidthRequest="65" />

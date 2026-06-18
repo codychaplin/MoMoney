@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <!--  light scheme  -->
     <Color x:Key="primary">#246A4B</Color>
+    <Color x:Key="primaryTransparent">#88246A4B</Color>
     <Color x:Key="onPrimary">#FFFFFF</Color>
     <Color x:Key="primaryContainer">#ABF2CA</Color>
     <Color x:Key="onPrimaryContainer">#005234</Color>
@@ -31,6 +33,7 @@
 
     <!--  dark scheme  -->
     <Color x:Key="primaryDark">#90D5AF</Color>
+    <Color x:Key="primaryTransparentDark">#8890D5AF</Color>
     <Color x:Key="onPrimaryDark">#003823</Color>
     <Color x:Key="primaryContainerDark">#005234</Color>
     <Color x:Key="onPrimaryContainerDark">#ABF2CA</Color>
@@ -56,6 +59,13 @@
     <Color x:Key="surfaceContainerHighestDark">#303632</Color>
     <Color x:Key="outlineDark">#8A938C</Color>
     <Color x:Key="outlineVariantDark">#404943</Color>
+
+    <!-- theme colours -->
+    <Color x:Key="themeGreen">#0cc0df</Color>
+    <Color x:Key="themeBlue">#5B9BD5</Color>
+    <Color x:Key="themeTeal">#4AC4C4</Color>
+    <Color x:Key="themePurple">#675496</Color>
+    <Color x:Key="themeYellow">#FFDE3F</Color>
 
     <!--  app-specific semantic colours (not theme-dependent)  -->
     <Color x:Key="Black">#000000</Color>

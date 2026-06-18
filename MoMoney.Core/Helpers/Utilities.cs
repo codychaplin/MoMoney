@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace MoMoney.Core.Helpers;
 
@@ -29,6 +30,12 @@ public static class Utilities
         set { Preferences.Set("CurrentTheme", value); }
     }
 
+    public static bool MaterialYouEnabled
+    {
+        get { return Preferences.Get("MaterialYou", false); }
+        set { Preferences.Set("MaterialYou", value); }
+    }
+
     public static Color GetColour(string lightColour, string darkColour) => UraniumUI.Resources.ColorResource.GetColor(lightColour, darkColour);
     public static Color GetColour(string colour) => UraniumUI.Resources.ColorResource.GetColor(colour);
 
@@ -44,25 +51,25 @@ public static class Utilities
 
     public static void ApplyTheme(string themeName)
     {
-        using var stream = FileSystem.OpenAppPackageFileAsync("themes.json").GetAwaiter().GetResult();
+        using var stream = FileSystem.OpenAppPackageFileAsync($"theme_{themeName}.json").GetAwaiter().GetResult();
         using var reader = new StreamReader(stream);
         using var doc = JsonDocument.Parse(reader.ReadToEnd());
         var root = doc.RootElement;
 
-        if (!root.TryGetProperty(themeName, out var themeEl))
-            return;
-
         var res = Application.Current!.Resources;
 
-        if (themeEl.TryGetProperty("light", out var light))
+        if (root.TryGetProperty("light", out var light))
             foreach (var prop in light.EnumerateObject())
                 if (Color.TryParse(prop.Value.GetString(), out var c))
                     res[prop.Name] = c;
 
-        if (themeEl.TryGetProperty("dark", out var dark))
+        if (root.TryGetProperty("dark", out var dark))
             foreach (var prop in dark.EnumerateObject())
                 if (Color.TryParse(prop.Value.GetString(), out var c))
                     res[prop.Name + "Dark"] = c;
+
+        // workaround for updating components that don't update properly
+        WeakReferenceMessenger.Default.Send(new UpdateThemeMessage(themeName));
     }
 
 }

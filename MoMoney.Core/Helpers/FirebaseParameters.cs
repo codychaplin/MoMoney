@@ -14,6 +14,7 @@ public class FirebaseParameters
     public static string EVENT_BULK_REPLACE => "Bulk_Replace";
     public static string EVENT_OPENAI_CALL => "OpenAI_Call";
     public static string EVENT_DEVELOPER_MODE_TOGGLED => "Developer_Mode_Toggled";
+    public static string EVENT_MATERIAL_YOU_TOGGLED => "Material_You_Toggled";
 
     public static string EVENT_WARNING_LOG => "Warning_Log";
     public static string EVENT_ERROR_LOG => "Error_Log";

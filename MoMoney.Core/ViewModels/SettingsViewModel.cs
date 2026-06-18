@@ -1,13 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels;
 
-public partial class SettingsViewModel
+public partial class SettingsViewModel : ObservableObject
 {
     readonly ILoggerService<SettingsViewModel> logger;
+    
+    [ObservableProperty] bool materialYouEnabled = false;
+    [ObservableProperty] bool showSensitiveValuesEnabled = true;
 
     public List<ThemeInfo> Themes { get; } =
     [
@@ -15,28 +19,12 @@ public partial class SettingsViewModel
         new("blue",   Color.FromArgb("#5B9BD5")),
         new("teal",   Color.FromArgb("#4AC4C4")),
         new("purple", Color.FromArgb("#9B6DD5")),
-        new("yellow", Color.FromArgb("#FFDE3F")),
-        new("red",    Color.FromArgb("#E85A5A")),
+        new("yellow", Color.FromArgb("#FFDE3F"))
     ];
 
     public SettingsViewModel(ILoggerService<SettingsViewModel> _logger)
     {
         logger = _logger;
-    }
-
-    /// <summary>
-    /// Selects a theme and applies it immediately.
-    /// </summary>
-    /// <param name="name"></param>
-    /// <returns></returns>
-    [RelayCommand]
-    static async Task SelectTheme(string name)
-    {
-        if (name == Utilities.CurrentTheme)
-            return;
-        
-        Utilities.ApplyTheme(name);
-        Utilities.CurrentTheme = name;
     }
 
     /// <summary>
@@ -91,6 +79,44 @@ public partial class SettingsViewModel
     }
 
     /// <summary>
+    /// Selects a theme and applies it immediately.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    [RelayCommand]
+    static async Task SelectTheme(string name)
+    {
+        if (name == Utilities.CurrentTheme)
+            return;
+        
+        Utilities.ApplyTheme(name);
+        Utilities.CurrentTheme = name;
+    }
+
+    /// <summary>
+    /// Toggles Material You and persists to Preferences
+    /// </summary>
+    /// <param name="value"></param>
+    partial void OnMaterialYouEnabledChanged(bool value)
+    {
+        bool materialYouEnabled = Utilities.MaterialYouEnabled;
+        bool newMaterialYouEnabled = !materialYouEnabled;
+        Utilities.MaterialYouEnabled = newMaterialYouEnabled;
+
+        logger.LogFirebaseEvent(FirebaseParameters.EVENT_MATERIAL_YOU_TOGGLED, FirebaseParameters.GetFirebaseParameters());
+    }
+
+    /// <summary>
+    /// Toggles Show Sensitive Values
+    /// </summary>
+    /// <param name="value"></param>
+    partial void OnShowSensitiveValuesEnabledChanged(bool value)
+    {
+        Utilities.ShowValue = value;
+        WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
+    }
+
+    /// <summary>
     /// Goes to AdminPage.xaml.
     /// </summary>
     [RelayCommand]
@@ -99,6 +125,9 @@ public partial class SettingsViewModel
         await Shell.Current.GoToAsync("AdminPage");
     }
 
+    /// <summary>
+    /// Toggles developer mode
+    /// </summary>
     [RelayCommand]
     void ToggleDeveloperMode()
     {

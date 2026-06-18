@@ -22,9 +22,9 @@
             <segmentedControl:SfSegmentedControl
                 x:Name="segTransactionType"
                 SelectedIndex="-1"
-                CornerRadius="10"
+                CornerRadius="50"
                 SelectionChanged="OnTransactionTypeChanged"
-                SegmentCornerRadius="10"
+                SegmentCornerRadius="50"
                 BackgroundColor="{AppThemeBinding Light={DynamicResource secondaryContainer}, Dark={DynamicResource secondaryContainerDark}}"
                 Stroke="Transparent">
                 <segmentedControl:SfSegmentedControl.TextStyle>
@@ -33,8 +33,8 @@
                 <segmentedControl:SfSegmentedControl.SelectionIndicatorSettings>
                     <segmentedControl:SelectionIndicatorSettings
                         SelectionIndicatorPlacement="Fill"
-                        TextColor="{AppThemeBinding Light={DynamicResource onPrimary}, Dark={DynamicResource onPrimaryDark}}"
-                        Background="{AppThemeBinding Light={DynamicResource primary}, Dark={DynamicResource primaryDark}}" />
+                        TextColor="{AppThemeBinding Light={DynamicResource onSecondary}, Dark={DynamicResource onSecondaryDark}}"
+                        Background="{AppThemeBinding Light={DynamicResource secondary}, Dark={DynamicResource secondaryDark}}" />
                 </segmentedControl:SfSegmentedControl.SelectionIndicatorSettings>
                 <segmentedControl:SfSegmentedControl.ItemsSource>
                     <x:Array Type="{x:Type x:String}">

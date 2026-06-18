@@ -63,7 +63,7 @@
                     Grid.Row="1"
                     Text="Run Again"
                     IsEnabled="{Binding FileUploaded}"
-                    Style="{StaticResource BtnTertiary}"
+                    Style="{StaticResource BtnOutlined}"
                     Command="{Binding ReloadCommand}" />
 
                 <!--  Clear button  -->
@@ -212,7 +212,7 @@
                         <Button
                             Margin="5,0,0,0"
                             Grid.Column="1"
-                            Style="{StaticResource BtnTertiary}"
+                            Style="{StaticResource BtnOutlined}"
                             Text="Skip"
                             Command="{Binding SkipTransactionCommand}" />
 

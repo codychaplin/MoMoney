@@ -14,7 +14,7 @@ public class AmountColourConverter : IValueConverter
         {
             return ID switch
             {
-                Constants.INCOME_ID => Utilities.GetColour("primary", "primaryDark"), // income = green
+                Constants.INCOME_ID => Utilities.GetColour("Green", "LightGreen"), // income = green
                 Constants.TRANSFER_ID => Utilities.GetColour("onSurface", "onSurfaceDark"), // transfer = white/black
                 _ => Utilities.GetColour("errorVariant", "errorVariantDark")  // expense = red
             };
