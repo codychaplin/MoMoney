@@ -10,25 +10,54 @@
     <Grid>
         <ScrollView>
             <VerticalStackLayout>
+                <VerticalStackLayout.Resources>
+                    <Style TargetType="Grid">
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={DynamicResource surfaceContainer}, Dark={DynamicResource surfaceContainerDark}}" />
+                        <Setter Property="ColumnDefinitions" Value="*,Auto,Auto" />
+                        <Setter Property="ColumnSpacing" Value="10" />
+                        <Setter Property="Padding" Value="10" />
+                    </Style>
+                    <Style x:Key="LblModel" TargetType="Label">
+                        <Setter Property="VerticalOptions" Value="Center" />
+                        <Setter Property="FontSize" Value="16" />
+                    </Style>
+                    <Style x:Key="BtnImportExport" TargetType="Button" BasedOn="{x:StaticResource BtnSecondary}">
+                        <Setter Property="Padding" Value="20,0" />
+                        <Setter Property="HeightRequest" Value="30" />
+                    </Style>
+                </VerticalStackLayout.Resources>
 
-                <!--  import  -->
-                <Label Style="{StaticResource SettingsSubtitle}" Text="Import" />
-                <components:AlignedButton Command="{Binding ImportAccountsCSVCommand}" Text="Import Accounts from CSV" />
-                <components:AlignedButton Command="{Binding ImportCategoriesCSVCommand}" Text="Import Categories from CSV" />
-                <components:AlignedButton Command="{Binding ImportStocksCSVCommand}" Text="Import Stocks from CSV" />
-                <components:AlignedButton Command="{Binding ImportTransactionsCSVCommand}" Text="Import Transactions from CSV" />
-                <components:AlignedButton Command="{Binding ImportMappingRulesCSVCommand}" Text="Import Mapping Rules from CSV" />
-                <components:AlignedButton Command="{Binding ImportLogsCSVCommand}" Text="Import Logs from CSV" />
-
-                <!--  export  -->
-                <Label Style="{StaticResource SettingsSubtitle}" Text="Export" />
-                <components:AlignedButton Command="{Binding ExportAccountsCSVCommand}" Text="Export Accounts to CSV" />
-                <components:AlignedButton Command="{Binding ExportCategoriesCSVCommand}" Text="Export Categories to CSV" />
-                <components:AlignedButton Command="{Binding ExportStocksCSVCommand}" Text="Export Stocks to CSV" />
-                <components:AlignedButton Command="{Binding ExportTransactionsCSVCommand}" Text="Export Transactions to CSV" />
-                <components:AlignedButton Command="{Binding ExportMappingRulesCSVCommand}" Text="Export Mapping Rules to CSV" />
-                <components:AlignedButton Command="{Binding ExportLogsCSVCommand}" Text="Export Logs to CSV" />
-
+                <Label Style="{StaticResource SettingsSubtitle}" Text="Import/Export from CSV" />
+                <Grid>
+                    <Label Style="{StaticResource LblModel}"  Text="Accounts" />
+                    <Button Grid.Column="1" Style="{StaticResource BtnImportExport}" Text="Import" Command="{Binding ImportAccountsCSVCommand}" />
+                    <Button Grid.Column="2" Style="{StaticResource BtnImportExport}" Text="Export" Command="{Binding ExportAccountsCSVCommand}" />
+                </Grid>
+                <Grid BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainerHighest}, Dark={DynamicResource surfaceContainerHighestDark}}">
+                    <Label Style="{StaticResource LblModel}"  Text="Categories" />
+                    <Button Grid.Column="1" Style="{StaticResource BtnImportExport}" Text="Import" Command="{Binding ImportCategoriesCSVCommand}" />
+                    <Button Grid.Column="2" Style="{StaticResource BtnImportExport}" Text="Export" Command="{Binding ExportCategoriesCSVCommand}" />
+                </Grid>
+                <Grid>
+                    <Label Style="{StaticResource LblModel}"  Text="Transactions" />
+                    <Button Grid.Column="1" Style="{StaticResource BtnImportExport}" Text="Import" Command="{Binding ImportTransactionsCSVCommand}" />
+                    <Button Grid.Column="2" Style="{StaticResource BtnImportExport}" Text="Export" Command="{Binding ExportTransactionsCSVCommand}" />
+                </Grid>
+                <Grid BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainerHighest}, Dark={DynamicResource surfaceContainerHighestDark}}">
+                    <Label Style="{StaticResource LblModel}"  Text="Stocks" />
+                    <Button Grid.Column="1" Style="{StaticResource BtnImportExport}" Text="Import" Command="{Binding ImportStocksCSVCommand}" />
+                    <Button Grid.Column="2" Style="{StaticResource BtnImportExport}" Text="Export" Command="{Binding ExportStocksCSVCommand}" />
+                </Grid>
+                <Grid>
+                    <Label Style="{StaticResource LblModel}"  Text="Mapping Rules" />
+                    <Button Grid.Column="1" Style="{StaticResource BtnImportExport}" Text="Import" Command="{Binding ImportMappingRulesCSVCommand}" />
+                    <Button Grid.Column="2" Style="{StaticResource BtnImportExport}" Text="Export" Command="{Binding ExportMappingRulesCSVCommand}" />
+                </Grid>
+                <Grid BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainerHighest}, Dark={DynamicResource surfaceContainerHighestDark}}">
+                    <Label Style="{StaticResource LblModel}"  Text="Logs" />
+                    <Button Grid.Column="1" Style="{StaticResource BtnImportExport}" Text="Import" Command="{Binding ImportLogsCSVCommand}" />
+                    <Button Grid.Column="2" Style="{StaticResource BtnImportExport}" Text="Export" Command="{Binding ExportLogsCSVCommand}" />
+                </Grid>
             </VerticalStackLayout>
         </ScrollView>
 

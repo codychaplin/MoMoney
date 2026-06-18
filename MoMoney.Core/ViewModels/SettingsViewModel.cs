@@ -19,7 +19,8 @@ public partial class SettingsViewModel : ObservableObject
         new("blue",   Color.FromArgb("#5B9BD5")),
         new("teal",   Color.FromArgb("#4AC4C4")),
         new("purple", Color.FromArgb("#9B6DD5")),
-        new("yellow", Color.FromArgb("#FFDE3F"))
+        new("yellow", Color.FromArgb("#FFDE3F")),
+        new("gray", Color.FromArgb("#898989"))
     ];
 
     public SettingsViewModel(ILoggerService<SettingsViewModel> _logger)

@@ -66,6 +66,7 @@
     <Color x:Key="themeTeal">#4AC4C4</Color>
     <Color x:Key="themePurple">#675496</Color>
     <Color x:Key="themeYellow">#FFDE3F</Color>
+    <Color x:Key="themeGray">#898989</Color>
 
     <!--  app-specific semantic colours (not theme-dependent)  -->
     <Color x:Key="Black">#000000</Color>
