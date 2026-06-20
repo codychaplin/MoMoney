@@ -1,6 +1,6 @@
 {
     "seed": "#9B6DD5",
-    "light": {
+    "lightMaterialYou": {
         "primary": "#6C538B",
         "primaryTransparent": "#886C538B",
         "onPrimary": "#FFFFFF",
@@ -24,7 +24,31 @@
         "outline": "#7B757F",
         "outlineVariant": "#CCC4CF"
     },
-    "dark": {
+    "light": {
+        "primary": "#6C538B",
+        "primaryTransparent": "#886C538B",
+        "onPrimary": "#FFFFFF",
+        "primaryContainer": "#EEDBFF",
+        "onPrimaryContainer": "#543B72",
+        "secondary": "#655A6F",
+        "onSecondary": "#FFFFFF",
+        "secondaryContainer": "#ECDDF7",
+        "onSecondaryContainer": "#4C4357",
+        "tertiary": "#80515A",
+        "onTertiary": "#FFFFFF",
+        "tertiaryContainer": "#FFD9DE",
+        "onTertiaryContainer": "#653B42",
+        "background": "#FFFCFF",
+        "onBackground": "#1F1E20",
+        "surface": "#FFFCFF",
+        "onSurface": "#1F1E20",
+        "onSurfaceVariant": "#4D4B4E",
+        "surfaceContainer": "#F4F1F4",
+        "surfaceContainerHighest": "#E8E5E8",
+        "outline": "#7E7C7F",
+        "outlineVariant": "#CECBCF"
+    },
+    "darkMaterialYou": {
         "primary": "#D8BAFA",
         "primaryTransparent": "#88D8BAFA",
         "onPrimary": "#3C245A",
@@ -47,5 +71,29 @@
         "surfaceContainerHighest": "#373339",
         "outline": "#958E99",
         "outlineVariant": "#4A454E"
+    },
+    "dark": {
+        "primary": "#D8BAFA",
+        "primaryTransparent": "#88D8BAFA",
+        "onPrimary": "#3C245A",
+        "primaryContainer": "#543B72",
+        "onPrimaryContainer": "#EEDBFF",
+        "secondary": "#CFC1DA",
+        "onSecondary": "#352D40",
+        "secondaryContainer": "#4C4357",
+        "onSecondaryContainer": "#ECDDF7",
+        "tertiary": "#F2B7C0",
+        "onTertiary": "#4B252D",
+        "tertiaryContainer": "#653B42",
+        "onTertiaryContainer": "#FFD9DE",
+        "background": "#171618",
+        "onBackground": "#E8E5E8",
+        "surface": "#171618",
+        "onSurface": "#E8E5E8",
+        "onSurfaceVariant": "#CECBCF",
+        "surfaceContainer": "#232224",
+        "surfaceContainerHighest": "#383739",
+        "outline": "#989599",
+        "outlineVariant": "#4D4B4E"
     }
 }

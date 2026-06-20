@@ -49,21 +49,28 @@ public static class Utilities
         await toast.Show();
     }
 
+    /// <summary>
+    /// Applies the selected theme from the corresponding json file. Use material variant if enabled.
+    /// </summary>
+    /// <param name="themeName"></param>
     public static void ApplyTheme(string themeName)
     {
         using var stream = FileSystem.OpenAppPackageFileAsync($"theme_{themeName}.json").GetAwaiter().GetResult();
         using var reader = new StreamReader(stream);
         using var doc = JsonDocument.Parse(reader.ReadToEnd());
         var root = doc.RootElement;
-
         var res = Application.Current!.Resources;
 
-        if (root.TryGetProperty("light", out var light))
+        bool useMaterial = MaterialYouEnabled;
+        string lightPrefix = useMaterial ? "lightMaterialYou" : "light";
+        string darkPrefix = useMaterial ? "darkMaterialYou" : "dark";
+
+        if (root.TryGetProperty(lightPrefix, out var light))
             foreach (var prop in light.EnumerateObject())
                 if (Color.TryParse(prop.Value.GetString(), out var c))
                     res[prop.Name] = c;
 
-        if (root.TryGetProperty("dark", out var dark))
+        if (root.TryGetProperty(darkPrefix, out var dark))
             foreach (var prop in dark.EnumerateObject())
                 if (Color.TryParse(prop.Value.GetString(), out var c))
                     res[prop.Name + "Dark"] = c;

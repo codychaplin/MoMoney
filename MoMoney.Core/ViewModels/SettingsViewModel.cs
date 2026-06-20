@@ -100,9 +100,8 @@ public partial class SettingsViewModel : ObservableObject
     /// <param name="value"></param>
     partial void OnMaterialYouEnabledChanged(bool value)
     {
-        bool materialYouEnabled = Utilities.MaterialYouEnabled;
-        bool newMaterialYouEnabled = !materialYouEnabled;
-        Utilities.MaterialYouEnabled = newMaterialYouEnabled;
+        Utilities.MaterialYouEnabled = value;
+        Utilities.ApplyTheme(Utilities.CurrentTheme);
 
         logger.LogFirebaseEvent(FirebaseParameters.EVENT_MATERIAL_YOU_TOGGLED, FirebaseParameters.GetFirebaseParameters());
     }
