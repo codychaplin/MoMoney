@@ -4,13 +4,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
 
-namespace MoMoney.Core.ViewModels;
+namespace MoMoney.Core.ViewModels.Tabs;
 
 public partial class SettingsViewModel : ObservableObject
 {
     readonly ILoggerService<SettingsViewModel> logger;
     
-    [ObservableProperty] bool materialYouEnabled = false;
+    [ObservableProperty] bool materialYouEnabled = Utilities.MaterialYouEnabled;
     [ObservableProperty] bool showSensitiveValuesEnabled = true;
 
     public List<ThemeInfo> Themes { get; } =

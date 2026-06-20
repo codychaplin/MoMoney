@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using MoMoney.Core.Helpers;
-using MoMoney.Core.ViewModels;
+using MoMoney.Core.ViewModels.Tabs;
 
 namespace MoMoney.Views.Tabs;
 

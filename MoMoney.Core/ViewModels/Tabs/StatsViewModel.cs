@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 
-namespace MoMoney.Core.ViewModels;
+namespace MoMoney.Core.ViewModels.Tabs;
 
 public partial class StatsViewModel
 {

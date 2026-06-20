@@ -8,116 +8,116 @@
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:segmentedControl="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Tabs;assembly=MoMoney.Core"
     x:DataType="viewmodel:AddTransactionViewModel">
+    
+    <Grid RowDefinitions="Auto,*">
+        <!--  title  -->
+        <components:PageHeader Title="Add Transaction" />
 
-    <!--  main page  -->
-    <ScrollView>
-        <VerticalStackLayout Padding="10,0" Spacing="5">
+        <ScrollView Grid.Row="1" Padding="0,10,0,0">
+            <VerticalStackLayout Padding="10,0" Spacing="5">
 
-            <!--  title  -->
-            <components:PageHeader Margin="-10,0,-10,5" Title="Add Transaction" />
+                <!--  transaction type buttons  -->
+                <segmentedControl:SfSegmentedControl
+                    x:Name="segTransactionType"
+                    SelectedIndex="-1"
+                    CornerRadius="50"
+                    SelectionChanged="OnTransactionTypeChanged"
+                    SegmentCornerRadius="50"
+                    BackgroundColor="{AppThemeBinding Light={DynamicResource secondaryContainer}, Dark={DynamicResource secondaryContainerDark}}"
+                    Stroke="Transparent">
+                    <segmentedControl:SfSegmentedControl.TextStyle>
+                        <segmentedControl:SegmentTextStyle FontSize="14" TextColor="{AppThemeBinding Light={DynamicResource onSurface}, Dark={DynamicResource onSurfaceDark}}" />
+                    </segmentedControl:SfSegmentedControl.TextStyle>
+                    <segmentedControl:SfSegmentedControl.SelectionIndicatorSettings>
+                        <segmentedControl:SelectionIndicatorSettings
+                            SelectionIndicatorPlacement="Fill"
+                            TextColor="{AppThemeBinding Light={DynamicResource onSecondary}, Dark={DynamicResource onSecondaryDark}}"
+                            Background="{AppThemeBinding Light={DynamicResource secondary}, Dark={DynamicResource secondaryDark}}" />
+                    </segmentedControl:SfSegmentedControl.SelectionIndicatorSettings>
+                    <segmentedControl:SfSegmentedControl.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Income</x:String>
+                            <x:String>Expense</x:String>
+                            <x:String>Transfer</x:String>
+                        </x:Array>
+                    </segmentedControl:SfSegmentedControl.ItemsSource>
+                </segmentedControl:SfSegmentedControl>
 
-            <!--  transaction type buttons  -->
-            <segmentedControl:SfSegmentedControl
-                x:Name="segTransactionType"
-                SelectedIndex="-1"
-                CornerRadius="50"
-                SelectionChanged="OnTransactionTypeChanged"
-                SegmentCornerRadius="50"
-                BackgroundColor="{AppThemeBinding Light={DynamicResource secondaryContainer}, Dark={DynamicResource secondaryContainerDark}}"
-                Stroke="Transparent">
-                <segmentedControl:SfSegmentedControl.TextStyle>
-                    <segmentedControl:SegmentTextStyle FontSize="14" TextColor="{AppThemeBinding Light={DynamicResource onSurface}, Dark={DynamicResource onSurfaceDark}}" />
-                </segmentedControl:SfSegmentedControl.TextStyle>
-                <segmentedControl:SfSegmentedControl.SelectionIndicatorSettings>
-                    <segmentedControl:SelectionIndicatorSettings
-                        SelectionIndicatorPlacement="Fill"
-                        TextColor="{AppThemeBinding Light={DynamicResource onSecondary}, Dark={DynamicResource onSecondaryDark}}"
-                        Background="{AppThemeBinding Light={DynamicResource secondary}, Dark={DynamicResource secondaryDark}}" />
-                </segmentedControl:SfSegmentedControl.SelectionIndicatorSettings>
-                <segmentedControl:SfSegmentedControl.ItemsSource>
-                    <x:Array Type="{x:Type x:String}">
-                        <x:String>Income</x:String>
-                        <x:String>Expense</x:String>
-                        <x:String>Transfer</x:String>
-                    </x:Array>
-                </segmentedControl:SfSegmentedControl.ItemsSource>
-            </segmentedControl:SfSegmentedControl>
+                <!--  shared form: Date, Amount, Account, Category, Subcategory, Payee, Transfer Account  -->
+                <components:TransactionFormView
+                    x:Name="transactionForm"
+                    Date="{Binding Date, Mode=TwoWay}"
+                    Account="{Binding Account, Mode=TwoWay}"
+                    Amount="{Binding Amount, Mode=TwoWay}"
+                    Category="{Binding Category, Mode=TwoWay}"
+                    Subcategory="{Binding Subcategory, Mode=TwoWay}"
+                    PayeeText="{Binding Payee, Mode=TwoWay}"
+                    TransferAccount="{Binding TransferAccount, Mode=TwoWay}"
+                    Accounts="{Binding Accounts}"
+                    Categories="{Binding Categories}"
+                    Subcategories="{Binding Subcategories}"
+                    Payees="{Binding Payees}"
+                    CategoryChangedCommand="{Binding CategoryChangedCommand}"
+                    AreFieldsEnabled="{Binding AreFieldsEnabled}"
+                    IsCategoryEnabled="{Binding IsCategoryEnabled}"
+                    IsSubcategoryEnabled="{Binding IsSubcategoryEnabled}"
+                    IsPayeeVisible="{Binding IsPayeeVisible}"
+                    IsTransferAccountVisible="{Binding IsTransferAccountVisible}" />
 
-            <!--  shared form: Date, Amount, Account, Category, Subcategory, Payee, Transfer Account  -->
-            <components:TransactionFormView
-                x:Name="transactionForm"
-                Date="{Binding Date, Mode=TwoWay}"
-                Account="{Binding Account, Mode=TwoWay}"
-                Amount="{Binding Amount, Mode=TwoWay}"
-                Category="{Binding Category, Mode=TwoWay}"
-                Subcategory="{Binding Subcategory, Mode=TwoWay}"
-                PayeeText="{Binding Payee, Mode=TwoWay}"
-                TransferAccount="{Binding TransferAccount, Mode=TwoWay}"
-                Accounts="{Binding Accounts}"
-                Categories="{Binding Categories}"
-                Subcategories="{Binding Subcategories}"
-                Payees="{Binding Payees}"
-                CategoryChangedCommand="{Binding CategoryChangedCommand}"
-                AreFieldsEnabled="{Binding AreFieldsEnabled}"
-                IsCategoryEnabled="{Binding IsCategoryEnabled}"
-                IsSubcategoryEnabled="{Binding IsSubcategoryEnabled}"
-                IsPayeeVisible="{Binding IsPayeeVisible}"
-                IsTransferAccountVisible="{Binding IsTransferAccountVisible}" />
+                <!--  clear/enter buttons  -->
+                <Grid
+                    x:Name="grdAcceptButtons"
+                    Margin="0,5"
+                    ColumnDefinitions="*,Auto,*"
+                    HeightRequest="50">
+                    <Button
+                        x:Name="btnClear"
+                        Margin="0,0,5,0"
+                        Style="{DynamicResource BtnTertiary}"
+                        Clicked="btnClear_Clicked"
+                        Text="Clear" />
+                    <Button
+                        x:Name="btnRecord"
+                        Grid.Column="1"
+                        Margin="5,0"
+                        Style="{DynamicResource BtnSecondaryContainer}"
+                        Command="{Binding RecordCommand}"
+                        CommandParameter="{x:Reference btnRecord}"
+                        FontFamily="MaterialRoundedFilled"
+                        FontSize="30"
+                        IsVisible="{Binding TransactionDictationEnabled}"
+                        Text="{x:Static m:MaterialOutlined.Mic}"
+                        WidthRequest="70">
+                        <Button.Triggers>
+                            <DataTrigger
+                                Binding="{Binding IsWaitingForTranscription}"
+                                TargetType="Button"
+                                Value="True">
+                                <Setter Property="Text" Value="" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                    <!--  activity indicator runs while transcription is processing  -->
+                    <ActivityIndicator
+                        Grid.Column="1"
+                        BackgroundColor="Transparent"
+                        HeightRequest="35"
+                        IsRunning="{Binding IsWaitingForTranscription}"
+                        IsVisible="{Binding IsWaitingForTranscription}"
+                        WidthRequest="35" />
+                    <Button
+                        x:Name="btnEnter"
+                        Grid.Column="2"
+                        Margin="5,0,0,0"
+                        Style="{DynamicResource BtnPrimary}"
+                        Clicked="btnEnter_Clicked"
+                        Command="{Binding AddTransactionCommand}"
+                        Text="Accept" />
+                </Grid>
 
-            <!--  clear/enter buttons  -->
-            <Grid
-                x:Name="grdAcceptButtons"
-                Margin="0,5"
-                ColumnDefinitions="*,Auto,*"
-                HeightRequest="50">
-                <Button
-                    x:Name="btnClear"
-                    Margin="0,0,5,0"
-                    Style="{DynamicResource BtnTertiary}"
-                    Clicked="btnClear_Clicked"
-                    Text="Clear" />
-                <Button
-                    x:Name="btnRecord"
-                    Grid.Column="1"
-                    Margin="5,0"
-                    Style="{DynamicResource BtnSecondaryContainer}"
-                    Command="{Binding RecordCommand}"
-                    CommandParameter="{x:Reference btnRecord}"
-                    FontFamily="MaterialRoundedFilled"
-                    FontSize="30"
-                    IsVisible="{Binding TransactionDictationEnabled}"
-                    Text="{x:Static m:MaterialOutlined.Mic}"
-                    WidthRequest="70">
-                    <Button.Triggers>
-                        <DataTrigger
-                            Binding="{Binding IsWaitingForTranscription}"
-                            TargetType="Button"
-                            Value="True">
-                            <Setter Property="Text" Value="" />
-                        </DataTrigger>
-                    </Button.Triggers>
-                </Button>
-                <!--  activity indicator runs while transcription is processing  -->
-                <ActivityIndicator
-                    Grid.Column="1"
-                    BackgroundColor="Transparent"
-                    HeightRequest="35"
-                    IsRunning="{Binding IsWaitingForTranscription}"
-                    IsVisible="{Binding IsWaitingForTranscription}"
-                    WidthRequest="35" />
-                <Button
-                    x:Name="btnEnter"
-                    Grid.Column="2"
-                    Margin="5,0,0,0"
-                    Style="{DynamicResource BtnPrimary}"
-                    Clicked="btnEnter_Clicked"
-                    Command="{Binding AddTransactionCommand}"
-                    Text="Accept" />
-            </Grid>
-
-        </VerticalStackLayout>
-    </ScrollView>
-
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentView>

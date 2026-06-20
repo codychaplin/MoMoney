@@ -7,7 +7,7 @@ using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
-namespace MoMoney.Core.ViewModels;
+namespace MoMoney.Core.ViewModels.Tabs;
 
 public partial class AddTransactionViewModel : BaseTransactionViewModel
 {

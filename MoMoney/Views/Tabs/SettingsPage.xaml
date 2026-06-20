@@ -6,116 +6,117 @@
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:helpers="clr-namespace:MoMoney.Core.Helpers;assembly=MoMoney.Core"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Tabs;assembly=MoMoney.Core"
     x:DataType="viewmodel:SettingsViewModel">
 
-    <!--  main page  -->
-    <ScrollView>
-        <VerticalStackLayout Margin="0,0,0,10">
+    <Grid RowDefinitions="Auto,*">
+        <!--  title  -->
+        <components:PageHeader Title="Settings" />
 
-            <!--  title  -->
-            <components:PageHeader Title="Settings" />
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout>
 
-            <!--  edit models  -->
-            <Label Style="{StaticResource SettingsSubtitle}" Text="Edit" />
-            <components:AlignedButton
-                Command="{Binding GoToAccountsCommand}"
-                ShowArrow="True"
-                Text="Accounts" />
-            <components:AlignedButton
-                Command="{Binding GoToCategoriesCommand}"
-                ShowArrow="True"
-                Text="Categories" />
-            <components:AlignedButton
-                Command="{Binding GoToStocksCommand}"
-                ShowArrow="True"
-                Text="Stocks" />
-            <components:AlignedButton
-                Command="{Binding GoToMappingRulesCommand}"
-                ShowArrow="True"
-                Text="Mapping Rules" />
+                <!--  edit models  -->
+                <Label Style="{StaticResource SettingsSubtitle}" Text="Edit" />
+                <components:AlignedButton
+                    Command="{Binding GoToAccountsCommand}"
+                    ShowArrow="True"
+                    Text="Accounts" />
+                <components:AlignedButton
+                    Command="{Binding GoToCategoriesCommand}"
+                    ShowArrow="True"
+                    Text="Categories" />
+                <components:AlignedButton
+                    Command="{Binding GoToStocksCommand}"
+                    ShowArrow="True"
+                    Text="Stocks" />
+                <components:AlignedButton
+                    Command="{Binding GoToMappingRulesCommand}"
+                    ShowArrow="True"
+                    Text="Mapping Rules" />
 
-            <!--  import/export  -->
-            <Label Style="{StaticResource SettingsSubtitle}" Text="Import/Export" />
-            <components:AlignedButton
-                Command="{Binding GoToImportStatementCommand}"
-                ShowArrow="True"
-                Text="Import Data from Bank Statement" />
-            <components:AlignedButton
-                Command="{Binding GoToImportExportCommand}"
-                ShowArrow="True"
-                Text="Import/Export MoMoney Data" />
+                <!--  import/export  -->
+                <Label Style="{StaticResource SettingsSubtitle}" Text="Import/Export" />
+                <components:AlignedButton
+                    Command="{Binding GoToImportStatementCommand}"
+                    ShowArrow="True"
+                    Text="Import Data from Bank Statement" />
+                <components:AlignedButton
+                    Command="{Binding GoToImportExportCommand}"
+                    ShowArrow="True"
+                    Text="Import/Export MoMoney Data" />
 
-            <!--  appearance  -->
-            <Label Style="{StaticResource SettingsSubtitle}" Text="Appearance" />
-            <Grid
-                Padding="10,8"
-                BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainer},
-                                                  Dark={DynamicResource surfaceContainerDark}}">
-                <Label Text="Theme" VerticalOptions="Center" />
-                <CollectionView
-                    HorizontalOptions="End"
-                    ItemsSource="{Binding Themes}"
-                    SelectionMode="None">
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout ItemSpacing="8" Orientation="Horizontal" />
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="helpers:ThemeInfo">
-                            <Border
-                                BackgroundColor="{Binding Colour}"
-                                HeightRequest="32"
-                                StrokeThickness="0"
-                                WidthRequest="32">
-                                <Border.StrokeShape><Ellipse /></Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:SettingsViewModel}}, Path=SelectThemeCommand}"
-                                        CommandParameter="{Binding Name}" />
-                                </Border.GestureRecognizers>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </Grid>
-            <Grid Padding="10,0" BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainer}, Dark={DynamicResource surfaceContainerDark}}">
-                <Label VerticalOptions="Center" Text="Material You" />
-                <Switch IsToggled="{Binding MaterialYouEnabled}" />
-            </Grid>
+                <!--  appearance  -->
+                <Label Style="{StaticResource SettingsSubtitle}" Text="Appearance" />
+                <Grid
+                    Padding="10,8"
+                    BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainer},
+                                                    Dark={DynamicResource surfaceContainerDark}}">
+                    <Label Text="Theme" VerticalOptions="Center" />
+                    <CollectionView
+                        HorizontalOptions="End"
+                        ItemsSource="{Binding Themes}"
+                        SelectionMode="None">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout ItemSpacing="8" Orientation="Horizontal" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="helpers:ThemeInfo">
+                                <Border
+                                    BackgroundColor="{Binding Colour}"
+                                    HeightRequest="32"
+                                    StrokeThickness="0"
+                                    WidthRequest="32">
+                                    <Border.StrokeShape><Ellipse /></Border.StrokeShape>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:SettingsViewModel}}, Path=SelectThemeCommand}"
+                                            CommandParameter="{Binding Name}" />
+                                    </Border.GestureRecognizers>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
+                <Grid Padding="10,0" BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainer}, Dark={DynamicResource surfaceContainerDark}}">
+                    <Label VerticalOptions="Center" Text="Material You" />
+                    <Switch IsToggled="{Binding MaterialYouEnabled}" />
+                </Grid>
 
-            <!--  privacy  -->
-            <Label Style="{StaticResource SettingsSubtitle}" Text="Privacy" />
-            <Grid Padding="10,0" BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainer}, Dark={DynamicResource surfaceContainerDark}}">
+                <!--  privacy  -->
+                <Label Style="{StaticResource SettingsSubtitle}" Text="Privacy" />
+                <Grid Padding="10,0" BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainer}, Dark={DynamicResource surfaceContainerDark}}">
+                    <Label
+                        Text="Show Sensitive Values"
+                        VerticalOptions="Center" />
+                    <Switch
+                        HorizontalOptions="End"
+                        IsToggled="{Binding ShowSensitiveValuesEnabled}" />
+                </Grid>
+
+                <!--  admin  -->
+                <Label Style="{StaticResource SettingsSubtitle}" Text="Admin" />
+                <components:AlignedButton
+                    Command="{Binding GoToAdminCommand}"
+                    ShowArrow="True"
+                    Text="Data" />
+
+                <!--  about  -->
                 <Label
-                    Text="Show Sensitive Values"
-                    VerticalOptions="Center" />
-                <Switch
-                    HorizontalOptions="End"
-                    IsToggled="{Binding ShowSensitiveValuesEnabled}" />
-            </Grid>
+                    x:Name="lblVersion"
+                    Margin="10,20"
+                    TextColor="{AppThemeBinding Light={StaticResource outline},
+                                                Dark={StaticResource outlineDark}}">
+                    <Label.Behaviors>
+                        <toolkit:TouchBehavior
+                            BindingContext="{Binding Path=BindingContext, Source={x:Reference lblVersion}, x:DataType=HorizontalStackLayout}"
+                            LongPressCommand="{Binding ToggleDeveloperModeCommand}"
+                            LongPressDuration="5000" />
+                    </Label.Behaviors>
+                </Label>
 
-            <!--  admin  -->
-            <Label Style="{StaticResource SettingsSubtitle}" Text="Admin" />
-            <components:AlignedButton
-                Command="{Binding GoToAdminCommand}"
-                ShowArrow="True"
-                Text="Data" />
-
-            <!--  about  -->
-            <Label
-                x:Name="lblVersion"
-                Margin="10,20"
-                TextColor="{AppThemeBinding Light={StaticResource outline},
-                                            Dark={StaticResource outlineDark}}">
-                <Label.Behaviors>
-                    <toolkit:TouchBehavior
-                        BindingContext="{Binding Path=BindingContext, Source={x:Reference lblVersion}, x:DataType=HorizontalStackLayout}"
-                        LongPressCommand="{Binding ToggleDeveloperModeCommand}"
-                        LongPressDuration="5000" />
-                </Label.Behaviors>
-            </Label>
-
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 
 </ContentView>

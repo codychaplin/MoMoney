@@ -13,6 +13,7 @@ using MoMoney.Core.Services;
 using MoMoney.Core.Services.Interfaces;
 using MoMoney.Core.Platforms.Android;
 using MoMoney.Core.ViewModels;
+using MoMoney.Core.ViewModels.Tabs;
 using MoMoney.Core.ViewModels.Stats;
 using MoMoney.Core.ViewModels.Settings;
 using MoMoney.Core.ViewModels.Settings.Edit;

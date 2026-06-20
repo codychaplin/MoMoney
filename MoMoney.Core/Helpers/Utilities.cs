@@ -78,7 +78,6 @@ public static class Utilities
         // workaround for updating components that don't update properly
         WeakReferenceMessenger.Default.Send(new UpdateThemeMessage(themeName));
     }
-
 }
 
 public class ThemeInfo(string name, Color colour)
