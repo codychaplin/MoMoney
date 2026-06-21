@@ -3,21 +3,27 @@
     x:Class="MoMoney.Views.Settings.Edit.StocksPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
-    Title="Stocks"
+    Shell.NavBarIsVisible="False"
     x:DataType="viewmodel:StocksViewModel">
 
-    <!--  main page  -->
-    <Grid Padding="0,10,0,0">
+    <Grid RowDefinitions="Auto,*">
+
+        <!--  title  -->
+        <components:PageHeader Title="Stocks" ShowBackButton="True" />
 
         <!--  list of stocks  -->
-        <CollectionView ItemsSource="{Binding Stocks}">
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Stocks}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Stock">
 
                     <!--  template  -->
-                    <Border BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainerHighest}, Dark={StaticResource surfaceContainerHighestDark}}" Style="{StaticResource SmallTileFrame}">
+                    <Border
+                        BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainerHighest},
+                                                          Dark={StaticResource surfaceContainerHighestDark}}"
+                        Style="{StaticResource SmallTileFrame}">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Path=GoToEditStockCommand, Source={RelativeSource AncestorType={x:Type viewmodel:StocksViewModel}}}" CommandParameter="{Binding .}" />
                         </Border.GestureRecognizers>
@@ -40,6 +46,6 @@
         </CollectionView>
 
         <!--  add account button  -->
-        <Button Command="{Binding GoToAddStockCommand}" Style="{StaticResource btnAdd}" />
+        <Button Grid.Row="1" Command="{Binding GoToAddStockCommand}" Style="{StaticResource btnAdd}" />
     </Grid>
 </ContentPage>

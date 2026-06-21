@@ -4,13 +4,14 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:converters="clr-namespace:MoMoney.Converters"
+    xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:selectors="clr-namespace:MoMoney.Selectors"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
-    Title="Logs"
+    Shell.NavBarIsVisible="False"
     x:DataType="viewmodel:LoggingViewModel">
     <ContentPage.ToolbarItems>
         <ToolbarItem
@@ -110,10 +111,13 @@
     </ContentPage.Resources>
 
     <!--  content  -->
-    <Grid Margin="10,5,10,10" RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto, Auto,*">
+
+        <!--  title  -->
+        <components:PageHeader Title="Logs" ShowBackButton="True" />
 
         <!--  filters  -->
-        <toolkit:Expander IsExpanded="{Binding IsExpanded}">
+        <toolkit:Expander Grid.Row="1" IsExpanded="{Binding IsExpanded}">
             <VerticalStackLayout Padding="0,5" Spacing="5">
 
                 <Border
@@ -161,7 +165,7 @@
 
         <!--  list  -->
         <Border
-            Grid.Row="1"
+            Grid.Row="2"
             Margin="0,5,0,0"
             Padding="0">
             <CollectionView

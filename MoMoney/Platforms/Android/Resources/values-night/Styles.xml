@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="MainTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+	<style name="MainTheme" parent="Maui.MainTheme">
 		<item name="colorPrimary">@color/White</item>
 		<item name="android:actionMenuTextColor">@color/White</item>
 		<item name="alertDialogTheme">@style/MauiAlertDialogTheme</item>

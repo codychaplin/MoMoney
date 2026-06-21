@@ -8,51 +8,58 @@
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:model="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
+    Shell.NavBarIsVisible="False"
     x:DataType="viewmodel:EditCategoryViewModel">
-    <ContentPage.Triggers>
-        <DataTrigger
-            Binding="{Binding IsEditMode}"
-            TargetType="ContentPage"
-            Value="True">
-            <Setter Property="Title" Value="Edit Category" />
-        </DataTrigger>
-        <DataTrigger
-            Binding="{Binding IsEditMode}"
-            TargetType="ContentPage"
-            Value="False">
-            <Setter Property="Title" Value="Add Category" />
-        </DataTrigger>
-    </ContentPage.Triggers>
+    <Grid RowDefinitions="Auto,*">
 
-    <!--  main page  -->
-    <VerticalStackLayout Padding="10" Spacing="10">
+        <!--  title  -->
+        <components:PageHeader ShowBackButton="True">
+            <components:PageHeader.Triggers>
+                <DataTrigger
+                    Binding="{Binding IsEditMode}"
+                    TargetType="components:PageHeader"
+                    Value="True">
+                    <Setter Property="Title" Value="Edit Category" />
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding IsEditMode}"
+                    TargetType="components:PageHeader"
+                    Value="False">
+                    <Setter Property="Title" Value="Add Category" />
+                </DataTrigger>
+            </components:PageHeader.Triggers>
+        </components:PageHeader>
 
-        <!--  category name  -->
-        <material:TextField
-            x:Name="txtName"
-            Title="Category Name"
-            Icon="{FontImageSource FontFamily=MaterialRounded,
-                                   Glyph={x:Static m:MaterialOutlined.Category}}"
-            Text="{Binding Category.CategoryName}" />
+        <!--  main page  -->
+        <VerticalStackLayout Grid.Row="1" Padding="10" Spacing="10">
 
-        <!--  parent category  -->
-        <material:PickerField
-            x:Name="pckParent"
-            Title="Select a Parent"
-            x:DataType="model:Category"
-            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                   Glyph={x:Static m:MaterialOutlined.Category}}"
-            ItemDisplayBinding="{Binding CategoryName}"
-            ItemsSource="{Binding Path=Parents, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}"
-            SelectedItem="{Binding Path=Parent, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}" />
+            <!--  category name  -->
+            <material:TextField
+                x:Name="txtName"
+                Title="Category Name"
+                Icon="{FontImageSource FontFamily=MaterialRounded,
+                                    Glyph={x:Static m:MaterialOutlined.Category}}"
+                Text="{Binding Category.CategoryName}" />
 
-        <!--  delete/clear/enter buttons  -->
-        <components:ActionButtons
-            AddCommand="{Binding AddCommand}"
-            ClearCommand="{Binding ClearCommand}"
-            EditCommand="{Binding EditCommand}"
-            IsEditMode="{Binding IsEditMode}"
-            RemoveCommand="{Binding RemoveCommand}" />
+            <!--  parent category  -->
+            <material:PickerField
+                x:Name="pckParent"
+                Title="Select a Parent"
+                x:DataType="model:Category"
+                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                    Glyph={x:Static m:MaterialOutlined.Category}}"
+                ItemDisplayBinding="{Binding CategoryName}"
+                ItemsSource="{Binding Path=Parents, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}"
+                SelectedItem="{Binding Path=Parent, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}" />
 
-    </VerticalStackLayout>
+            <!--  delete/clear/enter buttons  -->
+            <components:ActionButtons
+                AddCommand="{Binding AddCommand}"
+                ClearCommand="{Binding ClearCommand}"
+                EditCommand="{Binding EditCommand}"
+                IsEditMode="{Binding IsEditMode}"
+                RemoveCommand="{Binding RemoveCommand}" />
+
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>

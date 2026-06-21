@@ -2,7 +2,7 @@ using System.Windows.Input;
 
 namespace MoMoney.Components;
 
-public partial class PageHeader : ContentView
+public partial class PageHeader : Grid
 {
     public static readonly BindableProperty TitleProperty =
         BindableProperty.Create(nameof(Title), typeof(string), typeof(PageHeader), string.Empty);
@@ -22,8 +22,22 @@ public partial class PageHeader : ContentView
         set => SetValue(ImageSourceProperty, value);
     }
 
+    public static readonly BindableProperty ShowBackButtonProperty =
+        BindableProperty.Create(nameof(ShowBackButton), typeof(bool), typeof(PageHeader), false);
+
+    public bool ShowBackButton
+    {
+        get => (bool)GetValue(ShowBackButtonProperty);
+        set => SetValue(ShowBackButtonProperty, value);
+    }
+
     public PageHeader()
     {
         InitializeComponent();
+    }
+
+    private async void OnBackButtonTapped(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("..");
     }
 }

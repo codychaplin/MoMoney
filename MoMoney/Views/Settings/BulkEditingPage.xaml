@@ -6,14 +6,13 @@
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
-    Title="Bulk Editing"
+    Shell.NavBarIsVisible="False"
     x:DataType="viewmodels:BulkEditingViewModel">
 
     <Grid
-        Margin="10"
         ColumnDefinitions="*,*"
         ColumnSpacing="10"
-        RowDefinitions="Auto,Auto,*"
+        RowDefinitions="Auto,Auto,Auto,*"
         RowSpacing="10">
         <Grid.Resources>
             <Style TargetType="Border">
@@ -26,8 +25,11 @@
             </Style>
         </Grid.Resources>
 
+        <!--  title  -->
+        <components:PageHeader Grid.ColumnSpan="2" Title="Bulk Editing" ShowBackButton="True" />
+
         <!--  find values  -->
-        <VerticalStackLayout>
+        <VerticalStackLayout Grid.Row="1">
 
             <!--  find title  -->
             <Border Padding="15,0,0,0" HeightRequest="40">
@@ -58,7 +60,7 @@
         </VerticalStackLayout>
 
         <!--  replace values  -->
-        <VerticalStackLayout Grid.Column="1">
+        <VerticalStackLayout Grid.Row="1" Grid.Column="1">
 
             <!--  replace title  -->
             <Border Padding="15,0,0,0" HeightRequest="40">
@@ -89,8 +91,8 @@
         </VerticalStackLayout>
 
         <Button
-            Grid.Row="1"
-            Style="{StaticResource BtnOutlined}"
+            Grid.Row="2"
+            Style="{StaticResource BtnPrimary}"
             Command="{Binding BulkFindCommand}"
             Text="Find">
             <Button.CommandParameter>
@@ -99,14 +101,14 @@
         </Button>
 
         <Button
-            Grid.Row="1"
+            Grid.Row="2"
             Grid.Column="1"
-            Style="{StaticResource BtnPrimary}"
+            Style="{StaticResource BtnSecondary}"
             Command="{Binding BulkReplaceCommand}"
             Text="Replace" />
 
         <Border
-            Grid.Row="2"
+            Grid.Row="3"
             Grid.ColumnSpan="2"
             Padding="10">
             <Label LineHeight="1.5" Text="{Binding Info}" />

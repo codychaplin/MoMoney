@@ -10,7 +10,7 @@
     <Button
         x:Name="btnClear"
         Grid.Column="0"
-        Style="{DynamicResource BtnOutlined}"
+        Style="{DynamicResource BtnTertiary}"
         Command="{Binding Source={x:Reference this}, Path=ClearCommand}"
         HeightRequest="45"
         Text="Clear" />

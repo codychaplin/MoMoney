@@ -7,62 +7,67 @@
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
-    Title="Edit Transaction"
+    Shell.NavBarIsVisible="False"
     x:DataType="viewmodel:EditTransactionViewModel">
 
-    <!--  main page  -->
-    <ScrollView>
-        <VerticalStackLayout Margin="10" Spacing="10">
+    <Grid RowDefinitions="Auto,*">
+        <!--  title  -->
+        <components:PageHeader Title="Edit Transaction" ShowBackButton="True" />
 
-            <!--  shared form: Date, Amount, Account, Category, Subcategory, Payee, Transfer Account  -->
-            <components:TransactionFormView
-                x:Name="transactionForm"
-                Date="{Binding Transaction.Date, Mode=TwoWay}"
-                Account="{Binding Account, Mode=TwoWay}"
-                Amount="{Binding Transaction.Amount, Mode=TwoWay}"
-                Category="{Binding Category, Mode=TwoWay}"
-                Subcategory="{Binding Subcategory, Mode=TwoWay}"
-                PayeeText="{Binding Transaction.Payee, Mode=TwoWay}"
-                TransferAccount="{Binding TransferAccount, Mode=TwoWay}"
-                Accounts="{Binding Accounts}"
-                Categories="{Binding Categories}"
-                Subcategories="{Binding Subcategories}"
-                Payees="{Binding Payees}"
-                CategoryChangedCommand="{Binding CategoryChangedCommand}"
-                IsCategoryEnabled="{Binding IsCategoryEnabled}"
-                IsSubcategoryEnabled="{Binding IsSubcategoryEnabled}"
-                IsPayeeVisible="{Binding IsPayeeVisible}"
-                IsTransferAccountVisible="{Binding IsTransferAccountVisible}" />
+        <!--  main page  -->
+        <ScrollView>
+            <VerticalStackLayout Margin="10" Spacing="10">
 
-            <!--  delete/clear/enter buttons  -->
-            <Grid
-                x:Name="grdAcceptButtons"
-                ColumnDefinitions="*,*,*"
-                ColumnSpacing="10">
-                <Button
-                    x:Name="btnClear"
-                    Grid.Column="0"
-                    Style="{DynamicResource BtnTertiary}"
-                    Command="{Binding ClearCommand}"
-                    HeightRequest="45"
-                    Text="Clear" />
-                <Button
-                    x:Name="btnDelete"
-                    Grid.Column="1"
-                    Style="{DynamicResource BtnError}"
-                    Command="{Binding RemoveTransactionCommand}"
-                    HeightRequest="45"
-                    Text="Delete" />
-                <Button
-                    x:Name="btnEnter"
-                    Grid.Column="2"
-                    Style="{DynamicResource BtnPrimary}"
-                    Command="{Binding EditTransactionCommand}"
-                    CommandParameter="{Binding Path=PayeeText, Source={x:Reference transactionForm}}"
-                    HeightRequest="45"
-                    Text="Update" />
-            </Grid>
+                <!--  shared form: Date, Amount, Account, Category, Subcategory, Payee, Transfer Account  -->
+                <components:TransactionFormView
+                    x:Name="transactionForm"
+                    Date="{Binding Transaction.Date, Mode=TwoWay}"
+                    Account="{Binding Account, Mode=TwoWay}"
+                    Amount="{Binding Transaction.Amount, Mode=TwoWay}"
+                    Category="{Binding Category, Mode=TwoWay}"
+                    Subcategory="{Binding Subcategory, Mode=TwoWay}"
+                    PayeeText="{Binding Transaction.Payee, Mode=TwoWay}"
+                    TransferAccount="{Binding TransferAccount, Mode=TwoWay}"
+                    Accounts="{Binding Accounts}"
+                    Categories="{Binding Categories}"
+                    Subcategories="{Binding Subcategories}"
+                    Payees="{Binding Payees}"
+                    CategoryChangedCommand="{Binding CategoryChangedCommand}"
+                    IsCategoryEnabled="{Binding IsCategoryEnabled}"
+                    IsSubcategoryEnabled="{Binding IsSubcategoryEnabled}"
+                    IsPayeeVisible="{Binding IsPayeeVisible}"
+                    IsTransferAccountVisible="{Binding IsTransferAccountVisible}" />
 
-        </VerticalStackLayout>
-    </ScrollView>
+                <!--  delete/clear/enter buttons  -->
+                <Grid
+                    x:Name="grdAcceptButtons"
+                    ColumnDefinitions="*,*,*"
+                    ColumnSpacing="10">
+                    <Button
+                        x:Name="btnClear"
+                        Grid.Column="0"
+                        Style="{DynamicResource BtnTertiary}"
+                        Command="{Binding ClearCommand}"
+                        HeightRequest="45"
+                        Text="Clear" />
+                    <Button
+                        x:Name="btnDelete"
+                        Grid.Column="1"
+                        Style="{DynamicResource BtnError}"
+                        Command="{Binding RemoveTransactionCommand}"
+                        HeightRequest="45"
+                        Text="Delete" />
+                    <Button
+                        x:Name="btnEnter"
+                        Grid.Column="2"
+                        Style="{DynamicResource BtnPrimary}"
+                        Command="{Binding EditTransactionCommand}"
+                        CommandParameter="{Binding Path=PayeeText, Source={x:Reference transactionForm}}"
+                        HeightRequest="45"
+                        Text="Update" />
+                </Grid>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

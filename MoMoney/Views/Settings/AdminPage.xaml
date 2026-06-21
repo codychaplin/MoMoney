@@ -5,51 +5,56 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
-    Title="Administration"
+    Shell.NavBarIsVisible="False"
     x:DataType="viewmodels:AdminViewModel">
-    <ScrollView>
-        <VerticalStackLayout>
-            <!--  data removal  -->
-            <Label Style="{StaticResource SettingsSubtitle}" Text="Data Removal" />
-            <components:AlignedButton Command="{Binding RemoveAllAccountsCommand}" Text="Remove All Accounts" />
-            <components:AlignedButton Command="{Binding RemoveAllCategoriesCommand}" Text="Remove All Categories" />
-            <components:AlignedButton Command="{Binding RemoveAllStocksCommand}" Text="Remove All Stocks" />
-            <components:AlignedButton Command="{Binding RemoveAllTransactionsCommand}" Text="Remove All Transactions" />
-            <components:AlignedButton Command="{Binding RemoveAllLogsCommand}" Text="Remove All Logs" />
-            <components:AlignedButton Command="{Binding RemoveAllMappingRulesCommand}" Text="Remove All Mapping Rules" />
-            <components:AlignedButton Command="{Binding RemoveAllDataCommand}" Text="Remove Everything" />
+    <Grid RowDefinitions="Auto,*">
+        <!--  title  -->
+        <components:PageHeader Title="Administration" ShowBackButton="True" />
 
-            <!--  data maintenance  -->
-            <Label Style="{StaticResource SettingsSubtitle}" Text="Data Maintenance" />
-            <components:AlignedButton
-                Command="{Binding GoToLoggingCommand}"
-                IsVisible="{Binding IsAdmin}"
-                ShowArrow="True"
-                Text="Logging" />
-            <components:AlignedButton
-                Command="{Binding GoToBulkEditingCommand}"
-                ShowArrow="True"
-                Text="Bulk Editing" />
-            <components:AlignedButton
-                Command="{Binding CalculateAccountBalancesCommand}"
-                IsVisible="{Binding IsAdmin}"
-                Text="Recalculate Account Balances" />
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout>
+                <!--  data removal  -->
+                <Label Style="{StaticResource SettingsSubtitle}" Text="Data Removal" />
+                <components:AlignedButton Command="{Binding RemoveAllAccountsCommand}" Text="Remove All Accounts" />
+                <components:AlignedButton Command="{Binding RemoveAllCategoriesCommand}" Text="Remove All Categories" />
+                <components:AlignedButton Command="{Binding RemoveAllStocksCommand}" Text="Remove All Stocks" />
+                <components:AlignedButton Command="{Binding RemoveAllTransactionsCommand}" Text="Remove All Transactions" />
+                <components:AlignedButton Command="{Binding RemoveAllLogsCommand}" Text="Remove All Logs" />
+                <components:AlignedButton Command="{Binding RemoveAllMappingRulesCommand}" Text="Remove All Mapping Rules" />
+                <components:AlignedButton Command="{Binding RemoveAllDataCommand}" Text="Remove Everything" />
 
-            <Label
-                IsVisible="{Binding IsAdmin}"
-                Style="{StaticResource SettingsSubtitle}"
-                Text="Experimental Features" />
-            <Grid
-                Padding="10,0"
-                BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainer},
-                                                  Dark={StaticResource surfaceContainerDark}}"
-                IsVisible="{Binding IsAdmin}">
+                <!--  data maintenance  -->
+                <Label Style="{StaticResource SettingsSubtitle}" Text="Data Maintenance" />
+                <components:AlignedButton
+                    Command="{Binding GoToLoggingCommand}"
+                    IsVisible="{Binding IsAdmin}"
+                    ShowArrow="True"
+                    Text="Logging" />
+                <components:AlignedButton
+                    Command="{Binding GoToBulkEditingCommand}"
+                    ShowArrow="True"
+                    Text="Bulk Editing" />
+                <components:AlignedButton
+                    Command="{Binding CalculateAccountBalancesCommand}"
+                    IsVisible="{Binding IsAdmin}"
+                    Text="Recalculate Account Balances" />
+
                 <Label
-                    Text="Transaction Dictation"
-                    VerticalOptions="Center" />
-                <Switch HorizontalOptions="End" IsToggled="{Binding TransactionDictationEnabled}" />
-            </Grid>
+                    IsVisible="{Binding IsAdmin}"
+                    Style="{StaticResource SettingsSubtitle}"
+                    Text="Experimental Features" />
+                <Grid
+                    Padding="10,0"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainer},
+                                                    Dark={StaticResource surfaceContainerDark}}"
+                    IsVisible="{Binding IsAdmin}">
+                    <Label
+                        Text="Transaction Dictation"
+                        VerticalOptions="Center" />
+                    <Switch HorizontalOptions="End" IsToggled="{Binding TransactionDictationEnabled}" />
+                </Grid>
 
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

@@ -11,21 +11,20 @@
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
     xmlns:views="clr-namespace:MoMoney.Views.Tabs"
     Title="">
-    <ContentPage.Behaviors>
-        <toolkit:StatusBarBehavior StatusBarColor="{AppThemeBinding Light=White, Dark=Black}" StatusBarStyle="{AppThemeBinding Light='DarkContent', Dark='LightContent'}" />
-    </ContentPage.Behaviors>
 
     <!--  tab bar  -->
     <tabView:SfTabView
         x:Name="MainTabView"
         IndicatorBackground="{AppThemeBinding Light={DynamicResource primary},
                                               Dark={DynamicResource primaryDark}}"
+        TabBarHeight="50"
+        IndicatorPlacement="Top"
+        Padding="0,0,0,10"
         TabBarPlacement="Bottom">
 
         <!--  header  -->
         <tabView:SfTabView.Resources>
             <Style TargetType="tabView:SfTabItem">
-
                 <!--  changes text colour when selected  -->
                 <Setter Property="VisualStateManager.VisualStateGroups">
                     <VisualStateGroupList>

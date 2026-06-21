@@ -1,28 +1,43 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MoMoney.Components.PageHeader">
+<Grid
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
+    x:Class="MoMoney.Components.PageHeader"
+    x:Name="root"
+    Padding="10,45,10,10"
+    BackgroundColor="{AppThemeBinding Light={DynamicResource secondaryContainer},
+                                      Dark={DynamicResource secondaryContainerDark}}"
+    ColumnDefinitions="Auto,*,Auto">
+    <Image
+        Margin="0,0,20,0"
+        HeightRequest="30"
+        WidthRequest="30"
+        VerticalOptions="Center"
+        IsVisible="{Binding ShowBackButton, Source={x:Reference root}}">
+        <Image.Source>
+            <FontImageSource FontFamily="MaterialRoundedFilled"
+                             Glyph="{x:Static m:MaterialOutlined.Arrow_back}"
+                             Color="{AppThemeBinding Light={DynamicResource onSecondaryContainer}, Dark={DynamicResource onSecondaryContainerDark}}"
+                             Size="30" />
+        </Image.Source>
+        <Image.GestureRecognizers>
+            <TapGestureRecognizer Tapped="OnBackButtonTapped" />
+        </Image.GestureRecognizers>
+    </Image>
 
-    <ContentView.Resources>
-        <ResourceDictionary>
-            <!-- Bindable Properties are handled in code-behind -->
-        </ResourceDictionary>
-    </ContentView.Resources>
+    <Label
+        Grid.Column="1"
+        Style="{StaticResource lblTitle}"
+        FontSize="20"
+        TextColor="{AppThemeBinding Light={DynamicResource onSecondaryContainer}, Dark={DynamicResource onSecondaryContainerDark}}"
+        Text="{Binding Title, Source={x:Reference root}}"
+        VerticalOptions="Center" />
 
-    <Grid Padding="10"
-          BackgroundColor="{AppThemeBinding Light={DynamicResource secondaryContainer},
-                                            Dark={DynamicResource secondaryContainerDark}}">
-        <Label HorizontalOptions="Start"
-               Style="{StaticResource lblTitle}"
-               FontSize="20"
-               TextColor="{AppThemeBinding Light={DynamicResource onSecondaryContainer}, Dark={DynamicResource onSecondaryContainerDark}}"
-               Text="{Binding Title, Source={RelativeSource AncestorType={x:Type ContentView}}}"
-               VerticalOptions="Center" />
-        
-        <Image HeightRequest="30"
-               HorizontalOptions="End"
-               VerticalOptions="Center"
-               Source="{Binding ImageSource, Source={RelativeSource AncestorType={x:Type ContentView}}}"
-               WidthRequest="30" />
-    </Grid>
-</ContentView>
+    <Image
+        Grid.Column="2"
+        HeightRequest="30"
+        VerticalOptions="Center"
+        Source="{Binding ImageSource, Source={x:Reference root}}"
+        WidthRequest="30" />
+</Grid>

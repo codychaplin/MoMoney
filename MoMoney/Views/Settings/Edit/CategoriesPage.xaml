@@ -4,13 +4,14 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+    xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
-    Title="Categories"
+    Shell.NavBarIsVisible="False"
     x:DataType="viewmodel:CategoriesViewModel">
 
     <ContentPage.Resources>
         <DataTemplate x:Key="HeaderTemplate" x:DataType="models:CategoryGroup">
-            <Border BackgroundColor="{AppThemeBinding Light={StaticResource primary}, Dark={StaticResource primaryDark}}" Style="{StaticResource SmallTileFrame}">
+            <Border BackgroundColor="{AppThemeBinding Light={StaticResource secondaryContainer}, Dark={StaticResource secondaryContainerDark}}" Style="{StaticResource SmallTileFrame}">
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding Parent}" />
                 </Border.GestureRecognizers>
@@ -18,7 +19,7 @@
                     <Label
                         FontSize="20"
                         Style="{StaticResource lblTile}"
-                        TextColor="{AppThemeBinding Light={StaticResource onPrimary}, Dark={StaticResource onPrimaryDark}}"
+                        TextColor="{AppThemeBinding Light={StaticResource onSecondaryContainer}, Dark={StaticResource onSecondaryContainerDark}}"
                         Text="{Binding Parent.CategoryName}" />
                 </Grid>
             </Border>
@@ -36,16 +37,20 @@
     </ContentPage.Resources>
 
     <!--  main page  -->
-    <Grid Padding="0,10,0,0">
+    <Grid RowDefinitions="Auto,*">
+
+        <!--  title  -->
+        <components:PageHeader Title="Categories" ShowBackButton="True" />
 
         <!--  list of categories  -->
         <CollectionView
+            Grid.Row="1"
             GroupHeaderTemplate="{StaticResource HeaderTemplate}"
             IsGrouped="true"
             ItemTemplate="{StaticResource ItemTemplate}"
             ItemsSource="{Binding Categories}" />
 
         <!--  add account button  -->
-        <Button Command="{Binding GoToAddCategoryCommand}" Style="{StaticResource btnAdd}" />
+        <Button Grid.Row="1" Command="{Binding GoToAddCategoryCommand}" Style="{StaticResource btnAdd}" />
     </Grid>
 </ContentPage>

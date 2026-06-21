@@ -4,9 +4,10 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:converters="clr-namespace:MoMoney.Converters"
+    xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
-    Title="Accounts"
+    Shell.NavBarIsVisible="False"
     x:DataType="viewmodel:AccountsViewModel">
 
     <ContentPage.Resources>
@@ -15,10 +16,13 @@
     </ContentPage.Resources>
 
     <!--  main page  -->
-    <Grid>
+    <Grid RowDefinitions="Auto,*">
+
+        <!--  title  -->
+        <components:PageHeader Title="Accounts" ShowBackButton="True" />
 
         <!--  list of accounts  -->
-        <CollectionView Margin="0,10,0,0" ItemsSource="{Binding Accounts}">
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Accounts}">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Vertical" />
             </CollectionView.ItemsLayout>
@@ -47,7 +51,7 @@
         </CollectionView>
 
         <!--  add account button  -->
-        <Button Command="{Binding GoToAddAccountCommand}" Style="{StaticResource btnAdd}" />
+        <Button Grid.Row="1" Command="{Binding GoToAddAccountCommand}" Style="{StaticResource btnAdd}" />
 
     </Grid>
 </ContentPage>

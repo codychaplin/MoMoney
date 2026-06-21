@@ -8,73 +8,79 @@
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
-    Title="Edit Account"
+    Shell.NavBarIsVisible="False"
     x:DataType="viewmodel:EditAccountViewModel">
-    <ContentPage.Triggers>
-        <DataTrigger
-            Binding="{Binding IsEditMode}"
-            TargetType="ContentPage"
-            Value="True">
-            <Setter Property="Title" Value="Edit Account" />
-        </DataTrigger>
-        <DataTrigger
-            Binding="{Binding IsEditMode}"
-            TargetType="ContentPage"
-            Value="False">
-            <Setter Property="Title" Value="Add Account" />
-        </DataTrigger>
-    </ContentPage.Triggers>
+    <Grid RowDefinitions="Auto,*">
 
-    <!--  main page  -->
-    <VerticalStackLayout Padding="10" Spacing="10">
+        <!--  title  -->
+        <components:PageHeader ShowBackButton="True">
+            <components:PageHeader.Triggers>
+                <DataTrigger
+                    Binding="{Binding IsEditMode}"
+                    TargetType="components:PageHeader"
+                    Value="True">
+                    <Setter Property="Title" Value="Edit Account" />
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding IsEditMode}"
+                    TargetType="components:PageHeader"
+                    Value="False">
+                    <Setter Property="Title" Value="Add Account" />
+                </DataTrigger>
+            </components:PageHeader.Triggers>
+        </components:PageHeader>
 
-        <!--  account name  -->
-        <material:TextField
-            x:Name="txtName"
-            Title="Account Name"
-            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                   Glyph={x:Static m:MaterialOutlined.Account_circle}}"
-            Text="{Binding Account.AccountName}" />
+        <!--  main page  -->
+        <VerticalStackLayout Grid.Row="1" Padding="10" Spacing="10">
 
-        <!--  account type with predefined values  -->
-        <material:PickerField
-            x:Name="pckType"
-            Title="Select a type"
-            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                   Glyph={x:Static m:MaterialOutlined.Savings}}"
-            SelectedItem="{Binding Account.AccountType}">
-            <material:PickerField.Items>
-                <x:String>Checkings</x:String>
-                <x:String>Savings</x:String>
-                <x:String>Credit</x:String>
-                <x:String>Investments</x:String>
-            </material:PickerField.Items>
-        </material:PickerField>
-
-        <!--  starting balance  -->
-        <Grid ColumnDefinitions="*,60">
+            <!--  account name  -->
             <material:TextField
-                x:Name="txtStartingBalance"
-                Title="Starting Balance"
+                x:Name="txtName"
+                Title="Account Name"
                 Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                       Glyph={x:Static m:MaterialOutlined.Paid}}"
-                Keyboard="Numeric"
-                Text="{Binding Account.StartingBalance}" />
-            <Switch
-                x:Name="swEnabled"
-                Grid.Column="1"
-                HorizontalOptions="Center"
-                IsToggled="{Binding Account.Enabled}" />
-        </Grid>
+                                    Glyph={x:Static m:MaterialOutlined.Account_circle}}"
+                Text="{Binding Account.AccountName}" />
+
+            <!--  account type with predefined values  -->
+            <material:PickerField
+                x:Name="pckType"
+                Title="Select a type"
+                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                    Glyph={x:Static m:MaterialOutlined.Savings}}"
+                SelectedItem="{Binding Account.AccountType}">
+                <material:PickerField.Items>
+                    <x:String>Checkings</x:String>
+                    <x:String>Savings</x:String>
+                    <x:String>Credit</x:String>
+                    <x:String>Investments</x:String>
+                </material:PickerField.Items>
+            </material:PickerField>
+
+            <!--  starting balance  -->
+            <Grid ColumnDefinitions="*,60">
+                <material:TextField
+                    x:Name="txtStartingBalance"
+                    Title="Starting Balance"
+                    Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                        Glyph={x:Static m:MaterialOutlined.Paid}}"
+                    Keyboard="Numeric"
+                    Text="{Binding Account.StartingBalance}" />
+                <Switch
+                    x:Name="swEnabled"
+                    Grid.Column="1"
+                    HorizontalOptions="Center"
+                    IsToggled="{Binding Account.Enabled}" />
+            </Grid>
 
 
-        <!--  delete/clear/enter buttons  -->
-        <components:ActionButtons
-            AddCommand="{Binding AddCommand}"
-            ClearCommand="{Binding ClearCommand}"
-            EditCommand="{Binding EditCommand}"
-            IsEditMode="{Binding IsEditMode}"
-            RemoveCommand="{Binding RemoveCommand}" />
+            <!--  delete/clear/enter buttons  -->
+            <components:ActionButtons
+                AddCommand="{Binding AddCommand}"
+                ClearCommand="{Binding ClearCommand}"
+                EditCommand="{Binding EditCommand}"
+                IsEditMode="{Binding IsEditMode}"
+                RemoveCommand="{Binding RemoveCommand}" />
 
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>

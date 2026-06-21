@@ -8,13 +8,10 @@
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:tabView="clr-namespace:Syncfusion.Maui.Toolkit.TabView;assembly=Syncfusion.Maui.Toolkit"
+    xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
-    Title="Breakdown"
     x:DataType="viewmodel:BreakdownViewModel"
-    NavigationPage.HasNavigationBar="False">
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding ChangeTypeCommand}" Text="{Binding Type}" />
-    </ContentPage.ToolbarItems>
+    Shell.NavBarIsVisible="False">
 
     <ContentPage.Resources>
 
@@ -56,10 +53,11 @@
 
     </ContentPage.Resources>
 
-    <Grid Padding="0,10,0,0" RowDefinitions="30,*">
-
+    <Grid RowDefinitions="Auto,Auto,*">
         <!--  title  -->
-        <Grid>
+        <components:PageHeader Title="Breakdown" ShowBackButton="True" />
+
+        <Grid Grid.Row="1">
             <Grid.Resources>
                 <Style TargetType="Button">
                     <Setter Property="WidthRequest" Value="40" />
@@ -96,7 +94,7 @@
 
         <tabView:SfTabView
             x:Name="sfTabView"
-            Grid.Row="1"
+            Grid.Row="2"
             Margin="10,0,10,0"
             IndicatorBackground="{AppThemeBinding Light={StaticResource primary},
                                                   Dark={StaticResource primaryDark}}"
@@ -215,7 +213,5 @@
                 </Grid>
             </tabView:SfTabItem>
         </tabView:SfTabView>
-
-
     </Grid>
 </ContentPage>
