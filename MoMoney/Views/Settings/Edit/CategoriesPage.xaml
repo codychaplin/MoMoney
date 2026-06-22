@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<components:CustomContentPage
     x:Class="MoMoney.Views.Settings.Edit.CategoriesPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
-    Shell.NavBarIsVisible="False"
+    HeaderTitle="Categories"
     x:DataType="viewmodel:CategoriesViewModel">
-
-    <ContentPage.Resources>
+    <components:CustomContentPage.Resources>
         <DataTemplate x:Key="HeaderTemplate" x:DataType="models:CategoryGroup">
             <Border BackgroundColor="{AppThemeBinding Light={StaticResource secondaryContainer}, Dark={StaticResource secondaryContainerDark}}" Style="{StaticResource SmallTileFrame}">
                 <Border.GestureRecognizers>
@@ -34,23 +33,17 @@
                 </Grid>
             </Border>
         </DataTemplate>
-    </ContentPage.Resources>
+    </components:CustomContentPage.Resources>
 
-    <!--  main page  -->
-    <Grid RowDefinitions="Auto,*">
-
-        <!--  title  -->
-        <components:PageHeader Title="Categories" ShowBackButton="True" />
-
+    <Grid>
         <!--  list of categories  -->
         <CollectionView
-            Grid.Row="1"
             GroupHeaderTemplate="{StaticResource HeaderTemplate}"
             IsGrouped="true"
             ItemTemplate="{StaticResource ItemTemplate}"
             ItemsSource="{Binding Categories}" />
 
-        <!--  add account button  -->
-        <Button Grid.Row="1" Command="{Binding GoToAddCategoryCommand}" Style="{StaticResource btnAdd}" />
+        <!--  add category button  -->
+        <Button Command="{Binding GoToAddCategoryCommand}" Style="{StaticResource btnAdd}" />
     </Grid>
-</ContentPage>
+</components:CustomContentPage>

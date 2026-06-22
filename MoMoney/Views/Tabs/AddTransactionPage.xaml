@@ -13,7 +13,7 @@
     
     <Grid RowDefinitions="Auto,*">
         <!--  title  -->
-        <components:PageHeader Title="Add Transaction" />
+        <components:PageHeader Title="Add Transaction" ShowBackButton="False" />
 
         <ScrollView Grid.Row="1" Padding="0,10,0,0">
             <VerticalStackLayout Padding="10,0" Spacing="5">

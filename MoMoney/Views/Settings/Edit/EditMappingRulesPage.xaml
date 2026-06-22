@@ -1,111 +1,104 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
-             xmlns:statementModels="clr-namespace:MoMoney.Core.Models.Statements;assembly=MoMoney.Core"
-             xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
-             xmlns:components="clr-namespace:MoMoney.Components"
-             x:Class="MoMoney.Views.Settings.Edit.EditMappingRulesPage"
-             x:DataType="viewmodel:EditMappingRulesViewModel"
-             Shell.NavBarIsVisible="False">
+<components:CustomContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
+    xmlns:statementModels="clr-namespace:MoMoney.Core.Models.Statements;assembly=MoMoney.Core"
+    xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+    xmlns:components="clr-namespace:MoMoney.Components"
+    x:Class="MoMoney.Views.Settings.Edit.EditMappingRulesPage"
+    x:DataType="viewmodel:EditMappingRulesViewModel"
+    HeaderTitle="Edit Rules">
+    <ScrollView Padding="10,5,10,10">
+        <VerticalStackLayout Spacing="5">
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,*" ColumnSpacing="10" RowSpacing="5">
+                <!--  Bank Template  -->
+                <material:PickerField
+                    Grid.ColumnSpan="2"
+                    Title="Bank"
+                    SelectedItem="{Binding SelectedBankType}"
+                    SelectedValueChangedCommand="{Binding SelectedBankTypeChangedCommand}">
+                    <material:PickerField.Items>
+                        <x:String>Tangerine</x:String>
+                        <x:String>Wealthsimple</x:String>
+                    </material:PickerField.Items>
+                </material:PickerField>
 
-    <Grid RowDefinitions="Auto,*">
+                <!--  Rule picker  -->
+                <material:PickerField
+                    Grid.Row="1"
+                    Title="Rules"
+                    IsEnabled="{Binding SelectedBankType, Converter={StaticResource NullToVisibleConverter}, Source={RelativeSource AncestorType={x:Type viewmodel:EditMappingRulesViewModel}}}"
+                    x:DataType="statementModels:MappingRule"
+                    SelectedItem="{Binding Path=SelectedMappingRule, Source={RelativeSource AncestorType={x:Type viewmodel:EditMappingRulesViewModel}}}"
+                    ItemsSource="{Binding Path=MappingRules, Source={RelativeSource AncestorType={x:Type viewmodel:EditMappingRulesViewModel}}}"
+                    ItemDisplayBinding="{Binding Name}" />
 
-        <!--  title  -->
-        <components:PageHeader Title="Edit Rules" ShowBackButton="True" />
+                <!--  Add rule button  -->
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    Text="Add Rule"
+                    Style="{StaticResource BtnSecondary}"
+                    IsEnabled="{Binding SelectedBankType, Converter={StaticResource NullToVisibleConverter}}"
+                    Command="{Binding AddRuleToListCommand}" />
+            </Grid>
 
-        <ScrollView Grid.Row="1" Padding="10,5,10,10">
-            <VerticalStackLayout Spacing="5">
-                <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,*" ColumnSpacing="10" RowSpacing="5">
-                    <!--  Bank Template  -->
-                    <material:PickerField
-                        Grid.ColumnSpan="2"
-                        Title="Bank"
-                        SelectedItem="{Binding SelectedBankType}"
-                        SelectedValueChangedCommand="{Binding SelectedBankTypeChangedCommand}">
-                        <material:PickerField.Items>
-                            <x:String>Tangerine</x:String>
-                            <x:String>Wealthsimple</x:String>
-                        </material:PickerField.Items>
-                    </material:PickerField>
+            <VerticalStackLayout IsVisible="{Binding SelectedMappingRule, Converter={StaticResource NullToVisibleConverter}}" Spacing="5">
+                <!--  Rule explanation  -->
+                <Label Margin="15,10,15,5">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="A rule consists of a name, a pattern and the fields the pattern matches. "/>
+                            <Span Text="The pattern itself is text that is matched against the raw text of the statement. "/>
+                            <Span Text="It can be a regular expression or simple text. "/>
+                            <Span Text="If you instead want to skip matching transactions, toggle the 'Skip matching transactions' switch."/>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
 
+                <!--  Name  -->
+                <material:TextField
+                    Text="{Binding SelectedMappingRule.Name}"
+                    Title="Name" />
 
-                    <!--  Rule picker  -->
-                    <material:PickerField
-                        Grid.Row="1"
-                        Title="Rules"
-                        IsEnabled="{Binding SelectedBankType, Converter={StaticResource NullToVisibleConverter}, Source={RelativeSource AncestorType={x:Type viewmodel:EditMappingRulesViewModel}}}"
-                        x:DataType="statementModels:MappingRule"
-                        SelectedItem="{Binding Path=SelectedMappingRule, Source={RelativeSource AncestorType={x:Type viewmodel:EditMappingRulesViewModel}}}"
-                        ItemsSource="{Binding Path=MappingRules, Source={RelativeSource AncestorType={x:Type viewmodel:EditMappingRulesViewModel}}}"
-                        ItemDisplayBinding="{Binding Name}" />
+                <!--  Pattern  -->
+                <material:TextField
+                    Text="{Binding SelectedMappingRule.Pattern}"
+                    Title="Pattern" />
 
-                    <!--  Add rule button  -->
-                    <Button
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="0,5,0,0"
-                        Text="Add Rule"
-                        Style="{StaticResource BtnSecondary}"
-                        IsEnabled="{Binding SelectedBankType, Converter={StaticResource NullToVisibleConverter}}"
-                        Command="{Binding AddRuleToListCommand}" />
-                </Grid>
+                <!--  Skip toggle  -->
+                <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
+                    <Label Text="Skip matching transactions" VerticalOptions="Center" />
+                    <Switch IsToggled="{Binding IsSkipRule}" HorizontalOptions="Start" />
+                </HorizontalStackLayout>
 
-                <VerticalStackLayout IsVisible="{Binding SelectedMappingRule, Converter={StaticResource NullToVisibleConverter}}" Spacing="5">
-                    <!--  Rule explanation  -->
-                    <Label Margin="15,10,15,5">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="A rule consists of a name, a pattern and the fields the pattern matches. "/>
-                                <Span Text="The pattern itself is text that is matched against the raw text of the statement. "/>
-                                <Span Text="It can be a regular expression or simple text. "/>
-                                <Span Text="If you instead want to skip matching transactions, toggle the 'Skip matching transactions' switch."/>
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
+                <VerticalStackLayout IsVisible="{Binding IsSkipRule, Converter={StaticResource InverseBoolConverter}}" Spacing="5">
+                    <components:CategorySubcategoryField
+                        Categories="{Binding Categories}"
+                        Category="{Binding Category, Mode=TwoWay}"
+                        CategoryChangedCommand="{Binding CategoryChangedCommand}"
+                        Orientation="Horizontal"
+                        Subcategories="{Binding Subcategories}"
+                        Subcategory="{Binding Subcategory, Mode=TwoWay}" />
 
-                    <!--  Name  -->
-                    <material:TextField
-                        Text="{Binding SelectedMappingRule.Name}"
-                        Title="Name" />
-
-                    <!--  Pattern  -->
-                    <material:TextField
-                        Text="{Binding SelectedMappingRule.Pattern}"
-                        Title="Pattern" />
-
-                    <!--  Skip toggle  -->
-                    <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
-                        <Label Text="Skip matching transactions" VerticalOptions="Center" />
-                        <Switch IsToggled="{Binding IsSkipRule}" HorizontalOptions="Start" />
-                    </HorizontalStackLayout>
-
-                    <VerticalStackLayout IsVisible="{Binding IsSkipRule, Converter={StaticResource InverseBoolConverter}}" Spacing="5">
-                        <components:CategorySubcategoryField
-                            Categories="{Binding Categories}"
-                            Category="{Binding Category, Mode=TwoWay}"
-                            CategoryChangedCommand="{Binding CategoryChangedCommand}"
-                            Orientation="Horizontal"
-                            Subcategories="{Binding Subcategories}"
-                            Subcategory="{Binding Subcategory, Mode=TwoWay}" />
-
-                        <components:PayeeField
-                            Accounts="{Binding Accounts}"
-                            IsTransferAccountVisible="{Binding IsTransfer}"
-                            PayeeText="{Binding Payee, Mode=TwoWay}"
-                            Payees="{Binding Payees}"
-                            TransferAccount="{Binding TransferAccount, Mode=TwoWay}" />
-                    </VerticalStackLayout>
-                    
-                    <!--  delete/clear/enter buttons  -->
-                    <components:ActionButtons
-                        ClearCommand="{Binding ClearRuleCommand}"
-                        EditCommand="{Binding InsertOrReplaceRuleCommand}"
-                        IsEditMode="True"
-                        RemoveCommand="{Binding RemoveRuleCommand}" />
+                    <components:PayeeField
+                        Accounts="{Binding Accounts}"
+                        IsTransferAccountVisible="{Binding IsTransfer}"
+                        PayeeText="{Binding Payee, Mode=TwoWay}"
+                        Payees="{Binding Payees}"
+                        TransferAccount="{Binding TransferAccount, Mode=TwoWay}" />
                 </VerticalStackLayout>
+
+                <!--  delete/clear/enter buttons  -->
+                <components:ActionButtons
+                    ClearCommand="{Binding ClearRuleCommand}"
+                    EditCommand="{Binding InsertOrReplaceRuleCommand}"
+                    IsEditMode="True"
+                    RemoveCommand="{Binding RemoveRuleCommand}" />
             </VerticalStackLayout>
-        </ScrollView>
-    </Grid>
-</ContentPage>
+        </VerticalStackLayout>
+    </ScrollView>
+</components:CustomContentPage>

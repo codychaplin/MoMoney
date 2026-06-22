@@ -34,10 +34,8 @@
         Text="{Binding Title, Source={x:Reference root}}"
         VerticalOptions="Center" />
 
-    <Image
+    <ContentView
+        x:Name="RightContentContainer"
         Grid.Column="2"
-        HeightRequest="30"
-        VerticalOptions="Center"
-        Source="{Binding ImageSource, Source={x:Reference root}}"
-        WidthRequest="30" />
+        VerticalOptions="Center" />
 </Grid>

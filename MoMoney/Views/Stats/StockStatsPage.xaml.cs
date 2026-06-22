@@ -1,9 +1,10 @@
+using MoMoney.Components;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels.Stats;
 
 namespace MoMoney.Views.Stats;
 
-public partial class StockStatsPage : ContentPage
+public partial class StockStatsPage : CustomContentPage
 {
     StockStatsViewModel vm;
 

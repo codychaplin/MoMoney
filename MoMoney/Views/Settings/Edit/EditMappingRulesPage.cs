@@ -1,9 +1,10 @@
+using MoMoney.Components;
 using MoMoney.Core.ViewModels.Settings.Edit;
 
 namespace MoMoney.Views.Settings.Edit;
 
 [QueryProperty(nameof(Bank), "bank")]
-public partial class EditMappingRulesPage : ContentPage
+public partial class EditMappingRulesPage : CustomContentPage
 {
     EditMappingRulesViewModel vm;
 

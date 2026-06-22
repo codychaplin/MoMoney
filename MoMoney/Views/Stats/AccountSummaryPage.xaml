@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<components:CustomContentPage
     x:Class="MoMoney.Views.Stats.AccountSummaryPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -7,15 +7,11 @@
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
-    Shell.NavBarIsVisible="False"
+    HeaderTitle="Account Summary"
     x:DataType="viewmodel:AccountSummaryViewModel">
-
-    <ContentPage.Resources>
-
-        <!--  converter  -->
+    <components:CustomContentPage.Resources>
         <converters:ShowValueConverter x:Key="ShowValueConverter" />
 
-        <!--  styles  -->
         <Style
             x:Key="lblGroupTitle"
             BasedOn="{StaticResource lblTitle}"
@@ -32,7 +28,6 @@
         </Style>
 
         <ResourceDictionary>
-            <!--  account display template  -->
             <DataTemplate x:Key="Account" x:DataType="models:Account">
                 <Grid Margin="0,5,0,5" ColumnDefinitions="*,*">
                     <Grid.Resources>
@@ -42,13 +37,11 @@
                             <Setter Property="VerticalOptions" Value="Center" />
                         </Style>
                     </Grid.Resources>
-                    <!--  name  -->
                     <Label
                         Grid.Column="0"
                         HorizontalOptions="Start"
                         TextColor="{AppThemeBinding Light={StaticResource onSurfaceVariant}, Dark={StaticResource onSurfaceVariantDark}}"
                         Text="{Binding AccountName}" />
-                    <!--  current balance  -->
                     <Label
                         Grid.Column="1"
                         HorizontalOptions="End"
@@ -57,81 +50,70 @@
                 </Grid>
             </DataTemplate>
         </ResourceDictionary>
-    </ContentPage.Resources>
+    </components:CustomContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
-        <!--  title  -->
-        <components:PageHeader Title="Account Summary" ShowBackButton="True" />
+    <ScrollView Padding="0,10,0,0">
+        <VerticalStackLayout>
+            <VerticalStackLayout.Resources>
+                <Style CanCascade="True" TargetType="Border">
+                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource surfaceContainerHighest}, Dark={StaticResource surfaceContainerHighestDark}}" />
+                    <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+                    <Setter Property="Padding" Value="5,5,10,5" />
+                    <Setter Property="Margin" Value="10,0,10,20" />
+                </Style>
+                <Style TargetType="CollectionView">
+                    <Setter Property="ItemTemplate" Value="{StaticResource Account}" />
+                </Style>
+            </VerticalStackLayout.Resources>
 
-        <!--  main page  -->
-        <ScrollView Grid.Row="1" Padding="0,10,0,0">
-            <VerticalStackLayout>
-                <VerticalStackLayout.Resources>
-                    <Style CanCascade="True" TargetType="Border">
-                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource surfaceContainerHighest}, Dark={StaticResource surfaceContainerHighestDark}}" />
-                        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
-                        <Setter Property="Padding" Value="5,5,10,5" />
-                        <Setter Property="Margin" Value="10,0,10,20" />
-                    </Style>
-                    <Style TargetType="CollectionView">
-                        <Setter Property="ItemTemplate" Value="{StaticResource Account}" />
-                    </Style>
-                </VerticalStackLayout.Resources>
-
-                <!--  networth  -->
-                <Border Padding="10">
-                    <Grid>
-                        <Label
-                            Margin="0"
-                            FontSize="20"
-                            Style="{StaticResource lblTitle}"
-                            TextColor="{AppThemeBinding Light={StaticResource onSurfaceVariant}, Dark={StaticResource onSurfaceVariantDark}}"
-                            Text="Net Worth" />
-                        <Label
-                            Margin="0"
-                            FontSize="20"
-                            TextColor="{AppThemeBinding Light={StaticResource onSurfaceVariant}, Dark={StaticResource onSurfaceVariantDark}}"
-                            Style="{StaticResource lblAccountName}"
-                            Text="{Binding Networth, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
-                    </Grid>
-                </Border>
-
-                <!--  checkings  -->
-                <Grid IsVisible="{Binding CheckingsAccounts.Count}">
-                    <Label Style="{StaticResource lblGroupTitle}" Text="Checkings" />
-                    <Label Style="{StaticResource lblAccountName}" Text="{Binding CheckingsSum, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
+            <Border Padding="10">
+                <Grid>
+                    <Label
+                        Margin="0"
+                        FontSize="20"
+                        Style="{StaticResource lblTitle}"
+                        TextColor="{AppThemeBinding Light={StaticResource onSurfaceVariant}, Dark={StaticResource onSurfaceVariantDark}}"
+                        Text="Net Worth" />
+                    <Label
+                        Margin="0"
+                        FontSize="20"
+                        TextColor="{AppThemeBinding Light={StaticResource onSurfaceVariant}, Dark={StaticResource onSurfaceVariantDark}}"
+                        Style="{StaticResource lblAccountName}"
+                        Text="{Binding Networth, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
                 </Grid>
-                <Border IsVisible="{Binding CheckingsAccounts.Count}">
-                    <CollectionView ItemsSource="{Binding CheckingsAccounts}" />
-                </Border>
+            </Border>
 
-                <!--  savings  -->
-                <Grid IsVisible="{Binding SavingsAccounts.Count}">
-                    <Label Style="{StaticResource lblGroupTitle}" Text="Savings" />
-                    <Label Style="{StaticResource lblAccountName}" Text="{Binding SavingsSum, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
-                </Grid>
-                <Border IsVisible="{Binding SavingsAccounts.Count}">
-                    <CollectionView ItemsSource="{Binding SavingsAccounts}" />
-                </Border>
+            <Grid IsVisible="{Binding CheckingsAccounts.Count}">
+                <Label Style="{StaticResource lblGroupTitle}" Text="Checkings" />
+                <Label Style="{StaticResource lblAccountName}" Text="{Binding CheckingsSum, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
+            </Grid>
+            <Border IsVisible="{Binding CheckingsAccounts.Count}">
+                <CollectionView ItemsSource="{Binding CheckingsAccounts}" />
+            </Border>
 
-                <!--  credit  -->
-                <Grid IsVisible="{Binding CreditAccounts.Count}">
-                    <Label Style="{StaticResource lblGroupTitle}" Text="Credit" />
-                    <Label Style="{StaticResource lblAccountName}" Text="{Binding CreditSum, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
-                </Grid>
-                <Border IsVisible="{Binding CreditAccounts.Count}">
-                    <CollectionView ItemsSource="{Binding CreditAccounts}" />
-                </Border>
+            <Grid IsVisible="{Binding SavingsAccounts.Count}">
+                <Label Style="{StaticResource lblGroupTitle}" Text="Savings" />
+                <Label Style="{StaticResource lblAccountName}" Text="{Binding SavingsSum, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
+            </Grid>
+            <Border IsVisible="{Binding SavingsAccounts.Count}">
+                <CollectionView ItemsSource="{Binding SavingsAccounts}" />
+            </Border>
 
-                <!--  investment  -->
-                <Grid IsVisible="{Binding InvestmentAccounts.Count}">
-                    <Label Style="{StaticResource lblGroupTitle}" Text="Investments" />
-                    <Label Style="{StaticResource lblAccountName}" Text="{Binding InvestmentSum, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
-                </Grid>
-                <Border IsVisible="{Binding InvestmentAccounts.Count}">
-                    <CollectionView ItemsSource="{Binding InvestmentAccounts}" />
-                </Border>
-            </VerticalStackLayout>
-        </ScrollView>
-    </Grid>
-</ContentPage>
+            <Grid IsVisible="{Binding CreditAccounts.Count}">
+                <Label Style="{StaticResource lblGroupTitle}" Text="Credit" />
+                <Label Style="{StaticResource lblAccountName}" Text="{Binding CreditSum, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
+            </Grid>
+            <Border IsVisible="{Binding CreditAccounts.Count}">
+                <CollectionView ItemsSource="{Binding CreditAccounts}" />
+            </Border>
+
+            <Grid IsVisible="{Binding InvestmentAccounts.Count}">
+                <Label Style="{StaticResource lblGroupTitle}" Text="Investments" />
+                <Label Style="{StaticResource lblAccountName}" Text="{Binding InvestmentSum, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}" />
+            </Grid>
+            <Border IsVisible="{Binding InvestmentAccounts.Count}">
+                <CollectionView ItemsSource="{Binding InvestmentAccounts}" />
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</components:CustomContentPage>

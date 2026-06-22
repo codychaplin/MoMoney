@@ -1,9 +1,10 @@
+using MoMoney.Components;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels;
 
 namespace MoMoney.Views;
 
-public partial class EditTransactionPage : ContentPage
+public partial class EditTransactionPage : CustomContentPage
 {
     EditTransactionViewModel vm;
 

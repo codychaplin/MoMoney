@@ -11,7 +11,7 @@
 
     <Grid RowDefinitions="Auto,*">
         <!--  title  -->
-        <components:PageHeader Title="Settings" />
+        <components:PageHeader Title="Settings" ShowBackButton="False" />
 
         <ScrollView Grid.Row="1">
             <VerticalStackLayout>

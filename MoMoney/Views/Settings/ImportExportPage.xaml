@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<components:CustomContentPage
     x:Class="MoMoney.Views.Settings.ImportExportPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
-    Shell.NavBarIsVisible="False"
+    HeaderTitle="Import &amp; Export"
+    IsBusyOverlay="{Binding IsBusy}"
     x:DataType="viewmodels:ImportExportViewModel">
-    <Grid RowDefinitions="Auto,*">
-        <!--  title  -->
-        <components:PageHeader Title="Import &amp; Export" ShowBackButton="True" />
-
-        <ScrollView Grid.Row="1">
+    <ScrollView>
             <VerticalStackLayout>
                 <VerticalStackLayout.Resources>
                     <Style TargetType="Grid">
@@ -32,38 +29,35 @@
 
                 <Label Style="{StaticResource SettingsSubtitle}" Text="Import/Export from CSV" />
                 <Grid>
-                    <Label Style="{StaticResource LblModel}"  Text="Accounts" />
+                    <Label Style="{StaticResource LblModel}" Text="Accounts" />
                     <Button Grid.Column="1" Style="{StaticResource BtnImportExport}" Text="Import" Command="{Binding ImportAccountsCSVCommand}" />
                     <Button Grid.Column="2" Style="{StaticResource BtnImportExport}" Text="Export" Command="{Binding ExportAccountsCSVCommand}" />
                 </Grid>
                 <Grid BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainerHighest}, Dark={DynamicResource surfaceContainerHighestDark}}">
-                    <Label Style="{StaticResource LblModel}"  Text="Categories" />
+                    <Label Style="{StaticResource LblModel}" Text="Categories" />
                     <Button Grid.Column="1" Style="{StaticResource BtnImportExport}" Text="Import" Command="{Binding ImportCategoriesCSVCommand}" />
                     <Button Grid.Column="2" Style="{StaticResource BtnImportExport}" Text="Export" Command="{Binding ExportCategoriesCSVCommand}" />
                 </Grid>
                 <Grid>
-                    <Label Style="{StaticResource LblModel}"  Text="Transactions" />
+                    <Label Style="{StaticResource LblModel}" Text="Transactions" />
                     <Button Grid.Column="1" Style="{StaticResource BtnImportExport}" Text="Import" Command="{Binding ImportTransactionsCSVCommand}" />
                     <Button Grid.Column="2" Style="{StaticResource BtnImportExport}" Text="Export" Command="{Binding ExportTransactionsCSVCommand}" />
                 </Grid>
                 <Grid BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainerHighest}, Dark={DynamicResource surfaceContainerHighestDark}}">
-                    <Label Style="{StaticResource LblModel}"  Text="Stocks" />
+                    <Label Style="{StaticResource LblModel}" Text="Stocks" />
                     <Button Grid.Column="1" Style="{StaticResource BtnImportExport}" Text="Import" Command="{Binding ImportStocksCSVCommand}" />
                     <Button Grid.Column="2" Style="{StaticResource BtnImportExport}" Text="Export" Command="{Binding ExportStocksCSVCommand}" />
                 </Grid>
                 <Grid>
-                    <Label Style="{StaticResource LblModel}"  Text="Mapping Rules" />
+                    <Label Style="{StaticResource LblModel}" Text="Mapping Rules" />
                     <Button Grid.Column="1" Style="{StaticResource BtnImportExport}" Text="Import" Command="{Binding ImportMappingRulesCSVCommand}" />
                     <Button Grid.Column="2" Style="{StaticResource BtnImportExport}" Text="Export" Command="{Binding ExportMappingRulesCSVCommand}" />
                 </Grid>
                 <Grid BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainerHighest}, Dark={DynamicResource surfaceContainerHighestDark}}">
-                    <Label Style="{StaticResource LblModel}"  Text="Logs" />
+                    <Label Style="{StaticResource LblModel}" Text="Logs" />
                     <Button Grid.Column="1" Style="{StaticResource BtnImportExport}" Text="Import" Command="{Binding ImportLogsCSVCommand}" />
                     <Button Grid.Column="2" Style="{StaticResource BtnImportExport}" Text="Export" Command="{Binding ExportLogsCSVCommand}" />
                 </Grid>
             </VerticalStackLayout>
-        </ScrollView>
-
-        <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" />
-    </Grid>
-</ContentPage>
+    </ScrollView>
+</components:CustomContentPage>

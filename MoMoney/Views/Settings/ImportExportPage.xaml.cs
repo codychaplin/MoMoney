@@ -1,8 +1,9 @@
+using MoMoney.Components;
 using MoMoney.Core.ViewModels.Settings;
 
 namespace MoMoney.Views.Settings;
 
-public partial class ImportExportPage : ContentPage
+public partial class ImportExportPage : CustomContentPage
 {
 	public ImportExportPage(ImportExportViewModel vm)
 	{

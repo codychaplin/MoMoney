@@ -1,25 +1,18 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<components:CustomContentPage
     x:Class="MoMoney.Views.Settings.Edit.StocksPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
-    Shell.NavBarIsVisible="False"
+    HeaderTitle="Stocks"
     x:DataType="viewmodel:StocksViewModel">
-
-    <Grid RowDefinitions="Auto,*">
-
-        <!--  title  -->
-        <components:PageHeader Title="Stocks" ShowBackButton="True" />
-
+    <Grid>
         <!--  list of stocks  -->
-        <CollectionView Grid.Row="1" ItemsSource="{Binding Stocks}">
+        <CollectionView ItemsSource="{Binding Stocks}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Stock">
-
-                    <!--  template  -->
                     <Border
                         BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainerHighest},
                                                           Dark={StaticResource surfaceContainerHighestDark}}"
@@ -28,10 +21,8 @@
                             <TapGestureRecognizer Command="{Binding Path=GoToEditStockCommand, Source={RelativeSource AncestorType={x:Type viewmodel:StocksViewModel}}}" CommandParameter="{Binding .}" />
                         </Border.GestureRecognizers>
                         <Grid>
-
                             <!--  symbol  -->
                             <Label Style="{StaticResource lblTile}" Text="{Binding Symbol}" />
-
                             <!--  market price  -->
                             <Label
                                 Padding="0,0,5,0"
@@ -40,12 +31,11 @@
                                 Text="{Binding MarketPrice, StringFormat='{0:C2}'}" />
                         </Grid>
                     </Border>
-
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!--  add account button  -->
-        <Button Grid.Row="1" Command="{Binding GoToAddStockCommand}" Style="{StaticResource btnAdd}" />
+        <!--  add stock button  -->
+        <Button Command="{Binding GoToAddStockCommand}" Style="{StaticResource btnAdd}" />
     </Grid>
-</ContentPage>
+</components:CustomContentPage>

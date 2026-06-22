@@ -1,9 +1,10 @@
+using MoMoney.Components;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels.Stats;
 
 namespace MoMoney.Views.Stats;
 
-public partial class BreakdownPage : ContentPage
+public partial class BreakdownPage : CustomContentPage
 {
     BreakdownViewModel vm;
     public BreakdownPage(BreakdownViewModel _vm)

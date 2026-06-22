@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<components:CustomContentPage
     x:Class="MoMoney.Views.Stats.BreakdownPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -10,16 +10,12 @@
     xmlns:tabView="clr-namespace:Syncfusion.Maui.Toolkit.TabView;assembly=Syncfusion.Maui.Toolkit"
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
-    x:DataType="viewmodel:BreakdownViewModel"
-    Shell.NavBarIsVisible="False">
-
-    <ContentPage.Resources>
-
-        <!--  converter  -->
+    HeaderTitle="Breakdown"
+    x:DataType="viewmodel:BreakdownViewModel">
+    <components:CustomContentPage.Resources>
         <converters:ShowValueConverter x:Key="ShowValueConverter" />
         <converters:DateConverter x:Key="DateConverter" />
 
-        <!--  CollectionView Item Template  -->
         <DataTemplate x:Key="BreakdownItem" x:DataType="models:BreakdownData">
             <Grid
                 Padding="10,0"
@@ -50,14 +46,10 @@
                     VerticalOptions="Center" />
             </Grid>
         </DataTemplate>
+    </components:CustomContentPage.Resources>
 
-    </ContentPage.Resources>
-
-    <Grid RowDefinitions="Auto,Auto,*">
-        <!--  title  -->
-        <components:PageHeader Title="Breakdown" ShowBackButton="True" />
-
-        <Grid Grid.Row="1">
+    <Grid RowDefinitions="Auto,*">
+        <Grid>
             <Grid.Resources>
                 <Style TargetType="Button">
                     <Setter Property="WidthRequest" Value="40" />
@@ -94,7 +86,7 @@
 
         <tabView:SfTabView
             x:Name="sfTabView"
-            Grid.Row="2"
+            Grid.Row="1"
             Margin="10,0,10,0"
             IndicatorBackground="{AppThemeBinding Light={StaticResource primary},
                                                   Dark={StaticResource primaryDark}}"
@@ -124,7 +116,6 @@
                 </Style>
             </tabView:SfTabView.Resources>
 
-            <!--  expense tab  -->
             <tabView:SfTabItem Header="{Binding ExpenseSum, Converter={StaticResource ShowValueConverter}, StringFormat='Expenses {0:C2}'}">
                 <Grid RowDefinitions="*,*">
                     <Border Margin="0" Padding="0">
@@ -154,7 +145,6 @@
                         </chart:SfCircularChart>
                     </Border>
 
-                    <!--  collection  -->
                     <Border
                         Grid.Row="1"
                         Margin="0,10"
@@ -168,9 +158,7 @@
                 </Grid>
             </tabView:SfTabItem>
 
-            <!--  income tab  -->
             <tabView:SfTabItem Header="{Binding IncomeSum, Converter={StaticResource ShowValueConverter}, StringFormat='Income {0:C2}'}">
-                <!--  doughnut chart  -->
                 <Grid RowDefinitions="*,*">
                     <Border Margin="0" Padding="0">
                         <chart:SfCircularChart VerticalOptions="Center">
@@ -199,7 +187,6 @@
                         </chart:SfCircularChart>
                     </Border>
 
-                    <!--  collection  -->
                     <Border
                         Grid.Row="1"
                         Margin="0,10"
@@ -214,4 +201,4 @@
             </tabView:SfTabItem>
         </tabView:SfTabView>
     </Grid>
-</ContentPage>
+</components:CustomContentPage>

@@ -1,276 +1,258 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-             xmlns:components="clr-namespace:MoMoney.Components"
-             x:Class="MoMoney.Views.ImportStatementPage"
-             xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
-             x:DataType="viewmodel:ImportStatementViewModel"
-             xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
-             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
-             xmlns:converters="clr-namespace:MoMoney.Converters"
-             Shell.NavBarIsVisible="False">
-    <Grid RowDefinitions="Auto,*">
-        <!--  title  -->
-        <components:PageHeader Title="Import Statement" ShowBackButton="True" />
+<components:CustomContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:components="clr-namespace:MoMoney.Components"
+    x:Class="MoMoney.Views.ImportStatementPage"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
+    x:DataType="viewmodel:ImportStatementViewModel"
+    xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
+    xmlns:converters="clr-namespace:MoMoney.Converters"
+    HeaderTitle="Import Statement">
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="5">
+            <VerticalStackLayout.Resources>
+                <ResourceDictionary>
+                    <converters:ImportStatusToColourConverter x:Key="ImportStatusToColourConverter" />
+                    <converters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
+                    <Style TargetType="Label" x:Key="SectionTitle">
+                        <Setter Property="FontSize" Value="18" />
+                        <Setter Property="FontAttributes" Value="Bold" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
+                    </Style>
+                </ResourceDictionary>
+            </VerticalStackLayout.Resources>
 
-        <ScrollView Grid.Row="1">
-            <VerticalStackLayout Padding="10" Spacing="5">
-                <VerticalStackLayout.Resources>
-                    <ResourceDictionary>
-                        <converters:ImportStatusToColourConverter x:Key="ImportStatusToColourConverter" />
-                        <converters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
-                        <Style TargetType="Label" x:Key="SectionTitle">
-                            <Setter Property="FontSize" Value="18" />
-                            <Setter Property="FontAttributes" Value="Bold" />
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
-                        </Style>
-                    </ResourceDictionary>
-                </VerticalStackLayout.Resources>
+            <!--  Setup section title  -->
+            <Label Text="Setup" Style="{StaticResource SectionTitle}" />
 
-                <!--  Setup section title  -->
-                <Label Text="Setup" Style="{StaticResource SectionTitle}" />
-                
-                <!--  Account  -->
-                <material:PickerField
-                    x:Name="pckAccount"
-                    Title="Account"
-                    x:DataType="models:Account"
-                    ItemDisplayBinding="{Binding AccountName}"
-                    ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
-                    SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}" />
+            <!--  Account  -->
+            <material:PickerField
+                x:Name="pckAccount"
+                Title="Account"
+                x:DataType="models:Account"
+                ItemDisplayBinding="{Binding AccountName}"
+                ItemsSource="{Binding Path=Accounts, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}"
+                SelectedItem="{Binding Path=Account, Source={RelativeSource AncestorType={x:Type viewmodel:ImportStatementViewModel}}}" />
 
-                <!--  Bank Template  -->
-                <material:PickerField Title="Bank" SelectedItem="{Binding SelectedBankType}">
-                    <material:PickerField.Items>
-                        <x:String>Tangerine</x:String>
-                        <x:String>Wealthsimple</x:String>
-                    </material:PickerField.Items>
-                </material:PickerField>
+            <!--  Bank Template  -->
+            <material:PickerField Title="Bank" SelectedItem="{Binding SelectedBankType}">
+                <material:PickerField.Items>
+                    <x:String>Tangerine</x:String>
+                    <x:String>Wealthsimple</x:String>
+                </material:PickerField.Items>
+            </material:PickerField>
 
-                <Grid ColumnDefinitions="*,*" RowDefinitions="*,*" ColumnSpacing="10" RowSpacing="10" Margin="0,5,0,0">
-                    <!--  Upload file button  -->
-                    <Button
-                        Text="Upload File"
-                        Style="{StaticResource BtnPrimary}"
-                        Command="{Binding ImportStatementCommand}" />
+            <Grid ColumnDefinitions="*,*" RowDefinitions="*,*" ColumnSpacing="10" RowSpacing="10" Margin="0,5,0,0">
+                <!--  Upload file button  -->
+                <Button
+                    Text="Upload File"
+                    Style="{StaticResource BtnPrimary}"
+                    Command="{Binding ImportStatementCommand}" />
 
-                    <!--  Update rules button  -->
-                    <Button
-                        Grid.Column="1"
-                        Text="Update Rules"
-                        Style="{StaticResource BtnSecondary}"
-                        Command="{Binding GoToEditMappingRulesCommand}" />
+                <!--  Update rules button  -->
+                <Button
+                    Grid.Column="1"
+                    Text="Update Rules"
+                    Style="{StaticResource BtnSecondary}"
+                    Command="{Binding GoToEditMappingRulesCommand}" />
 
-                    <!--  Reload button  -->
-                    <Button
-                        Grid.Row="1"
-                        Text="Run Again"
-                        IsEnabled="{Binding FileUploaded}"
-                        Style="{StaticResource BtnOutlined}"
-                        Command="{Binding ReloadCommand}" />
+                <!--  Reload button  -->
+                <Button
+                    Grid.Row="1"
+                    Text="Run Again"
+                    IsEnabled="{Binding FileUploaded}"
+                    Style="{StaticResource BtnOutlined}"
+                    Command="{Binding ReloadCommand}" />
 
-                    <!--  Clear button  -->
-                    <Button
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Text="Clear"
-                        Style="{StaticResource BtnError}"
-                        Command="{Binding ClearCommand}">
-                        <Button.CommandParameter>
-                            <x:Boolean>True</x:Boolean>
-                        </Button.CommandParameter>
+                <!--  Clear button  -->
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Text="Clear"
+                    Style="{StaticResource BtnError}"
+                    Command="{Binding ClearCommand}">
+                    <Button.CommandParameter>
+                        <x:Boolean>True</x:Boolean>
+                    </Button.CommandParameter>
                 </Button>
+            </Grid>
+
+            <VerticalStackLayout IsVisible="{Binding FileUploaded}" Spacing="5">
+
+                <BoxView Style="{StaticResource separator}" />
+
+                <Grid ColumnDefinitions="Auto,*,*,Auto" ColumnSpacing="10" Margin="0,0,0,5">
+                    <Grid.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="WidthRequest" Value="30" />
+                            <Setter Property="HeightRequest" Value="30" />
+                            <Setter Property="CornerRadius" Value="10" />
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource primary}, Dark={StaticResource primaryDark}}" />
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
+                            <Setter Property="FontSize" Value="25" />
+                            <Setter Property="FontFamily" Value="MaterialRoundedFilled" />
+                            <Setter Property="Padding" Value="0" />
+                        </Style>
+                    </Grid.Resources>
+
+                    <!--  Left button  -->
+                    <Button
+                        Command="{Binding DecrementTransactionCommand}"
+                        TextColor="{AppThemeBinding Light={StaticResource onPrimary}, Dark={StaticResource onPrimaryDark}}"
+                        Text="{x:Static m:MaterialOutlined.Chevron_left}" />
+
+                    <!--  CSV Record title  -->
+                    <Label
+                        Grid.Column="1"
+                        Text="CSV Record"
+                        FontSize="18"
+                        VerticalOptions="Center"
+                        FontAttributes="Bold"
+                        HorizontalTextAlignment="Start" />
+
+                    <!--  Selected transaction index  -->
+                    <Label
+                        Grid.Column="2"
+                        HorizontalTextAlignment="End"
+                        VerticalOptions="Center"
+                        Text="{Binding ProgressText}"
+                        FontSize="18"
+                        FontAttributes="Bold" />
+
+                    <!--  Right button  -->
+                    <Button
+                        Grid.Column="3"
+                        Command="{Binding IncrementTransactionCommand}"
+                        TextColor="{AppThemeBinding Light={StaticResource onPrimary}, Dark={StaticResource onPrimaryDark}}"
+                        Text="{x:Static m:MaterialOutlined.Chevron_right}" />
                 </Grid>
 
-                <VerticalStackLayout IsVisible="{Binding FileUploaded}" Spacing="5">
-                    
-                    <BoxView Style="{StaticResource separator}" />
+                <!-- text field that needs mapping from CSV -->
+                <material:EditorField
+                    Grid.ColumnSpan="3"
+                    Title="Text"
+                    Text="{Binding SelectedRecord.RawData.FullText}"
+                    IsReadOnly="True"
+                    IsVisible="{Binding FilteredRecords.Count}" />
 
-                    <Grid ColumnDefinitions="Auto,*,*,Auto" ColumnSpacing="10" Margin="0,0,0,5">
-                        <Grid.Resources>
-                            <Style TargetType="Button">
-                                <Setter Property="WidthRequest" Value="30" />
-                                <Setter Property="HeightRequest" Value="30" />
-                                <Setter Property="CornerRadius" Value="10" />
-                                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource primary},
-                                                                                            Dark={StaticResource primaryDark}}" />
-                                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
-                                <Setter Property="FontSize" Value="25" />
-                                <Setter Property="FontFamily" Value="MaterialRoundedFilled" />
-                                <Setter Property="Padding" Value="0" />
-                            </Style>
-                        </Grid.Resources>
+                <BoxView Style="{StaticResource separator}" />
 
-                        <!--  Left button  -->
-                        <Button
-                            Command="{Binding DecrementTransactionCommand}"
-                            TextColor="{AppThemeBinding Light={StaticResource onPrimary},
-                                                        Dark={StaticResource onPrimaryDark}}"
-                            Text="{x:Static m:MaterialOutlined.Chevron_left}" />
-
-                        <!--  CSV Record title  -->
+                <!-- Transaction section title -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Label Text="Transaction" VerticalOptions="Center" Style="{StaticResource SectionTitle}" />
+                    <Border
+                        Grid.Column="1"
+                        HorizontalOptions="End"
+                        Padding="8,4"
+                        BackgroundColor="{Binding SelectedRecord.Status, Converter={StaticResource ImportStatusToColourConverter}}"
+                        Stroke="Transparent">
                         <Label
-                            Grid.Column="1"
-                            Text="CSV Record"
-                            FontSize="18"
-                            VerticalOptions="Center"
-                            FontAttributes="Bold"
-                            HorizontalTextAlignment="Start" />
-
-                        <!--  Selected transaction index  -->
-                        <Label
-                            Grid.Column="2"
-                            HorizontalTextAlignment="End"
-                            VerticalOptions="Center"
-                            Text="{Binding ProgressText}"
-                            FontSize="18"
+                            Text="{Binding SelectedRecord.Status, Converter={StaticResource EnumToDescriptionConverter}}"
+                            TextColor="White"
                             FontAttributes="Bold" />
+                    </Border>
+                </Grid>
 
-                        <!--  Right button  -->
-                        <Button
-                            Grid.Column="3"
-                            Command="{Binding IncrementTransactionCommand}"
-                            TextColor="{AppThemeBinding Light={StaticResource onPrimary},
-                                                        Dark={StaticResource onPrimaryDark}}"
-                            Text="{x:Static m:MaterialOutlined.Chevron_right}" />
-                    </Grid>
-                        
-                    <!-- text field that needs mapping from CSV -->
+                <Grid ColumnDefinitions="*,*,*" RowSpacing="5" ColumnSpacing="5" IsVisible="{Binding FilteredRecords.Count}">
+                    <material:TextField
+                        Grid.Column="0"
+                        Grid.Row="1"
+                        Title="Date"
+                        Text="{Binding SelectedRecord.Transaction.Date, StringFormat='{0:yyyy-MM-dd}'}"
+                        IsEnabled="False"
+                        AllowClear="False" />
+                    <material:TextField
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        Title="Account"
+                        Text="{Binding Account.AccountName}"
+                        IsEnabled="False"
+                        AllowClear="False" />
                     <material:EditorField
-                        Grid.ColumnSpan="3"
-                        Title="Text"
-                        Text="{Binding SelectedRecord.RawData.FullText}"
-                        IsReadOnly="True"
-                        IsVisible="{Binding FilteredRecords.Count}" />
+                        Grid.Column="2"
+                        Grid.Row="1"
+                        Title="Amount"
+                        Text="{Binding SelectedRecord.Transaction.Amount}"
+                        IsEnabled="False" />
+                </Grid>
 
-                    <BoxView Style="{StaticResource separator}"/>
+                <VerticalStackLayout IsVisible="{Binding FilteredRecords.Count}" Spacing="5">
+                    <components:CategorySubcategoryField
+                        Categories="{Binding Categories}"
+                        Category="{Binding Category, Mode=TwoWay}"
+                        CategoryChangedCommand="{Binding CategoryChangedCommand}"
+                        IsCategoryEnabled="{Binding SelectedRecord.CanEdit}"
+                        IsSubcategoryEnabled="{Binding SelectedRecord.CanEdit}"
+                        Orientation="Horizontal"
+                        Subcategories="{Binding Subcategories}"
+                        Subcategory="{Binding Subcategory, Mode=TwoWay}" />
 
-                    <!-- Transaction section title -->
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                        <Label Text="Transaction" VerticalOptions="Center" Style="{StaticResource SectionTitle}" />
-                        <Border
+                    <components:PayeeField
+                        IsEnabled="{Binding SelectedRecord.CanEdit}"
+                        Accounts="{Binding Accounts}"
+                        IsTransferAccountVisible="{Binding SelectedRecord.IsTransfer}"
+                        PayeeText="{Binding Payee, Mode=TwoWay}"
+                        Payees="{Binding Payees}"
+                        TransferAccount="{Binding TransferAccount, Mode=TwoWay}" />
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" Margin="0,5,0,0">
+                        <HorizontalStackLayout>
+                            <Label FontSize="16" Text="Manual Edit" VerticalOptions="Center" />
+                            <Switch HorizontalOptions="Start" IsToggled="{Binding SelectedRecord.CanEdit}" />
+                        </HorizontalStackLayout>
+                        <Button
+                            Margin="5,0,0,0"
                             Grid.Column="1"
-                            HorizontalOptions="End"
-                            Padding="8,4"
-                            BackgroundColor="{Binding SelectedRecord.Status, Converter={StaticResource ImportStatusToColourConverter}}"
-                            Stroke="Transparent">
-                            <Label
-                                Text="{Binding SelectedRecord.Status, Converter={StaticResource EnumToDescriptionConverter}}"
-                                TextColor="White"
-                                FontAttributes="Bold" />
-                        </Border>
-                    </Grid>
-
-                    <Grid ColumnDefinitions="*,*,*" RowSpacing="5" ColumnSpacing="5" IsVisible="{Binding FilteredRecords.Count}">
-                        <!-- Readonly confirmed fields -->
-                        <material:TextField
-                            Grid.Column="0"
-                            Grid.Row="1"
-                            Title="Date"
-                            Text="{Binding SelectedRecord.Transaction.Date, StringFormat='{0:yyyy-MM-dd}'}"
-                            IsEnabled="False"
-                            AllowClear="False" />
-                        <material:TextField
-                            Grid.Column="1"
-                            Grid.Row="1"
-                            Title="Account"
-                            Text="{Binding Account.AccountName}"
-                            IsEnabled="False"
-                            AllowClear="False" />
-                        <material:EditorField
+                            Style="{StaticResource BtnOutlined}"
+                            Text="Skip"
+                            Command="{Binding SkipTransactionCommand}" />
+                        <Button
                             Grid.Column="2"
-                            Grid.Row="1"
-                            Title="Amount"
-                            Text="{Binding SelectedRecord.Transaction.Amount}"
-                            IsEnabled="False" />
-                    </Grid>
-
-                    <VerticalStackLayout IsVisible="{Binding FilteredRecords.Count}" Spacing="5">
-                        <components:CategorySubcategoryField
-                            Categories="{Binding Categories}"
-                            Category="{Binding Category, Mode=TwoWay}"
-                            CategoryChangedCommand="{Binding CategoryChangedCommand}"
-                            IsCategoryEnabled="{Binding SelectedRecord.CanEdit}"
-                            IsSubcategoryEnabled="{Binding SelectedRecord.CanEdit}"
-                            Orientation="Horizontal"
-                            Subcategories="{Binding Subcategories}"
-                            Subcategory="{Binding Subcategory, Mode=TwoWay}" />
-
-                        <components:PayeeField
+                            Style="{StaticResource BtnPrimary}"
+                            Text="Approve"
                             IsEnabled="{Binding SelectedRecord.CanEdit}"
-                            Accounts="{Binding Accounts}"
-                            IsTransferAccountVisible="{Binding SelectedRecord.IsTransfer}"
-                            PayeeText="{Binding Payee, Mode=TwoWay}"
-                            Payees="{Binding Payees}"
-                            TransferAccount="{Binding TransferAccount, Mode=TwoWay}" />
-
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" Margin="0,5,0,0">
-                            <!--  Edit button  -->
-                            <HorizontalStackLayout>
-                                <Label FontSize="16" Text="Manual Edit" VerticalOptions="Center" />
-                                <Switch HorizontalOptions="Start" IsToggled="{Binding SelectedRecord.CanEdit}" />
-                            </HorizontalStackLayout>
-
-                            <!--  Skip button  -->
-                            <Button
-                                Margin="5,0,0,0"
-                                Grid.Column="1"
-                                Style="{StaticResource BtnOutlined}"
-                                Text="Skip"
-                                Command="{Binding SkipTransactionCommand}" />
-
-                            <!--  Approve button  -->
-                            <Button
-                                Grid.Column="2"
-                                Style="{StaticResource BtnPrimary}"
-                                Text="Approve"
-                                IsEnabled="{Binding SelectedRecord.CanEdit}"
-                                Command="{Binding ApproveTransactionCommand}" />
-                        </Grid>
-                    </VerticalStackLayout>
-
-                    <BoxView Style="{StaticResource separator}"/>
-
-                    <!--  Summary section title  -->
-                    <Label Text="Summary" Style="{StaticResource SectionTitle}" />
-
-                    <!--  Progress summary  -->
-                    <HorizontalStackLayout Spacing="15">
-                        <CheckBox IsChecked="{Binding ShowVerified}" />
-                        <Label Text="{Binding VerifiedCount}" VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-
-                    <HorizontalStackLayout Spacing="15">
-                        <CheckBox IsChecked="{Binding ShowManuallyApproved}" />
-                        <Label Text="{Binding ManuallyApprovedCount}" VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-
-                    <HorizontalStackLayout Spacing="15">
-                        <CheckBox IsChecked="{Binding ShowNeedsVerification}" />
-                        <Label Text="{Binding NeedsVerificationCount}" VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-
-                    <HorizontalStackLayout Spacing="15">
-                        <CheckBox IsChecked="{Binding ShowAutoSkipped}" />
-                        <Label Text="{Binding AutoSkippedCount}" VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-
-                    <HorizontalStackLayout Spacing="15">
-                        <CheckBox IsChecked="{Binding ShowManuallySkipped}" />
-                        <Label Text="{Binding ManuallySkippedCount}" VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-
-                    <!--  Import button  -->
-                    <Button
-                        Margin="0,5,0,0"
-                        Text="Commit"
-                        IsEnabled="{Binding IsCommitButtonEnabled}"
-                        Style="{StaticResource BtnPrimary}"
-                        Command="{Binding CommitImportCommand}" />
-                        
+                            Command="{Binding ApproveTransactionCommand}" />
+                    </Grid>
                 </VerticalStackLayout>
+
+                <BoxView Style="{StaticResource separator}" />
+
+                <!--  Summary section title  -->
+                <Label Text="Summary" Style="{StaticResource SectionTitle}" />
+
+                <HorizontalStackLayout Spacing="15">
+                    <CheckBox IsChecked="{Binding ShowVerified}" />
+                    <Label Text="{Binding VerifiedCount}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="15">
+                    <CheckBox IsChecked="{Binding ShowManuallyApproved}" />
+                    <Label Text="{Binding ManuallyApprovedCount}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="15">
+                    <CheckBox IsChecked="{Binding ShowNeedsVerification}" />
+                    <Label Text="{Binding NeedsVerificationCount}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="15">
+                    <CheckBox IsChecked="{Binding ShowAutoSkipped}" />
+                    <Label Text="{Binding AutoSkippedCount}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="15">
+                    <CheckBox IsChecked="{Binding ShowManuallySkipped}" />
+                    <Label Text="{Binding ManuallySkippedCount}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <!--  Import button  -->
+                <Button
+                    Margin="0,5,0,0"
+                    Text="Commit"
+                    IsEnabled="{Binding IsCommitButtonEnabled}"
+                    Style="{StaticResource BtnPrimary}"
+                    Command="{Binding CommitImportCommand}" />
+
             </VerticalStackLayout>
-        </ScrollView>
-    </Grid>
-</ContentPage>
+        </VerticalStackLayout>
+    </ScrollView>
+</components:CustomContentPage>

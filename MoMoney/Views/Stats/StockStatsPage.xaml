@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<components:CustomContentPage
     x:Class="MoMoney.Views.Stats.StockStatsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -8,149 +8,135 @@
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Stats;assembly=MoMoney.Core"
-    x:DataType="viewmodel:StockStatsViewModel"
-    Shell.NavBarIsVisible="False">
-
-    <ContentPage.Resources>
+    HeaderTitle="Stocks"
+    x:DataType="viewmodel:StockStatsViewModel">
+    <components:CustomContentPage.Resources>
         <converters:ShowValueConverter x:Key="ShowValueConverter" />
         <converters:ShowValuePercentConverter x:Key="ShowValuePercentConverter" />
         <converters:PositiveNegativeColourConverter x:Key="PosNegColourConverter" />
         <converters:StockDataLabelConverter x:Key="StockDataLabelConverter" />
-    </ContentPage.Resources>
+    </components:CustomContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
-        <!-- title -->
-        <components:PageHeader Title="Stocks" ShowBackButton="True" />
-
-        <ScrollView Grid.Row="1">
-            <VerticalStackLayout Margin="10" Spacing="10">
-
-                <!--  totals  -->
-                <Border Padding="10">
-                    <Grid ColumnDefinitions="*,*" RowDefinitions="0.5*,*,0.5*">
+    <ScrollView>
+        <VerticalStackLayout Margin="10" Spacing="10">
+            <Border Padding="10">
+                <Grid ColumnDefinitions="*,*" RowDefinitions="0.5*,*,0.5*">
+                    <Label FontSize="16" HorizontalOptions="Start" Text="Total" VerticalOptions="Center" />
+                    <Label
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        FontSize="36"
+                        HorizontalOptions="Start"
+                        Text="{Binding MarketValue, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
+                        VerticalOptions="Center" />
+                    <Label
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        FontSize="16"
+                        HorizontalOptions="Start"
+                        Text="Total Gain:"
+                        VerticalOptions="Center" />
+                    <HorizontalStackLayout
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2"
+                        HorizontalOptions="End">
                         <Label
+                            FontSize="18"
+                            HorizontalOptions="Center"
+                            Text="{Binding Total, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
+                            TextColor="{Binding Total, Converter={StaticResource PosNegColourConverter}}"
+                            VerticalOptions="Center" />
+                        <Label
+                            FontSize="18"
+                            HorizontalOptions="Center"
+                            Text="{Binding TotalPercent, Converter={StaticResource ShowValuePercentConverter}, StringFormat=' ({0:P2})'}"
+                            TextColor="{Binding TotalPercent, Converter={StaticResource PosNegColourConverter}}"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Grid>
+            </Border>
+
+            <Border Padding="5">
+                <CollectionView
+                    ItemsSource="{Binding Stocks}"
+                    SelectionMode="None"
+                    VerticalOptions="Start">
+                    <CollectionView.EmptyView>
+                        <Label
+                            Margin="0,10,0,0"
                             FontSize="16"
-                            HorizontalOptions="Start"
-                            Text="Total"
-                            VerticalOptions="Center" />
-                        <Label
-                            Grid.Row="1"
-                            Grid.ColumnSpan="2"
-                            FontSize="36"
-                            HorizontalOptions="Start"
-                            Text="{Binding MarketValue, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
-                            VerticalOptions="Center" />
-                        <Label
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            FontSize="16"
-                            HorizontalOptions="Start"
-                            Text="Total Gain:"
-                            VerticalOptions="Center" />
-                        <HorizontalStackLayout
-                            Grid.Row="2"
-                            Grid.ColumnSpan="2"
-                            HorizontalOptions="End">
-                            <Label
-                                FontSize="18"
-                                HorizontalOptions="Center"
-                                Text="{Binding Total, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
-                                TextColor="{Binding Total, Converter={StaticResource PosNegColourConverter}}"
-                                VerticalOptions="Center" />
-                            <Label
-                                FontSize="18"
-                                HorizontalOptions="Center"
-                                Text="{Binding TotalPercent, Converter={StaticResource ShowValuePercentConverter}, StringFormat=' ({0:P2})'}"
-                                TextColor="{Binding TotalPercent, Converter={StaticResource PosNegColourConverter}}"
-                                VerticalOptions="Center" />
-                        </HorizontalStackLayout>
-                    </Grid>
-                </Border>
-
-                <!--  stock list  -->
-                <Border Padding="5">
-                    <CollectionView
-                        ItemsSource="{Binding Stocks}"
-                        SelectionMode="None"
-                        VerticalOptions="Start">
-                        <CollectionView.EmptyView>
-                            <Label
-                                Margin="0,10,0,0"
-                                FontSize="16"
-                                HorizontalOptions="Center"
-                                Text="No stocks found"
-                                VerticalOptions="Start" />
-                        </CollectionView.EmptyView>
-                        <CollectionView.ItemsLayout>
-                            <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
-                        </CollectionView.ItemsLayout>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="models:Stock">
-                                <Border
-                                    Padding="10,5"
-                                    BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainerHighest},
-                                                                    Dark={StaticResource surfaceContainerHighestDark}}"
-                                    HeightRequest="55">
-                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,*">
-                                        <Label
-                                            FontSize="16"
-                                            HorizontalOptions="Start"
-                                            Text="{Binding Symbol}"
-                                            VerticalOptions="Center" />
-                                        <Label
-                                            Grid.Row="1"
-                                            HorizontalOptions="Start"
-                                            Text="{Binding MarketValue, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
-                                            TextColor="{AppThemeBinding Light={StaticResource onSurfaceVariant},
-                                                                        Dark={StaticResource onSurfaceVariantDark}}"
-                                            VerticalOptions="Center" />
-                                        <Label
-                                            Grid.Column="1"
-                                            HorizontalOptions="End"
-                                            Text="{Binding MarketPrice, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
-                                            VerticalOptions="Center" />
-                                        <HorizontalStackLayout
-                                            Grid.Row="1"
-                                            Grid.Column="1"
-                                            HorizontalOptions="End"
-                                            VerticalOptions="Center">
-                                            <Label Text="{Binding Change, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2} '}" TextColor="{Binding Change, Converter={StaticResource PosNegColourConverter}}" />
-                                            <Label Text="{Binding ChangePercent, Converter={StaticResource ShowValuePercentConverter}, StringFormat=' ({0:P2})'}" TextColor="{Binding ChangePercent, Converter={StaticResource PosNegColourConverter}}" />
-                                        </HorizontalStackLayout>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </Border>
-
-                <!--  chart  -->
-                <Border Padding="0">
-                    <chart:SfCircularChart
-                        x:Name="chart"
-                        HeightRequest="400"
-                        VerticalOptions="Center">
-                        <chart:DoughnutSeries
-                            InnerRadius="0.5"
-                            ItemsSource="{Binding StockData}"
-                            LabelTemplate="{StaticResource labelTemplate}"
-                            Radius="0.9"
-                            ShowDataLabels="True"
-                            XBindingPath="Symbol"
-                            YBindingPath="Price" />
-                        <chart:SfCircularChart.Resources>
-                            <DataTemplate x:Key="labelTemplate" x:DataType="chart:ChartDataLabel">
-                                <Border Padding="5" BackgroundColor="#66212121">
+                            HorizontalOptions="Center"
+                            Text="No stocks found"
+                            VerticalOptions="Start" />
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Stock">
+                            <Border
+                                Padding="10,5"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainerHighest},
+                                                                Dark={StaticResource surfaceContainerHighestDark}}"
+                                HeightRequest="55">
+                                <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,*">
                                     <Label
-                                        FontSize="12"
-                                        Text="{Binding Item, Converter={StaticResource StockDataLabelConverter}}"
-                                        TextColor="White" />
-                                </Border>
-                            </DataTemplate>
-                        </chart:SfCircularChart.Resources>
-                    </chart:SfCircularChart>
-                </Border>
-            </VerticalStackLayout>
-        </ScrollView>
-    </Grid>
-</ContentPage>
+                                        FontSize="16"
+                                        HorizontalOptions="Start"
+                                        Text="{Binding Symbol}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Row="1"
+                                        HorizontalOptions="Start"
+                                        Text="{Binding MarketValue, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
+                                        TextColor="{AppThemeBinding Light={StaticResource onSurfaceVariant},
+                                                                    Dark={StaticResource onSurfaceVariantDark}}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Column="1"
+                                        HorizontalOptions="End"
+                                        Text="{Binding MarketPrice, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2}'}"
+                                        VerticalOptions="Center" />
+                                    <HorizontalStackLayout
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Center">
+                                        <Label Text="{Binding Change, Converter={StaticResource ShowValueConverter}, StringFormat='{0:C2} '}" TextColor="{Binding Change, Converter={StaticResource PosNegColourConverter}}" />
+                                        <Label Text="{Binding ChangePercent, Converter={StaticResource ShowValuePercentConverter}, StringFormat=' ({0:P2})'}" TextColor="{Binding ChangePercent, Converter={StaticResource PosNegColourConverter}}" />
+                                    </HorizontalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Border>
+
+            <Border Padding="0">
+                <chart:SfCircularChart
+                    x:Name="chart"
+                    HeightRequest="400"
+                    VerticalOptions="Center">
+                    <chart:DoughnutSeries
+                        InnerRadius="0.5"
+                        ItemsSource="{Binding StockData}"
+                        LabelTemplate="{StaticResource labelTemplate}"
+                        Radius="0.9"
+                        ShowDataLabels="True"
+                        XBindingPath="Symbol"
+                        YBindingPath="Price" />
+                    <chart:SfCircularChart.Resources>
+                        <DataTemplate x:Key="labelTemplate" x:DataType="chart:ChartDataLabel">
+                            <Border Padding="5" BackgroundColor="#66212121">
+                                <Label
+                                    FontSize="12"
+                                    Text="{Binding Item, Converter={StaticResource StockDataLabelConverter}}"
+                                    TextColor="White" />
+                            </Border>
+                        </DataTemplate>
+                    </chart:SfCircularChart.Resources>
+                </chart:SfCircularChart>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</components:CustomContentPage>

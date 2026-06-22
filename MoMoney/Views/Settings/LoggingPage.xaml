@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<components:CustomContentPage
     x:Class="MoMoney.Views.Settings.LoggingPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -11,9 +11,10 @@
     xmlns:selectors="clr-namespace:MoMoney.Selectors"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
-    Shell.NavBarIsVisible="False"
+    HeaderTitle="Logs"
+    IsBusyOverlay="{Binding IsBusy}"
     x:DataType="viewmodel:LoggingViewModel">
-    <ContentPage.ToolbarItems>
+    <components:CustomContentPage.ToolbarItems>
         <ToolbarItem
             Command="{Binding ToggleExpandCommand}"
             IconImageSource="{
@@ -21,13 +22,11 @@
                 Color={AppThemeBinding Light={StaticResource onPrimaryContainer},
                 Dark={StaticResource onPrimaryDark}},
                 Glyph={x:Static m:MaterialOutlined.Tune}}" />
-    </ContentPage.ToolbarItems>
+    </components:CustomContentPage.ToolbarItems>
 
-    <ContentPage.Resources>
-
+    <components:CustomContentPage.Resources>
         <converters:NoneToVisibleConverter x:Key="NoneToVisible" />
 
-        <!--  small item template  -->
         <DataTemplate x:Key="Small" x:DataType="models:Log">
             <Grid
                 Padding="10,3"
@@ -59,7 +58,6 @@
             </Grid>
         </DataTemplate>
 
-        <!--  large item template  -->
         <DataTemplate x:Key="Large" x:DataType="models:Log">
             <Grid
                 Padding="10,5"
@@ -75,30 +73,11 @@
                         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
                     </Style>
                 </Grid.Resources>
-                <Label
-                    HorizontalOptions="Start"
-                    MinimumWidthRequest="170"
-                    Text="{Binding ClassName}" />
-                <Label
-                    HorizontalOptions="End"
-                    HorizontalTextAlignment="End"
-                    MinimumWidthRequest="170"
-                    Text="{Binding ExceptionType}" />
-                <Label
-                    Grid.Row="1"
-                    HorizontalOptions="Start"
-                    Text="{Binding Message}" />
-                <Label
-                    Grid.Row="2"
-                    HorizontalOptions="Start"
-                    MinimumWidthRequest="100"
-                    Text="{Binding Level}" />
-                <Label
-                    Grid.Row="2"
-                    HorizontalOptions="End"
-                    HorizontalTextAlignment="End"
-                    MinimumWidthRequest="120"
-                    Text="{Binding Timestamp, StringFormat='{0:yy-MM-dd HH:mm:ss}'}" />
+                <Label HorizontalOptions="Start" MinimumWidthRequest="170" Text="{Binding ClassName}" />
+                <Label HorizontalOptions="End" HorizontalTextAlignment="End" MinimumWidthRequest="170" Text="{Binding ExceptionType}" />
+                <Label Grid.Row="1" HorizontalOptions="Start" Text="{Binding Message}" />
+                <Label Grid.Row="2" HorizontalOptions="Start" MinimumWidthRequest="100" Text="{Binding Level}" />
+                <Label Grid.Row="2" HorizontalOptions="End" HorizontalTextAlignment="End" MinimumWidthRequest="120" Text="{Binding Timestamp, StringFormat='{0:yy-MM-dd HH:mm:ss}'}" />
             </Grid>
         </DataTemplate>
 
@@ -107,19 +86,12 @@
             CheckBox="{x:Reference ChkTileSize}"
             LargeTemplate="{StaticResource Large}"
             SmallTemplate="{StaticResource Small}" />
+    </components:CustomContentPage.Resources>
 
-    </ContentPage.Resources>
-
-    <!--  content  -->
-    <Grid RowDefinitions="Auto, Auto,*">
-
-        <!--  title  -->
-        <components:PageHeader Title="Logs" ShowBackButton="True" />
-
+    <Grid RowDefinitions="Auto,*">
         <!--  filters  -->
-        <toolkit:Expander Grid.Row="1" IsExpanded="{Binding IsExpanded}">
+        <toolkit:Expander IsExpanded="{Binding IsExpanded}">
             <VerticalStackLayout Padding="0,5" Spacing="5">
-
                 <Border
                     Padding="15,0,0,0"
                     BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainerHighest},
@@ -141,7 +113,6 @@
                                                 Dark={StaticResource primaryDark}}" />
                 </Border>
 
-                <!--  filters  -->
                 <material:PickerField
                     x:Name="PckLevels"
                     Title="Log Levels"
@@ -159,13 +130,12 @@
                     Title="Exceptions"
                     ItemsSource="{Binding Exceptions}"
                     WidthRequest="250" />
-
             </VerticalStackLayout>
         </toolkit:Expander>
 
         <!--  list  -->
         <Border
-            Grid.Row="2"
+            Grid.Row="1"
             Margin="0,5,0,0"
             Padding="0">
             <CollectionView
@@ -185,8 +155,5 @@
                 </CollectionView.EmptyView>
             </CollectionView>
         </Border>
-
-        <ActivityIndicator Grid.RowSpan="2" IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" />
     </Grid>
-
-</ContentPage>
+</components:CustomContentPage>

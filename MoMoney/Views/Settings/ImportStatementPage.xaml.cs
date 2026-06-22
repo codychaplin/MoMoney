@@ -1,9 +1,10 @@
+using MoMoney.Components;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels.Settings;
 
 namespace MoMoney.Views;
 
-public partial class ImportStatementPage : ContentPage
+public partial class ImportStatementPage : CustomContentPage
 {
 	ImportStatementViewModel vm;
 

@@ -18,12 +18,18 @@
 
             <!--  title  -->
             <toolkit:Expander.Header>
-                <components:PageHeader
-                    Title="{Binding PageTitle}"
-                    ImageSource="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                                  Color={AppThemeBinding Light={DynamicResource onSurface},
-                                                                         Dark={DynamicResource onSurfaceDark}},
-                                                  Glyph={x:Static m:MaterialOutlined.Tune}}" />
+                <components:PageHeader Title="{Binding PageTitle}">
+                    <components:PageHeader.RightContent>
+                        <Image
+                            HeightRequest="30"
+                            WidthRequest="30"
+                            Source="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                     Color={AppThemeBinding Light={DynamicResource onSurface},
+                                                            Dark={DynamicResource onSurfaceDark}},
+                                    Glyph={x:Static m:MaterialOutlined.Tune}}">
+                        </Image>
+                    </components:PageHeader.RightContent>
+                </components:PageHeader>
             </toolkit:Expander.Header>
 
             <!--  filters  -->

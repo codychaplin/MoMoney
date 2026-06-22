@@ -20,7 +20,7 @@
 
     <Grid RowDefinitions="Auto,*">
         <!--  title  -->
-        <components:PageHeader Title="Dashboard" />
+        <components:PageHeader Title="Dashboard" ShowBackButton="False" />
 
         <ScrollView Grid.Row="1" Padding="0,10,0,0">
             <VerticalStackLayout Padding="0,0,0,10" Spacing="10">
