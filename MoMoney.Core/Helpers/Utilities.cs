@@ -36,6 +36,12 @@ public static class Utilities
         set { Preferences.Set("MaterialYou", value); }
     }
 
+    public static string ThemeMode
+    {
+        get { return Preferences.Get("ThemeMode", "System"); }
+        set { Preferences.Set("ThemeMode", value); }
+    }
+
     public static Color GetColour(string lightColour, string darkColour) => UraniumUI.Resources.ColorResource.GetColor(lightColour, darkColour);
     public static Color GetColour(string colour) => UraniumUI.Resources.ColorResource.GetColor(colour);
 

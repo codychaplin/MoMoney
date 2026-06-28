@@ -240,6 +240,6 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" />
+        <ActivityIndicator Grid.Row="1" IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" />
     </Grid>
 </ContentView>

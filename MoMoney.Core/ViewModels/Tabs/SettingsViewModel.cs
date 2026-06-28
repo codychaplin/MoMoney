@@ -9,9 +9,11 @@ namespace MoMoney.Core.ViewModels.Tabs;
 public partial class SettingsViewModel : ObservableObject
 {
     readonly ILoggerService<SettingsViewModel> logger;
-    
+
     [ObservableProperty] bool materialYouEnabled = Utilities.MaterialYouEnabled;
     [ObservableProperty] bool showSensitiveValuesEnabled = true;
+    [ObservableProperty]
+    public partial string SelectedThemeMode { get; set; }
 
     public List<ThemeInfo> Themes { get; } =
     [
@@ -26,6 +28,7 @@ public partial class SettingsViewModel : ObservableObject
     public SettingsViewModel(ILoggerService<SettingsViewModel> _logger)
     {
         logger = _logger;
+        SelectedThemeMode = Utilities.ThemeMode;
     }
 
     /// <summary>
@@ -114,6 +117,27 @@ public partial class SettingsViewModel : ObservableObject
     {
         Utilities.ShowValue = value;
         WeakReferenceMessenger.Default.Send(new UpdateHomePageMessage());
+    }
+
+    /// <summary>
+    /// Saves selected theme mode to Preferences
+    /// </summary>
+    /// <param name="value"></param>
+    partial void OnSelectedThemeModeChanged(string value)
+    {
+        Utilities.ThemeMode = value;
+        switch (value)
+        {
+            case "Light":
+                Application.Current!.UserAppTheme = AppTheme.Light;
+                break;
+            case "Dark":
+                Application.Current!.UserAppTheme = AppTheme.Dark;
+                break;
+            default:
+                Application.Current!.UserAppTheme = AppTheme.Unspecified;
+                break;
+        }
     }
 
     /// <summary>

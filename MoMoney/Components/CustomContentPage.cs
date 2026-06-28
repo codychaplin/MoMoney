@@ -55,14 +55,19 @@ public class CustomContentPage : ContentPage
     {
         Shell.SetNavBarIsVisible(this, false);
         _header = new PageHeader();
-        _activityIndicator = new ActivityIndicator { IsVisible = false, IsRunning = false };
+        _activityIndicator = new ActivityIndicator {
+            IsVisible = false,
+            IsRunning = false,
+            VerticalOptions = LayoutOptions.Center,
+            HorizontalOptions = LayoutOptions.Center
+        };
         _grid = new Grid
         {
             RowDefinitions = [new(GridLength.Auto), new(GridLength.Star)]
         };
         _grid.Add(_header, 0, 0);
-        Grid.SetRow(_activityIndicator, 1);
         _grid.Children.Add(_activityIndicator);
+        Grid.SetRowSpan(_activityIndicator, 2);
         Content = _grid;
     }
 
