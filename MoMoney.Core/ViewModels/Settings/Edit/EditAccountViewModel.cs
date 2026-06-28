@@ -1,17 +1,24 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
+using Microsoft.Maui.Controls.Shapes;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
 public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, EditAccountViewModel>
 {
+    readonly IPopupService popupService;
+
     [ObservableProperty] Account account = new();
 
-    public EditAccountViewModel(IAccountService _accountService, ILoggerService<EditAccountViewModel> _logger) : base(_accountService, _logger) { }
+    public EditAccountViewModel(IAccountService _accountService, IPopupService _popupService, ILoggerService<EditAccountViewModel> _logger) : base(_accountService, _logger)
+    {
+        popupService = _popupService;
+    }
 
     /// <summary>
     /// Controls whether the view is in edit mode or not.
@@ -107,5 +114,23 @@ public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, E
         Account.AccountName = string.Empty;
         Account.AccountType = null;
         Account.StartingBalance = null;
+    }
+
+    [RelayCommand]
+    async Task OpenColourPopup()
+    {
+        var options = new PopupOptions
+        {
+            Shadow = null,
+            Shape = new RoundRectangle
+            {
+                CornerRadius = 10,
+                StrokeThickness = 0
+            }
+        };
+        var result = await popupService.ShowPopupAsync<ColourPopupViewModel, string>(Shell.Current, options);
+        string hexColour = result.Result ?? string.Empty;
+        if (Color.TryParse(hexColour, out Color _))
+            Account.Colour = hexColour;
     }
 }

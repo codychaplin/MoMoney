@@ -39,6 +39,17 @@
             ItemsSource="{Binding Path=Parents, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}"
             SelectedItem="{Binding Path=Parent, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}" />
 
+        <!--  colour  -->
+        <HorizontalStackLayout Spacing="10">
+            <Button
+                Command="{Binding OpenColourPopupCommand}"
+                CornerRadius="15"
+                BackgroundColor="{Binding Category.Colour}"
+                HeightRequest="26"
+                WidthRequest="26" />
+            <Label Text="Colour" FontSize="16" VerticalOptions="Center" />
+        </HorizontalStackLayout>
+
         <!--  delete/clear/enter buttons  -->
         <components:ActionButtons
             AddCommand="{Binding AddCommand}"

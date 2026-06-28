@@ -28,35 +28,57 @@
                                 Glyph={x:Static m:MaterialOutlined.Account_circle}}"
             Text="{Binding Account.AccountName}" />
 
-        <!--  account type with predefined values  -->
-        <material:PickerField
-            x:Name="pckType"
-            Title="Select a type"
-            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
-                                Glyph={x:Static m:MaterialOutlined.Savings}}"
-            SelectedItem="{Binding Account.AccountType}">
-            <material:PickerField.Items>
-                <x:String>Checkings</x:String>
-                <x:String>Savings</x:String>
-                <x:String>Credit</x:String>
-                <x:String>Investments</x:String>
-            </material:PickerField.Items>
-        </material:PickerField>
+        <Grid
+            ColumnDefinitions="*,Auto"
+            ColumnSpacing="10"
+            RowDefinitions="*,*"
+            RowSpacing="10">
+            <!--  account type with predefined values  -->
+            <material:PickerField
+                x:Name="pckType"
+                Title="Select a type"
+                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                    Glyph={x:Static m:MaterialOutlined.Savings}}"
+                SelectedItem="{Binding Account.AccountType}">
+                <material:PickerField.Items>
+                    <x:String>Checkings</x:String>
+                    <x:String>Savings</x:String>
+                    <x:String>Credit</x:String>
+                    <x:String>Investments</x:String>
+                </material:PickerField.Items>
+            </material:PickerField>
 
-        <!--  starting balance  -->
-        <Grid ColumnDefinitions="*,60">
+            <!--  colour  -->
+            <HorizontalStackLayout Grid.Column="1" Spacing="10">
+                <Button
+                    Command="{Binding OpenColourPopupCommand}"
+                    CornerRadius="15"
+                    BackgroundColor="{Binding Account.Colour}"
+                    HeightRequest="26"
+                    WidthRequest="26" />
+                <Label Text="Colour" FontSize="16" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <!--  starting balance  -->
             <material:TextField
+                Grid.Row="1"
                 x:Name="txtStartingBalance"
                 Title="Starting Balance"
                 Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
                                     Glyph={x:Static m:MaterialOutlined.Paid}}"
                 Keyboard="Numeric"
                 Text="{Binding Account.StartingBalance}" />
-            <Switch
-                x:Name="swEnabled"
+
+            <!--  endable  -->
+            <material:CheckBox
+                Grid.Row="1"
                 Grid.Column="1"
-                HorizontalOptions="Center"
-                IsToggled="{Binding Account.Enabled}" />
+                Margin="0,5"
+                TextFontSize="15"
+                LabelPosition="After"
+                Text="Enabled"
+                BoxSizeRequest="26"
+                IsChecked="{Binding Account.Enabled}" />
         </Grid>
 
         <!--  delete/clear/enter buttons  -->

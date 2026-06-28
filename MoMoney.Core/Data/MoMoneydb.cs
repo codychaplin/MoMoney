@@ -27,6 +27,7 @@ public class MoMoneydb : IMoMoneydb
             var options = new SQLiteConnectionString(Constants.DatabasePath, true, dbEncryptionKey);
             db = new SQLiteAsyncConnection(options);
 
+            await db.CreateTableAsync<DbVersion>();
             await db.CreateTableAsync<Log>();
             await db.CreateTableAsync<Stock>();
             await db.CreateTableAsync<Account>();
@@ -35,6 +36,21 @@ public class MoMoneydb : IMoMoneydb
             await db.CreateTableAsync<ChatResponse>();
             await db.CreateTableAsync<WhisperResponse>();
             await CreateCategories();
+
+            var currentVersion = await db.Table<DbVersion>().FirstOrDefaultAsync();
+            if (currentVersion is null || currentVersion.Version != Constants.dbVersion)
+            {
+                var accountInfo = await db.GetTableInfoAsync(nameof(Account));
+                if (accountInfo != null && !accountInfo.Select(x => x.Name).Contains("Colour"))
+                    await db.ExecuteAsync("ALTER TABLE Account ADD COLUMN Colour TEXT");
+
+                var categoryInfo = await db.GetTableInfoAsync(nameof(Category));
+                if (categoryInfo != null && !categoryInfo.Select(x => x.Name).Contains("Colour"))
+                    await db.ExecuteAsync("ALTER TABLE Category ADD COLUMN Colour TEXT");
+
+                // Update db version
+                await db.InsertOrReplaceAsync(new DbVersion(Constants.dbVersion));
+            }
         }
         catch (Exception ex)
         {
@@ -92,10 +108,10 @@ public class MoMoneydb : IMoMoneydb
     {
         return
         [
-            new Category(Constants.TRANSFER_ID, "Transfer", null), // 1
-            new Category(Constants.DEBIT_ID, "Debit", Constants.TRANSFER_ID), // 2
-            new Category(Constants.CREDIT_ID, "Credit", Constants.TRANSFER_ID), // 3
-            new Category(Constants.INCOME_ID, "Income", null) // 4
+            new Category(Constants.TRANSFER_ID, "Transfer", null, "#b0b0b0"), // 1
+            new Category(Constants.DEBIT_ID, "Debit", Constants.TRANSFER_ID, "#c9c9c9"), // 2
+            new Category(Constants.CREDIT_ID, "Credit", Constants.TRANSFER_ID, "#a0a0a0"), // 3
+            new Category(Constants.INCOME_ID, "Income", null, "#42ba96") // 4
         ];
     }
 

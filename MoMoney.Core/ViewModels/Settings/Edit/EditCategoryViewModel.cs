@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using Microsoft.Maui.Controls.Shapes;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
@@ -10,11 +12,16 @@ namespace MoMoney.Core.ViewModels.Settings.Edit;
 
 public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService, EditCategoryViewModel>
 {
+    readonly IPopupService popupService;
+
     [ObservableProperty] ObservableCollection<Category> parents = []; // list of categories
     [ObservableProperty] Category category = new(); // selected category
     [ObservableProperty] Category? parent; // category parent
 
-    public EditCategoryViewModel(ICategoryService _categoryService, ILoggerService<EditCategoryViewModel> _logger) : base(_categoryService, _logger) { }
+    public EditCategoryViewModel(ICategoryService _categoryService, IPopupService _popupService, ILoggerService<EditCategoryViewModel> _logger) : base(_categoryService, _logger)
+    {
+        popupService = _popupService;
+    }
 
     /// <summary>
     /// Controls whether the view is in edit mode or not.
@@ -148,5 +155,24 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
     {
         Category.CategoryName = string.Empty;
         Parent = null;
+        Category.Colour = string.Empty;
+    }
+
+    [RelayCommand]
+    async Task OpenColourPopup()
+    {
+        var options = new PopupOptions
+        {
+            Shadow = null,
+            Shape = new RoundRectangle
+            {
+                CornerRadius = 10,
+                StrokeThickness = 0
+            }
+        };
+        var result = await popupService.ShowPopupAsync<ColourPopupViewModel, string>(Shell.Current, options);
+        string hexColour = result.Result ?? string.Empty;
+        if (Color.TryParse(hexColour, out Color _))
+            Category.Colour = hexColour;
     }
 }

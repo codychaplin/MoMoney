@@ -10,13 +10,4 @@ public partial class EditAccountPage : CustomContentPage
         InitializeComponent();
         BindingContext = vm;
     }
-
-    protected override void OnAppearing()
-    {
-        base.OnAppearing();
-
-        // workaround for switch thumbcolor not updating on load
-        swEnabled.IsToggled = !swEnabled.IsToggled;
-        swEnabled.IsToggled = !swEnabled.IsToggled;
-    }
 }

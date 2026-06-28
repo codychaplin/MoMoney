@@ -47,6 +47,9 @@
             </Grid>
         </DataTemplate>
     </components:CustomContentPage.Resources>
+    <components:CustomContentPage.HeaderRightContent>
+        <Button HeightRequest="30" Margin="0" Padding="10,5" Command="{Binding ChangeTypeCommand}" Text="{Binding Type}" />
+    </components:CustomContentPage.HeaderRightContent>
 
     <Grid RowDefinitions="Auto,*">
         <Grid>

@@ -20,10 +20,12 @@ public partial class Account : ObservableObject
     public decimal CurrentBalance { get; set; }
     [Index(3)]
     public bool Enabled { get; set; }
+    [Index(4), ObservableProperty]
+    public partial string Colour { get; set; } = string.Empty;
 
     public Account() { }
 
-    public Account(int accountID, string accountName, string accountType, decimal? startingBalance, decimal currentBalance, bool enabled)
+    public Account(int accountID, string accountName, string accountType, decimal? startingBalance, decimal currentBalance, bool enabled, string colour)
     {
         AccountID = accountID;
         AccountName = accountName;
@@ -31,6 +33,7 @@ public partial class Account : ObservableObject
         StartingBalance = startingBalance;
         CurrentBalance = currentBalance;
         Enabled = enabled;
+        Colour = colour;
     }
 
     public Account(Account account)
@@ -41,6 +44,7 @@ public partial class Account : ObservableObject
         StartingBalance= account.StartingBalance;
         CurrentBalance = account.CurrentBalance;
         Enabled = account.Enabled;
+        Colour = account.Colour;
     }
 
     public override bool Equals(object? obj)

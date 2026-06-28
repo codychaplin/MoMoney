@@ -14,8 +14,17 @@
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding Parent}" />
                 </Border.GestureRecognizers>
-                <Grid>
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5">
+                    <!--  Category Colour  -->
+                    <Border
+                        HeightRequest="26"
+                        WidthRequest="26"
+                        StrokeShape="RoundRectangle 13"
+                        BackgroundColor="{Binding Parent.Colour}" />
+
+                    <!--  Category Name  -->
                     <Label
+                        Grid.Column="1"
                         FontSize="20"
                         Style="{StaticResource lblTile}"
                         TextColor="{AppThemeBinding Light={StaticResource onSecondaryContainer}, Dark={StaticResource onSecondaryContainerDark}}"
@@ -28,8 +37,16 @@
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding .}" />
                 </Border.GestureRecognizers>
-                <Grid>
-                    <Label Style="{StaticResource lblTile}" Text="{Binding CategoryName}" />
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5">
+                    <!--  Category Colour  -->
+                    <Border
+                        HeightRequest="26"
+                        WidthRequest="26"
+                        StrokeShape="RoundRectangle 13"
+                        BackgroundColor="{Binding Colour}" />
+                        
+                    <!--  Category Name  -->
+                    <Label Grid.Column="1" Style="{StaticResource lblTile}" Text="{Binding CategoryName}" />
                 </Grid>
             </Border>
         </DataTemplate>

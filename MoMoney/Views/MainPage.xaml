@@ -19,7 +19,7 @@
                                               Dark={DynamicResource primaryDark}}"
         TabBarHeight="50"
         IndicatorPlacement="Top"
-        Padding="0,0,0,10"
+        Padding="0,0,0,15"
         TabBarPlacement="Bottom">
 
         <!--  header  -->

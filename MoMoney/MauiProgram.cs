@@ -3,6 +3,7 @@ using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
 using Syncfusion.Maui.Toolkit.Hosting;
 using UraniumUI;
+using MoMoney.Components;
 using MoMoney.Views;
 using MoMoney.Views.Tabs;
 using MoMoney.Views.Stats;
@@ -153,6 +154,9 @@ public static class MauiProgram
 
         // file saver
         builder.Services.AddSingleton(FileSaver.Default);
+
+        // popups
+        builder.Services.AddTransientPopup<ColourPopup, ColourPopupViewModel>();
 
         return builder;
     }

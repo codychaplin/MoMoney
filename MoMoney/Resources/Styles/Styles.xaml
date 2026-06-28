@@ -111,6 +111,10 @@
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
     </Style>
 
+    <Style TargetType="material:CheckBox">
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource primary}, Dark={StaticResource primaryDark}}" />
+    </Style>
+
     <Style TargetType="ActivityIndicator">
         <Setter Property="HeightRequest" Value="50" />
         <Setter Property="WidthRequest" Value="50" />

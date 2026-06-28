@@ -5,6 +5,7 @@ namespace MoMoney.Core.Helpers;
 public static class Constants
 {
     // db constants
+    public const int dbVersion = 1;
     public const string dbName = "momoney.db";
     public const string DefaultDbPath = ":memory:";
     public static string DatabasePath => Path.Combine(FileSystem.AppDataDirectory, dbName);
