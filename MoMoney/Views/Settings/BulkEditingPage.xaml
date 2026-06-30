@@ -9,6 +9,7 @@
     HeaderTitle="Bulk Editing"
     x:DataType="viewmodels:BulkEditingViewModel">
     <Grid
+        Padding="10"
         ColumnDefinitions="*,*"
         ColumnSpacing="10"
         RowDefinitions="Auto,Auto,*"

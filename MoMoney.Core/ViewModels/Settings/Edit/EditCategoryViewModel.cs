@@ -18,6 +18,8 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
     [ObservableProperty] Category category = new(); // selected category
     [ObservableProperty] Category? parent; // category parent
 
+    [ObservableProperty] bool isEditableCategory = true; // disables some fields for transfer/income categories
+
     public EditCategoryViewModel(ICategoryService _categoryService, IPopupService _popupService, ILoggerService<EditCategoryViewModel> _logger) : base(_categoryService, _logger)
     {
         popupService = _popupService;
@@ -44,6 +46,13 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
 
             if (Category.ParentCategoryID.HasValue)
                 Parent = await service.GetParentCategoryByID(Category.ParentCategoryID.Value);
+
+            if (category.CategoryID is Constants.INCOME_ID or Constants.TRANSFER_ID ||
+                category.ParentCategoryID is Constants.TRANSFER_ID)
+            {
+                IsEditableCategory = false;   
+                await Utilities.DisplayToast($"Only the {category.CategoryName} category's colour can be edited");
+            }
         }
         catch (Exception ex)
         {

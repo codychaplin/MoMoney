@@ -158,16 +158,14 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
     public async Task<IEnumerable<Category>> GetCategories(bool includeParentName = false)
     {
         await Init();
-        var cats = Categories.Where(c => c.Value.CategoryID >= Constants.INCOME_ID).Select(pair => pair.Value);
+        var cats = Categories.Select(pair => pair.Value);
         if (includeParentName)
             foreach (var cat in cats)
                 cat.ParentName = GetParentName(cat);
         if (cats.Any())
             return cats;
 
-        var dbCats = await momoney.db.Table<Category>()
-                                     .Where(c => c.CategoryID >= Constants.INCOME_ID)
-                                     .ToListAsync();
+        var dbCats = await momoney.db.Table<Category>().ToListAsync();
         if (includeParentName)
             foreach (var cat in dbCats)
                 cat.ParentName = GetParentName(cat);
@@ -197,13 +195,13 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
     public async Task<IEnumerable<Category>> GetParentCategories()
     {
         await Init();
-        var cats = Categories.Where(c => c.Value.ParentCategoryID == null  && c.Value.CategoryID != Constants.TRANSFER_ID)
+        var cats = Categories.Where(c => c.Value.ParentCategoryID == null)
                              .Select(pair => pair.Value);
         if (cats.Any())
             return cats;
 
         return await momoney.db.Table<Category>()
-                               .Where(c => c.ParentCategoryID == null  && c.CategoryID != Constants.TRANSFER_ID)
+                               .Where(c => c.ParentCategoryID == null)
                                .ToListAsync();
     }
 

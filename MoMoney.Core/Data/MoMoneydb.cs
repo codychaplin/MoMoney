@@ -108,10 +108,10 @@ public class MoMoneydb : IMoMoneydb
     {
         return
         [
-            new Category(Constants.TRANSFER_ID, "Transfer", null, "#b0b0b0"), // 1
-            new Category(Constants.DEBIT_ID, "Debit", Constants.TRANSFER_ID, "#c9c9c9"), // 2
-            new Category(Constants.CREDIT_ID, "Credit", Constants.TRANSFER_ID, "#a0a0a0"), // 3
-            new Category(Constants.INCOME_ID, "Income", null, "#42ba96") // 4
+            new Category(Constants.TRANSFER_ID, "Transfer", null, "#808080"), // 1
+            new Category(Constants.DEBIT_ID, "Debit", Constants.TRANSFER_ID, "#555555"), // 2
+            new Category(Constants.CREDIT_ID, "Credit", Constants.TRANSFER_ID, "#A9A9A9"), // 3
+            new Category(Constants.INCOME_ID, "Income", null, "#28AA74") // 4
         ];
     }
 

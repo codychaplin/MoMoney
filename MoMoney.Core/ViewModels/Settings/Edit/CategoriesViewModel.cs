@@ -65,12 +65,6 @@ public partial class CategoriesViewModel : ObservableObject
     [RelayCommand]
     async Task GoToEditCategory(Category category)
     {
-        if (category.CategoryID == Constants.INCOME_ID)
-        {
-            await Utilities.DisplayToast($"The {category.CategoryName} category cannot be edited");
-            return;
-        }
-
         await Shell.Current.GoToAsync($"EditCategoryPage", new ShellNavigationQueryParameters() { { "Category", category } });
     }
 }

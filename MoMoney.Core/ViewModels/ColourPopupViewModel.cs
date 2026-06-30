@@ -27,6 +27,7 @@ public partial class ColourPopupViewModel : ObservableObject
         Color.FromArgb("#4394f0"),
         Color.FromArgb("#7437f5"),
         Color.FromArgb("#cd55f9"),
+        Color.FromArgb("#906546"),
         Color.FromArgb("#808080"),
     ];
 
@@ -73,11 +74,13 @@ public partial class ColourPopupViewModel : ObservableObject
     {
         return
         [
+            Darken(baseColor, 0.66f),
             Darken(baseColor, 0.5f),
-            Darken(baseColor, 0.25f),
+            Darken(baseColor, 0.33f),
             baseColor,
-            Lighten(baseColor, 0.25f),
-            Lighten(baseColor, 0.5f)
+            Lighten(baseColor, 0.33f),
+            Lighten(baseColor, 0.5f),
+            Lighten(baseColor, 0.66f)
         ];
     }
 }

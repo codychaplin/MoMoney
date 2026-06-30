@@ -23,6 +23,7 @@
         <!--  category name  -->
         <material:TextField
             x:Name="txtName"
+            IsEnabled="{Binding IsEditableCategory}"
             Title="Category Name"
             Icon="{FontImageSource FontFamily=MaterialRounded,
                                 Glyph={x:Static m:MaterialOutlined.Category}}"
@@ -31,6 +32,7 @@
         <!--  parent category  -->
         <material:PickerField
             x:Name="pckParent"
+            IsEnabled="{Binding IsEditableCategory}"
             Title="Select a Parent"
             x:DataType="model:Category"
             Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
@@ -52,10 +54,13 @@
 
         <!--  delete/clear/enter buttons  -->
         <components:ActionButtons
-            AddCommand="{Binding AddCommand}"
-            ClearCommand="{Binding ClearCommand}"
-            EditCommand="{Binding EditCommand}"
             IsEditMode="{Binding IsEditMode}"
-            RemoveCommand="{Binding RemoveCommand}" />
+            AddCommand="{Binding AddCommand}"
+            AddIsEnabled="{Binding IsEditableCategory}"
+            ClearCommand="{Binding ClearCommand}"
+            ClearIsEnabled="{Binding IsEditableCategory}"
+            EditCommand="{Binding EditCommand}"
+            RemoveCommand="{Binding RemoveCommand}"
+            RemoveIsEnabled="{Binding IsEditableCategory}" />
     </VerticalStackLayout>
 </components:CustomContentPage>

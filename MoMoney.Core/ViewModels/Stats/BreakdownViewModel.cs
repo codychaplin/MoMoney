@@ -20,6 +20,9 @@ public partial class BreakdownViewModel : ObservableObject
     [ObservableProperty] List<Brush> incomePalette = [];
     [ObservableProperty] List<Brush> expensePalette = [];
 
+    List<Brush> _expenseFallbackPalette = [];
+    List<Brush> _incomeFallbackPalette = [];
+
     [ObservableProperty] ObservableCollection<BreakdownData> incomeData = [];
     [ObservableProperty] ObservableCollection<BreakdownData> expenseData = [];
 
@@ -96,27 +99,27 @@ public partial class BreakdownViewModel : ObservableObject
 
     void InitPalettes()
     {
-        // expense colour palette
-        ExpensePalette.Add(Color.FromArgb("9D0208")); // red
-        ExpensePalette.Add(Color.FromArgb("EB7F08")); // orange
-        ExpensePalette.Add(Color.FromArgb("D6BF0F")); // yellow
-        ExpensePalette.Add(Color.FromArgb("79BD2B")); // lime
-        ExpensePalette.Add(Color.FromArgb("24B37F")); // teal-green
-        ExpensePalette.Add(Color.FromArgb("2E5B99")); // blue
-        ExpensePalette.Add(Color.FromArgb("55408F")); // purple
-        ExpensePalette.Add(Color.FromArgb("A15FD6")); // purple-pink
-        ExpensePalette.Add(Color.FromArgb("C261B5")); // pink
-        ExpensePalette.Add(Color.FromArgb("AD4B49")); // faded red
+        // expense colour palette fallback
+        _expenseFallbackPalette.Add(Color.FromArgb("9D0208")); // red
+        _expenseFallbackPalette.Add(Color.FromArgb("EB7F08")); // orange
+        _expenseFallbackPalette.Add(Color.FromArgb("D6BF0F")); // yellow
+        _expenseFallbackPalette.Add(Color.FromArgb("79BD2B")); // lime
+        _expenseFallbackPalette.Add(Color.FromArgb("24B37F")); // teal-green
+        _expenseFallbackPalette.Add(Color.FromArgb("2E5B99")); // blue
+        _expenseFallbackPalette.Add(Color.FromArgb("55408F")); // purple
+        _expenseFallbackPalette.Add(Color.FromArgb("A15FD6")); // purple-pink
+        _expenseFallbackPalette.Add(Color.FromArgb("C261B5")); // pink
+        _expenseFallbackPalette.Add(Color.FromArgb("AD4B49")); // faded red
 
-        // income colour palette
-        IncomePalette.Add(Color.FromArgb("008000")); // start green
-        IncomePalette.Add(Color.FromArgb("1F991F"));
-        IncomePalette.Add(Color.FromArgb("47B347"));
-        IncomePalette.Add(Color.FromArgb("43CC79"));
-        IncomePalette.Add(Color.FromArgb("49D59F")); // start teal
-        IncomePalette.Add(Color.FromArgb("50BDA9"));
-        IncomePalette.Add(Color.FromArgb("21948A"));
-        IncomePalette.Add(Color.FromArgb("026969"));
+        // income colour palette fallback
+        _incomeFallbackPalette.Add(Color.FromArgb("008000")); // start green
+        _incomeFallbackPalette.Add(Color.FromArgb("1F991F"));
+        _incomeFallbackPalette.Add(Color.FromArgb("47B347"));
+        _incomeFallbackPalette.Add(Color.FromArgb("43CC79"));
+        _incomeFallbackPalette.Add(Color.FromArgb("49D59F")); // start teal
+        _incomeFallbackPalette.Add(Color.FromArgb("50BDA9"));
+        _incomeFallbackPalette.Add(Color.FromArgb("21948A"));
+        _incomeFallbackPalette.Add(Color.FromArgb("026969"));
     }
 
     [RelayCommand]
@@ -222,26 +225,32 @@ public partial class BreakdownViewModel : ObservableObject
     /// <param name="transactions"></param>
     void UpdateExpenses(IEnumerable<Transaction> transactions)
     {
-        // group transactions by Category, sum amounts, get Category name from ID, assign colour from palette
-        int i = 0;
+        // group transactions by Category, sum amounts, get Category name from ID, assign colour from category or fallback palette
+        int fallbackIdx = 0;
         var expenseData = transactions
             .Where(t => t.CategoryID >= Constants.EXPENSE_ID)
             .GroupBy(t => t.CategoryID)
             .OrderByDescending(g => Math.Abs(g.Sum(t => t.Amount)))
             .Select(group =>
             {
+                var category = categoryService.Categories[group.Key];
                 var amount = Math.Abs(group.Sum(t => t.Amount));
-                var color = ExpensePalette[i++ % ExpensePalette.Count];
+                Brush color = !string.IsNullOrEmpty(category.Colour)
+                    ? Color.FromArgb(category.Colour)
+                    : _expenseFallbackPalette[fallbackIdx++ % _expenseFallbackPalette.Count];
                 return new BreakdownData
                 {
                     Amount = amount,
                     ActualAmount = amount,
-                    Category = categoryService.Categories[group.Key].CategoryName,
+                    Category = category.CategoryName,
                     Color = color
                 };
             })
             .OrderByDescending(c => c.Amount)
             .ToList();
+
+        // Rebuild palette to match sorted data order (chart PaletteBrushes uses index)
+        ExpensePalette = [.. expenseData.Select(d => d.Color!)];
 
         // calculate size of slice as percentage
         ExpenseData.Clear();
@@ -260,26 +269,32 @@ public partial class BreakdownViewModel : ObservableObject
     /// <param name="transactions"></param>
     void UpdateIncome(IEnumerable<Transaction> transactions)
     {
-        // group transactions by Subcategory, sum amounts, get Subcategory name from ID, assign colour from palette
-        int i = 0;
+        // group transactions by Subcategory, sum amounts, get Subcategory name from ID, assign colour from category or fallback palette
+        int fallbackIdx = 0;
         var incomeData = transactions
             .Where(t => t.CategoryID == Constants.INCOME_ID)
             .GroupBy(t => t.SubcategoryID)
             .OrderByDescending(g => g.Sum(t => t.Amount))
             .Select(group =>
             {
+                var category = categoryService.Categories[group.Key];
                 var amount = group.Sum(t => t.Amount);
-                var color = IncomePalette[i++ % IncomePalette.Count];
+                Brush color = !string.IsNullOrEmpty(category.Colour)
+                    ? Color.FromArgb(category.Colour)
+                    : _incomeFallbackPalette[fallbackIdx++ % _incomeFallbackPalette.Count];
                 return new BreakdownData
                 {
                     ActualAmount = amount,
                     Amount = (amount > 0) ? amount : 0,
-                    Category = categoryService.Categories[group.Key].CategoryName,
+                    Category = category.CategoryName,
                     Color = color
                 };
             })
             .OrderByDescending(c => c.Amount)
             .ToList();
+
+        // Rebuild palette to match sorted data order (chart PaletteBrushes uses index)
+        IncomePalette = [.. incomeData.Select(d => d.Color!)];
 
         IncomeData.Clear();
         decimal total = incomeData.Sum(d => d.Amount);

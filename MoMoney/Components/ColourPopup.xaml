@@ -15,8 +15,8 @@
     <CollectionView
         ItemsSource="{Binding ColourGroups}"
         SelectionMode="None"
-        HeightRequest="462"
-        WidthRequest="210"
+        HeightRequest="504"
+        WidthRequest="294"
         HorizontalOptions="Center"
         VerticalOptions="Center">
         <CollectionView.ItemsLayout>
@@ -30,7 +30,7 @@
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
                     HeightRequest="32"
-                    WidthRequest="210">
+                    WidthRequest="294">
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout ItemSpacing="10" Orientation="Horizontal" />
                     </CollectionView.ItemsLayout>
