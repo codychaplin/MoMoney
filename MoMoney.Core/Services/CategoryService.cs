@@ -47,18 +47,25 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
         {
             var dbCategories = await momoney.db.Table<Category>().ToListAsync();
 
-            // gets names of all categories where name matches any names of categories in parameter categories
-            bool containsDuplicates = categories.Any(a =>
-                 dbCategories.Any(dba => dba.CategoryName == a.CategoryName && dba.ParentCategoryID == a.ParentCategoryID));
-            if (containsDuplicates)
-                throw new DuplicateException("Imported categories contained duplicates. Please try again");
+            // filter out duplicates
+            var uniqueCategories = categories.Where(a =>
+                !dbCategories.Any(dba => dba.CategoryName == a.CategoryName && dba.ParentCategoryID == a.ParentCategoryID))
+                .ToList();
+
+            if (uniqueCategories.Count == 0)
+                return "No new categories to add (all were duplicates).";
 
             // adds Categories to db and dictionary
-            await momoney.db.InsertAllAsync(categories);
-            foreach (var cat in categories)
+            await momoney.db.InsertAllAsync(uniqueCategories);
+            foreach (var cat in uniqueCategories)
                 Categories.Add(cat.CategoryID, cat);
 
-            return $"Added {categories.Count} Categories to db.";
+            int skipped = categories.Count - uniqueCategories.Count;
+            string logMsg = skipped > 0
+                ? $"Added {uniqueCategories.Count} categories ({skipped} duplicates skipped)."
+                : $"Added {uniqueCategories.Count} categories.";
+
+            return logMsg;
         });
     }
 

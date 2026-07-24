@@ -22,7 +22,6 @@ public interface ICategoryService
     /// Inserts multiple Category objects into Categories table.
     /// </summary>
     /// <param name="categories"></param>
-    /// <exception cref="DuplicateException"></exception>
     Task AddCategories(List<Category> categories);
 
     /// <summary>

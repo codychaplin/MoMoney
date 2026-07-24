@@ -59,7 +59,7 @@ public partial class ImportExportViewModel : ObservableObject
             // read CSV and add each element to above list
             try
             {
-                var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false, MissingFieldFound = null };
                 using var sr = new StreamReader(result.FullPath);
                 using var csv = new CsvReader(sr, config);
                 await foreach (var account in csv.GetRecordsAsync<Account>())
@@ -121,7 +121,7 @@ public partial class ImportExportViewModel : ObservableObject
             // read CSV and add each element to above list
             try
             {
-                var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false };
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false, MissingFieldFound = null };
                 using var sr = new StreamReader(result.FullPath);
                 using var csv = new CsvReader(sr, config);
                 await foreach (var category in csv.GetRecordsAsync<Category>())
@@ -174,11 +174,6 @@ public partial class ImportExportViewModel : ObservableObject
         {
             await logger.LogWarning(nameof(ImportCategoriesCSV), ex);
             await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
-        }
-        catch (DuplicateException ex)
-        {
-            await logger.LogError(nameof(ImportCategoriesCSV), ex);
-            await Shell.Current.DisplayAlertAsync("Duplicate Error", ex.Message, "OK");
         }
         catch (Exception ex)
         {
