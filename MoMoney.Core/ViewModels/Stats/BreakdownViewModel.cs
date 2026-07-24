@@ -201,7 +201,7 @@ public partial class BreakdownViewModel : ObservableObject
 
             // calculates sums for tab headers
             // absolute value for expenses just to make it look cleaner
-            ExpenseSum = Math.Abs(transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID)
+            ExpenseSum = Math.Abs(transactions.Where(t => t.CategoryID >= Constants.EXPENSE_THRESHOLD)
                                               .Sum(t => t.Amount));
             IncomeSum = transactions.Where(t => t.CategoryID == Constants.INCOME_ID)
                                     .Sum(t => t.Amount);
@@ -228,7 +228,7 @@ public partial class BreakdownViewModel : ObservableObject
         // group transactions by Category, sum amounts, get Category name from ID, assign colour from category or fallback palette
         int fallbackIdx = 0;
         var expenseData = transactions
-            .Where(t => t.CategoryID >= Constants.EXPENSE_ID)
+            .Where(t => t.CategoryID >= Constants.EXPENSE_THRESHOLD)
             .GroupBy(t => t.CategoryID)
             .OrderByDescending(g => Math.Abs(g.Sum(t => t.Amount)))
             .Select(group =>

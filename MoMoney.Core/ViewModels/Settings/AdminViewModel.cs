@@ -89,9 +89,29 @@ public partial class AdminViewModel : ObservableObject
     /// Removes all Categories from database.
     /// </summary>
     [RelayCommand]
-    Task RemoveAllCategories() =>
-        RemoveAllObjects("category", "Categories", FirebaseParameters.EVENT_REMOVE_ALL_CATEGORIES,
-            nameof(RemoveAllCategories), categoryService.GetCategoryCount, categoryService.RemoveAllCategories);
+    async Task RemoveAllCategories()
+    {
+        bool selectedNecessary = await Shell.Current.DisplayAlertAsync("", "Do you want to delete all but the necessary categories (5), or delete all but the default categories (33)?", "Necessary", "Default");
+        string term = selectedNecessary ? "necessary" : "default";
+        bool flag = await Shell.Current.DisplayAlertAsync("", $"Are you sure you want to delete ALL but the {term} categories?", "Yes", "Cancel");
+        if (!flag)
+            return;
+
+        try
+        {
+            int count = await categoryService.GetCategoryCount();
+            bool getAll = !selectedNecessary;
+            await categoryService.RemoveAllCategories(getAll);
+            string message = count == 1 ? $"1 category has been deleted." : $"{count} categories have been deleted.";
+            _ = Shell.Current.DisplayAlertAsync("Success", message, "OK");
+            logger.LogFirebaseEvent(FirebaseParameters.EVENT_REMOVE_ALL_CATEGORIES, FirebaseParameters.GetFirebaseParameters());
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(nameof(RemoveAllCategories), ex);
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+        }
+    }
 
     /// <summary>
     /// Removes all Stocks from database.

@@ -84,7 +84,7 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
         });
     }
 
-    public async Task RemoveAllCategories()
+    public async Task RemoveAllCategories(bool getAll)
     {
         await DbOperation(async () =>
         {
@@ -93,7 +93,7 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
             Categories.Clear();
 
             // re-add default categories
-            await momoney.CreateCategories();
+            await momoney.CreateCategories(getAll);
 
             return $"Removed all Categories from db.";
         });
@@ -208,13 +208,13 @@ public class CategoryService : BaseService<CategoryService, UpdateCategoriesMess
     public async Task<IEnumerable<Category>> GetExpenseCategories()
     {
         await Init();
-        var cats = Categories.Where(c => c.Value.ParentCategoryID == null && c.Value.CategoryID >= Constants.EXPENSE_ID)
+        var cats = Categories.Where(c => c.Value.ParentCategoryID == null && c.Value.CategoryID >= Constants.EXPENSE_THRESHOLD)
                              .Select(pair => pair.Value);
         if (cats.Any())
             return cats;
 
         return await momoney.db.Table<Category>()
-                               .Where(c => c.ParentCategoryID == null  && c.CategoryID >= Constants.EXPENSE_ID)
+                               .Where(c => c.ParentCategoryID == null  && c.CategoryID >= Constants.EXPENSE_THRESHOLD)
                                .ToListAsync();
     }
 

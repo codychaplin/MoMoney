@@ -40,7 +40,8 @@ public interface ICategoryService
     /// <summary>
     /// Removes ALL Categories from Categories table.
     /// </summary>
-    Task RemoveAllCategories();
+    /// <param name="getAll"></param>
+    Task RemoveAllCategories(bool getAll);
 
     /// <summary>
     /// Gets an category from the Categories table using an ID.

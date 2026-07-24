@@ -22,7 +22,8 @@ public interface IMoMoneydb
     /// <summary>
     /// Creates default categories.
     /// </summary>
-    Task CreateCategories();
+    /// <param name="getAll"></param>
+    Task CreateCategories(bool getAll);
 
     // ----------------------- CRUD wrappers (needed for unit testing) ----------------------- //
 

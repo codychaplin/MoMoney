@@ -5,7 +5,7 @@
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     x:Class="MoMoney.Components.PageHeader"
     x:Name="root"
-    Padding="10,50,10,10"
+    Padding="10,55,10,10"
     BackgroundColor="{AppThemeBinding Light={DynamicResource secondaryContainer},
                                       Dark={DynamicResource secondaryContainerDark}}"
     ColumnDefinitions="Auto,*,Auto">

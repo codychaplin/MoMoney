@@ -101,7 +101,7 @@ public partial class EditTransactionViewModel : BaseTransactionViewModel
                 InitialCategory = await categoryService.GetCategory(InitialTransaction.CategoryID);
                 InitialSubcategory = await categoryService.GetCategory(InitialTransaction.SubcategoryID);
 
-                if (InitialCategory?.CategoryID >= Constants.EXPENSE_ID) // if expense, make amount appear positive for user
+                if (InitialCategory?.CategoryID >= Constants.EXPENSE_THRESHOLD) // if expense, make amount appear positive for user
                     Transaction.Amount *= -1;
                 else if (InitialCategory?.CategoryID == Constants.TRANSFER_ID) // if transfer, set initial payee account
                 {
@@ -313,7 +313,7 @@ public partial class EditTransactionViewModel : BaseTransactionViewModel
         }
 
         // if expense or transfer debit, convert back to negative
-        if (InitialCategory?.CategoryID >= Constants.EXPENSE_ID || InitialSubcategory?.CategoryID == Constants.DEBIT_ID)
+        if (InitialCategory?.CategoryID >= Constants.EXPENSE_THRESHOLD || InitialSubcategory?.CategoryID == Constants.DEBIT_ID)
             Transaction.Amount *= -1;
 
         // if payee is not in Payees list, update

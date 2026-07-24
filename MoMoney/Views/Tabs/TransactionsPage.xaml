@@ -18,7 +18,7 @@
 
             <!--  title  -->
             <toolkit:Expander.Header>
-                <components:PageHeader Title="{Binding PageTitle}">
+                <components:PageHeader Title="{Binding PageTitle}" ShowBackButton="False">
                     <components:PageHeader.RightContent>
                         <Image
                             HeightRequest="30"

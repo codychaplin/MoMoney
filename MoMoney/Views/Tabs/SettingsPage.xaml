@@ -89,7 +89,7 @@
                     <Label VerticalOptions="Center" Text="Material You" />
                     <Switch Grid.Column="1" IsToggled="{Binding MaterialYouEnabled}" />
 
-                    <!-- light/dark theme -->
+                    <!-- light/dark theme 
                     <Label Grid.Row="1" VerticalOptions="Center" Text="Theme" />
                     <material:PickerField
                         Grid.Row="1"
@@ -103,7 +103,7 @@
                             <x:String>Light</x:String>
                             <x:String>Dark</x:String>
                         </material:PickerField.Items>
-                    </material:PickerField>
+                    </material:PickerField>-->
                 </Grid>
 
                 <!--  privacy  -->

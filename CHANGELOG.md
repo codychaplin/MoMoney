@@ -12,6 +12,7 @@
 * Add payees for recent transactions in prompt for more accurate responses
 * Switch to OpenRouter for AI features
 * Add user-selectable themes
+* Add more default categories
 
 ### Fixes
 

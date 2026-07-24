@@ -160,7 +160,7 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         if (type == TransactionType.Income)
             query = query.Where(t => t.CategoryID == Constants.INCOME_ID);
         else
-            query = query.Where(t => t.CategoryID >= Constants.EXPENSE_ID);
+            query = query.Where(t => t.CategoryID >= Constants.EXPENSE_THRESHOLD);
         query = query
             .Where(t => !string.IsNullOrEmpty(t.Payee))
             .OrderByDescending(t => t.TransactionID)

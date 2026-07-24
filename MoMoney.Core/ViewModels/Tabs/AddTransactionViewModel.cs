@@ -332,7 +332,7 @@ public partial class AddTransactionViewModel : BaseTransactionViewModel
                 ID = await transactionService.AddTransaction(_date, _accountID, -_amount, _categoryID, Constants.DEBIT_ID, string.Empty, _transferID);
                 await transactionService.AddTransaction(_date, _transferID, _amount, _categoryID, Constants.CREDIT_ID, string.Empty, _accountID);
             }
-            else if (Category.CategoryID >= Constants.EXPENSE_ID) // expense = negative amount
+            else if (Category.CategoryID >= Constants.EXPENSE_THRESHOLD) // expense = negative amount
             {
                 ID = await transactionService.AddTransaction(Date, Account.AccountID, -Amount.Value, Category.CategoryID, Subcategory.CategoryID, Payee, null);
             }

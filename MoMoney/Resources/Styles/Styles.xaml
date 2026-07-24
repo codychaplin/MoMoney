@@ -12,10 +12,10 @@
         TargetType="material:InputField">
         <Setter Property="Opacity" Value="1" />
         <Setter Property="TitleFontSize" Value="14" />
-        <Setter Property="AccentColor" Value="{AppThemeBinding Light={StaticResource primary}, Dark={StaticResource primaryDark}}" />
-        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource outline}, Dark={StaticResource outlineDark}}" />
-        <Setter Property="TitleColor" Value="{AppThemeBinding Light={StaticResource onSurfaceVariant}, Dark={StaticResource onSurfaceVariantDark}}" />
-        <Setter Property="InputBackgroundColor" Value="{AppThemeBinding Light={StaticResource surfaceContainerHighest}, Dark={StaticResource surfaceContainerHighestDark}}" />
+        <Setter Property="AccentColor" Value="{AppThemeBinding Light={DynamicResource primary}, Dark={DynamicResource primaryDark}}" />
+        <Setter Property="BorderColor" Value="{AppThemeBinding Light={DynamicResource outline}, Dark={DynamicResource outlineDark}}" />
+        <Setter Property="TitleColor" Value="{AppThemeBinding Light={DynamicResource onSurfaceVariant}, Dark={DynamicResource onSurfaceVariantDark}}" />
+        <Setter Property="InputBackgroundColor" Value="{AppThemeBinding Light={DynamicResource surfaceContainerHighest}, Dark={DynamicResource surfaceContainerHighestDark}}" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -23,7 +23,7 @@
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
                             <Setter Property="Opacity" Value="0.6" />
-                            <Setter Property="BorderColor" Value="{StaticResource outline}" />
+                            <Setter Property="BorderColor" Value="{DynamicResource outline}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -42,7 +42,7 @@
         CanCascade="True"
         TargetType="material:TextField">
         <Setter Property="AllowClear" Value="True" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onSurface}, Dark={DynamicResource onSurfaceDark}}" />
     </Style>
 
     <Style
@@ -56,8 +56,8 @@
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
                             <Setter Property="Opacity" Value="0.6" />
-                            <Setter Property="BorderColor" Value="{StaticResource outline}" />
-                            <Setter Property="TextColor" Value="{StaticResource outlineDark}" />
+                            <Setter Property="BorderColor" Value="{DynamicResource outline}" />
+                            <Setter Property="TextColor" Value="{DynamicResource outlineDark}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -70,7 +70,7 @@
         CanCascade="True"
         TargetType="material:PickerField">
         <Setter Property="AllowClear" Value="True" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onSurface}, Dark={DynamicResource onSurfaceDark}}" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -78,8 +78,8 @@
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
                             <Setter Property="Opacity" Value="0.6" />
-                            <Setter Property="BorderColor" Value="{StaticResource outline}" />
-                            <Setter Property="TextColor" Value="{StaticResource outline}" />
+                            <Setter Property="BorderColor" Value="{DynamicResource outline}" />
+                            <Setter Property="TextColor" Value="{DynamicResource outline}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -89,7 +89,7 @@
 
     <Style BaseResourceKey="InputFieldBaseStyle" TargetType="material:DatePickerField">
         <Setter Property="AllowClear" Value="True" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onSurface}, Dark={DynamicResource onSurfaceDark}}" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -97,8 +97,8 @@
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
                             <Setter Property="Opacity" Value="0.6" />
-                            <Setter Property="BorderColor" Value="{StaticResource outline}" />
-                            <Setter Property="TextColor" Value="{StaticResource outline}" />
+                            <Setter Property="BorderColor" Value="{DynamicResource outline}" />
+                            <Setter Property="TextColor" Value="{DynamicResource outline}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -108,11 +108,13 @@
 
     <Style BaseResourceKey="InputFieldBaseStyle" TargetType="material:AutoCompleteTextField">
         <Setter Property="AllowClear" Value="True" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource onSurface}, Dark={StaticResource onSurfaceDark}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onSurface}, Dark={DynamicResource onSurfaceDark}}" />
     </Style>
 
     <Style TargetType="material:CheckBox">
-        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource primary}, Dark={StaticResource primaryDark}}" />
+        <Setter Property="BorderColor" Value="{AppThemeBinding Light={DynamicResource outline}, Dark={DynamicResource outlineDark}}" />
+        <Setter Property="Color" Value="{AppThemeBinding Light={DynamicResource primary}, Dark={DynamicResource primaryDark}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={DynamicResource onSurface}, Dark={DynamicResource onSurfaceDark}}" />
     </Style>
 
     <Style TargetType="ActivityIndicator">

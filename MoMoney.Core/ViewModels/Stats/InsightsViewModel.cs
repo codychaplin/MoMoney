@@ -85,7 +85,7 @@ public partial class InsightsViewModel : ObservableObject
                                         {
                                             Month = Constants.MONTHS[group.Key - 1],
                                             income = group.Where(t => t.CategoryID == Constants.INCOME_ID && t.Amount > 0),
-                                            expenses = group.Where(t => t.CategoryID >= Constants.EXPENSE_ID && t.Amount < 0)
+                                            expenses = group.Where(t => t.CategoryID >= Constants.EXPENSE_THRESHOLD && t.Amount < 0)
                                         });
 
         if (!groupByMonth.Any())
@@ -135,7 +135,7 @@ public partial class InsightsViewModel : ObservableObject
         if (Utilities.ShowValue)
         {
             TotalIncome = transactions.Where(t => t.CategoryID == Constants.INCOME_ID).Sum(t => t.Amount);
-            TotalExpense = Math.Abs(transactions.Where(t => t.CategoryID >= Constants.EXPENSE_ID).Sum(t => t.Amount));
+            TotalExpense = Math.Abs(transactions.Where(t => t.CategoryID >= Constants.EXPENSE_THRESHOLD).Sum(t => t.Amount));
             return;
         }
 
