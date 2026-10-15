@@ -1,0 +1,62 @@
+@import 'tailwindcss';
+@import 'uniwind';
+
+/* MoMoney palette, ported from MoMoney/Resources/Styles/Colors.xaml */
+@layer theme {
+  :root {
+    @variant light {
+      --color-background: #f5fbf4;
+      --color-surface: #eaefe9;
+      --color-surface-high: #dee4de;
+      --color-primary: #246a4b;
+      --color-primary-container: #abf2ca;
+      --color-on-primary: #ffffff;
+      --color-secondary: #4d6356;
+      --color-on-secondary: #ffffff;
+      --color-secondary-container: #d0e8d7;
+      --color-on-secondary-container: #364b3f;
+      --color-on-surface: #171d19;
+      --color-on-surface-variant: #404943;
+      --color-outline: #707972;
+      --color-outline-variant: #c0c9c1;
+      --color-income: #28aa74;
+      --color-expense: #df4759;
+      --color-error: #ba1a1a;
+      --color-on-error: #ffffff;
+      --color-error-container: #ffdad6;
+      --color-surface-container: #eaefe9;
+      --color-status-verified: #42ba96;
+      --color-status-approved: #3b74c5;
+      --color-status-review: #df4759;
+      --color-status-auto-skipped: #7e3bc5;
+      --color-status-skipped: #b1723e;
+    }
+    @variant dark {
+      --color-background: #0f1511;
+      --color-surface: #1b211e;
+      --color-surface-high: #303632;
+      --color-primary: #90d5af;
+      --color-primary-container: #005234;
+      --color-on-primary: #003823;
+      --color-secondary: #b4ccbc;
+      --color-on-secondary: #203529;
+      --color-secondary-container: #364b3f;
+      --color-on-secondary-container: #d0e8d7;
+      --color-on-surface: #dee4de;
+      --color-on-surface-variant: #c0c9c1;
+      --color-outline: #8a938c;
+      --color-outline-variant: #404943;
+      --color-income: #42ba96;
+      --color-expense: #ff7777;
+      --color-error: #ffb4ab;
+      --color-on-error: #690005;
+      --color-error-container: #93000a;
+      --color-surface-container: #1b211e;
+      --color-status-verified: #53f4c4;
+      --color-status-approved: #75aeff;
+      --color-status-review: #ff8290;
+      --color-status-auto-skipped: #a875e0;
+      --color-status-skipped: #d49866;
+    }
+  }
+}
