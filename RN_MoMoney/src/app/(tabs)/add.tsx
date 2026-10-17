@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { toast } from 'sonner-native';
 
 import { Autocomplete } from '@/components/autocomplete';
 import { DateField } from '@/components/date-field';
 import { Select } from '@/components/select';
-import { Button, Field, PageTitle, Screen, Segmented } from '@/components/ui';
+import { Button, Field, Page, Segmented } from '@/components/ui';
 import { useDb } from '@/db/provider';
 import { useActiveAccounts, useCategories, usePayees, useRefresh } from '@/hooks/data';
 import { CREDIT_ID, DEBIT_ID, EXPENSE_THRESHOLD, INCOME_ID, TRANSFER_ID } from '@/lib/constants';
@@ -114,56 +113,53 @@ export default function AddScreen() {
   };
 
   return (
-    <Screen>
-      <KeyboardAwareScrollView contentContainerClassName="gap-3 px-4 pb-6" keyboardShouldPersistTaps="handled" bottomOffset={24}>
-        <PageTitle>Add Transaction</PageTitle>
-        <Segmented options={KINDS} value={kind} onChange={changeKind} />
-        <DateField value={date} onChange={setDate} />
-        <Field label="Amount" value={amountText} onChangeText={setAmountText} placeholder="0.00" keyboardType="decimal-pad" />
-        <Select
-          label="Account"
-          value={accountId}
-          options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))}
-          onChange={setAccountId}
-        />
-        <View className="flex-row gap-2">
-          <View className="flex-1">
-            <Select
-              label="Category"
-              value={categoryId}
-              disabled={kind !== 'Expense'}
-              options={categoryOptions.map((c) => ({ label: c.name, value: c.id, colour: c.colour }))}
-              onChange={(v) => {
-                setCategoryId(v);
-                setSubcategoryId(null);
-              }}
-            />
-          </View>
-          <View className="flex-1">
-            <Select
-              label="Subcategory"
-              value={kind === 'Transfer' ? DEBIT_ID : subcategoryId}
-              disabled={kind === 'Transfer' || categoryId == null}
-              options={(kind === 'Transfer' ? subOptions.filter((c) => c.id === DEBIT_ID || c.id === CREDIT_ID) : subOptions).map((c) => ({ label: c.name, value: c.id, colour: c.colour }))}
-              onChange={setSubcategoryId}
-            />
-          </View>
-        </View>
-        {kind === 'Transfer' ? (
+    <Page title="Add Transaction" keyboard>
+      <Segmented options={KINDS} value={kind} onChange={changeKind} />
+      <DateField value={date} onChange={setDate} />
+      <Field label="Amount" value={amountText} onChangeText={setAmountText} placeholder="0.00" keyboardType="decimal-pad" />
+      <Select
+        label="Account"
+        value={accountId}
+        options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))}
+        onChange={setAccountId}
+      />
+      <View className="flex-row gap-2">
+        <View className="flex-1">
           <Select
-            label="Transfer Account"
-            value={transferAccountId}
-            options={accounts.filter((a) => a.id !== accountId).map((a) => ({ label: a.name, value: a.id, colour: a.colour }))}
-            onChange={setTransferAccountId}
+            label="Category"
+            value={categoryId}
+            disabled={kind !== 'Expense'}
+            options={categoryOptions.map((c) => ({ label: c.name, value: c.id, colour: c.colour }))}
+            onChange={(v) => {
+              setCategoryId(v);
+              setSubcategoryId(null);
+            }}
           />
-        ) : (
-          <Autocomplete label="Payee" value={payee} onChangeText={setPayee} suggestions={payees} />
-        )}
-        <View className="mt-1 flex-row items-center gap-3">
-          <Button label="Clear" variant="tertiary" className="flex-1" onPress={clearAll} />
-          <Button label="Accept" className="flex-1" onPress={submit} disabled={busy} />
         </View>
-      </KeyboardAwareScrollView>
-    </Screen>
+        <View className="flex-1">
+          <Select
+            label="Subcategory"
+            value={kind === 'Transfer' ? DEBIT_ID : subcategoryId}
+            disabled={kind === 'Transfer' || categoryId == null}
+            options={(kind === 'Transfer' ? subOptions.filter((c) => c.id === DEBIT_ID || c.id === CREDIT_ID) : subOptions).map((c) => ({ label: c.name, value: c.id, colour: c.colour }))}
+            onChange={setSubcategoryId}
+          />
+        </View>
+      </View>
+      {kind === 'Transfer' ? (
+        <Select
+          label="Transfer Account"
+          value={transferAccountId}
+          options={accounts.filter((a) => a.id !== accountId).map((a) => ({ label: a.name, value: a.id, colour: a.colour }))}
+          onChange={setTransferAccountId}
+        />
+      ) : (
+        <Autocomplete label="Payee" value={payee} onChangeText={setPayee} suggestions={payees} />
+      )}
+      <View className="mt-1 flex-row items-center gap-3">
+        <Button label="Clear" variant="tertiary" className="flex-1" onPress={clearAll} />
+        <Button label="Accept" className="flex-1" onPress={submit} disabled={busy} />
+      </View>
+    </Page>
   );
 }

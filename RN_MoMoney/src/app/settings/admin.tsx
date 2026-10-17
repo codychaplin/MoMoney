@@ -1,7 +1,7 @@
 import { useRouter, type Href } from 'expo-router';
-import { ScrollView, Text } from 'react-native';
+import { Text } from 'react-native';
 
-import { ListRow, PageTitle, Screen, SwitchRow } from '@/components/ui';
+import { ListRow, Page, SwitchRow } from '@/components/ui';
 import { useDb } from '@/db/provider';
 import { useAction } from '@/hooks/action';
 import { choose, confirm, notify } from '@/lib/confirm';
@@ -54,30 +54,27 @@ export default function AdminScreen() {
   };
 
   return (
-    <Screen>
-      <ScrollView contentContainerClassName="pb-8">
-        <PageTitle back>Administration</PageTitle>
+    <Page title="Administration" back contentClassName="pb-8">
 
-        <Subtitle>Data Maintenance</Subtitle>
-        {isAdmin ? <ListRow label="Logging" chevron onPress={() => router.push('/settings/logging' as Href)} /> : null}
-        <ListRow label="Bulk Editing" chevron onPress={() => router.push('/settings/bulk-editing' as Href)} />
+      <Subtitle>Data Maintenance</Subtitle>
+      {isAdmin ? <ListRow label="Logging" chevron onPress={() => router.push('/settings/logging' as Href)} /> : null}
+      <ListRow label="Bulk Editing" chevron onPress={() => router.push('/settings/bulk-editing' as Href)} />
 
-        <Subtitle>Data Removal</Subtitle>
-        <ListRow label="Remove All Transactions" onPress={removeAll('transactions', () => removeAllTransactions(db))} />
-        <ListRow label="Remove All Accounts" onPress={removeAll('accounts', () => removeAllAccounts(db), needsNoTransactions('accounts'))} />
-        <ListRow label="Remove All Categories" onPress={removeCategories} />
-        <ListRow label="Remove All Stocks" onPress={removeAll('stocks', () => removeAllStocks(db))} />
-        <ListRow label="Remove All Mapping Rules" onPress={removeAll('mapping rules', () => removeAllRules(db))} />
-        <ListRow label="Remove All Logs" onPress={removeAll('logs', () => removeAllLogs(db))} />
-        <ListRow label="Remove Everything" onPress={removeEverything} />
+      <Subtitle>Data Removal</Subtitle>
+      <ListRow label="Remove All Transactions" onPress={removeAll('transactions', () => removeAllTransactions(db))} />
+      <ListRow label="Remove All Accounts" onPress={removeAll('accounts', () => removeAllAccounts(db), needsNoTransactions('accounts'))} />
+      <ListRow label="Remove All Categories" onPress={removeCategories} />
+      <ListRow label="Remove All Stocks" onPress={removeAll('stocks', () => removeAllStocks(db))} />
+      <ListRow label="Remove All Mapping Rules" onPress={removeAll('mapping rules', () => removeAllRules(db))} />
+      <ListRow label="Remove All Logs" onPress={removeAll('logs', () => removeAllLogs(db))} />
+      <ListRow label="Remove Everything" onPress={removeEverything} />
 
-        {isAdmin ? (
-          <>
-            <Subtitle>Experimental Features</Subtitle>
-            <SwitchRow label="Transaction Dictation" value={dictationEnabled} onChange={setDictationEnabled} />
-          </>
-        ) : null}
-      </ScrollView>
-    </Screen>
+      {isAdmin ? (
+        <>
+          <Subtitle>Experimental Features</Subtitle>
+          <SwitchRow label="Transaction Dictation" value={dictationEnabled} onChange={setDictationEnabled} />
+        </>
+      ) : null}
+    </Page>
   );
 }

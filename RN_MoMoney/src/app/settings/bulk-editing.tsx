@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { Text, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Autocomplete } from '@/components/autocomplete';
 import { Select } from '@/components/select';
-import { Button, Card, Field, PageTitle, Screen } from '@/components/ui';
+import { Button, Card, Field, Page } from '@/components/ui';
 import { useDb } from '@/db/provider';
 import type { Transaction } from '@/db/schema';
 import { useAction } from '@/hooks/action';
@@ -83,21 +82,18 @@ export default function BulkEditingScreen() {
   };
 
   return (
-    <Screen>
-      <KeyboardAwareScrollView contentContainerClassName="gap-4 px-4 pb-8" keyboardShouldPersistTaps="handled" bottomOffset={24}>
-        <PageTitle back>Bulk Editing</PageTitle>
-        <SidePanel title="Find..." value={find} onChange={(s) => { setFind(s); reset(); }} payees={payees} />
-        <SidePanel title="Replace..." value={replace} onChange={setReplace} />
-        <View className="flex-row gap-3">
-          <Button label="Find" className="flex-1" onPress={() => run(doFind, 'find')} />
-          <Button label="Replace" variant="secondary" className="flex-1" onPress={doReplace} />
-        </View>
-        {info ? (
-          <Card className="p-4">
-            <Text className="text-base leading-6 text-on-surface">{info}</Text>
-          </Card>
-        ) : null}
-      </KeyboardAwareScrollView>
-    </Screen>
+    <Page title="Bulk Editing" back keyboard contentClassName="gap-4 px-4 pb-8">
+      <SidePanel title="Find..." value={find} onChange={(s) => { setFind(s); reset(); }} payees={payees} />
+      <SidePanel title="Replace..." value={replace} onChange={setReplace} />
+      <View className="flex-row gap-3">
+        <Button label="Find" className="flex-1" onPress={() => run(doFind, 'find')} />
+        <Button label="Replace" variant="secondary" className="flex-1" onPress={doReplace} />
+      </View>
+      {info ? (
+        <Card className="p-4">
+          <Text className="text-base leading-6 text-on-surface">{info}</Text>
+        </Card>
+      ) : null}
+    </Page>
   );
 }

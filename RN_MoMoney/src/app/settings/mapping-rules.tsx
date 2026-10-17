@@ -2,12 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { toast } from 'sonner-native';
 
 import { Autocomplete } from '@/components/autocomplete';
 import { Select } from '@/components/select';
-import { ActionButtons, Button, Field, PageTitle, Screen, SwitchRow } from '@/components/ui';
+import { ActionButtons, Button, Field, Page, SwitchRow } from '@/components/ui';
 import { useDb } from '@/db/provider';
 import { useAction } from '@/hooks/action';
 import { useAccounts, useCategories, usePayees } from '@/hooks/data';
@@ -92,56 +91,53 @@ export default function MappingRulesScreen() {
   };
 
   return (
-    <Screen>
-      <KeyboardAwareScrollView contentContainerClassName="gap-3 px-4 pb-8" keyboardShouldPersistTaps="handled" bottomOffset={24}>
-        <PageTitle back>Mapping Rules</PageTitle>
-        <Select
-          label="Bank"
-          value={bank}
-          options={BANK_TYPES.map((b) => ({ label: b, value: b }))}
-          onChange={(v) => {
-            setBank(v);
-            setRuleId(null);
-          }}
-        />
-        <View className="flex-row items-center gap-2">
-          <View className="flex-1">
-            <Select
-              label="Rules"
-              value={typeof ruleId === 'number' ? ruleId : null}
-              disabled={!bank}
-              options={rules.map((r) => ({ label: r.name, value: r.id }))}
-              onChange={setRuleId}
-            />
-          </View>
-          <Button label="Add Rule" variant="secondary" className="px-4" onPress={() => (bank ? setRuleId('new') : toast.error('Please select a bank first'))} />
+    <Page title="Mapping Rules" back keyboard contentClassName="gap-3 px-4 pb-8">
+      <Select
+        label="Bank"
+        value={bank}
+        options={BANK_TYPES.map((b) => ({ label: b, value: b }))}
+        onChange={(v) => {
+          setBank(v);
+          setRuleId(null);
+        }}
+      />
+      <View className="flex-row items-center gap-2">
+        <View className="flex-1">
+          <Select
+            label="Rules"
+            value={typeof ruleId === 'number' ? ruleId : null}
+            disabled={!bank}
+            options={rules.map((r) => ({ label: r.name, value: r.id }))}
+            onChange={setRuleId}
+          />
         </View>
+        <Button label="Add Rule" variant="secondary" className="px-4" onPress={() => (bank ? setRuleId('new') : toast.error('Please select a bank first'))} />
+      </View>
 
-        {ruleId != null ? (
-          <>
-            <Text className="text-sm leading-5 text-on-surface-variant">
-              A rule applies when its pattern (a regular expression, not case sensitive) matches the transaction text. Rules are checked in order and the first values found are used.
-            </Text>
-            <Field label="Name" value={name} onChangeText={setName} />
-            <Field label="Pattern" value={pattern} onChangeText={setPattern} />
-            <SwitchRow label="Skip matching transactions" value={skip} onChange={setSkip} className="rounded-lg" />
-            {!skip ? (
-              <>
-                <View className="flex-row gap-2">
-                  <View className="flex-1"><Select label="Category" value={categoryId} allowClear options={parents.map(opt)} onChange={(v) => { setCategoryId(v); setSubcategoryId(null); }} /></View>
-                  <View className="flex-1"><Select label="Subcategory" value={subcategoryId} allowClear disabled={categoryId == null} options={subs.map(opt)} onChange={setSubcategoryId} /></View>
-                </View>
-                {isTransfer ? (
-                  <Select label="Transfer Account" value={transferAccountId} allowClear options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))} onChange={setTransferAccountId} />
-                ) : (
-                  <Autocomplete label="Payee" value={payee} onChangeText={setPayee} suggestions={payees} />
-                )}
-              </>
-            ) : null}
-            <ActionButtons isEdit={typeof ruleId === 'number'} onClear={clearForm} onDelete={remove} onSubmit={save} />
-          </>
-        ) : null}
-      </KeyboardAwareScrollView>
-    </Screen>
+      {ruleId != null ? (
+        <>
+          <Text className="text-sm leading-5 text-on-surface-variant">
+            A rule applies when its pattern (a regular expression, not case sensitive) matches the transaction text. Rules are checked in order and the first values found are used.
+          </Text>
+          <Field label="Name" value={name} onChangeText={setName} />
+          <Field label="Pattern" value={pattern} onChangeText={setPattern} />
+          <SwitchRow label="Skip matching transactions" value={skip} onChange={setSkip} className="rounded-lg" />
+          {!skip ? (
+            <>
+              <View className="flex-row gap-2">
+                <View className="flex-1"><Select label="Category" value={categoryId} allowClear options={parents.map(opt)} onChange={(v) => { setCategoryId(v); setSubcategoryId(null); }} /></View>
+                <View className="flex-1"><Select label="Subcategory" value={subcategoryId} allowClear disabled={categoryId == null} options={subs.map(opt)} onChange={setSubcategoryId} /></View>
+              </View>
+              {isTransfer ? (
+                <Select label="Transfer Account" value={transferAccountId} allowClear options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))} onChange={setTransferAccountId} />
+              ) : (
+                <Autocomplete label="Payee" value={payee} onChangeText={setPayee} suggestions={payees} />
+              )}
+            </>
+          ) : null}
+          <ActionButtons isEdit={typeof ruleId === 'number'} onClear={clearForm} onDelete={remove} onSubmit={save} />
+        </>
+      ) : null}
+    </Page>
   );
 }

@@ -2,13 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { toast } from 'sonner-native';
 
 import { Autocomplete } from '@/components/autocomplete';
 import { DateField } from '@/components/date-field';
 import { Select } from '@/components/select';
-import { ActionButtons, Field, PageTitle, Screen } from '@/components/ui';
+import { ActionButtons, Field, Page } from '@/components/ui';
 import { useDb } from '@/db/provider';
 import { useAction } from '@/hooks/action';
 import { useCategories, usePayees } from '@/hooks/data';
@@ -49,7 +48,7 @@ export default function EditTransactionScreen() {
     setTransferAccountId(tx.transferAccountId);
   }, [tx]);
 
-  if (!tx) return <Screen><PageTitle back>Edit Transaction</PageTitle></Screen>;
+  if (!tx) return <Page title="Edit Transaction" back />;
 
   const isTransfer = tx.categoryId === TRANSFER_ID;
   const isIncome = tx.categoryId === INCOME_ID;
@@ -106,47 +105,44 @@ export default function EditTransactionScreen() {
   };
 
   return (
-    <Screen>
-      <KeyboardAwareScrollView contentContainerClassName="gap-3 px-4 pb-6" keyboardShouldPersistTaps="handled" bottomOffset={24}>
-        <PageTitle back>Edit Transaction</PageTitle>
-        <DateField value={date || tx.date} onChange={setDate} />
-        <Field label="Amount" value={amountText} onChangeText={setAmountText} placeholder="0.00" keyboardType="decimal-pad" />
-        <Select label="Account" value={accountId} options={accountOptions} onChange={setAccountId} />
-        <View className="flex-row gap-2">
-          <View className="flex-1">
-            <Select
-              label="Category"
-              value={categoryId}
-              disabled={isIncome || isTransfer}
-              options={categoryOptions.map((c) => ({ label: c.name, value: c.id, colour: c.colour }))}
-              onChange={(v) => {
-                setCategoryId(v);
-                setSubcategoryId(null);
-              }}
-            />
-          </View>
-          <View className="flex-1">
-            <Select
-              label="Subcategory"
-              value={subcategoryId}
-              disabled={isTransfer || categoryId == null}
-              options={subs.filter((c) => !isTransfer || c.id === DEBIT_ID || c.id === CREDIT_ID).map((c) => ({ label: c.name, value: c.id, colour: c.colour }))}
-              onChange={setSubcategoryId}
-            />
-          </View>
-        </View>
-        {isTransfer ? (
+    <Page title="Edit Transaction" back keyboard>
+      <DateField value={date || tx.date} onChange={setDate} />
+      <Field label="Amount" value={amountText} onChangeText={setAmountText} placeholder="0.00" keyboardType="decimal-pad" />
+      <Select label="Account" value={accountId} options={accountOptions} onChange={setAccountId} />
+      <View className="flex-row gap-2">
+        <View className="flex-1">
           <Select
-            label="Transfer Account"
-            value={transferAccountId}
-            options={accountOptions.filter((a) => a.value !== accountId)}
-            onChange={setTransferAccountId}
+            label="Category"
+            value={categoryId}
+            disabled={isIncome || isTransfer}
+            options={categoryOptions.map((c) => ({ label: c.name, value: c.id, colour: c.colour }))}
+            onChange={(v) => {
+              setCategoryId(v);
+              setSubcategoryId(null);
+            }}
           />
-        ) : (
-          <Autocomplete label="Payee" value={payee} onChangeText={setPayee} suggestions={payees} />
-        )}
-        <ActionButtons isEdit onClear={clear} onDelete={remove} onSubmit={update} />
-      </KeyboardAwareScrollView>
-    </Screen>
+        </View>
+        <View className="flex-1">
+          <Select
+            label="Subcategory"
+            value={subcategoryId}
+            disabled={isTransfer || categoryId == null}
+            options={subs.filter((c) => !isTransfer || c.id === DEBIT_ID || c.id === CREDIT_ID).map((c) => ({ label: c.name, value: c.id, colour: c.colour }))}
+            onChange={setSubcategoryId}
+          />
+        </View>
+      </View>
+      {isTransfer ? (
+        <Select
+          label="Transfer Account"
+          value={transferAccountId}
+          options={accountOptions.filter((a) => a.value !== accountId)}
+          onChange={setTransferAccountId}
+        />
+      ) : (
+        <Autocomplete label="Payee" value={payee} onChangeText={setPayee} suggestions={payees} />
+      )}
+      <ActionButtons isEdit onClear={clear} onDelete={remove} onSubmit={update} />
+    </Page>
   );
 }

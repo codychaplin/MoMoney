@@ -2,13 +2,12 @@ import { useRouter, type Href } from 'expo-router';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { toast } from 'sonner-native';
 import { useCSSVariable } from 'uniwind';
 
 import { Autocomplete } from '@/components/autocomplete';
 import { Select } from '@/components/select';
-import { BusyOverlay, Button, CheckboxRow, Field, PageTitle, Screen, SwitchRow } from '@/components/ui';
+import { BusyOverlay, Button, CheckboxRow, Field, Page, SwitchRow } from '@/components/ui';
 import { useDb } from '@/db/provider';
 import { useAction } from '@/hooks/action';
 import { useAccounts, useCategories, usePayees } from '@/hooks/data';
@@ -143,97 +142,93 @@ export default function ImportStatementScreen() {
   const ready = !!rows && counts.NeedsVerification === 0 && importable(rows).length > 0;
 
   return (
-    <Screen>
-      <KeyboardAwareScrollView contentContainerClassName="gap-3 px-4 pb-8" keyboardShouldPersistTaps="handled" bottomOffset={24}>
-        <PageTitle back>Import Statement</PageTitle>
+    <Page title="Import Statement" back keyboard contentClassName="gap-3 px-4 pb-8" overlay={<BusyOverlay visible={busy} />}>
 
-        <Select label="Account" value={accountId} options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))} onChange={setAccountId} />
-        <Select label="Bank" value={bank} options={BANK_TYPES.map((b) => ({ label: b, value: b }))} onChange={setBank} />
-        <View className="flex-row gap-2">
-          <Button label="Upload File" className="flex-1" onPress={upload} />
-          <Button label="Update Rules" variant="secondary" className="flex-1" onPress={() => (bank ? router.push(`/settings/mapping-rules?bank=${bank}` as Href) : toast.error('Please select a bank first'))} />
-        </View>
-        <View className="flex-row gap-2">
-          <Button label="Run Again" variant="outlined" className="flex-1" disabled={!rows} onPress={rerun} />
-          <Button label="Clear" variant="error" className="flex-1" disabled={!rows} onPress={clear} />
-        </View>
+      <Select label="Account" value={accountId} options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))} onChange={setAccountId} />
+      <Select label="Bank" value={bank} options={BANK_TYPES.map((b) => ({ label: b, value: b }))} onChange={setBank} />
+      <View className="flex-row gap-2">
+        <Button label="Upload File" className="flex-1" onPress={upload} />
+        <Button label="Update Rules" variant="secondary" className="flex-1" onPress={() => (bank ? router.push(`/settings/mapping-rules?bank=${bank}` as Href) : toast.error('Please select a bank first'))} />
+      </View>
+      <View className="flex-row gap-2">
+        <Button label="Run Again" variant="outlined" className="flex-1" disabled={!rows} onPress={rerun} />
+        <Button label="Clear" variant="error" className="flex-1" disabled={!rows} onPress={clear} />
+      </View>
 
-        {rows && current ? (
-          <>
-            <View className="my-1 h-px bg-outline-variant" />
-            <View className="flex-row items-center justify-between">
-              <Pressable hitSlop={12} onPress={() => setIndex((i) => Math.max(0, i - 1))}><MaterialDesignIcons name="chevron-left" size={32} color={icon} /></Pressable>
-              <View className="items-center">
-                <Text className="text-lg font-semibold text-on-surface">CSV Record</Text>
-                <Text className="text-sm text-on-surface-variant">{Math.min(index, visible.length - 1) + 1} / {visible.length}</Text>
-              </View>
-              <Pressable hitSlop={12} onPress={next}><MaterialDesignIcons name="chevron-right" size={32} color={icon} /></Pressable>
+      {rows && current ? (
+        <>
+          <View className="my-1 h-px bg-outline-variant" />
+          <View className="flex-row items-center justify-between">
+            <Pressable hitSlop={12} onPress={() => setIndex((i) => Math.max(0, i - 1))}><MaterialDesignIcons name="chevron-left" size={32} color={icon} /></Pressable>
+            <View className="items-center">
+              <Text className="text-lg font-semibold text-on-surface">CSV Record</Text>
+              <Text className="text-sm text-on-surface-variant">{Math.min(index, visible.length - 1) + 1} / {visible.length}</Text>
             </View>
-            <Field label="Text" value={current.record.raw} editable={false} multiline />
+            <Pressable hitSlop={12} onPress={next}><MaterialDesignIcons name="chevron-right" size={32} color={icon} /></Pressable>
+          </View>
+          <Field label="Text" value={current.record.raw} editable={false} multiline />
 
-            <View className="my-1 h-px bg-outline-variant" />
-            <View className="flex-row items-center justify-between">
-              <Text className="text-lg font-semibold text-on-surface">Transaction</Text>
-              <View className={`rounded-full px-3 py-1 ${STATUS_BG[current.status]}`}>
-                <Text className="text-xs font-bold text-white">{STATUS_LABEL[current.status]}</Text>
-              </View>
+          <View className="my-1 h-px bg-outline-variant" />
+          <View className="flex-row items-center justify-between">
+            <Text className="text-lg font-semibold text-on-surface">Transaction</Text>
+            <View className={`rounded-full px-3 py-1 ${STATUS_BG[current.status]}`}>
+              <Text className="text-xs font-bold text-white">{STATUS_LABEL[current.status]}</Text>
             </View>
-            <View className="flex-row gap-2">
-              <View className="flex-[1.2]"><Field label="Date" value={current.record.date} editable={false} /></View>
-              <View className="flex-1"><Field label="Account" value={accounts.find((a) => a.id === current.accountId)?.name ?? ''} editable={false} /></View>
-              <View className="flex-1"><Field label="Amount" value={formatMoney(current.record.amountCents)} editable={false} /></View>
+          </View>
+          <View className="flex-row gap-2">
+            <View className="flex-[1.2]"><Field label="Date" value={current.record.date} editable={false} /></View>
+            <View className="flex-1"><Field label="Account" value={accounts.find((a) => a.id === current.accountId)?.name ?? ''} editable={false} /></View>
+            <View className="flex-1"><Field label="Amount" value={formatMoney(current.record.amountCents)} editable={false} /></View>
+          </View>
+          <View className="flex-row gap-2">
+            <View className="flex-1">
+              <Select label="Category" value={current.categoryId} allowClear disabled={!editable} options={parents.map(opt)} onChange={(v) => patch(current, { categoryId: v, subcategoryId: null })} />
             </View>
-            <View className="flex-row gap-2">
-              <View className="flex-1">
-                <Select label="Category" value={current.categoryId} allowClear disabled={!editable} options={parents.map(opt)} onChange={(v) => patch(current, { categoryId: v, subcategoryId: null })} />
-              </View>
-              <View className="flex-1">
-                <Select label="Subcategory" value={current.subcategoryId} allowClear disabled={!editable || current.categoryId == null} options={subs.map(opt)} onChange={(v) => patch(current, { subcategoryId: v })} />
-              </View>
+            <View className="flex-1">
+              <Select label="Subcategory" value={current.subcategoryId} allowClear disabled={!editable || current.categoryId == null} options={subs.map(opt)} onChange={(v) => patch(current, { subcategoryId: v })} />
             </View>
-            {isTransfer ? (
-              <Select
-                label="Transfer Account"
-                value={current.transferAccountId}
-                allowClear
-                disabled={!editable}
-                options={accounts.filter((a) => a.id !== current.accountId).map((a) => ({ label: a.name, value: a.id, colour: a.colour }))}
-                onChange={(v) => patch(current, { transferAccountId: v })}
-              />
-            ) : (
-              <Autocomplete label="Payee" value={current.payee} editable={editable} onChangeText={(t) => patch(current, { payee: t })} suggestions={payees} />
-            )}
-            <View className="flex-row items-center gap-2">
-              <View className="flex-1"><SwitchRow label="Manual Edit" value={manual} onChange={setManual} className="rounded-lg" /></View>
-              <Button label="Skip" variant="outlined" className="px-5" onPress={skip} />
-              <Button label="Approve" className="px-5" disabled={!editable || !canApprove(current)} onPress={approve} />
-            </View>
-          </>
-        ) : rows ? (
-          <Text className="py-4 text-center text-on-surface-variant">No records match the selected filters</Text>
-        ) : null}
+          </View>
+          {isTransfer ? (
+            <Select
+              label="Transfer Account"
+              value={current.transferAccountId}
+              allowClear
+              disabled={!editable}
+              options={accounts.filter((a) => a.id !== current.accountId).map((a) => ({ label: a.name, value: a.id, colour: a.colour }))}
+              onChange={(v) => patch(current, { transferAccountId: v })}
+            />
+          ) : (
+            <Autocomplete label="Payee" value={current.payee} editable={editable} onChangeText={(t) => patch(current, { payee: t })} suggestions={payees} />
+          )}
+          <View className="flex-row items-center gap-2">
+            <View className="flex-1"><SwitchRow label="Manual Edit" value={manual} onChange={setManual} className="rounded-lg" /></View>
+            <Button label="Skip" variant="outlined" className="px-5" onPress={skip} />
+            <Button label="Approve" className="px-5" disabled={!editable || !canApprove(current)} onPress={approve} />
+          </View>
+        </>
+      ) : rows ? (
+        <Text className="py-4 text-center text-on-surface-variant">No records match the selected filters</Text>
+      ) : null}
 
-        {rows ? (
-          <>
-            <View className="my-1 h-px bg-outline-variant" />
-            <Text className="text-lg font-semibold text-on-surface">Summary</Text>
-            {IMPORT_STATUSES.map((s) => (
-              <CheckboxRow
-                key={s}
-                label={STATUS_LABEL[s]}
-                checked={filter.has(s)}
-                onChange={(on) => toggleStatus(s, on)}
-                right={<Text className="text-base font-semibold text-on-surface">{counts[s]}</Text>}
-              />
-            ))}
-            <Text className="text-sm text-on-surface-variant">
-              {ready ? `${importable(rows).length} transactions ready for import` : counts.NeedsVerification > 0 ? `${counts.NeedsVerification} still need verification` : 'Nothing to import yet'}
-            </Text>
-            <Button label="Commit" disabled={!ready} onPress={commit} />
-          </>
-        ) : null}
-      </KeyboardAwareScrollView>
-      <BusyOverlay visible={busy} />
-    </Screen>
+      {rows ? (
+        <>
+          <View className="my-1 h-px bg-outline-variant" />
+          <Text className="text-lg font-semibold text-on-surface">Summary</Text>
+          {IMPORT_STATUSES.map((s) => (
+            <CheckboxRow
+              key={s}
+              label={STATUS_LABEL[s]}
+              checked={filter.has(s)}
+              onChange={(on) => toggleStatus(s, on)}
+              right={<Text className="text-base font-semibold text-on-surface">{counts[s]}</Text>}
+            />
+          ))}
+          <Text className="text-sm text-on-surface-variant">
+            {ready ? `${importable(rows).length} transactions ready for import` : counts.NeedsVerification > 0 ? `${counts.NeedsVerification} still need verification` : 'Nothing to import yet'}
+          </Text>
+          <Button label="Commit" disabled={!ready} onPress={commit} />
+        </>
+      ) : null}
+    </Page>
   );
 }

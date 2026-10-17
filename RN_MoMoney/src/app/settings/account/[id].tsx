@@ -1,12 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { toast } from 'sonner-native';
 
 import { ColourField } from '@/components/colour-picker';
 import { Select } from '@/components/select';
-import { ActionButtons, Field, PageTitle, Screen, SwitchRow } from '@/components/ui';
+import { ActionButtons, Field, Page, SwitchRow } from '@/components/ui';
 import { useDb } from '@/db/provider';
 import { useAction } from '@/hooks/action';
 import { ACCOUNT_TYPES } from '@/lib/constants';
@@ -59,16 +58,13 @@ export default function EditAccountScreen() {
   };
 
   return (
-    <Screen>
-      <KeyboardAwareScrollView contentContainerClassName="gap-3 px-4 pb-6" keyboardShouldPersistTaps="handled" bottomOffset={24}>
-        <PageTitle back>{isEdit ? 'Edit Account' : 'Add Account'}</PageTitle>
-        <Field label="Name" value={name} onChangeText={setName} />
-        <Select label="Type" value={type} options={ACCOUNT_TYPES.map((t) => ({ label: t, value: t }))} onChange={setType} />
-        <ColourField value={colour} onChange={setColour} />
-        <Field label="Starting Balance" value={balanceText} onChangeText={setBalanceText} placeholder="0.00" keyboardType="decimal-pad" />
-        <SwitchRow label="Enabled" value={enabled} onChange={setEnabled} className="rounded-lg" />
-        <ActionButtons isEdit={isEdit} onClear={clear} onDelete={remove} onSubmit={submit} />
-      </KeyboardAwareScrollView>
-    </Screen>
+    <Page title={isEdit ? 'Edit Account' : 'Add Account'} back keyboard>
+      <Field label="Name" value={name} onChangeText={setName} />
+      <Select label="Type" value={type} options={ACCOUNT_TYPES.map((t) => ({ label: t, value: t }))} onChange={setType} />
+      <ColourField value={colour} onChange={setColour} />
+      <Field label="Starting Balance" value={balanceText} onChangeText={setBalanceText} placeholder="0.00" keyboardType="decimal-pad" />
+      <SwitchRow label="Enabled" value={enabled} onChange={setEnabled} className="rounded-lg" />
+      <ActionButtons isEdit={isEdit} onClear={clear} onDelete={remove} onSubmit={submit} />
+    </Page>
   );
 }

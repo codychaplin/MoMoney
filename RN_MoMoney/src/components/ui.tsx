@@ -1,36 +1,89 @@
 import { clsx } from 'clsx';
-import { useRouter } from 'expo-router';
+import { useRouter, useSegments } from 'expo-router';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { ReactNode } from 'react';
-import { ActivityIndicator, Pressable, Switch, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Switch, Text, TextInput, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { twMerge } from 'tailwind-merge';
 import { useCSSVariable } from 'uniwind';
 
 export const cn = (...v: Parameters<typeof clsx>) => twMerge(clsx(v));
 
-/** Edge-to-edge page: content scrolls under the transparent status bar. */
+/** Edge-to-edge page: content scrolls under the transparent system bars. */
 export function Screen({ children }: { children: ReactNode }) {
   return <View className="flex-1 bg-background">{children}</View>;
 }
 
-/** Large title that lives inside the scroll content, padded below the status bar. */
+const BAR_HEIGHT = 56;
+
+/** First child of scroll content: keeps rows clear of the floating title bar. */
+export function TopSpacer() {
+  const { top } = useSafeAreaInsets();
+  return <View style={{ height: top + BAR_HEIGHT }} />;
+}
+
+/** Floating back button, title and actions in small pills so content stays visible under the system bars. */
 export function PageTitle({ children, right, back }: { children: string; right?: ReactNode; back?: boolean }) {
   const { top } = useSafeAreaInsets();
   const router = useRouter();
   const color = (useCSSVariable('--color-on-surface') as string) ?? '#171d19';
   return (
-    <View className="flex-row items-center justify-between gap-3 px-1 pb-2" style={{ paddingTop: top + 12 }}>
-      <View className="flex-1 flex-row items-center gap-3">
-        {back ? (
-          <Pressable hitSlop={12} onPress={() => router.back()}>
-            <MaterialDesignIcons name="arrow-left" size={28} color={color} />
-          </Pressable>
-        ) : null}
-        <Text className="flex-1 text-2xl font-semibold text-on-surface" numberOfLines={1}>{children}</Text>
+    <View pointerEvents="box-none" className="absolute inset-x-0 top-0 flex-row items-center gap-2 px-3" style={{ paddingTop: top + 8, zIndex: 10 }}>
+      {back ? (
+        <Pressable hitSlop={8} onPress={() => router.back()} className="size-10 items-center justify-center rounded-full bg-surface-high/90 active:opacity-80">
+          <MaterialDesignIcons name="arrow-left" size={24} color={color} />
+        </Pressable>
+      ) : null}
+      <View className="h-10 shrink justify-center rounded-full bg-surface-high/90 px-4">
+        <Text className="text-lg font-semibold text-on-surface" numberOfLines={1}>{children}</Text>
       </View>
-      {right}
+      <View className="flex-1" />
+      {right ? <View className="h-10 items-center justify-center rounded-full bg-surface-high/90 px-3">{right}</View> : null}
     </View>
+  );
+}
+
+/**
+ * Standard page: floating title bar over scrolling content.
+ * `scroll` (default) wraps children in a ScrollView, `keyboard` uses a keyboard-aware one, `false` renders children as-is
+ * (for virtualised lists, which must add TopSpacer themselves). `overlay` renders above the content, e.g. a Fab.
+ */
+export function Page({
+  title,
+  back,
+  right,
+  keyboard,
+  scroll = true,
+  contentClassName = 'gap-3 px-4 pb-6',
+  overlay,
+  children,
+}: {
+  title: string;
+  back?: boolean;
+  right?: ReactNode;
+  keyboard?: boolean;
+  scroll?: boolean;
+  contentClassName?: string;
+  overlay?: ReactNode;
+  children?: ReactNode;
+}) {
+  const body = (
+    <>
+      <TopSpacer />
+      {children}
+    </>
+  );
+  return (
+    <Screen>
+      <PageTitle back={back} right={right}>{title}</PageTitle>
+      {!scroll ? children : keyboard ? (
+        <KeyboardAwareScrollView contentContainerClassName={contentClassName} keyboardShouldPersistTaps="handled" bottomOffset={24}>{body}</KeyboardAwareScrollView>
+      ) : (
+        <ScrollView contentContainerClassName={contentClassName}>{body}</ScrollView>
+      )}
+      {overlay}
+    </Screen>
   );
 }
 
@@ -213,11 +266,12 @@ export function CheckboxRow({ label, checked, onChange, right }: { label: string
 
 /** Round floating add button, bottom right (btnAdd). */
 export function Fab({ onPress }: { onPress: () => void }) {
+  const { bottom } = useSafeAreaInsets();
   const color = (useCSSVariable('--color-on-secondary-container') as string) ?? '#364b3f';
   return (
     <Pressable
       onPress={onPress}
-      className="absolute bottom-5 right-5 h-14 w-14 items-center justify-center rounded-full bg-primary-container shadow-lg active:opacity-80">
+      style={{ marginBottom: bottom }} className="absolute bottom-5 right-5 h-14 w-14 items-center justify-center rounded-full bg-primary-container shadow-lg active:opacity-80">
       <MaterialDesignIcons name="plus" size={30} color={color} />
     </Pressable>
   );

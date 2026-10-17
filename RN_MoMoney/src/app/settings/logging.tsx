@@ -7,7 +7,7 @@ import { Pressable, Text, View } from 'react-native';
 import { useCSSVariable } from 'uniwind';
 
 import { Select } from '@/components/select';
-import { CheckboxRow, PageTitle, Screen } from '@/components/ui';
+import { CheckboxRow, Page, TopSpacer } from '@/components/ui';
 import { useDb } from '@/db/provider';
 import type { Log } from '@/db/schema';
 import { LOAD_COUNT } from '@/lib/constants';
@@ -40,7 +40,13 @@ export default function LoggingScreen() {
     notify('Details', `Date: ${l.timestamp}\nLevel: ${l.level}\nClass: ${l.className}${l.exceptionType ? `\nException: ${l.exceptionType}` : ''}\nMessage: ${l.message}`);
 
   return (
-    <Screen>
+    <Page title={`Logs - ${rows.length}/${total}`} back
+      scroll={false}
+      right={
+        <Pressable onPress={() => setOpen((o) => !o)} hitSlop={12}>
+          <MaterialDesignIcons name="tune" size={26} color={icon} />
+        </Pressable>
+      }>
       <FlashList
         data={rows}
         keyExtractor={(l) => String(l.id)}
@@ -49,15 +55,7 @@ export default function LoggingScreen() {
         contentContainerClassName="px-3 pb-6"
         ListHeaderComponent={
           <View>
-            <PageTitle
-              back
-              right={
-                <Pressable onPress={() => setOpen((o) => !o)} hitSlop={12}>
-                  <MaterialDesignIcons name="tune" size={26} color={icon} />
-                </Pressable>
-              }>
-              {`Logs - ${rows.length}/${total}`}
-            </PageTitle>
+            <TopSpacer />
             {open ? (
               <View className="gap-2 pb-3">
                 <CheckboxRow label="Large Tiles" checked={large} onChange={setLarge} />
@@ -88,6 +86,6 @@ export default function LoggingScreen() {
           </Pressable>
         )}
       />
-    </Screen>
+    </Page>
   );
 }

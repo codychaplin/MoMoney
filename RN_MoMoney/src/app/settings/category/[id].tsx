@@ -2,12 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Text } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { toast } from 'sonner-native';
 
 import { ColourField } from '@/components/colour-picker';
 import { Select } from '@/components/select';
-import { ActionButtons, Field, PageTitle, Screen } from '@/components/ui';
+import { ActionButtons, Field, Page } from '@/components/ui';
 import { useDb } from '@/db/provider';
 import { useAction } from '@/hooks/action';
 import { useCategories } from '@/hooks/data';
@@ -54,33 +53,30 @@ export default function EditCategoryScreen() {
   };
 
   return (
-    <Screen>
-      <KeyboardAwareScrollView contentContainerClassName="gap-3 px-4 pb-6" keyboardShouldPersistTaps="handled" bottomOffset={24}>
-        <PageTitle back>{isEdit ? 'Edit Category' : 'Add Category'}</PageTitle>
-        {locked ? <Text className="px-1 text-sm text-on-surface-variant">Only the {category?.name} category&apos;s colour can be edited.</Text> : null}
-        <Field label="Name" value={name} onChangeText={setName} editable={!locked} />
-        <Select
-          label="Parent Category"
-          value={parentId}
-          allowClear
-          disabled={locked || hasChildren}
-          options={parentOptions}
-          onChange={setParentId}
-          placeholder="None (top-level category)"
-        />
-        <ColourField value={colour} onChange={setColour} />
-        <ActionButtons
-          isEdit={isEdit}
-          deleteDisabled={locked}
-          onClear={() => {
-            setName('');
-            setParentId(null);
-            setColour('');
-          }}
-          onDelete={remove}
-          onSubmit={submit}
-        />
-      </KeyboardAwareScrollView>
-    </Screen>
+    <Page title={isEdit ? 'Edit Category' : 'Add Category'} back keyboard>
+      {locked ? <Text className="px-1 text-sm text-on-surface-variant">Only the {category?.name} category&apos;s colour can be edited.</Text> : null}
+      <Field label="Name" value={name} onChangeText={setName} editable={!locked} />
+      <Select
+        label="Parent Category"
+        value={parentId}
+        allowClear
+        disabled={locked || hasChildren}
+        options={parentOptions}
+        onChange={setParentId}
+        placeholder="None (top-level category)"
+      />
+      <ColourField value={colour} onChange={setColour} />
+      <ActionButtons
+        isEdit={isEdit}
+        deleteDisabled={locked}
+        onClear={() => {
+          setName('');
+          setParentId(null);
+          setColour('');
+        }}
+        onDelete={remove}
+        onSubmit={submit}
+      />
+    </Page>
   );
 }

@@ -10,7 +10,7 @@ import { Autocomplete } from '@/components/autocomplete';
 import { DateField } from '@/components/date-field';
 import { Select } from '@/components/select';
 import { TransactionRow } from '@/components/transaction-row';
-import { Field, PageTitle, Screen } from '@/components/ui';
+import { Field, Page, TopSpacer } from '@/components/ui';
 import { useDb } from '@/db/provider';
 import { useAccounts, useCategories, useLookups, usePayees } from '@/hooks/data';
 import { LOAD_COUNT } from '@/lib/constants';
@@ -74,7 +74,13 @@ export default function TransactionsScreen() {
   const subs = categories.filter((c) => c.parentId === categoryId);
 
   return (
-    <Screen>
+    <Page title={`Transactions - ${rows.length}/${total}`}
+      scroll={false}
+      right={
+        <Pressable onPress={() => setOpen((o) => !o)} hitSlop={12}>
+          <MaterialDesignIcons name="tune" size={26} color={icon} />
+        </Pressable>
+      }>
       <FlashList
         data={rows}
         keyExtractor={(t) => String(t.id)}
@@ -84,14 +90,7 @@ export default function TransactionsScreen() {
         contentContainerClassName="pb-3"
         ListHeaderComponent={
           <View className="px-3">
-            <PageTitle
-              right={
-                <Pressable onPress={() => setOpen((o) => !o)} hitSlop={12}>
-                  <MaterialDesignIcons name="tune" size={26} color={icon} />
-                </Pressable>
-              }>
-              {`Transactions - ${rows.length}/${total}`}
-            </PageTitle>
+            <TopSpacer />
             {open && (
               <View className="gap-2 pb-3">
                 <View className="flex-row gap-2">
@@ -140,6 +139,6 @@ export default function TransactionsScreen() {
         }
         ListEmptyComponent={<Text className="m-6 text-center text-on-surface-variant">No Transactions Found</Text>}
       />
-    </Screen>
+    </Page>
   );
 }
