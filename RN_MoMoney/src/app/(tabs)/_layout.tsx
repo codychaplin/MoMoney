@@ -1,55 +1,46 @@
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
-import { Tabs } from 'expo-router';
-import { PlatformPressable } from 'expo-router/build/react-navigation';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { useCSSVariable } from 'uniwind';
 
-type IconName = React.ComponentProps<typeof MaterialDesignIcons>['name'];
-
-const tabs: { name: string; title: string; icon: IconName }[] = [
-  { name: 'index', title: 'Home', icon: 'home-variant' },
-  { name: 'transactions', title: 'Transactions', icon: 'list-box' },
-  { name: 'add', title: 'Add Transaction', icon: 'plus-circle' },
-  { name: 'stats', title: 'Stats', icon: 'chart-pie' },
-  { name: 'settings', title: 'Settings', icon: 'cog' },
-];
+const homeIcon = MaterialDesignIcons.getImageSourceSync('home-variant', 24, 'black');
+const transactionsIcon = MaterialDesignIcons.getImageSourceSync('list-box', 24, 'black');
+const addIcon = MaterialDesignIcons.getImageSourceSync('plus-circle', 24, 'black');
+const statsIcon = MaterialDesignIcons.getImageSourceSync('chart-pie', 24, 'black');
+const settingsIcon = MaterialDesignIcons.getImageSourceSync('cog', 24, 'black');
 
 export default function TabsLayout() {
-  const insets = useSafeAreaInsets();
-  
   const background = (useCSSVariable('--color-background') as string) ?? '#f5fbf4';
+  const indicator = (useCSSVariable('--color-secondary-container') as string) ?? '#abf2ca';
   const primary = (useCSSVariable('--color-primary') as string) ?? '#246a4b';
   const muted = (useCSSVariable('--color-on-surface-variant') as string) ?? '#404943';
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarActiveTintColor: primary,
-        tabBarInactiveTintColor: muted,
-        tabBarStyle: {
-          backgroundColor: background,
-          height: 43 + insets.bottom,
-          paddingTop: 5,
-          borderTopWidth: 0,
-          elevation: 0,
-          shadowOpacity: 0
-        },
-      }}
+    <NativeTabs
+      backgroundColor={background}
+      indicatorColor={indicator}
+      iconColor={{ default: muted, selected: primary }}
+      labelVisibilityMode="unlabeled"
     >
-      {tabs.map(({ name, title, icon }) => (
-        <Tabs.Screen
-          key={name}
-          name={name}
-          options={{
-            title,
-            tabBarIcon: ({ color, size, focused }) => (
-              <MaterialDesignIcons name={icon} size={focused ? size + 3 : size - 3} color={color} />
-            ),
-          }}
-        />
-      ))}
-    </Tabs>
+      <NativeTabs.Trigger name="index">
+        <NativeTabs.Trigger.Label hidden>Home</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon src={ homeIcon } />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="transactions">
+        <NativeTabs.Trigger.Label hidden>Transactions</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon src={ transactionsIcon } />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="add">
+        <NativeTabs.Trigger.Label hidden>Add Transaction</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon src={ addIcon } />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="stats">
+        <NativeTabs.Trigger.Label hidden>Stats</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon src={ statsIcon } />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="settings">
+        <NativeTabs.Trigger.Label hidden>Settings</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon src={ settingsIcon } />
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
