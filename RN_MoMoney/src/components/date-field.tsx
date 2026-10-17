@@ -1,6 +1,6 @@
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { format, parseISO } from 'date-fns';
-import { MaterialIcons } from '@react-native-vector-icons/material-icons/static';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { Pressable, Text, View } from 'react-native';
 import { useCSSVariable } from 'uniwind';
 
@@ -25,7 +25,7 @@ export function DateField({ label = 'Date', value, onChange, disabled }: Props) 
       <Text className="text-xs text-on-surface-variant">{label}</Text>
       <View className="h-9 flex-row items-center">
         <Text className="flex-1 text-base text-on-surface">{format(parseISO(value), 'MMMM d yyyy')}</Text>
-        <MaterialIcons name="calendar-today" size={20} color={muted} />
+        <MaterialDesignIcons name="calendar-today" size={20} color={muted} />
       </View>
     </Pressable>
   );

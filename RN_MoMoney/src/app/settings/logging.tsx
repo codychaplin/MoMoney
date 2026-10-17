@@ -1,7 +1,7 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { FlashList } from '@shopify/flash-list';
 import { format } from 'date-fns';
-import { MaterialIcons } from '@react-native-vector-icons/material-icons/static';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useCSSVariable } from 'uniwind';
@@ -53,7 +53,7 @@ export default function LoggingScreen() {
               back
               right={
                 <Pressable onPress={() => setOpen((o) => !o)} hitSlop={12}>
-                  <MaterialIcons name="tune" size={26} color={icon} />
+                  <MaterialDesignIcons name="tune" size={26} color={icon} />
                 </Pressable>
               }>
               {`Logs - ${rows.length}/${total}`}

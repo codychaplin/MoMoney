@@ -1,4 +1,4 @@
-import { MaterialIcons } from '@react-native-vector-icons/material-icons/static';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useState } from 'react';
 import { FlatList, Modal, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -39,10 +39,10 @@ export function Select<T extends string | number>({ label, value, options, onCha
           </Text>
           {allowClear && selected ? (
             <Pressable hitSlop={10} onPress={() => onChange(null)}>
-              <MaterialIcons name="close" size={18} color={muted} />
+              <MaterialDesignIcons name="close" size={18} color={muted} />
             </Pressable>
           ) : (
-            <MaterialIcons name="expand-more" size={20} color={muted} />
+            <MaterialDesignIcons name="chevron-down" size={20} color={muted} />
           )}
         </View>
       </Pressable>
@@ -64,7 +64,7 @@ export function Select<T extends string | number>({ label, value, options, onCha
                   }}>
                   {item.colour ? <View className="h-5 w-5 rounded-full" style={{ backgroundColor: item.colour }} /> : null}
                   <Text className="flex-1 text-base text-on-surface">{item.label}</Text>
-                  {item.value === value ? <MaterialIcons name="check" size={20} color={primary} /> : null}
+                  {item.value === value ? <MaterialDesignIcons name="check" size={20} color={primary} /> : null}
                 </Pressable>
               )}
             />

@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 import { useRouter } from 'expo-router';
-import { MaterialIcons } from '@react-native-vector-icons/material-icons/static';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { ReactNode } from 'react';
 import { ActivityIndicator, Pressable, Switch, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -24,7 +24,7 @@ export function PageTitle({ children, right, back }: { children: string; right?:
       <View className="flex-1 flex-row items-center gap-3">
         {back ? (
           <Pressable hitSlop={12} onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={28} color={color} />
+            <MaterialDesignIcons name="arrow-left" size={28} color={color} />
           </Pressable>
         ) : null}
         <Text className="flex-1 text-2xl font-semibold text-on-surface" numberOfLines={1}>{children}</Text>
@@ -185,7 +185,7 @@ export function ListRow({
       {left}
       <Text className="flex-1 text-base text-on-surface" numberOfLines={1}>{label}</Text>
       {right}
-      {chevron ? <MaterialIcons name="chevron-right" size={20} color={color} /> : null}
+      {chevron ? <MaterialDesignIcons name="chevron-right" size={20} color={color} /> : null}
     </Pressable>
   );
 }
@@ -203,7 +203,7 @@ export function CheckboxRow({ label, checked, onChange, right }: { label: string
   return (
     <Pressable onPress={() => onChange(!checked)} className="min-h-11 flex-row items-center gap-3 px-1">
       <View className={cn('h-6 w-6 items-center justify-center rounded-md border-2', checked ? 'border-primary bg-primary' : 'border-outline')}>
-        {checked ? <MaterialIcons name="check" size={16} color="white" /> : null}
+        {checked ? <MaterialDesignIcons name="check" size={16} color="white" /> : null}
       </View>
       <Text className="flex-1 text-base text-on-surface">{label}</Text>
       {right}
@@ -218,7 +218,7 @@ export function Fab({ onPress }: { onPress: () => void }) {
     <Pressable
       onPress={onPress}
       className="absolute bottom-5 right-5 h-14 w-14 items-center justify-center rounded-full bg-primary-container shadow-lg active:opacity-80">
-      <MaterialIcons name="add" size={30} color={color} />
+      <MaterialDesignIcons name="plus" size={30} color={color} />
     </Pressable>
   );
 }

@@ -48,7 +48,8 @@
           "microphonePermission": "Allow MoMoney to record audio for transaction dictation."
         }
       ],
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,

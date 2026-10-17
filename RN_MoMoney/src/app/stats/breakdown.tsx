@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { addMonths, format, isAfter, isBefore, startOfMonth } from 'date-fns';
-import { MaterialIcons } from '@react-native-vector-icons/material-icons/static';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useCSSVariable } from 'uniwind';
@@ -49,11 +49,11 @@ export default function BreakdownScreen() {
 
         <View className="flex-row items-center justify-between">
           <Pressable disabled={!canGoBack} onPress={() => step(-1)} hitSlop={12} className={canGoBack ? '' : 'opacity-30'}>
-            <MaterialIcons name="chevron-left" size={30} color={icon} />
+            <MaterialDesignIcons name="chevron-left" size={30} color={icon} />
           </Pressable>
           <Text className="text-xl font-bold text-on-surface">{format(cursor, mode === 'Month' ? 'MMM yyyy' : 'yyyy')}</Text>
           <Pressable disabled={!canGoForward} onPress={() => step(1)} hitSlop={12} className={canGoForward ? '' : 'opacity-30'}>
-            <MaterialIcons name="chevron-right" size={30} color={icon} />
+            <MaterialDesignIcons name="chevron-right" size={30} color={icon} />
           </Pressable>
         </View>
 

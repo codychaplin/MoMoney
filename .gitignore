@@ -365,3 +365,5 @@ FodyWeavers.xsd
 /MoMoney.Core/Secret.cs
 *.keystore
 *.lscache
+
+.expo

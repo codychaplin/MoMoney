@@ -1,4 +1,4 @@
-import { MaterialIcons } from '@react-native-vector-icons/material-icons/static';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useRouter, type Href } from 'expo-router';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useCSSVariable } from 'uniwind';
@@ -6,10 +6,10 @@ import { useCSSVariable } from 'uniwind';
 import { PageTitle, Screen } from '@/components/ui';
 
 const tiles = [
-  { title: 'Accounts', icon: 'account-balance', href: '/stats/account-summary' },
-  { title: 'Breakdown', icon: 'pie-chart', href: '/stats/breakdown' },
-  { title: 'Stocks', icon: 'candlestick-chart', href: '/stats/stocks' },
-  { title: 'Insights', icon: 'bar-chart', href: '/stats/insights' },
+  { title: 'Accounts', icon: 'bank', href: '/stats/account-summary' },
+  { title: 'Breakdown', icon: 'chart-pie', href: '/stats/breakdown' },
+  { title: 'Stocks', icon: 'chart-line', href: '/stats/stocks' },
+  { title: 'Insights', icon: 'chart-bar', href: '/stats/insights' },
 ] as const;
 
 export default function StatsScreen() {
@@ -24,7 +24,7 @@ export default function StatsScreen() {
         {tiles.map(({ title, icon, href }) => {
           return (
             <Pressable key={title} onPress={() => router.push(href as Href)} className="h-32 w-[48%] flex-grow items-center justify-center gap-2 rounded-xl bg-surface-high active:opacity-80">
-              <MaterialIcons name={icon} size={56} color={color} />
+              <MaterialDesignIcons name={icon} size={56} color={color} />
               <Text className="text-lg font-bold text-on-surface">{title}</Text>
             </Pressable>
           );

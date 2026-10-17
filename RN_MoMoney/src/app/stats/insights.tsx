@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { MaterialIcons } from '@react-native-vector-icons/material-icons/static';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
@@ -49,12 +49,12 @@ export default function InsightsScreen() {
         <Text className="text-lg font-semibold text-on-surface">Totals</Text>
         <View className="flex-row gap-3">
           <Card className="flex-1 gap-1 p-4">
-            <MaterialIcons name="trending-up" size={28} color="#42ba96" />
+            <MaterialDesignIcons name="trending-up" size={28} color="#42ba96" />
             <Text className="text-sm text-on-surface-variant">Income</Text>
             <Text className="text-lg font-bold text-income">{money(data?.totalIncomeCents ?? 0)}</Text>
           </Card>
           <Card className="flex-1 gap-1 p-4">
-            <MaterialIcons name="trending-down" size={28} color="#df4759" />
+            <MaterialDesignIcons name="trending-down" size={28} color="#df4759" />
             <Text className="text-sm text-on-surface-variant">Expenses</Text>
             <Text className="text-lg font-bold text-expense">{money(data?.totalExpenseCents ?? 0)}</Text>
           </Card>

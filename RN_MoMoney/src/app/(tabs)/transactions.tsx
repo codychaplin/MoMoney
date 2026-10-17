@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { FlashList } from '@shopify/flash-list';
-import { MaterialIcons } from '@react-native-vector-icons/material-icons/static';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { toast } from 'sonner-native';
@@ -87,7 +87,7 @@ export default function TransactionsScreen() {
             <PageTitle
               right={
                 <Pressable onPress={() => setOpen((o) => !o)} hitSlop={12}>
-                  <MaterialIcons name="tune" size={26} color={icon} />
+                  <MaterialDesignIcons name="tune" size={26} color={icon} />
                 </Pressable>
               }>
               {`Transactions - ${rows.length}/${total}`}
