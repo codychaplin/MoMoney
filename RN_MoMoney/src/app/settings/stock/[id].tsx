@@ -3,8 +3,9 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner-native';
 
-import { Select } from '@/components/select';
-import { ActionButtons, Field, Page } from '@/components/ui';
+import { ActionButtons, Page } from '@/components/ui';
+import { TextField } from '@/components/inputs/text-field';
+import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
 import { useAction } from '@/hooks/action';
 import { STOCK_MARKETS } from '@/lib/constants';
@@ -50,10 +51,10 @@ export default function EditStockScreen() {
 
   return (
     <Page title={isEdit ? 'Edit Stock' : 'Add Stock'} back keyboard>
-      <Field label="Symbol" value={symbol} onChangeText={(t) => setSymbol(t.toUpperCase())} />
-      <Select label="Market" value={market} options={STOCK_MARKETS.map((m) => ({ label: m, value: m }))} onChange={setMarket} />
-      <Field label="Quantity" value={quantity} onChangeText={setQuantity} keyboardType="decimal-pad" />
-      <Field label="Cost per share" value={cost} onChangeText={setCost} keyboardType="decimal-pad" />
+      <TextField label="Symbol" value={symbol} onChangeText={(t) => setSymbol(t.toUpperCase())} />
+      <PickerField label="Market" value={market} options={STOCK_MARKETS.map((m) => ({ label: m, value: m }))} onChange={setMarket} />
+      <TextField label="Quantity" value={quantity} onChangeText={setQuantity} keyboardType="decimal-pad" />
+      <TextField label="Cost per share" value={cost} onChangeText={setCost} keyboardType="decimal-pad" />
       <ActionButtons
         isEdit={isEdit}
         onClear={() => {

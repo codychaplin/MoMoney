@@ -5,8 +5,9 @@ import { Text } from 'react-native';
 import { toast } from 'sonner-native';
 
 import { ColourField } from '@/components/colour-picker';
-import { Select } from '@/components/select';
-import { ActionButtons, Field, Page } from '@/components/ui';
+import { ActionButtons, Page } from '@/components/ui';
+import { TextField } from '@/components/inputs/text-field';
+import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
 import { useAction } from '@/hooks/action';
 import { useCategories } from '@/hooks/data';
@@ -55,15 +56,14 @@ export default function EditCategoryScreen() {
   return (
     <Page title={isEdit ? 'Edit Category' : 'Add Category'} back keyboard>
       {locked ? <Text className="px-1 text-sm text-on-surface-variant">Only the {category?.name} category&apos;s colour can be edited.</Text> : null}
-      <Field label="Name" value={name} onChangeText={setName} editable={!locked} />
-      <Select
+      <TextField label="Name" value={name} onChangeText={setName} editable={!locked} />
+      <PickerField
         label="Parent Category"
         value={parentId}
         allowClear
         disabled={locked || hasChildren}
         options={parentOptions}
         onChange={setParentId}
-        placeholder="None (top-level category)"
       />
       <ColourField value={colour} onChange={setColour} />
       <ActionButtons

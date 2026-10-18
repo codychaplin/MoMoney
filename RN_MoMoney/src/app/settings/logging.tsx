@@ -6,8 +6,8 @@ import { useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useCSSVariable } from 'uniwind';
 
-import { Select } from '@/components/select';
 import { CheckboxRow, Page, TopSpacer } from '@/components/ui';
+import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
 import type { Log } from '@/db/schema';
 import { LOAD_COUNT } from '@/lib/constants';
@@ -59,9 +59,9 @@ export default function LoggingScreen() {
             {open ? (
               <View className="gap-2 pb-3">
                 <CheckboxRow label="Large Tiles" checked={large} onChange={setLarge} />
-                <Select label="Log Level" value={level} allowClear options={LOG_LEVELS.map((l) => ({ label: l, value: l }))} onChange={(v) => setLevel(v as LogLevel | null)} />
-                <Select label="Class" value={className} allowClear options={(options?.classes ?? []).map((c) => ({ label: c, value: c }))} onChange={setClassName} />
-                <Select
+                <PickerField label="Log Level" value={level} allowClear options={LOG_LEVELS.map((l) => ({ label: l, value: l }))} onChange={(v) => setLevel(v as LogLevel | null)} />
+                <PickerField label="Class" value={className} allowClear options={(options?.classes ?? []).map((c) => ({ label: c, value: c }))} onChange={setClassName} />
+                <PickerField
                   label="Exception"
                   value={exceptionType}
                   allowClear

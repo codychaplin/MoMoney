@@ -5,9 +5,10 @@ import { View } from 'react-native';
 import { toast } from 'sonner-native';
 
 import { Autocomplete } from '@/components/autocomplete';
-import { DateField } from '@/components/date-field';
-import { Select } from '@/components/select';
-import { ActionButtons, Field, Page } from '@/components/ui';
+import { DateField } from '@/components/inputs/date-field';
+import { ActionButtons, Page } from '@/components/ui';
+import { TextField } from '@/components/inputs/text-field';
+import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
 import { useAction } from '@/hooks/action';
 import { useCategories, usePayees } from '@/hooks/data';
@@ -107,11 +108,11 @@ export default function EditTransactionScreen() {
   return (
     <Page title="Edit Transaction" back keyboard>
       <DateField value={date || tx.date} onChange={setDate} />
-      <Field label="Amount" value={amountText} onChangeText={setAmountText} placeholder="0.00" keyboardType="decimal-pad" />
-      <Select label="Account" value={accountId} options={accountOptions} onChange={setAccountId} />
+      <TextField label="Amount" value={amountText} onChangeText={setAmountText} placeholder="0.00" keyboardType="decimal-pad" />
+      <PickerField label="Account" value={accountId} options={accountOptions} onChange={setAccountId} />
       <View className="flex-row gap-2">
         <View className="flex-1">
-          <Select
+          <PickerField
             label="Category"
             value={categoryId}
             disabled={isIncome || isTransfer}
@@ -123,7 +124,7 @@ export default function EditTransactionScreen() {
           />
         </View>
         <View className="flex-1">
-          <Select
+          <PickerField
             label="Subcategory"
             value={subcategoryId}
             disabled={isTransfer || categoryId == null}
@@ -133,7 +134,7 @@ export default function EditTransactionScreen() {
         </View>
       </View>
       {isTransfer ? (
-        <Select
+        <PickerField
           label="Transfer Account"
           value={transferAccountId}
           options={accountOptions.filter((a) => a.value !== accountId)}

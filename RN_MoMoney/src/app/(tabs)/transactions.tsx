@@ -7,10 +7,11 @@ import { toast } from 'sonner-native';
 import { useCSSVariable } from 'uniwind';
 
 import { Autocomplete } from '@/components/autocomplete';
-import { DateField } from '@/components/date-field';
-import { Select } from '@/components/select';
+import { DateField } from '@/components/inputs/date-field';
 import { TransactionRow } from '@/components/transaction-row';
-import { Field, Page, TopSpacer } from '@/components/ui';
+import { Page, TopSpacer } from '@/components/ui';
+import { TextField } from '@/components/inputs/text-field';
+import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
 import { useAccounts, useCategories, useLookups, usePayees } from '@/hooks/data';
 import { LOAD_COUNT } from '@/lib/constants';
@@ -97,7 +98,7 @@ export default function TransactionsScreen() {
                   <View className="flex-1"><DateField label="From" value={from} onChange={setFrom} /></View>
                   <View className="flex-1"><DateField label="To" value={to} onChange={setTo} /></View>
                 </View>
-                <Select
+                <PickerField
                   label="Account"
                   value={accountId}
                   allowClear
@@ -105,12 +106,12 @@ export default function TransactionsScreen() {
                   onChange={setAccountId}
                 />
                 <View className="flex-row gap-2">
-                  <View className="flex-1"><Field label="Min" placeholder="0.00" keyboardType="decimal-pad" value={minText} onChangeText={setMinText} /></View>
-                  <View className="flex-1"><Field label="Max" placeholder="0.00" keyboardType="decimal-pad" value={maxText} onChangeText={setMaxText} /></View>
+                  <View className="flex-1"><TextField label="Min" placeholder="0.00" keyboardType="decimal-pad" value={minText} onChangeText={setMinText} /></View>
+                  <View className="flex-1"><TextField label="Max" placeholder="0.00" keyboardType="decimal-pad" value={maxText} onChangeText={setMaxText} /></View>
                 </View>
                 <View className="flex-row gap-2">
                   <View className="flex-1">
-                    <Select
+                    <PickerField
                       label="Category"
                       value={categoryId}
                       allowClear
@@ -122,7 +123,7 @@ export default function TransactionsScreen() {
                     />
                   </View>
                   <View className="flex-1">
-                    <Select
+                    <PickerField
                       label="Subcategory"
                       value={subcategoryId}
                       allowClear

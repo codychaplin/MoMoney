@@ -2,7 +2,7 @@ import { clsx } from 'clsx';
 import { useRouter, useSegments } from 'expo-router';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { ReactNode } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Switch, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Switch, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { twMerge } from 'tailwind-merge';
@@ -123,66 +123,6 @@ export function Button({
     <Pressable onPress={onPress} disabled={disabled} className={cn('h-12 items-center justify-center rounded-full active:opacity-80', bg, disabled && 'opacity-40', className)}>
       <Text className={cn('text-base font-medium', fg)}>{label}</Text>
     </Pressable>
-  );
-}
-
-/** Pill selector, like SfSegmentedControl. */
-export function Segmented<T extends string>({
-  options,
-  value,
-  onChange,
-  small,
-}: {
-  options: readonly T[];
-  value: T | null;
-  onChange: (v: T) => void;
-  small?: boolean;
-}) {
-  return (
-    <View className="flex-row rounded-full bg-secondary-container p-1">
-      {options.map((o) => {
-        const on = o === value;
-        return (
-          <Pressable key={o} onPress={() => onChange(o)} className={cn('flex-1 items-center rounded-full', small ? 'py-1' : 'py-2.5', on && 'bg-secondary')}>
-            <Text className={cn(small ? 'text-xs' : 'text-sm', on ? 'font-semibold text-on-secondary' : 'text-on-surface')}>{o}</Text>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-}
-
-/** Outlined text field with floating-style label. */
-export function Field({ label, value, placeholder, onChangeText, keyboardType, trailing, editable = true, multiline, onBlur }: {
-  label: string;
-  value?: string;
-  placeholder?: string;
-  onChangeText?: (t: string) => void;
-  keyboardType?: 'default' | 'decimal-pad' | 'numeric';
-  trailing?: ReactNode;
-  editable?: boolean;
-  multiline?: boolean;
-  onBlur?: () => void;
-}) {
-  return (
-    <View className={cn('rounded-lg border border-outline-variant bg-background px-3 pb-1 pt-2', !editable && 'opacity-60')}>
-      <Text className="text-xs text-on-surface-variant">{label}</Text>
-      <View className="flex-row items-center">
-        <TextInput
-          value={value}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          keyboardType={keyboardType}
-          editable={editable}
-          multiline={multiline}
-          onBlur={onBlur}
-          className={cn('flex-1 p-0 text-base text-on-surface', multiline ? 'min-h-24 py-1' : 'h-9')}
-          textAlignVertical={multiline ? 'top' : 'center'}
-          placeholderTextColorClassName="accent-outline"
-        />
-        {trailing}
-      </View>
-    </View>
   );
 }
 

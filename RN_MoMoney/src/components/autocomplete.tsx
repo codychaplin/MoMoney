@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import { Field } from '@/components/ui';
+import { TextField } from '@/components/inputs/text-field';
 
 type Props = {
   label: string;
@@ -20,7 +20,7 @@ export function Autocomplete({ label, value, onChangeText, suggestions, placehol
 
   return (
     <View>
-      <Field
+      <TextField
         label={label}
         value={value}
         placeholder={placeholder}

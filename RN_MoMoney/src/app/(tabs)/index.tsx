@@ -4,7 +4,8 @@ import { Text, View } from 'react-native';
 
 import { BalanceChart } from '@/components/balance-chart';
 import { TransactionRow } from '@/components/transaction-row';
-import { Card, Page, SectionTitle, Segmented } from '@/components/ui';
+import { Card, Page, SectionTitle } from '@/components/ui';
+import { SegmentedField } from '@/components/inputs/segmented-field';
 import { useHomeData, useLookups } from '@/hooks/data';
 import { DATE_RANGES, type DateRange } from '@/lib/dates';
 import { useMoney } from '@/store/settings';
@@ -22,7 +23,7 @@ export default function HomeScreen() {
       <Card className="h-56 p-2">
         {data ? <BalanceChart data={data.series} bucket={data.bucket} showValues={show} /> : null}
       </Card>
-      <Segmented options={DATE_RANGES} value={range} onChange={setRange} small />
+      <SegmentedField options={DATE_RANGES} value={range} onChange={setRange} pill small />
 
       <SectionTitle action="View All" onAction={() => router.navigate('/stats' as Href)}>Statistics</SectionTitle>
       <Card className="p-4">

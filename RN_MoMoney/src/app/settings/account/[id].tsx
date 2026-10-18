@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner-native';
 
 import { ColourField } from '@/components/colour-picker';
-import { Select } from '@/components/select';
-import { ActionButtons, Field, Page, SwitchRow } from '@/components/ui';
+import { ActionButtons, Page, SwitchRow } from '@/components/ui';
+import { TextField } from '@/components/inputs/text-field';
+import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
 import { useAction } from '@/hooks/action';
 import { ACCOUNT_TYPES } from '@/lib/constants';
@@ -59,10 +60,10 @@ export default function EditAccountScreen() {
 
   return (
     <Page title={isEdit ? 'Edit Account' : 'Add Account'} back keyboard>
-      <Field label="Name" value={name} onChangeText={setName} />
-      <Select label="Type" value={type} options={ACCOUNT_TYPES.map((t) => ({ label: t, value: t }))} onChange={setType} />
+      <TextField label="Name" value={name} onChangeText={setName} />
+      <PickerField label="Type" value={type} options={ACCOUNT_TYPES.map((t) => ({ label: t, value: t }))} onChange={setType} />
       <ColourField value={colour} onChange={setColour} />
-      <Field label="Starting Balance" value={balanceText} onChangeText={setBalanceText} placeholder="0.00" keyboardType="decimal-pad" />
+      <TextField label="Starting Balance" value={balanceText} onChangeText={setBalanceText} placeholder="0.00" keyboardType="decimal-pad" />
       <SwitchRow label="Enabled" value={enabled} onChange={setEnabled} className="rounded-lg" />
       <ActionButtons isEdit={isEdit} onClear={clear} onDelete={remove} onSubmit={submit} />
     </Page>

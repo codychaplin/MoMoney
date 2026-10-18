@@ -6,8 +6,9 @@ import { toast } from 'sonner-native';
 import { useCSSVariable } from 'uniwind';
 
 import { Autocomplete } from '@/components/autocomplete';
-import { Select } from '@/components/select';
-import { BusyOverlay, Button, CheckboxRow, Field, Page, SwitchRow } from '@/components/ui';
+import { BusyOverlay, Button, CheckboxRow, Page, SwitchRow } from '@/components/ui';
+import { TextField } from '@/components/inputs/text-field';
+import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
 import { useAction } from '@/hooks/action';
 import { useAccounts, useCategories, usePayees } from '@/hooks/data';
@@ -144,8 +145,8 @@ export default function ImportStatementScreen() {
   return (
     <Page title="Import Statement" back keyboard contentClassName="gap-3 px-4 pb-8" overlay={<BusyOverlay visible={busy} />}>
 
-      <Select label="Account" value={accountId} options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))} onChange={setAccountId} />
-      <Select label="Bank" value={bank} options={BANK_TYPES.map((b) => ({ label: b, value: b }))} onChange={setBank} />
+      <PickerField label="Account" value={accountId} options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))} onChange={setAccountId} />
+      <PickerField label="Bank" value={bank} options={BANK_TYPES.map((b) => ({ label: b, value: b }))} onChange={setBank} />
       <View className="flex-row gap-2">
         <Button label="Upload File" className="flex-1" onPress={upload} />
         <Button label="Update Rules" variant="secondary" className="flex-1" onPress={() => (bank ? router.push(`/settings/mapping-rules?bank=${bank}` as Href) : toast.error('Please select a bank first'))} />
@@ -166,7 +167,7 @@ export default function ImportStatementScreen() {
             </View>
             <Pressable hitSlop={12} onPress={next}><MaterialDesignIcons name="chevron-right" size={32} color={icon} /></Pressable>
           </View>
-          <Field label="Text" value={current.record.raw} editable={false} multiline />
+          <TextField label="Text" value={current.record.raw} editable={false} multiline />
 
           <View className="my-1 h-px bg-outline-variant" />
           <View className="flex-row items-center justify-between">
@@ -176,20 +177,20 @@ export default function ImportStatementScreen() {
             </View>
           </View>
           <View className="flex-row gap-2">
-            <View className="flex-[1.2]"><Field label="Date" value={current.record.date} editable={false} /></View>
-            <View className="flex-1"><Field label="Account" value={accounts.find((a) => a.id === current.accountId)?.name ?? ''} editable={false} /></View>
-            <View className="flex-1"><Field label="Amount" value={formatMoney(current.record.amountCents)} editable={false} /></View>
+            <View className="flex-[1.2]"><TextField label="Date" value={current.record.date} editable={false} /></View>
+            <View className="flex-1"><TextField label="Account" value={accounts.find((a) => a.id === current.accountId)?.name ?? ''} editable={false} /></View>
+            <View className="flex-1"><TextField label="Amount" value={formatMoney(current.record.amountCents)} editable={false} /></View>
           </View>
           <View className="flex-row gap-2">
             <View className="flex-1">
-              <Select label="Category" value={current.categoryId} allowClear disabled={!editable} options={parents.map(opt)} onChange={(v) => patch(current, { categoryId: v, subcategoryId: null })} />
+              <PickerField label="Category" value={current.categoryId} allowClear disabled={!editable} options={parents.map(opt)} onChange={(v) => patch(current, { categoryId: v, subcategoryId: null })} />
             </View>
             <View className="flex-1">
-              <Select label="Subcategory" value={current.subcategoryId} allowClear disabled={!editable || current.categoryId == null} options={subs.map(opt)} onChange={(v) => patch(current, { subcategoryId: v })} />
+              <PickerField label="Subcategory" value={current.subcategoryId} allowClear disabled={!editable || current.categoryId == null} options={subs.map(opt)} onChange={(v) => patch(current, { subcategoryId: v })} />
             </View>
           </View>
           {isTransfer ? (
-            <Select
+            <PickerField
               label="Transfer Account"
               value={current.transferAccountId}
               allowClear

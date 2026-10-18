@@ -3,8 +3,8 @@ import MaterialDesignIcons from '@react-native-vector-icons/material-design-icon
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { Select } from '@/components/select';
 import { Card, Page } from '@/components/ui';
+import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
 import { MONTHS } from '@/lib/constants';
 import { getInsights, getInsightYears } from '@/services/stats';
@@ -22,7 +22,7 @@ export default function InsightsScreen() {
 
   return (
     <Page title="Insights" back contentClassName="gap-3 px-3 pb-6">
-      <Select label="Select a Year" value={year} options={years.map((y) => ({ label: String(y), value: y }))} onChange={(v) => v != null && setYear(v)} />
+      <PickerField label="Select a Year" value={year} options={years.map((y) => ({ label: String(y), value: y }))} onChange={(v) => v != null && setYear(v)} />
 
       <Text className="text-lg font-semibold text-on-surface">Income &amp; Expenses</Text>
       <Card className="gap-2 p-3">

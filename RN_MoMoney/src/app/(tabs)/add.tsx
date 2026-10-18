@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { View } from 'react-native';
 import { toast } from 'sonner-native';
-
 import { Autocomplete } from '@/components/autocomplete';
-import { DateField } from '@/components/date-field';
-import { Select } from '@/components/select';
-import { Button, Field, Page, Segmented } from '@/components/ui';
+import { DateField } from '@/components/inputs/date-field';
+import { Button, Page } from '@/components/ui';
+import { SegmentedField } from '@/components/inputs/segmented-field';
+import { TextField } from '@/components/inputs/text-field';
+import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
 import { useActiveAccounts, useCategories, usePayees, useRefresh } from '@/hooks/data';
 import { CREDIT_ID, DEBIT_ID, EXPENSE_THRESHOLD, INCOME_ID, TRANSFER_ID } from '@/lib/constants';
@@ -15,6 +16,7 @@ import { notify } from '@/lib/confirm';
 import { parseCents } from '@/lib/money';
 import { createLogger } from '@/services/logger';
 import { addTransaction } from '@/services/transactions';
+import { Column, Host, TextInput, TextInputRef } from '@expo/ui';
 
 const KINDS = ['Income', 'Expense', 'Transfer'] as const;
 type Kind = (typeof KINDS)[number];
@@ -114,10 +116,10 @@ export default function AddScreen() {
 
   return (
     <Page title="Add Transaction" keyboard>
-      <Segmented options={KINDS} value={kind} onChange={changeKind} />
+      <SegmentedField options={KINDS} value={kind} onChange={changeKind} pill />
       <DateField value={date} onChange={setDate} />
-      <Field label="Amount" value={amountText} onChangeText={setAmountText} placeholder="0.00" keyboardType="decimal-pad" />
-      <Select
+      <TextField label="Amount" value={amountText} onChangeText={setAmountText} placeholder="0.00" keyboardType="decimal-pad" />
+      <PickerField
         label="Account"
         value={accountId}
         options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))}
@@ -125,7 +127,7 @@ export default function AddScreen() {
       />
       <View className="flex-row gap-2">
         <View className="flex-1">
-          <Select
+          <PickerField
             label="Category"
             value={categoryId}
             disabled={kind !== 'Expense'}
@@ -137,7 +139,7 @@ export default function AddScreen() {
           />
         </View>
         <View className="flex-1">
-          <Select
+          <PickerField
             label="Subcategory"
             value={kind === 'Transfer' ? DEBIT_ID : subcategoryId}
             disabled={kind === 'Transfer' || categoryId == null}
@@ -147,7 +149,7 @@ export default function AddScreen() {
         </View>
       </View>
       {kind === 'Transfer' ? (
-        <Select
+        <PickerField
           label="Transfer Account"
           value={transferAccountId}
           options={accounts.filter((a) => a.id !== accountId).map((a) => ({ label: a.name, value: a.id, colour: a.colour }))}

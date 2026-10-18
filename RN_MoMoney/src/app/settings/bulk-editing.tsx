@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { Autocomplete } from '@/components/autocomplete';
-import { Select } from '@/components/select';
-import { Button, Card, Field, Page } from '@/components/ui';
+import { Button, Card, Page } from '@/components/ui';
+import { TextField } from '@/components/inputs/text-field';
+import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
 import type { Transaction } from '@/db/schema';
 import { useAction } from '@/hooks/action';
@@ -25,13 +26,13 @@ function SidePanel({ title, value, onChange, payees }: { title: string; value: S
   return (
     <View className="gap-2">
       <Text className="text-xl font-bold text-on-surface">{title}</Text>
-      <Select label="Account" value={value.accountId} allowClear options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))} onChange={(v) => onChange({ ...value, accountId: v })} />
-      <Select label="Category" value={value.categoryId} allowClear options={parents.map(opt)} onChange={(v) => onChange({ ...value, categoryId: v, subcategoryId: null })} />
-      <Select label="Subcategory" value={value.subcategoryId} allowClear disabled={value.categoryId == null} options={subs.map(opt)} onChange={(v) => onChange({ ...value, subcategoryId: v })} />
+      <PickerField label="Account" value={value.accountId} allowClear options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))} onChange={(v) => onChange({ ...value, accountId: v })} />
+      <PickerField label="Category" value={value.categoryId} allowClear options={parents.map(opt)} onChange={(v) => onChange({ ...value, categoryId: v, subcategoryId: null })} />
+      <PickerField label="Subcategory" value={value.subcategoryId} allowClear disabled={value.categoryId == null} options={subs.map(opt)} onChange={(v) => onChange({ ...value, subcategoryId: v })} />
       {payees ? (
         <Autocomplete label="Payee" value={value.payee} onChangeText={(t) => onChange({ ...value, payee: t })} suggestions={payees} />
       ) : (
-        <Field label="Payee" value={value.payee} onChangeText={(t) => onChange({ ...value, payee: t })} />
+        <TextField label="Payee" value={value.payee} onChangeText={(t) => onChange({ ...value, payee: t })} />
       )}
     </View>
   );

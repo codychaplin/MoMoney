@@ -6,7 +6,8 @@ import { Pressable, Text, View } from 'react-native';
 import { useCSSVariable } from 'uniwind';
 
 import { Donut } from '@/components/donut';
-import { Card, Page, Segmented } from '@/components/ui';
+import { Card, Page } from '@/components/ui';
+import { SegmentedField } from '@/components/inputs/segmented-field';
 import { useDb } from '@/db/provider';
 import { formatPercent } from '@/lib/money';
 import { getBreakdown, getFirstDate, type Slice } from '@/services/stats';
@@ -54,7 +55,7 @@ export default function BreakdownScreen() {
         </Pressable>
       </View>
 
-      <Segmented
+      <SegmentedField
         options={TABS}
         value={tab}
         onChange={setTab}
