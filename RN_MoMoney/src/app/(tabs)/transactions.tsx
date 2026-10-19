@@ -2,7 +2,8 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { FlashList } from '@shopify/flash-list';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { BottomSheet, RNHostView } from '@expo/ui';
+import { Pressable, ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import { toast } from 'sonner-native';
 import { useCSSVariable } from 'uniwind';
 
@@ -37,6 +38,8 @@ export default function TransactionsScreen() {
   const { data: payees = [] } = usePayees();
   const icon = (useCSSVariable('--color-on-surface') as string) ?? '#171d19';
 
+  const { height } = useWindowDimensions();
+  const sheetBg = (useCSSVariable('--color-surface') as string) ?? '#ffffff';
   const [open, setOpen] = useState(false);
   const [from, setFrom] = useState(`${new Date().getFullYear()}-01-01`);
   const [to, setTo] = useState(todayISO());
@@ -71,6 +74,9 @@ export default function TransactionsScreen() {
   });
   const rows = useMemo(() => data?.pages.flat() ?? [], [data]);
 
+  const hasFilters =
+    from !== `${new Date().getFullYear()}-01-01` || to !== todayISO() || accountId != null || categoryId != null || subcategoryId != null || minText !== '' || maxText !== '' || payeeText !== '';
+
   const parents = categories.filter((c) => c.parentId == null);
   const subs = categories.filter((c) => c.parentId === categoryId);
 
@@ -80,6 +86,7 @@ export default function TransactionsScreen() {
       right={
         <Pressable onPress={() => setOpen((o) => !o)} hitSlop={12}>
           <MaterialDesignIcons name="tune" size={26} color={icon} />
+          {hasFilters && <View className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-primary" />}
         </Pressable>
       }>
       <FlashList
@@ -92,8 +99,14 @@ export default function TransactionsScreen() {
         ListHeaderComponent={
           <View className="px-3">
             <TopSpacer />
-            {open && (
-              <View className="gap-2 pb-3">
+          </View>
+        }
+        ListEmptyComponent={<Text className="m-6 text-center text-on-surface-variant">No Transactions Found</Text>}
+      />
+      <BottomSheet isPresented={open} onDismiss={() => setOpen(false)} containerColor={sheetBg}>
+        <RNHostView matchContents={{ vertical: true }}>
+          <ScrollView keyboardShouldPersistTaps="handled" style={{ maxHeight: height * 0.7 }}>
+            <View className="gap-2 px-3 pb-6 pt-2">
                 <View className="flex-row gap-2">
                   <View className="flex-1"><DateField label="From" value={from} onChange={setFrom} /></View>
                   <View className="flex-1"><DateField label="To" value={to} onChange={setTo} /></View>
@@ -135,11 +148,9 @@ export default function TransactionsScreen() {
                 </View>
                 <Autocomplete label="Payee" value={payeeText} onChangeText={setPayeeText} suggestions={payees} />
               </View>
-            )}
-          </View>
-        }
-        ListEmptyComponent={<Text className="m-6 text-center text-on-surface-variant">No Transactions Found</Text>}
-      />
+          </ScrollView>
+        </RNHostView>
+      </BottomSheet>
     </Page>
   );
 }

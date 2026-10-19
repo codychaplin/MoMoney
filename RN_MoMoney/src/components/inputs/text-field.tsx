@@ -53,5 +53,3 @@ export function TextField({ label, value, placeholder, onChangeText, keyboardTyp
     </View>
   );
 }
-
-const NONE = '__none__';

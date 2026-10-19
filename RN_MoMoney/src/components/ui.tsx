@@ -55,7 +55,7 @@ export function Page({
   right,
   keyboard,
   scroll = true,
-  contentClassName = 'gap-3 px-4 pb-6',
+  contentClassName,
   overlay,
   children,
 }: {
@@ -68,6 +68,7 @@ export function Page({
   overlay?: ReactNode;
   children?: ReactNode;
 }) {
+  const contentClasses = cn('gap-3 px-4 pb-6', contentClassName);
   const body = (
     <>
       <TopSpacer />
@@ -78,9 +79,9 @@ export function Page({
     <Screen>
       <PageTitle back={back} right={right}>{title}</PageTitle>
       {!scroll ? children : keyboard ? (
-        <KeyboardAwareScrollView contentContainerClassName={contentClassName} keyboardShouldPersistTaps="handled" bottomOffset={24}>{body}</KeyboardAwareScrollView>
+        <KeyboardAwareScrollView contentContainerClassName={contentClasses} keyboardShouldPersistTaps="handled" bottomOffset={24}>{body}</KeyboardAwareScrollView>
       ) : (
-        <ScrollView contentContainerClassName={contentClassName}>{body}</ScrollView>
+        <ScrollView contentContainerClassName={contentClasses}>{body}</ScrollView>
       )}
       {overlay}
     </Screen>

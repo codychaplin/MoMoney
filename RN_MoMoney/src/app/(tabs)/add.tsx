@@ -115,7 +115,7 @@ export default function AddScreen() {
   };
 
   return (
-    <Page title="Add Transaction" keyboard>
+    <Page title="Add Transaction" keyboard contentClassName="gap-1">
       <SegmentedField options={KINDS} value={kind} onChange={changeKind} pill />
       <DateField value={date} onChange={setDate} />
       <TextField label="Amount" value={amountText} onChangeText={setAmountText} placeholder="0.00" keyboardType="decimal-pad" />

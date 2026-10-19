@@ -20,7 +20,7 @@ export function DateField({ label = 'Date', value, onChange, disabled }: Props) 
     <View>
       <Pressable disabled={disabled} onPress={() => setOpen(true)}>
         <View pointerEvents="none">
-          <Host>
+          <Host matchContents={{ vertical: true }} style={{ width: '100%' }}>
             <OutlinedTextField value={text} readOnly singleLine enabled={!disabled} modifiers={[fillMaxWidth()]}>
               <OutlinedTextField.Label>
                 <ComposeText>{label}</ComposeText>
