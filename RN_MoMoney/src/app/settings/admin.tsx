@@ -10,7 +10,6 @@ import { resetAllData } from '@/services/admin';
 import { removeAllCategories } from '@/services/categories';
 import { removeAllLogs } from '@/services/logger';
 import { removeAllRules } from '@/services/mappingRules';
-import { removeAllStocks } from '@/services/stocks';
 import { countTransactions, removeAllTransactions } from '@/services/transactions';
 import { useSettings } from '@/store/settings';
 
@@ -64,7 +63,6 @@ export default function AdminScreen() {
       <ListRow label="Remove All Transactions" onPress={removeAll('transactions', () => removeAllTransactions(db))} />
       <ListRow label="Remove All Accounts" onPress={removeAll('accounts', () => removeAllAccounts(db), needsNoTransactions('accounts'))} />
       <ListRow label="Remove All Categories" onPress={removeCategories} />
-      <ListRow label="Remove All Stocks" onPress={removeAll('stocks', () => removeAllStocks(db))} />
       <ListRow label="Remove All Mapping Rules" onPress={removeAll('mapping rules', () => removeAllRules(db))} />
       <ListRow label="Remove All Logs" onPress={removeAll('logs', () => removeAllLogs(db))} />
       <ListRow label="Remove Everything" onPress={removeEverything} />

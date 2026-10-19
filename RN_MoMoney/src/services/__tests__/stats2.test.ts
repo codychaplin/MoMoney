@@ -1,8 +1,6 @@
 import type { Db } from '@/db/db';
-import { InvalidError, NotFoundError } from '@/lib/errors';
 import { addAccount } from '@/services/accounts';
 import { buildBreakdown, buildInsights, getAccountSummary, getBreakdown, getInsightYears, getInsights } from '@/services/stats';
-import { parsePrice } from '@/services/stockPrices';
 import { addTransactions } from '@/services/transactions';
 import { createTestDb } from '@/test/db';
 
@@ -84,22 +82,5 @@ describe('db-backed stats', () => {
     expect((await getBreakdown(db, 2026, null)).expenseCents).toBe(900);
     expect((await getInsights(db, 2025)).totalExpenseCents).toBe(100);
     expect(await getInsightYears(db, new Date(2026, 5, 1))).toEqual([2026, 2025]);
-  });
-});
-
-describe('parsePrice', () => {
-  const page = (inner: string) => `<html><body>${inner}</body></html>`;
-
-  it('reads the first selector and strips the currency', () => {
-    expect(parsePrice(page('<div class="N6SYTe"><span><span>$1,234.56</span></span></div>'), 'X:TSE')).toBeCloseTo(1234.56);
-  });
-
-  it('falls back to the second selector', () => {
-    expect(parsePrice(page('<div class="YMlKec fxKbKc">CA$98.10</div>'), 'X:TSE')).toBeCloseTo(98.1);
-  });
-
-  it('throws NotFoundError when no price element exists and InvalidError for junk', () => {
-    expect(() => parsePrice(page('<p>nothing</p>'), 'X:TSE')).toThrow(NotFoundError);
-    expect(() => parsePrice(page('<div class="YMlKec fxKbKc">N/A</div>'), 'X:TSE')).toThrow(InvalidError);
   });
 });

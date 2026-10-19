@@ -44,7 +44,6 @@ export const accounts = ['Chequing', 'Savings', 'Credit Card', 'Investments'];
 export const statTiles = [
   { title: 'Accounts', icon: 'landmark' },
   { title: 'Breakdown', icon: 'chart-pie' },
-  { title: 'Stocks', icon: 'chart-candlestick' },
   { title: 'Insights', icon: 'chart-column' },
 ] as const;
 

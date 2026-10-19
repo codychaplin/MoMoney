@@ -14,7 +14,6 @@ export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', '
 export const ACCOUNT_TYPES = ['Checkings', 'Savings', 'Credit', 'Investments'] as const;
 export type AccountType = (typeof ACCOUNT_TYPES)[number];
 
-export const STOCK_MARKETS = ['TSE', 'NASDAQ', 'NYSE'] as const;
 export const BANK_TYPES = ['Tangerine', 'Wealthsimple'] as const;
 export type BankType = (typeof BANK_TYPES)[number];
 

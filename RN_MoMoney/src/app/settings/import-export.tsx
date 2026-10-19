@@ -12,7 +12,6 @@ const ROWS: { kind: CsvKind; label: string }[] = [
   { kind: 'accounts', label: 'Accounts' },
   { kind: 'categories', label: 'Categories' },
   { kind: 'transactions', label: 'Transactions' },
-  { kind: 'stocks', label: 'Stocks' },
   { kind: 'mappingRules', label: 'Mapping Rules' },
   { kind: 'logs', label: 'Logs' },
 ];

@@ -34,16 +34,6 @@ export const transactions = sqliteTable('transaction', {
   linkedTransactionId: integer('linked_transaction_id'),
 });
 
-export const stocks = sqliteTable('stock', {
-  id: integer('stock_id').primaryKey({ autoIncrement: true }),
-  symbol: text('symbol').notNull(),
-  market: text('market').notNull(),
-  quantity: real('quantity').notNull().default(0),
-  /** Cost per share. */
-  cost: real('cost').notNull().default(0),
-  marketPrice: real('market_price').notNull().default(0),
-});
-
 export const mappingRules = sqliteTable('mapping_rule', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   bankType: text('bank_type').notNull(),
@@ -77,9 +67,8 @@ export const aiCalls = sqliteTable('ai_call', {
 export type Account = typeof accounts.$inferSelect;
 export type Category = typeof categories.$inferSelect;
 export type Transaction = typeof transactions.$inferSelect;
-export type Stock = typeof stocks.$inferSelect;
 export type MappingRule = typeof mappingRules.$inferSelect;
 export type Log = typeof logs.$inferSelect;
 export type AiCall = typeof aiCalls.$inferSelect;
 
-export const schema = { accounts, categories, transactions, stocks, mappingRules, logs, aiCalls };
+export const schema = { accounts, categories, transactions, mappingRules, logs, aiCalls };

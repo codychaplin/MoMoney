@@ -1,6 +1,6 @@
 import type { Db } from '@/db/db';
 import { DEFAULT_CATEGORIES, NECESSARY_CATEGORIES } from '@/db/seed';
-import { DuplicateError, InvalidError, NotFoundError } from '@/lib/errors';
+import { DuplicateError, InvalidError } from '@/lib/errors';
 import { addAccount } from '@/services/accounts';
 import {
   addCategories, addCategory, categoryKeyMap, categoryLabel, getAllCategories, getCategoryGroups, getExpenseCategories,
@@ -8,7 +8,6 @@ import {
 } from '@/services/categories';
 import { countLogs, createLogger, getLogFilterOptions, getLogs } from '@/services/logger';
 import { addRules, getRules, parseMapping, saveRule } from '@/services/mappingRules';
-import { addStock, addStocks, getStock, portfolioTotals, removeStock, setMarketPrice, stockMetrics, updateStock } from '@/services/stocks';
 import { addTransaction } from '@/services/transactions';
 import { createTestDb } from '@/test/db';
 
@@ -77,40 +76,6 @@ describe('categories', () => {
     expect(map.get('groceries,food')?.id).toBe(13);
     expect(map.get('food,')?.id).toBe(12);
     expect((await getCategoryGroups(db))[0].children.map((c) => c.name)).toEqual(['Debit', 'Credit']);
-  });
-});
-
-describe('stocks', () => {
-  const s = (over = {}) => ({ symbol: 'shop', market: 'tse', quantity: 10, cost: 100, ...over });
-
-  it('normalises case and defaults the market price to cost', async () => {
-    const id = await addStock(db, s());
-    expect(await getStock(db, id)).toMatchObject({ symbol: 'SHOP', market: 'TSE', marketPrice: 100 });
-  });
-
-  it('rejects duplicates and invalid values', async () => {
-    await addStock(db, s());
-    await expect(addStock(db, s({ symbol: 'SHOP' }))).rejects.toThrow(DuplicateError);
-    await expect(addStock(db, s({ symbol: 'X', quantity: 0 }))).rejects.toThrow('Quantity must be > 0');
-    await expect(addStock(db, s({ symbol: 'X', cost: 0 }))).rejects.toThrow('Cost must be > 0');
-    await expect(addStock(db, s({ symbol: '' }))).rejects.toThrow('Invalid symbol');
-    await expect(addStocks(db, [s({ symbol: 'A' }), s({ symbol: 'a' })])).rejects.toThrow(DuplicateError);
-  });
-
-  it('persists a refreshed market price and computes metrics', async () => {
-    const id = await addStock(db, s());
-    await setMarketPrice(db, id, 120);
-    const stock = await getStock(db, id);
-    expect(stock.marketPrice).toBe(120);
-    expect(stockMetrics(stock)).toMatchObject({ marketValue: 1200, bookValue: 1000, change: 200 });
-    await updateStock(db, id, s({ quantity: 5 }));
-    expect((await getStock(db, id)).marketPrice).toBe(120);
-    await removeStock(db, id);
-    await expect(getStock(db, id)).rejects.toThrow(NotFoundError);
-  });
-
-  it('portfolio percent is 0 with no book value', () => {
-    expect(portfolioTotals([])).toEqual({ book: 0, market: 0, gain: 0, gainPercent: 0 });
   });
 });
 

@@ -4,23 +4,21 @@ import { format, isValid, parse as parseDate, parseISO } from 'date-fns';
 
 import type { Db } from '@/db/db';
 import { logs } from '@/db/schema';
-import { ACCOUNT_TYPES, BANK_TYPES, CREDIT_ID, DEBIT_ID, STOCK_MARKETS, TRANSFER_ID } from '@/lib/constants';
+import { ACCOUNT_TYPES, BANK_TYPES, CREDIT_ID, DEBIT_ID, TRANSFER_ID } from '@/lib/constants';
 import { InvalidError } from '@/lib/errors';
-import { centsToDecimal, parseCents, parseDecimal } from '@/lib/money';
+import { centsToDecimal, parseCents } from '@/lib/money';
 import { addAccounts, getAccounts, getAccountsByName } from '@/services/accounts';
 import { addCategories, categoryKeyMap, getAllCategories } from '@/services/categories';
 import { LOG_LEVELS, type LogLevel } from '@/services/logger';
 import { addRules, getRules, parseMapping, type RuleMapping } from '@/services/mappingRules';
-import { addStocks, getStocks } from '@/services/stocks';
 import { addTransactions, getFilteredTransactions, type TransactionInput } from '@/services/transactions';
 
 /** All files are headerless, comma separated, with the column orders of the MAUI app. */
-export type CsvKind = 'transactions' | 'accounts' | 'categories' | 'stocks' | 'mappingRules' | 'logs';
+export type CsvKind = 'transactions' | 'accounts' | 'categories' | 'mappingRules' | 'logs';
 export const CSV_FILE_NAMES: Record<CsvKind, string> = {
   transactions: 'transactions.csv',
   accounts: 'accounts.csv',
   categories: 'categories.csv',
-  stocks: 'stocks.csv',
   mappingRules: 'mapping_rules.csv',
   logs: 'logs.csv',
 };
@@ -91,24 +89,6 @@ export async function importCategories(db: Db, text: string): Promise<number> {
   });
   added += await addCategories(db, children);
   return added;
-}
-
-// ---------- stocks ----------
-
-export async function exportStocks(db: Db): Promise<string> {
-  return writeRows((await getStocks(db)).map((s) => [s.symbol, s.market, s.quantity, s.cost]));
-}
-
-export async function importStocks(db: Db, text: string): Promise<number> {
-  const stocks = readRows(text).map((r, i) => {
-    const quantity = parseDecimal(r[2]);
-    const cost = parseDecimal(r[3]);
-    if (quantity == null) throw bad('Stock', i + 1, r[2] ?? '', 'Quantity');
-    if (cost == null) throw bad('Stock', i + 1, r[3] ?? '', 'Cost');
-    const market = (STOCK_MARKETS as readonly string[]).includes((r[1] ?? '').trim().toUpperCase()) ? r[1].trim().toUpperCase() : (r[1] ?? '');
-    return { symbol: r[0] ?? '', market, quantity, cost };
-  });
-  return addStocks(db, stocks);
 }
 
 // ---------- transactions ----------
@@ -270,7 +250,6 @@ export const EXPORTERS: Record<CsvKind, (db: Db) => Promise<string>> = {
   transactions: exportTransactions,
   accounts: exportAccounts,
   categories: exportCategories,
-  stocks: exportStocks,
   mappingRules: exportMappingRules,
   logs: exportLogs,
 };
@@ -279,7 +258,6 @@ export const IMPORTERS: Record<CsvKind, (db: Db, text: string) => Promise<number
   transactions: importTransactions,
   accounts: importAccounts,
   categories: importCategories,
-  stocks: importStocks,
   mappingRules: importMappingRules,
   logs: importLogs,
 };

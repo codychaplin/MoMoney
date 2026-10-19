@@ -8,7 +8,6 @@ import { Page } from '@/components/ui';
 const tiles = [
   { title: 'Accounts', icon: 'bank', href: '/stats/account-summary' },
   { title: 'Breakdown', icon: 'chart-pie', href: '/stats/breakdown' },
-  { title: 'Stocks', icon: 'chart-line', href: '/stats/stocks' },
   { title: 'Insights', icon: 'chart-bar', href: '/stats/insights' },
 ] as const;
 

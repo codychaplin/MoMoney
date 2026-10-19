@@ -37,7 +37,6 @@ export default function SettingsScreen() {
       <Subtitle>Edit</Subtitle>
       <ListRow label="Accounts" chevron onPress={go('/settings/accounts')} />
       <ListRow label="Categories" chevron onPress={go('/settings/categories')} />
-      <ListRow label="Stocks" chevron onPress={go('/settings/stocks')} />
       <ListRow label="Mapping Rules" chevron onPress={go('/settings/mapping-rules')} />
 
       <Subtitle>Import/Export</Subtitle>

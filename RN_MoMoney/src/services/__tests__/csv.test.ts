@@ -4,7 +4,6 @@ import { addAccount, getAccounts } from '@/services/accounts';
 import { addCategory, getAllCategories } from '@/services/categories';
 import { EXPORTERS, IMPORTERS, importAccounts, importCategories, importTransactions, parseCsvDate } from '@/services/csv';
 import { saveRule } from '@/services/mappingRules';
-import { addStock } from '@/services/stocks';
 import { addTransactions, getFilteredTransactions } from '@/services/transactions';
 import { createTestDb } from '@/test/db';
 
@@ -88,14 +87,13 @@ describe('export then import is lossless', () => {
       { date: '2026-01-06', accountId: chq, amountCents: -5000, categoryId: 1, subcategoryId: 2, transferAccountId: sav },
       { date: '2026-01-06', accountId: sav, amountCents: 7000, categoryId: 4, subcategoryId: 6, payee: 'Bank' },
     ]);
-    await addStock(a, { symbol: 'SHOP', market: 'TSE', quantity: 2.5, cost: 100.25 });
     await saveRule(a, { bankType: 'Tangerine', name: 'Groceries', pattern: 'loblaws', mapping: { Category: '12', Subcategory: '13', Payee: 'Loblaws' } });
     await saveRule(a, { bankType: 'Wealthsimple', name: 'Skip fees', pattern: 'fee', mapping: { Skip: 'true' } });
 
     const files = Object.fromEntries(await Promise.all((Object.keys(EXPORTERS) as (keyof typeof EXPORTERS)[]).map(async (k) => [k, await EXPORTERS[k](a)])));
     const b = await createTestDb();
-    for (const k of ['accounts', 'categories', 'transactions', 'stocks', 'mappingRules'] as const) await IMPORTERS[k](b, files[k]);
-    for (const k of ['accounts', 'categories', 'transactions', 'stocks', 'mappingRules'] as const) expect(await EXPORTERS[k](b)).toBe(files[k]);
+    for (const k of ['accounts', 'categories', 'transactions', 'mappingRules'] as const) await IMPORTERS[k](b, files[k]);
+    for (const k of ['accounts', 'categories', 'transactions', 'mappingRules'] as const) expect(await EXPORTERS[k](b)).toBe(files[k]);
     expect((await getAccounts(b)).find((x) => x.name === 'Chq, Main')!.balanceCents).toBe(100050 - 1999 - 5000);
   });
 });

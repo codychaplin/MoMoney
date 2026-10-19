@@ -67,4 +67,6 @@ export const MIGRATIONS: string[][] = [
       transaction_id INTEGER
     )`,
   ],
+  // v2: stock tracking removed
+  [`DROP TABLE IF EXISTS stock`],
 ];
