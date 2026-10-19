@@ -3,15 +3,18 @@ import { useRouter, type Href } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { toast } from 'sonner-native';
-import { Uniwind } from 'uniwind';
-
+import { PickerField } from '@/components/inputs/picker-field';
 import { ListRow, Page, SwitchRow } from '@/components/ui';
 import { useDb } from '@/db/provider';
-import { useRefresh } from '@/hooks/data';
-import { addSampleData } from '@/services/sampleData';
-import { useSettings } from '@/store/settings';
+import { useSettings, type ThemeMode } from '@/store/settings';
 
 const swatches = ['#246A4B', '#5B9BD5', '#4AC4C4', '#675496', '#FFDE3F', '#898989'];
+
+const themes: { label: string; value: ThemeMode }[] = [
+  { label: 'System', value: 'system' },
+  { label: 'Light', value: 'light' },
+  { label: 'Dark', value: 'dark' },
+];
 
 function Subtitle({ children }: { children: string }) {
   return <Text className="px-4 pb-1 pt-5 text-sm font-semibold text-primary">{children}</Text>;
@@ -21,10 +24,8 @@ export default function SettingsScreen() {
   const router = useRouter();
   const go = (href: string) => () => router.push(href as Href);
   const db = useDb();
-  const refresh = useRefresh();
-  const { showValues, setShowValues, isAdmin, setIsAdmin } = useSettings();
+  const { showValues, setShowValues, isAdmin, setIsAdmin, theme, setTheme, materialYou, setMaterialYou } = useSettings();
   const [selected, setSelected] = useState(swatches[0]);
-  const [dark, setDark] = useState(false);
 
   const toggleDeveloperMode = () => {
     setIsAdmin(!isAdmin);
@@ -32,7 +33,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <Page title="Settings" contentClassName="">
+    <Page title="Settings" contentClassName="gap-0">
 
       <Subtitle>Edit</Subtitle>
       <ListRow label="Accounts" chevron onPress={go('/settings/accounts')} />
@@ -57,38 +58,17 @@ export default function SettingsScreen() {
           ))}
         </View>
       </View>
-      <SwitchRow
-        label="Dark mode"
-        value={dark}
-        onChange={(v) => {
-          setDark(v);
-          Uniwind.setTheme(v ? 'dark' : 'light');
-        }}
-      />
+      <SwitchRow label="Material You" value={materialYou} onChange={setMaterialYou} />
+      <View className="min-h-14 flex-row items-center justify-between bg-surface px-4 py-2">
+        <Text className="text-base text-on-surface">Theme</Text>
+        <PickerField compact value={theme} options={themes} onChange={(v) => v && setTheme(v)} />
+      </View>
 
       <Subtitle>Privacy</Subtitle>
       <SwitchRow label="Show Sensitive Values" value={showValues} onChange={setShowValues} />
 
       <Subtitle>Admin</Subtitle>
       <ListRow label="Data" chevron onPress={go('/settings/admin')} />
-
-      {__DEV__ ? (
-        <>
-          <Subtitle>Development</Subtitle>
-          <ListRow
-            label="Add sample data"
-            onPress={async () => {
-              try {
-                await addSampleData(db);
-                await refresh();
-                toast.success('Sample data added');
-              } catch (e) {
-                toast.error((e as Error).message);
-              }
-            }}
-          />
-        </>
-      ) : null}
 
       <Pressable delayLongPress={5000} onLongPress={toggleDeveloperMode}>
         <Text className="m-4 mt-6 text-outline">MoMoney {Constants.expoConfig?.version}</Text>

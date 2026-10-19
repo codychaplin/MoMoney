@@ -1,4 +1,26 @@
 {
+  "permissions": {
+    "deny": [
+      "Bash(rm *)",
+      "Bash(sudo *)",
+      "Bash(git push *)",
+      "Bash(git reset *)",
+      "Bash(git clean *)",
+      "Bash(git branch -D *)",
+      "Bash(git branch -d *)",
+      "Bash(git tag -d *)",
+      "Bash(git rm *)",
+      "Bash(mv *)",
+      "Bash(dd *)",
+      "Bash(mkfs *)",
+      "Bash(chmod -R *)",
+      "Bash(chown -R *)",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(> *)"
+    ],
+    "blockReadsOutsideWorkingDirectories": true
+  },
   "enabledPlugins": {
     "expo@claude-plugins-official": true
   }

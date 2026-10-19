@@ -1,6 +1,6 @@
 import { Host, SegmentedButton, SingleChoiceSegmentedButtonRow, Text as ComposeText } from '@expo/ui/jetpack-compose';
 import { Pressable, Text, View } from 'react-native';
-import { useCSSVariable } from 'uniwind';
+import { useCSSVariable, useUniwind } from 'uniwind';
 import { cn } from '@/components/ui';
 
 type Props<T extends string> = {
@@ -17,6 +17,7 @@ export function SegmentedField<T extends string>({ pill, small, ...props }: Prop
 
 /** Material 3 single-choice segmented button row (Jetpack Compose). */
 function NativeSegmented<T extends string>({ options, value, onChange }: Omit<Props<T>, 'pill' | 'small'>) {
+  const { theme } = useUniwind();
   const outline = useCSSVariable('--color-outline') as string;
   const onSurface = useCSSVariable('--color-on-surface') as string;
   const container = useCSSVariable('--color-secondary-container') as string;
@@ -30,7 +31,7 @@ function NativeSegmented<T extends string>({ options, value, onChange }: Omit<Pr
     inactiveBorderColor: 'transparent',
   };
   return (
-    <Host matchContents={{ vertical: true }} style={{ width: '100%' }}>
+    <Host colorScheme={theme} matchContents={{ vertical: true }} style={{ width: '100%' }}>
       <SingleChoiceSegmentedButtonRow>
         {options.map((o) => (
           <SegmentedButton key={o} selected={o === value} colors={colors} onClick={() => onChange(o)}>
