@@ -13,8 +13,8 @@ export default function AccountSummaryScreen() {
   const { data } = useQuery({ queryKey: ['stats', 'accounts'], queryFn: () => getAccountSummary(db) });
 
   return (
-    <Page title="Account Summary" back contentClassName="gap-3 px-3 pb-6">
-      <Card className="flex-row items-center justify-between p-4">
+    <Page title="Account Summary" back>
+      <Card className="flex-row items-center justify-between bg-surface-high">
         <Text className="text-lg font-semibold text-on-surface">Net Worth</Text>
         <Text className="text-xl font-bold text-on-surface">{money(data?.netWorthCents ?? 0)}</Text>
       </Card>
@@ -24,9 +24,9 @@ export default function AccountSummaryScreen() {
             <Text className="text-lg font-semibold text-on-surface">{g.type}</Text>
             <Text className="text-lg font-semibold text-on-surface">{money(g.totalCents)}</Text>
           </View>
-          <Card className="gap-1 px-4 py-2">
+          <Card className="bg-surface-high px-4 py-1">
             {g.accounts.map((a) => (
-              <View key={a.id} className="h-10 flex-row items-center gap-3">
+              <View key={a.id} className="flex-row items-center gap-3 py-1">
                 <ColourDot colour={a.colour} size={18} />
                 <Text className="flex-1 text-base text-on-surface">{a.name}</Text>
                 <Text className={a.balanceCents < 0 ? 'text-base text-expense' : 'text-base text-on-surface-variant'}>{money(a.balanceCents)}</Text>

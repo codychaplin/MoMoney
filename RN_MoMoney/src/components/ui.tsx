@@ -31,15 +31,15 @@ export function PageTitle({ children, right, back }: { children: string; right?:
   return (
     <View pointerEvents="box-none" className="absolute inset-x-0 top-0 flex-row items-center gap-2 px-3" style={{ paddingTop: top + 8, zIndex: 10 }}>
       {back ? (
-        <Pressable hitSlop={8} onPress={() => router.back()} className="size-10 items-center justify-center rounded-full bg-surface-high/90 active:opacity-80">
+        <Pressable hitSlop={8} onPress={() => router.back()} className="size-10 items-center justify-center rounded-full bg-secondary-container/90 active:opacity-80">
           <MaterialDesignIcons name="arrow-left" size={24} color={color} />
         </Pressable>
       ) : null}
-      <View className="h-10 shrink justify-center rounded-full bg-surface-high/90 px-4">
+      <View className="h-10 shrink justify-center rounded-full bg-secondary-container/90 px-4">
         <Text className="text-lg font-semibold text-on-surface" numberOfLines={1}>{children}</Text>
       </View>
       <View className="flex-1" />
-      {right ? <View className="h-10 items-center justify-center rounded-full bg-surface-high/90 px-3">{right}</View> : null}
+      {right ? <View className="h-10 items-center justify-center rounded-full bg-secondary-container/90 px-3">{right}</View> : null}
     </View>
   );
 }

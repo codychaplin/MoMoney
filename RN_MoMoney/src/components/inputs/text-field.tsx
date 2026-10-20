@@ -1,4 +1,4 @@
-import { useUniwind } from 'uniwind';
+import { useHostTheme } from '@/theme/host';
 import { Host, OutlinedTextField, Text as ComposeText, useNativeState } from '@expo/ui/jetpack-compose';
 import { fillMaxWidth } from '@expo/ui/jetpack-compose/modifiers';
 import { ReactNode, useEffect } from 'react';
@@ -16,7 +16,7 @@ export function TextField({ label, value, placeholder, onChangeText, keyboardTyp
   multiline?: boolean;
   onBlur?: () => void;
 }) {
-  const { theme } = useUniwind();
+  const host = useHostTheme();
   const text = useNativeState(value ?? '');
   useEffect(() => {
     if (text.value !== (value ?? '')) text.value = value ?? '';
@@ -25,7 +25,7 @@ export function TextField({ label, value, placeholder, onChangeText, keyboardTyp
   return (
     <View className="flex-row items-center">
       <View className="flex-1">
-        <Host colorScheme={theme} matchContents={{ vertical: true }} style={{ width: '100%' }}>
+        <Host {...host} matchContents={{ vertical: true }} style={{ width: '100%' }}>
           <OutlinedTextField
             value={text}
             onValueChange={(t) => {

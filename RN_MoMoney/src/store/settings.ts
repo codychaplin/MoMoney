@@ -4,6 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { Uniwind } from 'uniwind';
 
 import { formatMoney, MASK_MONEY, MASK_PERCENT, formatPercent } from '@/lib/money';
+import { applyPalette, DEFAULT_THEME } from '@/theme/palettes';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 
@@ -36,14 +37,14 @@ const storage = {
 
 export const useSettings = create<SettingsState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       showValues: true,
       setShowValues: (showValues) => set({ showValues }),
 
       isAdmin: false,
       dictationEnabled: false,
       theme: 'system',
-      themeName: 'green',
+      themeName: DEFAULT_THEME,
       materialYou: false,
       // turning developer mode off also turns off experimental features
       setIsAdmin: (isAdmin) => set(isAdmin ? { isAdmin } : { isAdmin, dictationEnabled: false }),
@@ -52,14 +53,22 @@ export const useSettings = create<SettingsState>()(
         Uniwind.setTheme(theme);
         set({ theme });
       },
-      setThemeName: (themeName) => set({ themeName }),
-      setMaterialYou: (materialYou) => set({ materialYou }),
+      setThemeName: (themeName) => {
+        applyPalette(themeName, get().materialYou);
+        set({ themeName });
+      },
+      setMaterialYou: (materialYou) => {
+        applyPalette(get().themeName, materialYou);
+        set({ materialYou });
+      },
     }),
     {
       name: 'momoney-settings',
       storage: createJSONStorage(() => storage),
       onRehydrateStorage: () => (state) => {
-        if (state) Uniwind.setTheme(state.theme);
+        if (!state) return;
+        Uniwind.setTheme(state.theme);
+        applyPalette(state.themeName, state.materialYou);
       },
       partialize: ({ isAdmin, dictationEnabled, theme, themeName, materialYou }) => ({ isAdmin, dictationEnabled, theme, themeName, materialYou }),
     },

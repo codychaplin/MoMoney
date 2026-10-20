@@ -1,4 +1,5 @@
-import { useCSSVariable, useUniwind } from 'uniwind';
+import { useCSSVariable } from 'uniwind';
+import { useHostTheme } from '@/theme/host';
 import {
   DropdownMenuItem,
   ExposedDropdownMenu,
@@ -34,7 +35,7 @@ export function PickerField<T extends string | number>({
   disabled?: boolean;
   allowClear?: boolean;
 }) {
-  const { theme } = useUniwind();
+  const host = useHostTheme();
   const onSurface = useCSSVariable('--color-on-surface') as string;
   const arrow = useMemo(() => MaterialDesignIcons.getImageSourceSync('menu-down', 24, onSurface) ?? undefined, [onSurface]);
   const [expanded, setExpanded] = useState(false);
@@ -46,7 +47,7 @@ export function PickerField<T extends string | number>({
   }, [selectedLabel, text]);
 
   return (
-    <Host colorScheme={theme} matchContents={compact ? { vertical: true, horizontal: true } : { vertical: true }} style={compact ? undefined : { width: '100%' }}>
+    <Host {...host} matchContents={compact ? { vertical: true, horizontal: true } : { vertical: true }} style={compact ? undefined : { width: '100%' }}>
       <ExposedDropdownMenuBox expanded={expanded && !disabled} onExpandedChange={setExpanded}>
         {compact ? (
           <OutlinedButton

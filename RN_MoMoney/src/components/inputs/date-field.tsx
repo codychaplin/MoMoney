@@ -1,4 +1,4 @@
-import { useUniwind } from 'uniwind';
+import { useHostTheme } from '@/theme/host';
 import DateTimePicker from '@expo/ui/community/datetime-picker';
 import { Host, OutlinedTextField, Text as ComposeText, useNativeState } from '@expo/ui/jetpack-compose';
 import { fillMaxWidth } from '@expo/ui/jetpack-compose/modifiers';
@@ -10,7 +10,7 @@ type Props = { label?: string; value: string; onChange: (isoDate: string) => voi
 
 /** yyyy-MM-dd date field backed by the Material 3 date picker dialog. */
 export function DateField({ label = 'Date', value, onChange, disabled }: Props) {
-  const { theme } = useUniwind();
+  const host = useHostTheme();
   const [open, setOpen] = useState(false);
   const shown = format(parseISO(value), 'MMMM d yyyy');
   const text = useNativeState(shown);
@@ -22,7 +22,7 @@ export function DateField({ label = 'Date', value, onChange, disabled }: Props) 
     <View>
       <Pressable disabled={disabled} onPress={() => setOpen(true)}>
         <View pointerEvents="none">
-          <Host colorScheme={theme} matchContents={{ vertical: true }} style={{ width: '100%' }}>
+          <Host {...host} matchContents={{ vertical: true }} style={{ width: '100%' }}>
             <OutlinedTextField value={text} readOnly singleLine enabled={!disabled} modifiers={[fillMaxWidth()]}>
               <OutlinedTextField.Label>
                 <ComposeText>{label}</ComposeText>

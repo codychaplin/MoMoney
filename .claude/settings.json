@@ -1,5 +1,24 @@
 {
   "permissions": {
+    "allow": [
+      "Read(./CLAUDE.md)",
+      "Read(./AGENTS.md)",
+      "Read(./**)",
+      "Edit(./**)",
+      "Bash(npm run *)",
+      "Bash(npx vitest *)",
+      "Bash(npx eslint *)",
+      "Bash(npm test *)",
+      "Bash(npx vite *)",
+      "Bash(npx tsc *)",
+      "Bash(cd *)",
+      "Bash(ls *)",
+      "Bash(grep *)",
+      "Bash(sed -n *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)"
+    ],
     "deny": [
       "Bash(rm *)",
       "Bash(sudo *)",
