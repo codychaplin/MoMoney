@@ -33,7 +33,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <Page title="Settings" contentClassName="gap-0">
+    <Page title="Settings" contentClassName="gap-0 px-0">
 
       <Subtitle>Edit</Subtitle>
       <ListRow

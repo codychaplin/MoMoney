@@ -128,8 +128,24 @@ export default function TransactionsScreen() {
                   onChange={setAccountId}
                 />
                 <View className="flex-row gap-2">
-                  <View className="flex-1"><TextField label="Min" placeholder="0.00" keyboardType="decimal-pad" value={minText} onChangeText={setMinText} /></View>
-                  <View className="flex-1"><TextField label="Max" placeholder="0.00" keyboardType="decimal-pad" value={maxText} onChangeText={setMaxText} /></View>
+                  <View className="flex-1">
+                    <TextField
+                      label="Min"
+                      placeholder="0.00"
+                      keyboardType="decimal"
+                      value={minText}
+                      onChangeText={setMinText}
+                    />
+                  </View>
+                  <View className="flex-1">
+                    <TextField
+                      label="Max"
+                      placeholder="0.00"
+                      keyboardType="decimal"
+                      value={maxText}
+                      onChangeText={setMaxText}
+                    />
+                  </View>
                 </View>
                 <View className="flex-row gap-2">
                   <View className="flex-1">

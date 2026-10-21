@@ -6,13 +6,15 @@ import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useCSSVariable } from 'uniwind';
 import { View } from 'react-native';
 
+type KeyboardType = 'text' | 'number' | 'email' | 'phone' | 'decimal' | 'password' | 'ascii' | 'uri' | 'numberPassword';
+
 /** Material 3 outlined text field (Jetpack Compose). */
 export function TextField({ label, value, placeholder, onChangeText, keyboardType, trailing, editable = true, multiline, onBlur, allowClear = true }: {
   label: string;
   value?: string;
   placeholder?: string;
   onChangeText?: (t: string) => void;
-  keyboardType?: 'default' | 'decimal-pad' | 'numeric';
+  keyboardType?: KeyboardType;
   trailing?: ReactNode;
   editable?: boolean;
   multiline?: boolean;
@@ -52,7 +54,7 @@ export function TextField({ label, value, placeholder, onChangeText, keyboardTyp
             enabled={editable}
             singleLine={!multiline}
             minLines={multiline ? 3 : undefined}
-            keyboardOptions={{ keyboardType: keyboardType === 'default' || !keyboardType ? 'text' : 'decimal' }}
+            keyboardOptions={{ keyboardType: keyboardType ?? 'text' }}
             modifiers={[fillMaxWidth()]}>
             <OutlinedTextField.Label>
               <ComposeText>{label}</ComposeText>

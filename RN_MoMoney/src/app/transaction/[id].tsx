@@ -14,6 +14,7 @@ import { useAction } from '@/hooks/action';
 import { useCategories, usePayees } from '@/hooks/data';
 import { CREDIT_ID, DEBIT_ID, EXPENSE_THRESHOLD, INCOME_ID, TRANSFER_ID } from '@/lib/constants';
 import { confirm } from '@/lib/confirm';
+import { todayISO } from '@/lib/dates';
 import { centsToDecimal, parseCents } from '@/lib/money';
 import { getAccounts } from '@/services/accounts';
 import { getTransaction, removeTransaction, updateTransaction } from '@/services/transactions';
@@ -96,7 +97,8 @@ export default function EditTransactionScreen() {
   };
 
   const clear = () => {
-    if (isTransfer) return; // nothing sensible to clear on a transfer
+    setDate(todayISO());
+    setAccountId(null);
     setAmountText('');
     setPayee('');
     if (!isIncome) {
@@ -117,7 +119,7 @@ export default function EditTransactionScreen() {
         value={amountText}
         onChangeText={setAmountText}
         placeholder="0.00"
-        keyboardType="decimal-pad"
+        keyboardType="decimal"
       />
       <PickerField
         label="Account"

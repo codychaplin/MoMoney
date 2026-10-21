@@ -81,7 +81,7 @@ export default function EditAccountScreen() {
         value={balanceText}
         onChangeText={setBalanceText}
         placeholder="0.00"
-        keyboardType="decimal-pad"
+        keyboardType="decimal"
       />
       <SwitchRow
         label="Enabled"

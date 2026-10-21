@@ -1,24 +1,61 @@
 {
-    "label": "Publish MoMoney Android Release",
-    "command": "dotnet",
-    "args": [
-        "publish",
-        "-f",
-        "net10.0-android36.0",
-        "-c",
-        "Release",
-        "-p:AndroidSigningKeyStore=${workspaceFolder}/pherda-apps.keystore",
-        "${workspaceFolder}/MoMoney/MoMoney.csproj"
-    ],
-    "problemMatcher": "$msCompile",
-    "group": {
-        "kind": "build",
-        "isDefault": false
-    },
-    "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
-    }
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Publish MoMoney Android Release",
+            "command": "dotnet",
+            "args": [
+                "publish",
+                "-f",
+                "net10.0-android36.0",
+                "-c",
+                "Release",
+                "-p:AndroidSigningKeyStore=${workspaceFolder}/pherda-apps.keystore",
+                "${workspaceFolder}/MoMoney/MoMoney.csproj"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "EAS: Build Android Preview (APK)",
+            "type": "shell",
+            "command": "npx eas build -p android --profile preview",
+            "options": { "cwd": "${workspaceFolder}/RN_MoMoney" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "focus": true, "panel": "dedicated" }
+        },
+        {
+            "label": "EAS: Build Android Production (AAB)",
+            "type": "shell",
+            "command": "npx eas build -p android --profile production",
+            "options": { "cwd": "${workspaceFolder}/RN_MoMoney" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "focus": true, "panel": "dedicated" }
+        },
+        {
+            "label": "EAS: Submit Latest Android Build",
+            "type": "shell",
+            "command": "npx eas submit -p android --profile production --latest",
+            "options": { "cwd": "${workspaceFolder}/RN_MoMoney" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "focus": true, "panel": "dedicated" }
+        },
+        {
+            "label": "EAS: Build + Submit Android Production",
+            "type": "shell",
+            "command": "npx eas build -p android --profile production --auto-submit",
+            "options": { "cwd": "${workspaceFolder}/RN_MoMoney" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "focus": true, "panel": "dedicated" }
+        }
+    ]
 }

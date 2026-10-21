@@ -129,14 +129,13 @@ export default function AddScreen() {
       <DateField
         value={date}
         onChange={setDate}
-        onClear={() => setDate(todayISO())}
       />
       <TextField
         label="Amount"
         value={amountText}
         onChangeText={setAmountText}
         placeholder="0.00"
-        keyboardType="decimal-pad"
+        keyboardType="decimal"
       />
       <PickerField
         label="Account"
