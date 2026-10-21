@@ -19,21 +19,36 @@ public class IdToCategoryConverter : IValueConverter
 
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (int.TryParse(value?.ToString(), out int ID))
+        if (categoryService != null  &&int.TryParse(value?.ToString(), out int ID))
         {
             // try to get category from dictionary
-            if (categoryService!.Categories.TryGetValue(ID, out var category))
+            if (categoryService.Categories.TryGetValue(ID, out var category))
             {
+                if (category.ParentCategoryID.HasValue && categoryService.Categories.TryGetValue(category.ParentCategoryID.Value, out var parent))
+                    return $"{parent.CategoryName} - {category.CategoryName}";
                 return category.CategoryName;
             }
             else // get category from db
             {
                 try
                 {
-                    var task = Task.Run(async () => await categoryService.GetCategory(ID));
+                    var task = Task.Run(async () => 
+                    {
+                        var cat = await categoryService.GetCategory(ID);
+                        if (cat == null)
+                            return "";
+                        
+                        if (!cat.ParentCategoryID.HasValue)
+                            return cat.CategoryName;
+                        
+                        var parentCat = await categoryService.GetCategory(cat.ParentCategoryID.Value);
+                        if (parentCat != null)
+                            return $"{parentCat.CategoryName} - {cat.CategoryName}";
+
+                        return cat.CategoryName;
+                    });
                     task.Wait();
-                    var cat = task.Result;
-                    return cat.CategoryName;
+                    return task?.Result ?? "";
                 }
                 catch (Exception ex)
                 {

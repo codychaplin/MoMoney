@@ -1,9 +1,10 @@
+using MoMoney.Components;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels.Settings.Edit;
 
 namespace MoMoney.Views.Settings.Edit;
 
-public partial class AccountsPage : ContentPage
+public partial class AccountsPage : CustomContentPage
 {
 	AccountsViewModel vm;
 	public AccountsPage(AccountsViewModel _vm)

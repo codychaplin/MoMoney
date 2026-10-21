@@ -40,7 +40,7 @@ public partial class AccountsViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(LoadAccounts), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 

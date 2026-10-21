@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<components:CustomContentPage
     x:Class="MoMoney.Views.Settings.AdminPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:viewmodels="clr-namespace:MoMoney.Core.ViewModels.Settings;assembly=MoMoney.Core"
-    Title="Administration"
+    HeaderTitle="Administration"
     x:DataType="viewmodels:AdminViewModel">
     <ScrollView>
         <VerticalStackLayout>
@@ -16,6 +16,7 @@
             <components:AlignedButton Command="{Binding RemoveAllStocksCommand}" Text="Remove All Stocks" />
             <components:AlignedButton Command="{Binding RemoveAllTransactionsCommand}" Text="Remove All Transactions" />
             <components:AlignedButton Command="{Binding RemoveAllLogsCommand}" Text="Remove All Logs" />
+            <components:AlignedButton Command="{Binding RemoveAllMappingRulesCommand}" Text="Remove All Mapping Rules" />
             <components:AlignedButton Command="{Binding RemoveAllDataCommand}" Text="Remove Everything" />
 
             <!--  data maintenance  -->
@@ -34,6 +35,18 @@
                 IsVisible="{Binding IsAdmin}"
                 Text="Recalculate Account Balances" />
 
+            <Label
+                IsVisible="{Binding IsAdmin}"
+                Style="{StaticResource SettingsSubtitle}"
+                Text="Experimental Features" />
+            <Grid
+                Padding="10,0"
+                BackgroundColor="{AppThemeBinding Light={StaticResource surfaceContainer},
+                                                Dark={StaticResource surfaceContainerDark}}"
+                IsVisible="{Binding IsAdmin}">
+                <Label Text="Transaction Dictation" VerticalOptions="Center" />
+                <Switch HorizontalOptions="End" IsToggled="{Binding TransactionDictationEnabled}" />
+            </Grid>
         </VerticalStackLayout>
     </ScrollView>
-</ContentPage>
+</components:CustomContentPage>

@@ -46,7 +46,7 @@ public partial class AccountSummaryViewModel : ObservableObject
             // update account type values
             foreach (var acc in accounts)
             {
-                var type = Enum.Parse(typeof(AccountType), acc.AccountType);
+                var type = Enum.Parse<AccountType>(acc.AccountType ?? string.Empty);
                 switch (type)
                 {
                     case AccountType.Checkings:
@@ -81,7 +81,7 @@ public partial class AccountSummaryViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(LoadAccountsSummary), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 }

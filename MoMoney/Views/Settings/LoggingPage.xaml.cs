@@ -1,10 +1,11 @@
 using Microsoft.Extensions.Logging;
+using MoMoney.Components;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels.Settings;
 
 namespace MoMoney.Views.Settings;
 
-public partial class LoggingPage : ContentPage
+public partial class LoggingPage : CustomContentPage
 {
 	LoggingViewModel vm;
 

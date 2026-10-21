@@ -11,13 +11,11 @@ public class TileColourConverter : IValueConverter
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         // if enabled, light gray, else, dark gray
-        if (bool.TryParse(value?.ToString(), out bool enabled))
-        {
-            return (enabled) ? Utilities.GetColour("Gray100", "Gray700") : Utilities.GetColour("Gray200", "Gray900");
-        }
+        if (bool.TryParse(value?.ToString(), out bool enabled) && !enabled)
+            return Utilities.GetColour("surfaceContainer", "surfaceContainerDark");
 
         // return enabled colour by default
-        return Utilities.GetColour("Gray100", "Gray700");
+        return Utilities.GetColour("surfaceContainerHighest", "surfaceContainerHighestDark") ;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

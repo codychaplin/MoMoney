@@ -1,6 +1,6 @@
-using MoMoney.Core.ViewModels;
+using MoMoney.Core.ViewModels.Tabs;
 
-namespace MoMoney.Views;
+namespace MoMoney.Views.Tabs;
 
 public partial class StatsPage : ContentView
 {

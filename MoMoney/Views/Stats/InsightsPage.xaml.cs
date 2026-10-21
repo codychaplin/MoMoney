@@ -1,9 +1,10 @@
+using MoMoney.Components;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels.Stats;
 
 namespace MoMoney.Views.Stats;
 
-public partial class InsightsPage : ContentPage
+public partial class InsightsPage : CustomContentPage
 {
     InsightsViewModel vm;
     public InsightsPage(InsightsViewModel _vm)

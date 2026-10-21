@@ -1,30 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView
-    x:Class="MoMoney.Views.StatsPage"
+    x:Class="MoMoney.Views.Tabs.StatsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
-    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
-    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels;assembly=MoMoney.Core"
-    x:DataType="viewmodel:StatsViewModel"
-    BackgroundColor="{AppThemeBinding Light={StaticResource White},
-                                      Dark={StaticResource Gray950}}">
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Tabs;assembly=MoMoney.Core"
+    x:DataType="viewmodel:StatsViewModel">
 
     <!--  main page  -->
     <VerticalStackLayout>
 
         <!--  title  -->
-        <Grid
-            Padding="10,0"
-            BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
-                                              Dark={StaticResource PrimaryDark}}"
-            HeightRequest="55">
-            <Label
-                HorizontalOptions="Start"
-                Style="{StaticResource lblTitle}"
-                Text="Statistics" />
-        </Grid>
+        <components:PageHeader Title="Statistics" ShowBackButton="False" />
 
         <!--  tabs  -->
         <Grid
@@ -38,7 +27,7 @@
             <components:StatsButton
                 Title="Accounts"
                 Command="{Binding GoToAccountSummaryCommand}"
-                Icon="{x:Static m:MaterialRegular.Account_balance}" />
+                Icon="{x:Static m:MaterialOutlined.Account_balance}" />
 
             <!--  breakdown  -->
             <components:StatsButton
@@ -46,7 +35,7 @@
                 Grid.Row="0"
                 Grid.Column="1"
                 Command="{Binding GoToBreakdownCommand}"
-                Icon="{x:Static m:MaterialRegular.Donut_small}" />
+                Icon="{x:Static m:MaterialOutlined.Donut_small}" />
 
             <!--  stocks  -->
             <components:StatsButton
@@ -54,7 +43,7 @@
                 Grid.Row="1"
                 Grid.Column="0"
                 Command="{Binding GoToStocksCommand}"
-                Icon="{x:Static m:MaterialRegular.Candlestick_chart}" />
+                Icon="{x:Static m:MaterialOutlined.Candlestick_chart}" />
 
             <!--  insights  -->
             <components:StatsButton
@@ -62,7 +51,7 @@
                 Grid.Row="1"
                 Grid.Column="1"
                 Command="{Binding GoToInsightsCommand}"
-                Icon="{x:Static m:MaterialRegular.Equalizer}" />
+                Icon="{x:Static m:MaterialOutlined.Equalizer}" />
 
         </Grid>
 

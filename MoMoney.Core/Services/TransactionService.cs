@@ -113,24 +113,20 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
 
     public async Task<Transaction> GetTransaction(int ID)
     {
-        await momoney.Init();
         var transaction = await momoney.db.Table<Transaction>().FirstOrDefaultAsync(t => t.TransactionID == ID);
         return transaction is null
-            ? throw new TransactionNotFoundException($"Could not find Transaction with ID '{ID}'.")
+            ? throw new NotFoundException($"Could not find Transaction with ID '{ID}'.")
             : new Transaction(transaction);
     }
 
     public async Task<IEnumerable<Transaction>> GetTransactions()
     {
-        await momoney.Init();
         return await momoney.db.Table<Transaction>().OrderBy(t => t.Date).ThenBy(t => t.TransactionID).ToListAsync();
     }
     
     public async Task<List<Transaction>> GetFilteredTransactions(DateTime? from = null, DateTime? to = null, int? accountID = null,
         decimal? minAmount = null, decimal? maxAmount = null, int? categoryID = null, int? subcategoryID = null, string? payee = null)
     {
-        await momoney.Init();
-
         var transactionsQuery = momoney.db.Table<Transaction>();
         if (from != null)
             transactionsQuery = transactionsQuery.Where(t => t.Date >= from);
@@ -154,13 +150,34 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
 
     public async Task<IEnumerable<string>> GetPayeesFromTransactions()
     {
-        await momoney.Init();
         return await momoney.db.QueryScalarsAsync<string>("SELECT DISTINCT Payee FROM \"Transaction\"");
     }
 
-    public async Task<List<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse)
+    public async Task<List<string>> GetPayeesFromTransactions(TransactionType type, int transactionCount, int numOfPayees)
     {
         await momoney.Init();
+        var query = momoney.db.Table<Transaction>();
+        if (type == TransactionType.Income)
+            query = query.Where(t => t.CategoryID == Constants.INCOME_ID);
+        else
+            query = query.Where(t => t.CategoryID >= Constants.EXPENSE_THRESHOLD);
+        query = query
+            .Where(t => !string.IsNullOrEmpty(t.Payee))
+            .OrderByDescending(t => t.TransactionID)
+            .Take(transactionCount);
+        var transactions = await query.ToListAsync();
+
+
+        return transactions
+            .GroupBy(t => t.Payee)
+            .OrderByDescending(g => g.Count())
+            .Take(numOfPayees)
+            .Select(g => g.Key)
+            .ToList();
+    }
+
+    public async Task<List<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse = true)
+    {
         if (reverse)
         {
             return await momoney.db.Table<Transaction>().Where(t => t.Date >= from && t.Date <= to)
@@ -173,15 +190,28 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
                                                     .ToListAsync();
     }
 
+    public async Task<Transaction?> TryGetCorrespondingTransfer(Transaction transaction)
+    {
+        if (transaction.TransferID == null || transaction.CategoryID != Constants.TRANSFER_ID)
+            return null;
+        
+        // try to match by:
+        // date is the same, account matches transfer account, and subcategory is the opposite (debit/credit) 
+        int oppositeSubcategory = transaction.SubcategoryID == Constants.DEBIT_ID ? Constants.CREDIT_ID : Constants.DEBIT_ID;
+        return await momoney.db.Table<Transaction>().FirstOrDefaultAsync(
+            t => t.Date == transaction.Date &&
+            t.AccountID == transaction.TransferID &&
+            t.SubcategoryID == oppositeSubcategory
+        );
+    }
+
     public async Task<Transaction> GetFirstTransaction()
     {
-        await momoney.Init();
         return await momoney.db.Table<Transaction>().FirstOrDefaultAsync();
     }
 
     public async Task<int> GetTransactionCount()
     {
-        await momoney.Init();
         return await momoney.db.Table<Transaction>().CountAsync();
     }
 
@@ -207,7 +237,8 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
         // update current balance in db
         foreach (var account in matchingAccounts)
         {
-            account.CurrentBalance = account.StartingBalance + currentBalances[account.AccountID];
+            decimal startingBalance = account.StartingBalance ?? 0;
+            account.CurrentBalance = startingBalance + currentBalances[account.AccountID];
             await accountService.UpdateAccount(account);
         }
     }
@@ -222,28 +253,28 @@ public class TransactionService : BaseService<TransactionService, UpdateTransact
     /// <param name="subcategoryID"></param>
     /// <param name="payee"></param>
     /// <param name="transferID"></param>
-    /// <exception cref="InvalidTransactionException"></exception>
-    void ValidateTransaction(DateTime date, int accountID, decimal amount, int categoryID,
+    /// <exception cref="InvalidException"></exception>
+    static void ValidateTransaction(DateTime date, int accountID, decimal amount, int categoryID,
         int subcategoryID, string payee, int? transferID)
     {
         if (date.Year < 2000)
-            throw new InvalidTransactionException("Invalid Date");
+            throw new InvalidException("Invalid Date");
         if (accountID < 1)
-            throw new InvalidTransactionException("Invalid Account");
+            throw new InvalidException("Invalid Account");
         if (amount == 0)
-            throw new InvalidTransactionException("Amount cannot be 0");
+            throw new InvalidException("Amount cannot be 0");
         if (categoryID < 1)
-            throw new InvalidTransactionException("Invalid Category");
+            throw new InvalidException("Invalid Category");
         if (subcategoryID < 1)
-            throw new InvalidTransactionException("Invalid Subcategory");
+            throw new InvalidException("Invalid Subcategory");
         if (categoryID != Constants.TRANSFER_ID && string.IsNullOrEmpty(payee))
-            throw new InvalidTransactionException("Payee cannot be blank");
+            throw new InvalidException("Payee cannot be blank");
         if (categoryID == Constants.TRANSFER_ID)
         {
             if (transferID < 1)
-                throw new InvalidTransactionException("Invalid Transfer Account");
+                throw new InvalidException("Invalid Transfer Account");
             if (accountID == transferID)
-                throw new InvalidTransactionException("Cannot transfer to the same account.");
+                throw new InvalidException("Cannot transfer to the same account.");
         }
     }
 }

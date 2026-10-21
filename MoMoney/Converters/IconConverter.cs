@@ -23,7 +23,7 @@ public class IconConverter : IMultiValueConverter
             {
                 return "green_arrow_up.svg";
             }
-            else if (cat >= Constants.EXPENSE_ID)
+            else if (cat >= Constants.EXPENSE_THRESHOLD)
             {
                 return "red_arrow_down.svg";
             }

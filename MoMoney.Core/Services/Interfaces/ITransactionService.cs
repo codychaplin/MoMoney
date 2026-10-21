@@ -47,7 +47,7 @@ public interface ITransactionService
     /// </summary>
     /// <param name="ID"></param>
     /// <returns>Transaction object</returns>
-    /// <exception cref="TransactionNotFoundException"></exception>
+    /// <exception cref="NotFoundException"></exception>
     Task<Transaction> GetTransaction(int ID);
 
     /// <summary>
@@ -66,8 +66,16 @@ public interface ITransactionService
     /// <summary>
     /// Gets all distinct payees from Transactions table.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>List of Payee strings</returns>
     Task<IEnumerable<string>> GetPayeesFromTransactions();
+
+    /// <summary>
+    /// Gets x amount of distinct payees from the Transactions Table.
+    /// </summary>
+    /// <param name="transactionCount"></param>
+    /// <param name="numOfPayees"></param>
+    /// <returns>List of Payee strings</returns>
+    Task<List<string>> GetPayeesFromTransactions(TransactionType type, int transactionCount, int numOfPayees);
 
     /// <summary>
     /// Gets all Transactions between specified dates from Transaction table as a list.
@@ -76,7 +84,14 @@ public interface ITransactionService
     /// <param name="to"></param>
     /// <param name="reverse"></param>
     /// <returns>List of Transaction objects between the specified dates</returns>
-    Task<List<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse);
+    Task<List<Transaction>> GetTransactionsFromTo(DateTime from, DateTime to, bool reverse = true);
+
+    /// <summary>
+    /// Tries to get the corresponding transfer for a Transaction.
+    /// </summary>
+    /// <param name="transaction"></param>
+    /// <returns>Transaction object or null if none found</returns>
+    Task<Transaction?> TryGetCorrespondingTransfer(Transaction transaction);
 
     /// <summary>
     /// Gets first Transaction from Transaction table.

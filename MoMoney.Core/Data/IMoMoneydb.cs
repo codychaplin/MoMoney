@@ -1,4 +1,5 @@
 ﻿using MoMoney.Core.Models;
+using MoMoney.Core.Models.Statements;
 using SQLite;
 
 namespace MoMoney.Core.Data;
@@ -10,7 +11,8 @@ public interface IMoMoneydb
     /// <summary>
     /// Creates new database connection, creates tables if not exists and adds default data to tables.
     /// </summary>
-    Task Init();
+    /// <param name="wait"></param>
+    Task Init(bool wait = true);
 
     /// <summary>
     /// Drops all tables, closes and nullifies database connection, and re-initializes the database.
@@ -20,7 +22,8 @@ public interface IMoMoneydb
     /// <summary>
     /// Creates default categories.
     /// </summary>
-    Task CreateCategories();
+    /// <param name="getAll"></param>
+    Task CreateCategories(bool getAll);
 
     // ----------------------- CRUD wrappers (needed for unit testing) ----------------------- //
 
@@ -33,6 +36,7 @@ public interface IMoMoneydb
     /// <summary>
     /// Counts the number of accounts in the database that match the account name.
     /// </summary>
+    /// <param name="accountName"></param>
     /// <returns>Number of accounts that match</returns>
     Task<int> AccountsCountAsync(string accountName);
 

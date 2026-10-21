@@ -80,6 +80,17 @@ public partial class Transaction : ObservableObject
                trans1.Payee == trans2.Payee &&
                trans1.TransferID == trans2.TransferID;
     }
+
+    public void SetData(DateTime date, int accountID, decimal amount, int categoryID, int subcategoryID, string payee, int? transferID)
+    {
+        Date = date;
+        AccountID = accountID;
+        Amount = amount;
+        CategoryID = categoryID;
+        SubcategoryID = subcategoryID;
+        Payee = payee;
+        TransferID = transferID;
+    }
 }
 
 public class TransactionImportMap : ClassMap<Transaction>

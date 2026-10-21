@@ -6,7 +6,7 @@ using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
 
-namespace MoMoney.Core.ViewModels;
+namespace MoMoney.Core.ViewModels.Tabs;
 
 public partial class HomeViewModel : ObservableObject
 {
@@ -14,6 +14,8 @@ public partial class HomeViewModel : ObservableObject
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
     readonly ILoggerService<HomeViewModel> logger;
+
+    [ObservableProperty] bool isBusy = false;
 
     [ObservableProperty] ObservableCollection<Transaction> recentTransactions = [];
 
@@ -26,6 +28,10 @@ public partial class HomeViewModel : ObservableObject
     [ObservableProperty] ObservableCollection<BalanceOverTimeData> data = [];
 
     [ObservableProperty] string showValue = "$0,k";
+    [ObservableProperty] DateRange selectedRange = DateRange.Y1;
+    [ObservableProperty] string xLabelFormat = "MMM";
+    [ObservableProperty] double xInterval = 1;
+    [ObservableProperty] string xIntervalType = "Months";
 
     bool firstLoad = true;
     DateTime latestTransactionDate = DateTime.Today;
@@ -39,24 +45,28 @@ public partial class HomeViewModel : ObservableObject
         categoryService = _categoryService;
         logger = _logger;
 
-        // first two months, show 1 year, starting March show YTD
-        StartDate = (DateTime.Today.Month <= 2) ? DateTime.Today.AddYears(-1) : new(DateTime.Today.Year, 1, 1);
+        StartDate = DateTime.Today.AddYears(-1);
         EndDate = DateTime.Today;
 
         logger.LogFirebaseEvent(FirebaseParameters.EVENT_OPEN_APP, FirebaseParameters.GetFirebaseParameters());
+
+        WeakReferenceMessenger.Default.Register<UpdateHomePageMessage>(this, async (r, m) => await Refresh());
     }
 
     /// <summary>
     /// Refreshes the page with updated data.
     /// </summary>
     /// <returns></returns>
-    public async Task Refresh()
+    public async Task Refresh(bool showLoading = false)
     {
         try
         {
+            if (showLoading)
+                IsBusy = true;
+                
             ShowValue = Utilities.ShowValue ? "$0,k" : "$?";
 
-            var transactions = await transactionService.GetTransactionsFromTo(StartDate, EndDate, true);
+            var transactions = await transactionService.GetTransactionsFromTo(StartDate, EndDate);
             if (transactions.Count == 0)
             {
                 RecentTransactions.Clear();
@@ -77,7 +87,12 @@ public partial class HomeViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(Refresh), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            if (showLoading)
+                IsBusy = false;
         }
     }
 
@@ -88,12 +103,6 @@ public partial class HomeViewModel : ObservableObject
     async Task CalculateNetworthAndAccountBalances()
     {
         // calculate current networth
-        if (Utilities.ShowValue == false)
-        {
-            currentNetworth = 0;
-            return;
-        }
-
         var accounts = await accountService.GetActiveAccounts();
         currentNetworth = accounts.Sum(acc => acc.CurrentBalance);
 
@@ -102,12 +111,16 @@ public partial class HomeViewModel : ObservableObject
             .GroupBy(acc => acc.AccountType)
             .Select(group => new AccountTotalModel
             {
-                AccountType = group.Key.ToString(),
+                AccountType = group.Key!.ToString(),
                 Total = Utilities.ShowValue ? group.Sum(acc => acc.CurrentBalance) : 0
             })
             .Where(acc => acc != null).ToList();
 
-        if (EndDate >= latestTransactionDate)
+        if (Utilities.ShowValue == false)
+        {
+            NetworthAtEndDate = 0;
+        }
+        else if (EndDate >= latestTransactionDate)
         {
             // if the end date is >= the date of the latest transaction, networth is current networth
             NetworthAtEndDate = currentNetworth;
@@ -115,7 +128,7 @@ public partial class HomeViewModel : ObservableObject
         else
         {
             // if the end date is before the latest transaction date, get transactions between the two dates and calculate the difference
-            var transactions = await transactionService.GetTransactionsFromTo(EndDate, latestTransactionDate, true);
+            var transactions = await transactionService.GetTransactionsFromTo(EndDate, latestTransactionDate);
             NetworthAtEndDate = currentNetworth - transactions.Where(trans => trans.CategoryID != Constants.TRANSFER_ID).Sum(t => t.Amount);
             foreach (var account in groupedAccounts)
             {
@@ -145,33 +158,53 @@ public partial class HomeViewModel : ObservableObject
     /// </summary>
     void GetChartData(IEnumerable<Transaction> transactions)
     {
-        // if the date range is > 1 year, group results by Month, if < 1 year, group by day
+        // group by year if range > 1Y, by month if range > 1M, otherwise by day
         // get non-transfer transactions, group by date, and select date and sum of amounts on each date
-        bool isLong = (EndDate - StartDate).TotalDays > 365;
+        double totalDays = (EndDate - StartDate).TotalDays;
         decimal runningTotal = NetworthAtEndDate;
 
-        if (isLong)
+        IEnumerable<BalanceOverTimeData> data;
+        if (totalDays > 365)
         {
-            var data = transactions
+            XLabelFormat = "yyyy";
+            XIntervalType = "Years";
+            data = transactions
                 .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
-                .GroupBy(trans => trans.Date.Month)
+                .GroupBy(trans => trans.Date.Year)
                 .Select(group =>
                 {
                     var balanceData = new BalanceOverTimeData
                     {
-                        Date = group.First().Date,
+                        Date = new DateTime(group.Key, 1, 1),
                         Balance = runningTotal
                     };
                     runningTotal -= group.Sum(t => t.Amount);
                     return balanceData;
                 });
-            Data.Clear();
-            foreach (var d in data)
-                Data.Add(d);
+        }
+        else if (totalDays > 93)
+        {
+            XLabelFormat = "MMM-yy";
+            XIntervalType = "Months";
+            data = transactions
+                .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
+                .GroupBy(trans => new { trans.Date.Year, trans.Date.Month })
+                .Select(group =>
+                {
+                    var balanceData = new BalanceOverTimeData
+                    {
+                        Date = new DateTime(group.Key.Year, group.Key.Month, 1),
+                        Balance = runningTotal
+                    };
+                    runningTotal -= group.Sum(t => t.Amount);
+                    return balanceData;
+                });
         }
         else
         {
-            var data = transactions
+            XLabelFormat = "dd-MMM";
+            XIntervalType = "Days";
+            data = transactions
                 .Where(trans => trans.CategoryID != Constants.TRANSFER_ID)
                 .GroupBy(trans => trans.Date)
                 .Select(group =>
@@ -184,10 +217,30 @@ public partial class HomeViewModel : ObservableObject
                     runningTotal -= group.Sum(t => t.Amount);
                     return balanceData;
                 });
-            Data.Clear();
-            foreach (var d in data)
-                Data.Add(d);
         }
+
+        Data.Clear();
+        foreach (var d in data)
+            Data.Add(d);
+    }
+
+    partial void OnSelectedRangeChanged(DateRange value)
+    {
+        var today = DateTime.Today;
+        StartDate = value switch
+        {
+            DateRange.D1  => today.AddDays(-1),
+            DateRange.W1  => today.AddDays(-7),
+            DateRange.M1  => today.AddMonths(-1),
+            DateRange.M3  => today.AddMonths(-3),
+            DateRange.M6  => today.AddMonths(-6),
+            DateRange.YTD => new DateTime(today.Year, 1, 1),
+            DateRange.Y1  => today.AddYears(-1),
+            DateRange.ALL => DateTime.MinValue,
+            _             => StartDate
+        };
+        EndDate = today;
+        _ = Refresh(true);
     }
 
     [RelayCommand]
@@ -195,4 +248,16 @@ public partial class HomeViewModel : ObservableObject
 
     [RelayCommand]
     public void ViewAllTransactions() => WeakReferenceMessenger.Default.Send(new ChangeTabMessage(1));
+}
+
+public enum DateRange
+{
+    D1,
+    W1,
+    M1,
+    M3,
+    M6,
+    YTD,
+    Y1,
+    ALL
 }

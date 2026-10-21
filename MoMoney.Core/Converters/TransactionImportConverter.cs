@@ -35,12 +35,12 @@ public class TransactionImportConverter : DefaultTypeConverter
             case "Payee":
                 var parentId = categories[row.GetField(3) + ","];
                 if (parentId != Constants.TRANSFER_ID && string.IsNullOrEmpty(text))
-                    throw new InvalidTransactionException($"Transaction {row.Parser.Row}: Payee cannot be blank");
+                    throw new InvalidException($"Transaction {row.Parser.Row}: Payee cannot be blank");
                 return text;
             default:
                 break;
         }
 
-        throw new InvalidTransactionException($"Transaction {row.Parser.Row}: '{text} is not a valid value for '{name}'");
+        throw new InvalidException($"Transaction {row.Parser.Row}: '{text} is not a valid value for '{name}'");
     }
 }

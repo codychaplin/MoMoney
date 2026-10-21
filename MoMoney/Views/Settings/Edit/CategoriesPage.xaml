@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<components:CustomContentPage
     x:Class="MoMoney.Views.Settings.Edit.CategoriesPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
+    xmlns:components="clr-namespace:MoMoney.Components"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
-    Title="Categories"
+    HeaderTitle="Categories"
     x:DataType="viewmodel:CategoriesViewModel">
-
-    <ContentPage.Resources>
+    <components:CustomContentPage.Resources>
         <DataTemplate x:Key="HeaderTemplate" x:DataType="models:CategoryGroup">
-            <Border BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Style="{StaticResource SmallTileFrame}">
+            <Border BackgroundColor="{AppThemeBinding Light={StaticResource secondaryContainer}, Dark={StaticResource secondaryContainerDark}}" Style="{StaticResource SmallTileFrame}">
                 <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryStringCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding CategoryName}" />
+                    <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding Parent}" />
                 </Border.GestureRecognizers>
-                <Grid>
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5">
+                    <!--  Category Colour  -->
+                    <Border
+                        HeightRequest="26"
+                        WidthRequest="26"
+                        StrokeShape="RoundRectangle 13"
+                        BackgroundColor="{Binding Parent.Colour}" />
+
+                    <!--  Category Name  -->
                     <Label
+                        Grid.Column="1"
                         FontSize="20"
                         Style="{StaticResource lblTile}"
-                        Text="{Binding CategoryName}" />
+                        TextColor="{AppThemeBinding Light={StaticResource onSecondaryContainer}, Dark={StaticResource onSecondaryContainerDark}}"
+                        Text="{Binding Parent.CategoryName}" />
                 </Grid>
             </Border>
         </DataTemplate>
@@ -27,16 +37,22 @@
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding Path=GoToEditCategoryCommand, Source={RelativeSource AncestorType={x:Type viewmodel:CategoriesViewModel}}}" CommandParameter="{Binding .}" />
                 </Border.GestureRecognizers>
-                <Grid>
-                    <Label Style="{StaticResource lblTile}" Text="{Binding CategoryName}" />
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5">
+                    <!--  Category Colour  -->
+                    <Border
+                        HeightRequest="26"
+                        WidthRequest="26"
+                        StrokeShape="RoundRectangle 13"
+                        BackgroundColor="{Binding Colour}" />
+                        
+                    <!--  Category Name  -->
+                    <Label Grid.Column="1" Style="{StaticResource lblTile}" Text="{Binding CategoryName}" />
                 </Grid>
             </Border>
         </DataTemplate>
-    </ContentPage.Resources>
+    </components:CustomContentPage.Resources>
 
-    <!--  main page  -->
-    <Grid Padding="0,10,0,0">
-
+    <Grid>
         <!--  list of categories  -->
         <CollectionView
             GroupHeaderTemplate="{StaticResource HeaderTemplate}"
@@ -44,7 +60,7 @@
             ItemTemplate="{StaticResource ItemTemplate}"
             ItemsSource="{Binding Categories}" />
 
-        <!--  add account button  -->
+        <!--  add category button  -->
         <Button Command="{Binding GoToAddCategoryCommand}" Style="{StaticResource btnAdd}" />
     </Grid>
-</ContentPage>
+</components:CustomContentPage>

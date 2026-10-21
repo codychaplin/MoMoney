@@ -1,48 +1,38 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<components:CustomContentPage
     x:Class="MoMoney.Views.Settings.Edit.EditStockPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
-    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
     x:DataType="viewmodel:EditStockViewModel">
-    <ContentPage.Triggers>
-        <DataTrigger
-            Binding="{Binding IsEditMode}"
-            TargetType="ContentPage"
-            Value="True">
-            <Setter Property="Title" Value="Edit Stock" />
+    <components:CustomContentPage.Triggers>
+        <DataTrigger Binding="{Binding IsEditMode}" TargetType="components:CustomContentPage" Value="True">
+            <Setter Property="HeaderTitle" Value="Edit Stock" />
         </DataTrigger>
-        <DataTrigger
-            Binding="{Binding IsEditMode}"
-            TargetType="ContentPage"
-            Value="False">
-            <Setter Property="Title" Value="Add Stock" />
+        <DataTrigger Binding="{Binding IsEditMode}" TargetType="components:CustomContentPage" Value="False">
+            <Setter Property="HeaderTitle" Value="Add Stock" />
         </DataTrigger>
-    </ContentPage.Triggers>
+    </components:CustomContentPage.Triggers>
 
-    <!--  main page  -->
     <ScrollView>
         <VerticalStackLayout Padding="10" Spacing="10">
 
             <!--  symbol  -->
             <material:TextField
-                x:Name="txtSymbol"
                 Title="Symbol"
-                Margin="0"
-                Padding="0"
-                Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Label}}"
+                Icon="{FontImageSource FontFamily=MaterialOutlinedFilled,
+                                    Glyph={x:Static m:MaterialOutlined.Label}}"
                 Text="{Binding Stock.Symbol}" />
 
             <!--  market  -->
             <material:PickerField
                 x:Name="txtMarket"
                 Title="Market"
-                Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Storefront}}"
+                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                    Glyph={x:Static m:MaterialOutlined.Storefront}}"
                 SelectedItem="{Binding Stock.Market}">
                 <material:PickerField.Items>
                     <x:String>TSE</x:String>
@@ -53,30 +43,28 @@
 
             <!--  quantity  -->
             <material:TextField
-                x:Name="txtQuantity"
                 Title="Quantity"
-                Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Tag}}"
+                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                    Glyph={x:Static m:MaterialOutlined.Tag}}"
                 Keyboard="Numeric"
                 Text="{Binding Stock.Quantity}" />
 
             <!--  cost  -->
             <material:TextField
-                x:Name="txtCost"
                 Title="Cost"
-                Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Shopping_cart}}"
+                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                    Glyph={x:Static m:MaterialOutlined.Shopping_cart}}"
                 Keyboard="Numeric"
                 Text="{Binding Stock.Cost}" />
 
             <!--  delete/clear/enter buttons  -->
             <components:ActionButtons
                 AddCommand="{Binding AddCommand}"
-                ClearClicked="BtnClear_Clicked"
+                ClearCommand="{Binding ClearCommand}"
                 EditCommand="{Binding EditCommand}"
                 IsEditMode="{Binding IsEditMode}"
                 RemoveCommand="{Binding RemoveCommand}" />
 
         </VerticalStackLayout>
     </ScrollView>
-</ContentPage>
+</components:CustomContentPage>

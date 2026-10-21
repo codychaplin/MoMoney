@@ -1,10 +1,11 @@
 ﻿using Microsoft.Maui.LifecycleEvents;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
-using Syncfusion.Maui.Core.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
 using UraniumUI;
+using MoMoney.Components;
 using MoMoney.Views;
+using MoMoney.Views.Tabs;
 using MoMoney.Views.Stats;
 using MoMoney.Views.Settings;
 using MoMoney.Views.Settings.Edit;
@@ -13,6 +14,7 @@ using MoMoney.Core.Services;
 using MoMoney.Core.Services.Interfaces;
 using MoMoney.Core.Platforms.Android;
 using MoMoney.Core.ViewModels;
+using MoMoney.Core.ViewModels.Tabs;
 using MoMoney.Core.ViewModels.Stats;
 using MoMoney.Core.ViewModels.Settings;
 using MoMoney.Core.ViewModels.Settings.Edit;
@@ -25,7 +27,6 @@ public static class MauiProgram
 	{
 		var builder = MauiApp.CreateBuilder();
         builder.UseMauiApp<App>()
-               .ConfigureSyncfusionCore()
                .ConfigureSyncfusionToolkit()
                .RegisterPages()
                .RegisterViewModels()
@@ -37,15 +38,23 @@ public static class MauiProgram
                .UseMauiCommunityToolkit()
                .ConfigureFonts(fonts =>
                {
-                   fonts.AddFont("MaterialIcons-Regular.ttf", "Material");
-                   fonts.AddMaterialIconFonts();
+                   fonts.AddMaterialSymbolsFonts();
                })
                .ConfigureEssentials(essentials =>
                {
                    essentials.UseVersionTracking();
                });
 
-        return builder.Build();
+        // needed to initialize sqlite
+        SQLitePCL.Batteries_V2.Init();
+
+        var app = builder.Build();
+
+        // initialize db
+        var db = app.Services.GetRequiredService<IMoMoneydb>();
+        Task.Run(async () => await db.Init()).Wait();
+
+        return app;
 	}
 
     static MauiAppBuilder RegisterServices(this MauiAppBuilder builder)
@@ -54,6 +63,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<ICategoryService, CategoryService>();
         builder.Services.AddSingleton<IStockService, StockService>();
         builder.Services.AddSingleton<ITransactionService, TransactionService>();
+        builder.Services.AddSingleton<IMappingRuleService, MappingRuleService>();
         builder.Services.AddSingleton<IRecordAudioService, RecordAudioService>();
 
         return builder;
@@ -80,6 +90,8 @@ public static class MauiProgram
         builder.Services.AddTransient<AdminPage>();
         builder.Services.AddTransient<BulkEditingPage>();
         builder.Services.AddTransient<ImportExportPage>();
+        builder.Services.AddTransient<ImportStatementPage>();
+        builder.Services.AddTransient<EditMappingRulesPage>();
         builder.Services.AddTransient<LoggingPage>();
 
         // models
@@ -113,6 +125,8 @@ public static class MauiProgram
         builder.Services.AddTransient<AdminViewModel>();
         builder.Services.AddTransient<BulkEditingViewModel>();
         builder.Services.AddTransient<ImportExportViewModel>();
+        builder.Services.AddTransient<ImportStatementViewModel>();
+        builder.Services.AddTransient<EditMappingRulesViewModel>();
         builder.Services.AddTransient<LoggingViewModel>();
 
         // models
@@ -140,6 +154,9 @@ public static class MauiProgram
 
         // file saver
         builder.Services.AddSingleton(FileSaver.Default);
+
+        // popups
+        builder.Services.AddTransientPopup<ColourPopup, ColourPopupViewModel>();
 
         return builder;
     }

@@ -1,80 +1,93 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<components:CustomContentPage
     x:Class="MoMoney.Views.Settings.Edit.EditAccountPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
-    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:models="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
-    Title="Edit Account"
     x:DataType="viewmodel:EditAccountViewModel">
-    <ContentPage.Triggers>
-        <DataTrigger
-            Binding="{Binding IsEditMode}"
-            TargetType="ContentPage"
-            Value="True">
-            <Setter Property="Title" Value="Edit Account" />
+    <components:CustomContentPage.Triggers>
+        <DataTrigger Binding="{Binding IsEditMode}" TargetType="components:CustomContentPage" Value="True">
+            <Setter Property="HeaderTitle" Value="Edit Account" />
         </DataTrigger>
-        <DataTrigger
-            Binding="{Binding IsEditMode}"
-            TargetType="ContentPage"
-            Value="False">
-            <Setter Property="Title" Value="Add Account" />
+        <DataTrigger Binding="{Binding IsEditMode}" TargetType="components:CustomContentPage" Value="False">
+            <Setter Property="HeaderTitle" Value="Add Account" />
         </DataTrigger>
-    </ContentPage.Triggers>
+    </components:CustomContentPage.Triggers>
 
-    <!--  main page  -->
     <VerticalStackLayout Padding="10" Spacing="10">
 
         <!--  account name  -->
         <material:TextField
             x:Name="txtName"
             Title="Account Name"
-            Icon="{FontImageSource FontFamily=MaterialRegular,
-                                   Glyph={x:Static m:MaterialRegular.Account_circle}}"
+            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                Glyph={x:Static m:MaterialOutlined.Account_circle}}"
             Text="{Binding Account.AccountName}" />
 
-        <!--  account type with predefined values  -->
-        <material:PickerField
-            x:Name="pckType"
-            Title="Select a type"
-            Icon="{FontImageSource FontFamily=MaterialRegular,
-                                   Glyph={x:Static m:MaterialRegular.Savings}}"
-            SelectedItem="{Binding Account.AccountType}">
-            <material:PickerField.Items>
-                <x:String>Checkings</x:String>
-                <x:String>Savings</x:String>
-                <x:String>Credit</x:String>
-                <x:String>Investments</x:String>
-            </material:PickerField.Items>
-        </material:PickerField>
+        <Grid
+            ColumnDefinitions="*,Auto"
+            ColumnSpacing="10"
+            RowDefinitions="*,*"
+            RowSpacing="10">
+            <!--  account type with predefined values  -->
+            <material:PickerField
+                x:Name="pckType"
+                Title="Select a type"
+                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                    Glyph={x:Static m:MaterialOutlined.Savings}}"
+                SelectedItem="{Binding Account.AccountType}">
+                <material:PickerField.Items>
+                    <x:String>Checkings</x:String>
+                    <x:String>Savings</x:String>
+                    <x:String>Credit</x:String>
+                    <x:String>Investments</x:String>
+                </material:PickerField.Items>
+            </material:PickerField>
 
-        <!--  starting balance  -->
-        <Grid ColumnDefinitions="*,60">
+            <!--  colour  -->
+            <HorizontalStackLayout Grid.Column="1" Spacing="10">
+                <Button
+                    Command="{Binding OpenColourPopupCommand}"
+                    CornerRadius="15"
+                    BackgroundColor="{Binding Account.Colour}"
+                    HeightRequest="26"
+                    WidthRequest="26" />
+                <Label Text="Colour" FontSize="16" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <!--  starting balance  -->
             <material:TextField
+                Grid.Row="1"
                 x:Name="txtStartingBalance"
                 Title="Starting Balance"
-                Icon="{FontImageSource FontFamily=MaterialRegular,
-                                       Glyph={x:Static m:MaterialRegular.Paid}}"
+                Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                    Glyph={x:Static m:MaterialOutlined.Paid}}"
                 Keyboard="Numeric"
                 Text="{Binding Account.StartingBalance}" />
-            <Switch
-                x:Name="swEnabled"
-                Grid.Column="1"
-                HorizontalOptions="Center"
-                IsToggled="{Binding Account.Enabled}" />
-        </Grid>
 
+            <!--  endable  -->
+            <material:CheckBox
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="0,5"
+                TextFontSize="15"
+                LabelPosition="After"
+                Text="Enabled"
+                BoxSizeRequest="26"
+                IsChecked="{Binding Account.Enabled}" />
+        </Grid>
 
         <!--  delete/clear/enter buttons  -->
         <components:ActionButtons
             AddCommand="{Binding AddCommand}"
-            ClearClicked="BtnClear_Clicked"
+            ClearCommand="{Binding ClearCommand}"
             EditCommand="{Binding EditCommand}"
             IsEditMode="{Binding IsEditMode}"
             RemoveCommand="{Binding RemoveCommand}" />
 
     </VerticalStackLayout>
-</ContentPage>
+</components:CustomContentPage>

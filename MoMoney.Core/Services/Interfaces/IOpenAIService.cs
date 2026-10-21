@@ -1,4 +1,5 @@
 ﻿using MoMoney.Core.Models;
+using MoMoney.Core.Helpers;
 
 namespace MoMoney.Core.Services.Interfaces;
 
@@ -18,4 +19,7 @@ public interface IOpenAIService
     /// <param name="transactionID"></param>
     /// <param name="responseIDs"></param>
     Task MapDictationToTransaction(int transactionID, ResponseIDs responseIDs);
+
+    List<string> _recentIncomePayees { get; set; }
+    List<string> _recentExpensePayees { get; set; }
 }

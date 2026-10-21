@@ -1,5 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MoMoney.Core.Data;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
@@ -13,73 +14,76 @@ public partial class AdminViewModel : ObservableObject
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
     readonly ITransactionService transactionService;
+    readonly IMappingRuleService mappingRuleService;
     readonly ILoggerService<AdminViewModel> logger;
 
     [ObservableProperty]
     bool isAdmin;
 
+    [ObservableProperty]
+    bool transactionDictationEnabled;
+
     public AdminViewModel(IMoMoneydb _momoney, ITransactionService _transactionService, IAccountService _accountService,
-        ICategoryService _categoryService, IStockService _stockService, ILoggerService<AdminViewModel> _logger)
+        ICategoryService _categoryService, IStockService _stockService, IMappingRuleService _mappingRuleService, ILoggerService<AdminViewModel> _logger)
     {
         momoney = _momoney;
         transactionService = _transactionService;
         accountService = _accountService;
         categoryService = _categoryService;
         stockService = _stockService;
+        mappingRuleService = _mappingRuleService;
         logger = _logger;
 
-        IsAdmin = Preferences.Get("IsAdmin", false);
+        IsAdmin = Utilities.IsAdmin;
+        TransactionDictationEnabled = Utilities.TransactionDictationEnabled;
+    }
+
+    /// <summary>
+    /// Generic method to remove all objects from database
+    /// </summary>
+    /// <param name="typeSingular"></param>
+    /// <param name="typePlural"></param>
+    /// <param name="eventName"></param>
+    /// <param name="functionName"></param>
+    /// <param name="getCount"></param>
+    /// <param name="removeAll"></param>
+    async Task RemoveAllObjects(string typeSingular, string typePlural, string eventName, string functionName,
+        Func<Task<int>> getCount, Func<Task> removeAll)
+    {
+        bool flag = await Shell.Current.DisplayAlertAsync("", $"Are you sure you want to delete ALL {typePlural}?", "Yes", "No");
+        if (!flag)
+            return;
+
+        try
+        {
+            int count = await getCount();
+            await removeAll();
+            string message = count == 1 ? $"1 {typeSingular} has been deleted." : $"{count} {typePlural} have been deleted.";
+            _ = Shell.Current.DisplayAlertAsync("Success", message, "OK");
+            logger.LogFirebaseEvent(eventName, FirebaseParameters.GetFirebaseParameters());
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(functionName, ex);
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+        }
     }
 
     /// <summary>
     /// Removes all Transactions from database.
     /// </summary>
     [RelayCommand]
-    async Task RemoveAllTransactions()
-    {
-        bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Transactions?", "Yes", "No");
-        if (!flag)
-            return;
-
-        try
-        {
-            int count = await transactionService.GetTransactionCount();
-            await transactionService.RemoveAllTransactions();
-            string message = count == 1 ? "1 transaction has been deleted." : $"{count} transactions have been deleted.";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
-            logger.LogFirebaseEvent(FirebaseParameters.EVENT_REMOVE_ALL_TRANSACTIONS, FirebaseParameters.GetFirebaseParameters());
-        }
-        catch (Exception ex)
-        {
-            await logger.LogError(nameof(RemoveAllTransactions), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
-        }
-    }
+    Task RemoveAllTransactions() =>
+        RemoveAllObjects("transaction", "Transactions", FirebaseParameters.EVENT_REMOVE_ALL_TRANSACTIONS,
+            nameof(RemoveAllTransactions), transactionService.GetTransactionCount, transactionService.RemoveAllTransactions);
 
     /// <summary>
     /// Removes all Accounts from database.
     /// </summary>
     [RelayCommand]
-    async Task RemoveAllAccounts()
-    {
-        bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Accounts?", "Yes", "No");
-        if (!flag)
-            return;
-
-        try
-        {
-            int count = await accountService.GetAccountCount();
-            await accountService.RemoveAllAccounts();
-            string message = count == 1 ? "1 account has been deleted." : $"{count} accounts have been deleted.";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
-            logger.LogFirebaseEvent(FirebaseParameters.EVENT_REMOVE_ALL_ACCOUNTS, FirebaseParameters.GetFirebaseParameters());
-        }
-        catch (Exception ex)
-        {
-            await logger.LogError(nameof(RemoveAllAccounts), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
-        }
-    }
+    Task RemoveAllAccounts() =>
+        RemoveAllObjects("account", "Accounts", FirebaseParameters.EVENT_REMOVE_ALL_ACCOUNTS,
+            nameof(RemoveAllAccounts), accountService.GetAccountCount, accountService.RemoveAllAccounts);
 
     /// <summary>
     /// Removes all Categories from database.
@@ -87,22 +91,25 @@ public partial class AdminViewModel : ObservableObject
     [RelayCommand]
     async Task RemoveAllCategories()
     {
-        bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Categories?", "Yes", "No");
+        bool selectedNecessary = await Shell.Current.DisplayAlertAsync("", "Do you want to delete all but the necessary categories (5), or delete all but the default categories (33)?", "Necessary", "Default");
+        string term = selectedNecessary ? "necessary" : "default";
+        bool flag = await Shell.Current.DisplayAlertAsync("", $"Are you sure you want to delete ALL but the {term} categories?", "Yes", "Cancel");
         if (!flag)
             return;
 
         try
         {
             int count = await categoryService.GetCategoryCount();
-            await categoryService.RemoveAllCategories();
-            string message = count == 1 ? "1 category has been deleted." : $"{count} categories have been deleted.";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
+            bool getAll = !selectedNecessary;
+            await categoryService.RemoveAllCategories(getAll);
+            string message = count == 1 ? $"1 category has been deleted." : $"{count} categories have been deleted.";
+            _ = Shell.Current.DisplayAlertAsync("Success", message, "OK");
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_REMOVE_ALL_CATEGORIES, FirebaseParameters.GetFirebaseParameters());
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(RemoveAllCategories), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -110,51 +117,25 @@ public partial class AdminViewModel : ObservableObject
     /// Removes all Stocks from database.
     /// </summary>
     [RelayCommand]
-    async Task RemoveAllStocks()
-    {
-        bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Stocks?", "Yes", "No");
-        if (!flag)
-            return;
-
-        try
-        {
-            int count = await stockService.GetStockCount();
-            await stockService.RemoveStocks();
-            string message = count == 1 ? "1 stock has been deleted." : $"{count} stocks have been deleted.";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
-            logger.LogFirebaseEvent(FirebaseParameters.EVENT_REMOVE_ALL_STOCKS, FirebaseParameters.GetFirebaseParameters());
-        }
-        catch (Exception ex)
-        {
-            await logger.LogError(nameof(RemoveAllStocks), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
-        }
-    }
+    Task RemoveAllStocks() =>
+        RemoveAllObjects("stock", "Stocks", FirebaseParameters.EVENT_REMOVE_ALL_STOCKS,
+            nameof(RemoveAllStocks), stockService.GetStockCount, stockService.RemoveStocks);
 
     /// <summary>
     /// Removes all Logs from database.
     /// </summary>
     [RelayCommand]
-    async Task RemoveAllLogs()
-    {
-        bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL Logs?", "Yes", "No");
-        if (!flag)
-            return;
+    Task RemoveAllLogs() =>
+        RemoveAllObjects("log", "Logs", FirebaseParameters.EVENT_REMOVE_ALL_LOGS,
+            nameof(RemoveAllLogs), logger.GetLogCount, logger.RemoveLogs);
 
-        try
-        {
-            int count = await logger.GetLogCount();
-            await logger.RemoveLogs();
-            string message = count == 1 ? "1 log has been deleted." : $"{count} logs have been deleted.";
-            _ = Shell.Current.DisplayAlert("Success", message, "OK");
-            logger.LogFirebaseEvent(FirebaseParameters.EVENT_REMOVE_ALL_LOGS, FirebaseParameters.GetFirebaseParameters());
-        }
-        catch (Exception ex)
-        {
-            await logger.LogError(nameof(RemoveAllLogs), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
-        }
-    }
+    /// <summary>
+    /// Removes all Mapping Rules from database.
+    /// </summary>
+    [RelayCommand]
+    Task RemoveAllMappingRules() =>
+        RemoveAllObjects("rule", "Mapping Rules", FirebaseParameters.EVENT_REMOVE_ALL_MAPPING_RULES,
+            nameof(RemoveAllMappingRules), mappingRuleService.GetMappingRuleCount, mappingRuleService.RemoveAllRules);
 
     /// <summary>
     /// Removes all data from database.
@@ -162,20 +143,20 @@ public partial class AdminViewModel : ObservableObject
     [RelayCommand]
     async Task RemoveAllData()
     {
-        bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete ALL data?", "Yes", "No");
+        bool flag = await Shell.Current.DisplayAlertAsync("", "Are you sure you want to delete ALL data?", "Yes", "No");
         if (!flag)
             return;
 
         try
         {
             await momoney.ResetDb();
-            _ = Shell.Current.DisplayAlert("Success", "All data has been deleted.", "OK");
+            _ = Shell.Current.DisplayAlertAsync("Success", "All data has been deleted.", "OK");
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_REMOVE_ALL_DATA, FirebaseParameters.GetFirebaseParameters());
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(RemoveAllLogs), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await logger.LogError(nameof(RemoveAllData), ex);
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -188,11 +169,12 @@ public partial class AdminViewModel : ObservableObject
         try
         {
             await transactionService.CalculateAccountBalances();
+            await Utilities.DisplayToast("Balances have been recalculated.");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(CalculateAccountBalances), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -212,5 +194,15 @@ public partial class AdminViewModel : ObservableObject
     async Task GoToBulkEditing()
     {
         await Shell.Current.GoToAsync("BulkEditingPage");
+    }
+
+    /// <summary>
+    /// Toggle TransactionDictationEnabled in Preferences (shows/hides AI feature)
+    /// </summary>
+    /// <param name="value"></param>
+    partial void OnTransactionDictationEnabledChanged(bool value)
+    {
+        Utilities.TransactionDictationEnabled = value;
+        WeakReferenceMessenger.Default.Send(new UpdateTransactionDictationMessage(value));
     }
 }

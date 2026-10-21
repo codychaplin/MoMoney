@@ -1,58 +1,66 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<components:CustomContentPage
     x:Class="MoMoney.Views.Settings.Edit.EditCategoryPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
-    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:model="clr-namespace:MoMoney.Core.Models;assembly=MoMoney.Core"
     xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Settings.Edit;assembly=MoMoney.Core"
     x:DataType="viewmodel:EditCategoryViewModel">
-    <ContentPage.Triggers>
-        <DataTrigger
-            Binding="{Binding IsEditMode}"
-            TargetType="ContentPage"
-            Value="True">
-            <Setter Property="Title" Value="Edit Category" />
+    <components:CustomContentPage.Triggers>
+        <DataTrigger Binding="{Binding IsEditMode}" TargetType="components:CustomContentPage" Value="True">
+            <Setter Property="HeaderTitle" Value="Edit Category" />
         </DataTrigger>
-        <DataTrigger
-            Binding="{Binding IsEditMode}"
-            TargetType="ContentPage"
-            Value="False">
-            <Setter Property="Title" Value="Add Category" />
+        <DataTrigger Binding="{Binding IsEditMode}" TargetType="components:CustomContentPage" Value="False">
+            <Setter Property="HeaderTitle" Value="Add Category" />
         </DataTrigger>
-    </ContentPage.Triggers>
+    </components:CustomContentPage.Triggers>
 
-    <!--  main page  -->
     <VerticalStackLayout Padding="10" Spacing="10">
 
         <!--  category name  -->
         <material:TextField
             x:Name="txtName"
+            IsEnabled="{Binding IsEditableCategory}"
             Title="Category Name"
-            Icon="{FontImageSource FontFamily=MaterialOutlined,
-                                   Glyph={x:Static m:MaterialOutlined.Category}}"
+            Icon="{FontImageSource FontFamily=MaterialRounded,
+                                Glyph={x:Static m:MaterialOutlined.Category}}"
             Text="{Binding Category.CategoryName}" />
 
         <!--  parent category  -->
         <material:PickerField
             x:Name="pckParent"
+            IsEnabled="{Binding IsEditableCategory}"
             Title="Select a Parent"
             x:DataType="model:Category"
-            Icon="{FontImageSource FontFamily=MaterialRegular,
-                                   Glyph={x:Static m:MaterialRound.Category}}"
+            Icon="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                Glyph={x:Static m:MaterialOutlined.Category}}"
             ItemDisplayBinding="{Binding CategoryName}"
             ItemsSource="{Binding Path=Parents, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}"
             SelectedItem="{Binding Path=Parent, Source={RelativeSource AncestorType={x:Type viewmodel:EditCategoryViewModel}}}" />
 
+        <!--  colour  -->
+        <HorizontalStackLayout Spacing="10">
+            <Button
+                Command="{Binding OpenColourPopupCommand}"
+                CornerRadius="15"
+                BackgroundColor="{Binding Category.Colour}"
+                HeightRequest="26"
+                WidthRequest="26" />
+            <Label Text="Colour" FontSize="16" VerticalOptions="Center" />
+        </HorizontalStackLayout>
+
         <!--  delete/clear/enter buttons  -->
         <components:ActionButtons
-            AddCommand="{Binding AddCommand}"
-            ClearClicked="BtnClear_Clicked"
-            EditCommand="{Binding EditCommand}"
             IsEditMode="{Binding IsEditMode}"
-            RemoveCommand="{Binding RemoveCommand}" />
-
+            AddCommand="{Binding AddCommand}"
+            AddIsEnabled="{Binding IsEditableCategory}"
+            ClearCommand="{Binding ClearCommand}"
+            ClearIsEnabled="{Binding IsEditableCategory}"
+            EditCommand="{Binding EditCommand}"
+            RemoveCommand="{Binding RemoveCommand}"
+            RemoveIsEnabled="{Binding IsEditableCategory}" />
     </VerticalStackLayout>
-</ContentPage>
+</components:CustomContentPage>

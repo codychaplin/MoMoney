@@ -1,9 +1,10 @@
+using MoMoney.Components;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.ViewModels.Stats;
 
 namespace MoMoney.Views.Stats;
 
-public partial class AccountSummaryPage : ContentPage
+public partial class AccountSummaryPage : CustomContentPage
 {
     AccountSummaryViewModel vm;
     public AccountSummaryPage(AccountSummaryViewModel _vm)

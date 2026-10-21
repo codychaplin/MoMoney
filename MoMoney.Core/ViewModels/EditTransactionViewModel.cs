@@ -1,4 +1,3 @@
-﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
@@ -9,27 +8,14 @@ using MoMoney.Core.Services.Interfaces;
 namespace MoMoney.Core.ViewModels;
 
 [QueryProperty(nameof(ID), "ID")]
-public partial class EditTransactionViewModel : ObservableObject
+public partial class EditTransactionViewModel : BaseTransactionViewModel
 {
-    readonly IAccountService accountService;
-    readonly ICategoryService categoryService;
-    readonly ITransactionService transactionService;
     readonly ILoggerService<EditTransactionViewModel> logger;
 
     public string ID { get; set; } = string.Empty;
 
-    [ObservableProperty] ObservableCollection<Account> accounts = [];
-    [ObservableProperty] ObservableCollection<Category> categories = [];
-    [ObservableProperty] ObservableCollection<Category> subcategories = [];
-    [ObservableProperty] ObservableCollection<string> payees = [];
-
-    [ObservableProperty] Account? account;
-    [ObservableProperty] Category? category;
-    [ObservableProperty] Category? subcategory;
-    [ObservableProperty] Account? transferAccount;
-
     [ObservableProperty] Transaction? transaction;
-    
+
     public Account? InitialAccount { get; private set; }
     public Category? InitialCategory { get; private set; }
     public Category? InitialSubcategory { get; private set; }
@@ -39,11 +25,64 @@ public partial class EditTransactionViewModel : ObservableObject
 
     public EditTransactionViewModel(ITransactionService _transactionService, IAccountService _accountService,
         ICategoryService _categoryService, ILoggerService<EditTransactionViewModel> _logger)
+        : base(_transactionService, _accountService, _categoryService)
     {
-        transactionService = _transactionService;
-        accountService = _accountService;
-        categoryService = _categoryService;
         logger = _logger;
+        IsCategoryEnabled = true;
+        IsSubcategoryEnabled = true;
+    }
+
+    protected override async Task LogError(string method, Exception ex) => await logger.LogError(method, ex);
+    protected override async Task LogWarning(string method, Exception ex) => await logger.LogWarning(method, ex);
+
+    /// <summary>
+    /// Initializes the page: loads transaction, accounts, payees, categories, and subcategories.
+    /// </summary>
+    public async Task Init()
+    {
+        await GetTransaction();
+        await GetAccounts();
+        await GetPayees();
+
+        switch (InitialCategory?.CategoryID)
+        {
+            case Constants.INCOME_ID:
+                await GetIncomeCategory();
+                IsCategoryEnabled = false;
+                break;
+            case Constants.TRANSFER_ID:
+                await GetTransferCategory();
+                IsCategoryEnabled = false;
+                IsSubcategoryEnabled = false;
+                IsPayeeVisible = false;
+                IsTransferAccountVisible = true;
+                break;
+            default:
+                await GetExpenseCategories();
+                break;
+        }
+
+        await CategoryChanged();
+    }
+
+    /// <summary>
+    /// Resets input fields.
+    /// </summary>
+    [RelayCommand]
+    void Clear()
+    {
+        if (Category?.CategoryID == Constants.TRANSFER_ID)
+            return;
+
+        IsCategoryEnabled = true;
+        IsSubcategoryEnabled = true;
+
+        Transaction?.Payee = string.Empty;
+        Transaction = new Transaction { Date = DateTime.Now };
+        Account = null;
+        TransferAccount = null;
+        Category = null;
+        Subcategory = null;
     }
 
     /// <summary>
@@ -62,7 +101,7 @@ public partial class EditTransactionViewModel : ObservableObject
                 InitialCategory = await categoryService.GetCategory(InitialTransaction.CategoryID);
                 InitialSubcategory = await categoryService.GetCategory(InitialTransaction.SubcategoryID);
 
-                if (InitialCategory?.CategoryID >= Constants.EXPENSE_ID) // if expense, make amount appear positive for user
+                if (InitialCategory?.CategoryID >= Constants.EXPENSE_THRESHOLD) // if expense, make amount appear positive for user
                     Transaction.Amount *= -1;
                 else if (InitialCategory?.CategoryID == Constants.TRANSFER_ID) // if transfer, set initial payee account
                 {
@@ -74,48 +113,25 @@ public partial class EditTransactionViewModel : ObservableObject
                         InitialTransferAccount = await accountService.GetAccount(Transaction.TransferID.Value);
                 }
             }
-            catch (TransactionNotFoundException ex)
-            {
-                await logger.LogError(nameof(GetTransaction), ex);
-                await Shell.Current.DisplayAlert("Transaction Error", ex.Message, "OK");
-            }
-            catch (AccountNotFoundException ex)
-            {
-                await logger.LogError(nameof(GetTransaction), ex);
-                await Shell.Current.DisplayAlert("Account Error", ex.Message, "OK");
-            }
-            catch (CategoryNotFoundException ex)
-            {
-                await logger.LogError(nameof(GetTransaction), ex);
-                await Shell.Current.DisplayAlert("Category Error", ex.Message, "OK");
-            }
             catch (Exception ex)
             {
-                await logger.LogError(nameof(GetTransaction), ex);
-                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+                await HandleError(nameof(GetTransaction), ex);
             }
         }
         else
         {
             string message = $"{ID} is not a valid ID";
             await logger.LogError(nameof(GetTransaction), new Exception(message));
-            await Shell.Current.DisplayAlert("Transaction ID Error", message, "OK");
+            await Shell.Current.DisplayAlertAsync("Transaction ID Error", message, "OK");
         }
     }
 
-    /// <summary>
-    /// Gets accounts from database and refreshes Accounts collection.
-    /// </summary>
-    /// <returns></returns>
-    public async Task GetAccounts()
+    protected override async Task GetAccounts()
     {
         try
         {
             // TODO: if using disabled account, retrieve from db as well
-            var accounts = await accountService.GetActiveAccounts();
-            Accounts.Clear();
-            foreach (var account in accounts)
-                Accounts.Add(account);
+            await base.GetAccounts();
 
             Account = InitialAccount;
             if (InitialCategory?.CategoryID == Constants.TRANSFER_ID)
@@ -123,81 +139,52 @@ public partial class EditTransactionViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(GetAccounts), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await HandleError(nameof(GetAccounts), ex);
         }
     }
 
-    /// <summary>
-    /// Gets income category from database and refreshes Categories collection.
-    /// </summary>
-    public async Task GetIncomeCategory()
+    protected override async Task<Category?> GetIncomeCategory()
     {
+        Category? income = null;
         try
         {
-            var income = await categoryService.GetCategory(Constants.INCOME_ID);
-            Categories.Clear();
-            if (income != null)
-                Categories.Add(income);
-            Subcategories.Clear();
-            Category = InitialCategory;
-        }
-        catch (CategoryNotFoundException ex)
-        {
-            await logger.LogError(nameof(GetIncomeCategory), ex);
-            await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+            income = await base.GetIncomeCategory();
+            Category = Categories.FirstOrDefault(c => c.CategoryID == InitialCategory?.CategoryID);
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(GetIncomeCategory), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await HandleError(nameof(GetIncomeCategory), ex);
         }
+
+        return income;
     }
 
-    /// <summary>
-    /// Gets transfer category from database and refreshes Categories collection.
-    /// </summary>
-    public async Task GetTransferCategory()
+    protected override async Task<Category?> GetTransferCategory()
     {
+        Category? transfer = null;
         try
         {
-            var transfer = await categoryService.GetCategory(Constants.TRANSFER_ID);
-            Categories.Clear();
-            if (transfer != null)
-                Categories.Add(transfer);
-            Subcategories.Clear();
-            Category = InitialCategory;
-        }
-        catch (CategoryNotFoundException ex)
-        {
-            await logger.LogError(nameof(GetTransferCategory), ex);
-            await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+            transfer = await base.GetTransferCategory();
+            Category = Categories.FirstOrDefault(c => c.CategoryID == InitialCategory?.CategoryID);
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(GetTransferCategory), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await HandleError(nameof(GetTransferCategory), ex);
         }
+
+        return transfer;
     }
 
-    /// <summary>
-    /// Gets updated expense categories from database and refreshes Categories collection.
-    /// </summary>
-    public async Task GetExpenseCategories()
+    protected override async Task GetExpenseCategories()
     {
         try
         {
-            var categories = await categoryService.GetExpenseCategories();
-            Categories.Clear();
-            foreach (var category in categories)
-                Categories.Add(category);
-            Subcategories.Clear();
-            Category = InitialCategory;
+            await base.GetExpenseCategories();
+            Category = Categories.FirstOrDefault(c => c.CategoryID == InitialCategory?.CategoryID);
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(GetExpenseCategories), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await HandleError(nameof(GetExpenseCategories), ex);
         }
     }
 
@@ -205,42 +192,16 @@ public partial class EditTransactionViewModel : ObservableObject
     /// Updates Subcategories based on selected parent Category.
     /// </summary>
     [RelayCommand]
-    public async Task GetSubcategories()
+    public async Task CategoryChanged()
     {
         try
         {
-            if (Category is not null)
-            {
-                var subcategories = await categoryService.GetSubcategories(Category);
-                Subcategories.Clear();
-                foreach (var subcategory in subcategories)
-                    Subcategories.Add(subcategory);
-            }
-
-            Subcategory = InitialSubcategory;
+            await GetSubcategories();
+            Subcategory = Subcategories.FirstOrDefault(s => s.CategoryID == InitialSubcategory?.CategoryID);
         }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(GetSubcategories), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
-        }
-    }
-
-    /// <summary>
-    /// Gets all distinct payees from all transactions
-    /// </summary>
-    public async Task GetPayees()
-    {
-        try
-        {
-            var payees = await transactionService.GetPayeesFromTransactions();
-            Payees = new(payees);
-            //Payees.ReplaceRange(payees);
-        }
-        catch (Exception ex)
-        {
-            await logger.LogError(nameof(GetPayees), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await HandleError(nameof(CategoryChanged), ex);
         }
     }
 
@@ -272,45 +233,37 @@ public partial class EditTransactionViewModel : ObservableObject
                 await accountService.UpdateBalance(Transaction.AccountID, Transaction.Amount);
             }
 
-            // if transfer, update other side of transfer
+            // if transfer, update other side of transfer if it exists
             if (Transaction.CategoryID == Constants.TRANSFER_ID)
             {
-                // get other Transaction
-                int transID = Transaction.TransactionID;
-                int otherTransID = (Transaction.SubcategoryID == Constants.DEBIT_ID) ? transID + 1 : transID - 1;
-
-                Transaction otherTrans = await transactionService.GetTransaction(otherTransID);
-
-                // update
-                otherTrans.Date = Transaction.Date;
-                otherTrans.AccountID = Transaction.TransferID!.Value;
-                otherTrans.TransferID = Transaction.AccountID;
-                otherTrans.Amount = Transaction.Amount * -1;
-                await transactionService.UpdateTransaction(otherTrans);
-
-                // if payee unchanged, update payee account balance
-                if (InitialTransaction.TransferID == Transaction.TransferID)
+                Transaction? otherTrans = await transactionService.TryGetCorrespondingTransfer(Transaction);
+                if (otherTrans is not null)
                 {
-                    await accountService.UpdateBalance(otherTrans.AccountID, InitialTransaction.Amount - Transaction.Amount);
-                }
-                else // if changed, update both
-                {
-                    await accountService.UpdateBalance(InitialTransaction.TransferID!.Value, InitialTransaction.Amount);
-                    await accountService.UpdateBalance(otherTrans.AccountID, -Transaction.Amount);
+                    // update
+                    otherTrans.Date = Transaction.Date;
+                    otherTrans.AccountID = Transaction.TransferID!.Value;
+                    otherTrans.TransferID = Transaction.AccountID;
+                    otherTrans.Amount = Transaction.Amount * -1;
+                    await transactionService.UpdateTransaction(otherTrans);
+
+                    // if payee unchanged, update payee account balance
+                    if (InitialTransaction.TransferID == Transaction.TransferID)
+                    {
+                        await accountService.UpdateBalance(otherTrans.AccountID, InitialTransaction.Amount - Transaction.Amount);
+                    }
+                    else // if changed, update both
+                    {
+                        await accountService.UpdateBalance(InitialTransaction.TransferID!.Value, InitialTransaction.Amount);
+                        await accountService.UpdateBalance(otherTrans.AccountID, -Transaction.Amount);
+                    }
                 }
             }
 
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_EDIT_TRANSACTION, FirebaseParameters.GetFirebaseParameters());
         }
-        catch (TransactionNotFoundException ex)
-        {
-            await logger.LogError(nameof(EditTransaction), ex);
-            await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
-        }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(EditTransaction), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await HandleError(nameof(EditTransaction), ex);
         }
 
         await Shell.Current.GoToAsync("..");
@@ -322,36 +275,30 @@ public partial class EditTransactionViewModel : ObservableObject
     [RelayCommand]
     async Task RemoveTransaction()
     {
-        bool flag = await Shell.Current.DisplayAlert("", "Are you sure you want to delete this transaction?", "Yes", "No");
+        bool flag = await Shell.Current.DisplayAlertAsync("", "Are you sure you want to delete this transaction?", "Yes", "No");
         if (!flag)
+            return;
+
+        if (Transaction is null)
             return;
 
         try
         {
-            if (Transaction is null)
-                return;
             await transactionService.RemoveTransaction(Transaction);
 
             if (Transaction.CategoryID == Constants.TRANSFER_ID)
             {
                 // get and remove other Transaction
-                int transID = Transaction.TransactionID;
-                int otherTransID = (Transaction.SubcategoryID == Constants.DEBIT_ID) ? transID + 1 : transID - 1;
-                Transaction otherTrans = await transactionService.GetTransaction(otherTransID);
-                await transactionService.RemoveTransaction(otherTrans);
+                Transaction? otherTrans = await transactionService.TryGetCorrespondingTransfer(Transaction);
+                if (otherTrans is not null)
+                    await transactionService.RemoveTransaction(otherTrans);
             }
 
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_DELETE_TRANSACTION, FirebaseParameters.GetFirebaseParameters());
         }
-        catch (TransactionNotFoundException ex)
-        {
-            await logger.LogError(nameof(RemoveTransaction), ex);
-            await Shell.Current.DisplayAlert("Error", "Could not find corresponding transfer", "OK");
-        }
         catch (Exception ex)
         {
-            await logger.LogError(nameof(RemoveTransaction), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await HandleError(nameof(RemoveTransaction), ex);
         }
 
         await Shell.Current.GoToAsync("..");
@@ -361,12 +308,12 @@ public partial class EditTransactionViewModel : ObservableObject
     {
         if (Transaction is null || Account is null || Category is null || Subcategory is null)
         {
-            await Shell.Current.DisplayAlert("Validation Error", "Please fill out all fields", "OK");
+            await Shell.Current.DisplayAlertAsync("Validation Error", "Please fill out all fields", "OK");
             return false;
         }
 
         // if expense or transfer debit, convert back to negative
-        if (InitialCategory?.CategoryID >= Constants.EXPENSE_ID || InitialSubcategory?.CategoryID == Constants.DEBIT_ID)
+        if (InitialCategory?.CategoryID >= Constants.EXPENSE_THRESHOLD || InitialSubcategory?.CategoryID == Constants.DEBIT_ID)
             Transaction.Amount *= -1;
 
         // if payee is not in Payees list, update
@@ -389,7 +336,7 @@ public partial class EditTransactionViewModel : ObservableObject
         // if account and transfer account are same, don't update
         if (Transaction.AccountID == Transaction.TransferID)
         {
-            await Shell.Current.DisplayAlert("Error", "Cannot transfer to and from the same Account", "OK");
+            await Shell.Current.DisplayAlertAsync("Error", "Cannot transfer to and from the same Account", "OK");
             return false;
         }
 

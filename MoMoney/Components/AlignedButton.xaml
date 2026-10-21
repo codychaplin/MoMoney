@@ -4,14 +4,16 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MoMoney.Components"
-    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:Name="this"
     x:DataType="components:AlignedButton">
-    <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" BindingContext="{x:Reference this}">
+    <Grid
+        BackgroundColor="{AppThemeBinding Light={DynamicResource surfaceContainer},
+                                          Dark={DynamicResource surfaceContainerDark}}"
+        BindingContext="{x:Reference this}">
         <Button
-            BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
-                                              Dark={StaticResource Gray900}}"
+            BackgroundColor="Transparent"
             Command="{Binding Command}"
             HeightRequest="45"
             HorizontalOptions="Fill" />
@@ -20,16 +22,14 @@
             FontFamily="Roboto"
             HorizontalOptions="Start"
             Text="{Binding Text}"
-            TextColor="{AppThemeBinding Light={StaticResource Black},
-                                        Dark={StaticResource White}}"
             VerticalOptions="Center" />
         <Image
             Margin="10,0"
             HorizontalOptions="End"
             IsVisible="{Binding ShowArrow, FallbackValue=false}"
-            Source="{FontImageSource FontFamily=MaterialRegular,
-                                     Glyph={x:Static m:MaterialRegular.Chevron_right},
-                                     Color={AppThemeBinding Light={StaticResource Gray700},
-                                                            Dark={StaticResource Gray200}}}" />
+            Source="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                     Glyph={x:Static m:MaterialOutlined.Chevron_right},
+                                     Color={AppThemeBinding Light={DynamicResource onSurface},
+                                                            Dark={DynamicResource onSurfaceDark}}}" />
     </Grid>
 </ContentView>

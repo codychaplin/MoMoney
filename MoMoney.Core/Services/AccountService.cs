@@ -15,21 +15,22 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
 
     public AccountService(IMoMoneydb _momoney, ILoggerService<AccountService> _logger) : base(_momoney, _logger) { }
     
-    protected override async Task Init()
+    protected async Task Init()
     {
-        await base.Init();
         if (Accounts.Count == 0)
             Accounts = await GetAccountsAsDict();
     }
 
-    public async Task<int> AddAccount(string accountName, string accountType, decimal startingBalance)
+    public async Task<int> AddAccount(string accountName, string? accountType, decimal? startingBalance)
     {
         int numRows = 0;
         await DbOperation(async () =>
         {
             var count = await momoney.AccountsCountAsync(accountName);
             if (count > 0)
-                throw new DuplicateAccountException("Account named '" + accountName + "' already exists");
+                throw new DuplicateException($"Account named '{accountName}' already exists");
+
+            ValidateAccount(accountName, accountType, startingBalance);
 
             // startingBalance used for CurrentBalance because it's calculated later
             var account = new Account
@@ -37,7 +38,7 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
                 AccountName = accountName,
                 AccountType = accountType,
                 StartingBalance = startingBalance,
-                CurrentBalance = startingBalance,
+                CurrentBalance = startingBalance ?? 0,
                 Enabled = true
             };
 
@@ -62,12 +63,15 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
             // checks if names of any new accounts matches any names from dbAccounts and throw exception if true
             bool containsDuplicates = accounts.Any(a => dbAccounts.Select(dba => dba.AccountName).Contains(a.AccountName));
             if (containsDuplicates)
-                throw new DuplicateAccountException("Imported accounts contained duplicates. Please try again");
+                throw new DuplicateException("Imported accounts contained duplicates. Please try again");
 
             // adds accounts to db and dictionary
             numRows = await momoney.db.InsertAllAsync(accounts);
             foreach (var acc in accounts)
+            {
+                ValidateAccount(acc.AccountName, acc.AccountType, acc.StartingBalance);   
                 Accounts.Add(acc.AccountID, acc);
+            }
 
             return $"Added {accounts.Count} Accounts to db.";
         });
@@ -81,6 +85,8 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
         int numRows = 0;
         await DbOperation(async () =>
         {
+            ValidateAccount(updatedAccount.AccountName, updatedAccount.AccountType, updatedAccount.StartingBalance);
+
             numRows = await momoney.db.UpdateAsync(updatedAccount);
             Accounts[updatedAccount.AccountID] = updatedAccount;
 
@@ -98,7 +104,7 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
         {
             numRows = await momoney.db.ExecuteAsync($"UPDATE Account SET CurrentBalance=CurrentBalance + {amount} WHERE AccountID={ID}");
             if (numRows == 0)
-                throw new AccountNotFoundException($"Could not find Account with ID '{ID}'.");
+                throw new NotFoundException($"Could not find Account with ID '{ID}'.");
 
             decimal balanceBefore = Math.Round(Accounts[ID].CurrentBalance, 2);
             Accounts[ID].CurrentBalance += amount;
@@ -151,7 +157,7 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
 
         var account = await momoney.FirstOrDefaultAccountAsync(ID);
         return account is null && !tryGet
-            ? throw new AccountNotFoundException($"Could not find Account with ID '{ID}'.")
+            ? throw new NotFoundException($"Could not find Account with ID '{ID}'.")
             : account;
     }
 
@@ -204,8 +210,24 @@ public class AccountService : BaseService<AccountService, UpdateAccountsMessage,
     /// <returns>Dictionary of Account objects</returns>
     async Task<Dictionary<int, Account>> GetAccountsAsDict()
     {
-        await momoney.Init();
         var accounts = await momoney.AccountsToList();
         return accounts.ToDictionary(a => a.AccountID, a => a);
+    }
+
+    /// <summary>
+    /// Validates account
+    /// </summary>
+    /// <param name="accountName"></param>
+    /// <param name="accountType"></param>
+    /// <param name="startingBalance"></param>
+    /// <exception cref="InvalidException"></exception>
+    static void ValidateAccount(string accountName, string? accountType, decimal? startingBalance)
+    {
+        if (string.IsNullOrEmpty(accountName))
+            throw new InvalidException("Invalid name");
+        if (string.IsNullOrEmpty(accountType))
+            throw new InvalidException("Invalid type");
+        if (!startingBalance.HasValue)
+            throw new InvalidException("Account must have a startin balance");
     }
 }

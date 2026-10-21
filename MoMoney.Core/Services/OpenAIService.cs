@@ -2,12 +2,13 @@
 using System.ClientModel;
 using OpenAI;
 using OpenAI.Chat;
-using OpenAI.Audio;
-using Newtonsoft.Json;
+using System.Text.Json.Schema;
 using MoMoney.Core.Data;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Services.Interfaces;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace MoMoney.Core.Services;
 
@@ -17,33 +18,63 @@ public class OpenAIService : IOpenAIService
     readonly IMoMoneydb momoney;
     readonly IAccountService accountService;
     readonly ICategoryService categoryService;
+    readonly ITransactionService transactionService;
     readonly ILoggerService<OpenAIService> logger;
     
     readonly ChatClient chatClient;
-    readonly AudioClient audioClient;
+    readonly HttpClient httpClient;
 
-    public OpenAIService(IMoMoneydb _momoney, IAccountService _accountService, ICategoryService _categoryService, ILoggerService<OpenAIService> _logger)
+    readonly string _jsonSchema;
+
+    public List<string> _recentIncomePayees { get; set; } = [];
+    public List<string> _recentExpensePayees { get; set; } = [];
+    
+    public OpenAIService(IMoMoneydb _momoney, IAccountService _accountService, ICategoryService _categoryService, ITransactionService _transactionService, ILoggerService<OpenAIService> _logger)
     {
         momoney = _momoney;
         accountService = _accountService;
         categoryService = _categoryService;
+        transactionService = _transactionService;
         logger = _logger;
 
-        var openAIClient = new OpenAIClient(Secret.OpenAIAPIKey);
-        chatClient = openAIClient.GetChatClient(Constants.CHAT_MODEL);
-        audioClient = openAIClient.GetAudioClient(Constants.AUDIO_MODEL);
+        var creds = new ApiKeyCredential(Secret.OpenRouterAPIKey);
+        var options = new OpenAIClientOptions() { Endpoint = new Uri("https://openrouter.ai/api/v1") };
+        chatClient = new(
+            model: Constants.CHAT_MODEL,
+            credential: creds,
+            options: options
+        );
+        httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {Secret.OpenRouterAPIKey}");
+
+        JsonSerializerOptions jsonOptions = JsonSerializerOptions.Default;
+        JsonNode schema = jsonOptions.GetJsonSchemaAsNode(typeof(TransactionResponse));
+        _jsonSchema = schema.ToString();
     }
 
     public async Task<TransactionResponse?> DictateTransaction(BinaryData audioData, TransactionType type)
     {
         try
         {
+            // get common payees
+            List<string> recentPayees = [];
+            if (type == TransactionType.Income && _recentIncomePayees.Count == 0)
+            {
+                _recentIncomePayees = await transactionService.GetPayeesFromTransactions(type, 100, 20);
+                recentPayees = _recentIncomePayees;
+            }
+            else if (type == TransactionType.Expense && _recentExpensePayees.Count == 0)
+            {
+                _recentExpensePayees = await transactionService.GetPayeesFromTransactions(type, 100, 20);
+                recentPayees = _recentExpensePayees;
+            }
+
             // transcribe the audio
-            var audioTranscription = await CallWhisper(audioData);
-            var whisperResponse = new WhisperResponse((decimal)audioTranscription.Value.Duration!.Value.TotalMinutes, audioTranscription.Value.Text);
+            var (transcribedText, durationMinutes) = await CallWhisper(audioData);
+            var whisperResponse = new WhisperResponse(durationMinutes, transcribedText);
 
             // map the transcription to a transaction
-            var chatCompletion = await CallChat(type, audioTranscription.Value.Text);
+            var chatCompletion = await CallChat(type, transcribedText);
             var chatResponse = new ChatResponse(chatCompletion.Value.Content[0].Text, chatCompletion.Value.Usage.InputTokenCount, chatCompletion.Value.Usage.OutputTokenCount);
 
             // total cost in cents
@@ -54,12 +85,12 @@ public class OpenAIService : IOpenAIService
             int responseID = await AddResponse(chatResponse);
 
             // deserialize the response into a TransactionResponse
-            var transactionResponse = JsonConvert.DeserializeObject<TransactionResponse>(chatCompletion.Value.Content[0].Text);
+            var transactionResponse = JsonSerializer.Deserialize<TransactionResponse>(chatCompletion.Value.Content[0].Text);
             if (transactionResponse != null)
                 transactionResponse.ResponseIDs = new ResponseIDs(responseID, whisperID);
 
             // log the cost and the event to Firebase
-            await logger.LogInfo($"{type} Transcription Cost: {totalCost:0.00##}\u00A2");
+            await logger.LogInfo($"{type} Transcription Cost: ${totalCost:0.00##}");
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_OPENAI_CALL, FirebaseParameters.GetFirebaseParameters());
             
             return transactionResponse;
@@ -67,7 +98,7 @@ public class OpenAIService : IOpenAIService
         catch (Exception ex)
         {
             await logger.LogError(nameof(DictateTransaction), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
 
         return null;
@@ -75,7 +106,6 @@ public class OpenAIService : IOpenAIService
 
     public async Task MapDictationToTransaction(int transactionID, ResponseIDs responseIDs)
     {
-        await momoney.Init();
         await momoney.db.ExecuteAsync("UPDATE WhisperResponse SET TransactionID = ? WHERE ID = ?", transactionID, responseIDs.WhisperResponseID);
         await momoney.db.ExecuteAsync("UPDATE ChatResponse SET TransactionID = ? WHERE ID = ?", transactionID, responseIDs.ChatResponseID);
     }
@@ -87,7 +117,6 @@ public class OpenAIService : IOpenAIService
     /// <returns>ID of newly created response</returns>
     async Task<int> AddResponse(OpenAIResponse response)
     {
-        await momoney.Init();
         await momoney.db.InsertAsync(response);
         return response.ID;
     }
@@ -97,13 +126,25 @@ public class OpenAIService : IOpenAIService
     /// </summary>
     /// <param name="audioData"></param>
     /// <returns>AudioTransaction response</returns>
-    async Task<ClientResult<AudioTranscription>> CallWhisper(BinaryData audioData)
+    async Task<(string Text, decimal DurationMinutes)> CallWhisper(BinaryData audioData)
     {
-        return await audioClient.TranscribeAudioAsync(audioData.ToStream(), Constants.AUDIO_FILE_NAME, new AudioTranscriptionOptions()
+        string base64Audio = Convert.ToBase64String(audioData.ToArray());
+        string format = Path.GetExtension(Constants.AUDIO_FILE_NAME).TrimStart('.');
+
+        var payload = new
         {
-            ResponseFormat = AudioTranscriptionFormat.Verbose,
-            Language = "en"
-        });
+            model = Constants.AUDIO_MODEL,
+            input_audio = new { data = base64Audio, format }
+        };
+
+        var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+        var response = await httpClient.PostAsync("https://openrouter.ai/api/v1/audio/transcriptions", content);
+        response.EnsureSuccessStatusCode();
+
+        var json = JsonNode.Parse(await response.Content.ReadAsStringAsync());
+        string text = json?["text"]?.GetValue<string>() ?? "";
+        decimal durationSeconds = json?["usage"]?["seconds"]?.GetValue<decimal>() ?? 0;
+        return (text, durationSeconds / 60);
     }
 
     /// <summary>
@@ -118,10 +159,12 @@ public class OpenAIService : IOpenAIService
         return await chatClient.CompleteChatAsync(messages, new ChatCompletionOptions()
         {
             MaxOutputTokenCount = Constants.MAX_TOKENS,
-            Temperature = 0f,
-            ResponseFormat = ChatResponseFormat.CreateJsonObjectFormat()
+            Temperature = 0.2f,
+            ResponseFormat = ChatResponseFormat.CreateJsonSchemaFormat(
+                nameof(TransactionResponse),
+                BinaryData.FromString(_jsonSchema)
+            )
         });
-        
     }
     
     /// <summary>
@@ -138,33 +181,36 @@ public class OpenAIService : IOpenAIService
         var userSb = new StringBuilder();
         var assistantSb = new StringBuilder();
 
-        // add generic details to the prompt
-        systemSb.Append($"Today's date is {DateTime.Now:yyyy-MM-dd}. ");
-        systemSb.Append($"Map the user's message to the most correct values in a transaction. This specific transaction will be of type {type}. ");
-        systemSb.Append("Only reply in this JSON format in a single-line without whitespaces: ");
-        systemSb.AppendLine("{\"date\":\"yyyy-MM-dd\",\"account\":\"\",\"amount\":0.0,\"category\":\"\",\"subcategory\":\"\",\"payee\":\"\",\"transfer_account\":\"\"}");
+        int currentYear = DateTime.Now.Year;
 
+        // add generic details to the prompt
+        systemSb.Append($"Today's date is {DateTime.Now:yyyy-MM-dd}. Always assume the year is {currentYear} unless otherwise specified. ");
+        systemSb.Append($"Map the user's message to the most correct values in a transaction. This specific transaction will be of type {type}. ");
+        systemSb.Append("If any of the properties (date, account, amount, category, subcategory, payee, transfer account) are omitted in the user's message, simply set it as null/empty string where applicable. ");
+        systemSb.AppendLine("Only reply in JSON format in a single-line without whitespaces.");
+        
         // add type-specific details to the prompt
         switch (type)
         {
             case TransactionType.Income:
-                categories = categories.Where(c => c.CategoryID == Constants.INCOME_ID || c.ParentName == "Income"); // reduce to only income categories
+                categories = categories.Where(c => c.CategoryID == Constants.INCOME_ID || c.ParentCategoryID == Constants.INCOME_ID); // reduce to only income categories
                 systemSb.Append("For this transaction, category is \"Income\" and transfer_account is \"\". ");
                 userSb.AppendLine("December 2nd,Savings,9.34,Interest,Tangerine");
-                assistantSb.AppendLine("{\"date\":\"2023-12-02\",\"account\":\"Tan Savings\",\"amount\":9.34,\"category\":\"Income\",\"subcategory\":\"Interest\",\"payee\":\"Tangerine\",\"transfer_account\":\"\"}");
+                assistantSb.AppendLine($"{{\"date\":\"{currentYear}-12-02\",\"account\":\"Tan Savings\",\"amount\":9.34,\"category\":\"Income\",\"subcategory\":\"Interest\",\"payee\":\"Tangerine\",\"transfer_account\":\"\"}}");
                 break;
             case TransactionType.Expense:
-                categories = categories.Where(c => c.CategoryID >= Constants.EXPENSE_ID && c.ParentName != "Income"); // reduce to only expense categories
+                categories = categories.Where(c => c.CategoryID >= Constants.EXPENSE_THRESHOLD && c.ParentCategoryID != Constants.INCOME_ID); // reduce to only expense categories
                 systemSb.Append("For this transaction, transfer_account is \"\". ");
                 userSb.AppendLine("April 7th,Mastercard,91.65,Food,Restaurant,Amici");
-                assistantSb.AppendLine("{\"date\":\"2024-04-07\",\"account\":\"Mastercard\",\"amount\":91.65,\"category\":\"Food\",\"subcategory\":\"Restaurant\",\"payee\":\"Amici\",\"transfer_account\":\"\"}");
+                assistantSb.AppendLine($"{{\"date\":\"{currentYear}-04-07\",\"account\":\"Mastercard\",\"amount\":91.65,\"category\":\"Food\",\"subcategory\":\"Restaurant\",\"payee\":\"Amici\",\"transfer_account\":\"\"}}");
                 break;
             case TransactionType.Transfer:
                 categories = null; // no categories for transfers
                 systemSb.Append("For this transaction, category is \"Transfer\", subcategory is \"Debit\", and payee is \"\". ");
                 systemSb.Append("Also the first account mentioned will be account and the second account mentioned will be transfer_account. ");
+                systemSb.Append("Infer which amount corresponds to the account and transfer_account from context of the input. ");
                 userSb.AppendLine("September 22, $224.98 from Tan Check to Mastercard");
-                assistantSb.AppendLine("{\"date\":\"2024-09-22\",\"account\":\"Tan Check\",\"amount\":224.98,\"category\":\"Transfer\",\"subcategory\":\"Debit\",\"payee\":\"\",\"transfer_account\":\"Mastercard\"}");
+                assistantSb.AppendLine($"{{\"date\":\"{currentYear}-09-22\",\"account\":\"Tan Check\",\"amount\":224.98,\"category\":\"Transfer\",\"subcategory\":\"Debit\",\"payee\":\"\",\"transfer_account\":\"Mastercard\"}}");
                 break;
         }
 
@@ -192,6 +238,14 @@ public class OpenAIService : IOpenAIService
             systemSb.Append(group.Key);
             systemSb.Append(',');
             systemSb.AppendLine(string.Join(',', group.Where(c => c.ParentName != "").Select(c => c.CategoryName)));
+        }
+
+        // add recent payees to the prompt
+        var recentPayees = type == TransactionType.Income ? _recentIncomePayees : _recentIncomePayees;
+        if (recentPayees?.Count > 0)
+        {
+            systemSb.AppendLine($"Here are the {recentPayees.Count} most common payees, the options are not limited to these, they are just the most commonly used:");
+            systemSb.Append(string.Join(',', recentPayees));
         }
 
         // update systemSb with categories

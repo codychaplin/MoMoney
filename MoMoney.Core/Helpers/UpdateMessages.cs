@@ -32,3 +32,13 @@ public class UpdateHomePageMessage : ValueChangedMessage<string>
 {
     public UpdateHomePageMessage() : base(string.Empty) { }
 }
+
+public class UpdateTransactionDictationMessage : ValueChangedMessage<bool>
+{
+    public UpdateTransactionDictationMessage(bool isAdmin) : base(isAdmin) { }
+}
+
+public class UpdateThemeMessage : ValueChangedMessage<string>
+{
+    public UpdateThemeMessage(string themeName) : base(themeName) { }
+}

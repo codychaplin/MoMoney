@@ -63,7 +63,7 @@ public partial class StockStatsViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(LoadStockStats), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -102,17 +102,31 @@ public partial class StockStatsViewModel : ObservableObject
                 // parse content to html, find element using xpath
                 HtmlDocument document = new();
                 document.LoadHtml(htmlContent);
-                HtmlNode priceElement = document.DocumentNode.SelectSingleNode("//div[@class='YMlKec fxKbKc']") 
-                   ?? throw new StockNotFoundException($"Could not find '{Stocks[i].FullName}'. Please ensure the name and market are correct");
+                string[] xpaths =
+                [
+                    "//div[@class='N6SYTe']//span//span",
+                    "//div[@class='YMlKec fxKbKc']"
+                ];
+                HtmlNode? priceElement = null;
+                foreach (var xpath in xpaths)
+                {
+                    priceElement = document.DocumentNode.SelectSingleNode(xpath);
+                    if (priceElement != null)
+                        break;
+                }
+                if (priceElement is null)
+                    throw new NotFoundException($"Could not find '{Stocks[i].FullName}'. Please ensure the name and market are correct");
 
                 // validate price
-                string price = priceElement.InnerHtml[1..];
+                string raw = priceElement.InnerText;
+                int dollarIdx = raw.IndexOf('$');
+                string price = dollarIdx >= 0 ? raw[(dollarIdx + 1)..] : raw;
                 if (string.IsNullOrEmpty(price))
-                    throw new InvalidStockException("Updated price not found.");
+                    throw new InvalidException("Updated price not found.");
                 if (decimal.TryParse(price, out decimal newPrice))
                 {
                     // if price has changed, update values
-                    decimal difference = newPrice - Stocks[i].MarketPrice;
+                    decimal difference = newPrice - Stocks[i].MarketPrice ?? 0;
                     if (difference == 0)
                         continue;
 
@@ -129,25 +143,25 @@ public partial class StockStatsViewModel : ObservableObject
                 }
                 else
                 {
-                    throw new InvalidStockException($"{price} is not a valid number");
+                    throw new InvalidException($"{price} is not a valid number");
                 }
             }
         }
         catch (HttpRequestException ex)
         {
             await logger.LogError(nameof(GetUpdatedStockPrices), ex);
-            await Shell.Current.DisplayAlert("HTTP Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("HTTP Error", ex.Message, "OK");
         }
-        catch (InvalidStockException ex)
+        catch (InvalidException ex)
         {
             await logger.LogError(nameof(GetUpdatedStockPrices), ex);
-            await Shell.Current.DisplayAlert("Parse Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Parsing Error", ex.Message, "OK");
         }
 
-        catch (StockNotFoundException ex)
+        catch (NotFoundException ex)
         {
             await logger.LogError(nameof(GetUpdatedStockPrices), ex);
-            await Shell.Current.DisplayAlert("Stock not found", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Stock Not Found", ex.Message, "OK");
         }
         catch (InvalidOperationException)
         {
@@ -160,7 +174,7 @@ public partial class StockStatsViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetUpdatedStockPrices), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
         {

@@ -1,17 +1,24 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
 using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
+using Microsoft.Maui.Controls.Shapes;
 
 namespace MoMoney.Core.ViewModels.Settings.Edit;
 
 public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, EditAccountViewModel>
 {
+    readonly IPopupService popupService;
+
     [ObservableProperty] Account account = new();
 
-    public EditAccountViewModel(IAccountService _accountService, ILoggerService<EditAccountViewModel> _logger) : base(_accountService, _logger) { }
+    public EditAccountViewModel(IAccountService _accountService, IPopupService _popupService, ILoggerService<EditAccountViewModel> _logger) : base(_accountService, _logger)
+    {
+        popupService = _popupService;
+    }
 
     /// <summary>
     /// Controls whether the view is in edit mode or not.
@@ -38,15 +45,15 @@ public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, E
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_ACCOUNT, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
         }
-        catch (DuplicateAccountException ex)
+        catch (DuplicateException ex)
         {
             await logger.LogWarning(nameof(Add), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(Add), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -61,7 +68,7 @@ public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, E
             string.IsNullOrEmpty(Account.AccountType))
         {
             // if invalid, display error
-            await Shell.Current.DisplayAlert("Validation Error", "Information not valid", "OK");
+            await Shell.Current.DisplayAlertAsync("Validation Error", "Information not valid", "OK");
             return;
         }
 
@@ -74,7 +81,7 @@ public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, E
         catch (Exception ex)
         {
             await logger.LogError(nameof(Edit), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -84,7 +91,7 @@ public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, E
     [RelayCommand]
     protected override async Task Remove()
     {
-        bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Account.AccountName}\"?", "Yes", "No");
+        bool flag = await Shell.Current.DisplayAlertAsync("", $"Are you sure you want to delete \"{Account.AccountName}\"?", "Yes", "No");
         if (!flag)
             return;
 
@@ -97,7 +104,33 @@ public partial class EditAccountViewModel : BaseEditViewModel<IAccountService, E
         catch (Exception ex)
         {
             await logger.LogError(nameof(Remove), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
+    }
+
+    [RelayCommand]
+    void Clear()
+    {
+        Account.AccountName = string.Empty;
+        Account.AccountType = null;
+        Account.StartingBalance = null;
+    }
+
+    [RelayCommand]
+    async Task OpenColourPopup()
+    {
+        var options = new PopupOptions
+        {
+            Shadow = null,
+            Shape = new RoundRectangle
+            {
+                CornerRadius = 10,
+                StrokeThickness = 0
+            }
+        };
+        var result = await popupService.ShowPopupAsync<ColourPopupViewModel, string>(Shell.Current, options);
+        string hexColour = result.Result ?? string.Empty;
+        if (Color.TryParse(hexColour, out Color _))
+            Account.Colour = hexColour;
     }
 }

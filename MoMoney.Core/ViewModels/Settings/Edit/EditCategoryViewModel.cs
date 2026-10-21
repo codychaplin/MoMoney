@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using Microsoft.Maui.Controls.Shapes;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
@@ -10,11 +12,18 @@ namespace MoMoney.Core.ViewModels.Settings.Edit;
 
 public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService, EditCategoryViewModel>
 {
+    readonly IPopupService popupService;
+
     [ObservableProperty] ObservableCollection<Category> parents = []; // list of categories
     [ObservableProperty] Category category = new(); // selected category
     [ObservableProperty] Category? parent; // category parent
 
-    public EditCategoryViewModel(ICategoryService _categoryService, ILoggerService<EditCategoryViewModel> _logger) : base(_categoryService, _logger) { }
+    [ObservableProperty] bool isEditableCategory = true; // disables some fields for transfer/income categories
+
+    public EditCategoryViewModel(ICategoryService _categoryService, IPopupService _popupService, ILoggerService<EditCategoryViewModel> _logger) : base(_categoryService, _logger)
+    {
+        popupService = _popupService;
+    }
 
     /// <summary>
     /// Controls whether the view is in edit mode or not.
@@ -35,18 +44,20 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
 
             await GetParents();
 
-            if (!string.IsNullOrEmpty(Category.ParentName))
-                Parent = await service.GetParentCategory(Category.ParentName);
-        }
-        catch (CategoryNotFoundException ex)
-        {
-            await logger.LogError(nameof(ApplyQueryAttributes), ex);
-            await Shell.Current.DisplayAlert("Category Not Found Error", ex.Message, "OK");
+            if (Category.ParentCategoryID.HasValue)
+                Parent = await service.GetParentCategoryByID(Category.ParentCategoryID.Value);
+
+            if (category.CategoryID is Constants.INCOME_ID or Constants.TRANSFER_ID ||
+                category.ParentCategoryID is Constants.TRANSFER_ID)
+            {
+                IsEditableCategory = false;   
+                await Utilities.DisplayToast($"Only the {category.CategoryName} category's colour can be edited");
+            }
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(ApplyQueryAttributes), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -65,7 +76,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
         catch (Exception ex)
         {
             await logger.LogError(nameof(GetParents), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -77,24 +88,24 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
     {
         try
         {
-            await service.AddCategory(Category.CategoryName, Parent?.CategoryName ?? string.Empty);
+            await service.AddCategory(Category.CategoryName, Parent?.CategoryID);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_ADD_CATEGORY, FirebaseParameters.GetFirebaseParameters());
 
             // if parent category, notify the user that it won't show up until a subcategory is added
             if (Parent == null)
-                _ = Shell.Current.DisplayAlert("Note", "Parent categories will only appear in this list once a subcategory has been added.", "OK");
+                _ = Shell.Current.DisplayAlertAsync("Note", "Parent categories will only appear in this list once a subcategory has been added.", "OK");
 
             await Shell.Current.GoToAsync("..");
         }
-        catch (DuplicateCategoryException ex)
+        catch (DuplicateException ex)
         {
             await logger.LogWarning(nameof(Add), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Warning", ex.Message, "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(Add), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -107,13 +118,13 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
         if (Category is null || string.IsNullOrEmpty(Category.CategoryName))
         {
             // if invalid, display error
-            await Shell.Current.DisplayAlert("Error", "Information not valid", "OK");
+            await Shell.Current.DisplayAlertAsync("Error", "Information not valid", "OK");
             return;
         }
 
         try
         {
-            Category.ParentName = Parent?.CategoryName ?? string.Empty;
+            Category.ParentCategoryID = Parent?.CategoryID;
             await service.UpdateCategory(Category);
             logger.LogFirebaseEvent(FirebaseParameters.EVENT_EDIT_CATEGORY, FirebaseParameters.GetFirebaseParameters());
             await Shell.Current.GoToAsync("..");
@@ -121,7 +132,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
         catch (Exception ex)
         {
             await logger.LogError(nameof(Edit), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -131,7 +142,7 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
     [RelayCommand]
     protected override async Task Remove()
     {
-        bool flag = await Shell.Current.DisplayAlert("", $"Are you sure you want to delete \"{Category.CategoryName}\"?", "Yes", "No");
+        bool flag = await Shell.Current.DisplayAlertAsync("", $"Are you sure you want to delete \"{Category.CategoryName}\"?", "Yes", "No");
         if (!flag)
             return;
 
@@ -144,7 +155,33 @@ public partial class EditCategoryViewModel : BaseEditViewModel<ICategoryService,
         catch (Exception ex)
         {
             await logger.LogError(nameof(Remove), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
+    }
+
+    [RelayCommand]
+    void Clear()
+    {
+        Category.CategoryName = string.Empty;
+        Parent = null;
+        Category.Colour = string.Empty;
+    }
+
+    [RelayCommand]
+    async Task OpenColourPopup()
+    {
+        var options = new PopupOptions
+        {
+            Shadow = null,
+            Shape = new RoundRectangle
+            {
+                CornerRadius = 10,
+                StrokeThickness = 0
+            }
+        };
+        var result = await popupService.ShowPopupAsync<ColourPopupViewModel, string>(Shell.Current, options);
+        string hexColour = result.Result ?? string.Empty;
+        if (Color.TryParse(hexColour, out Color _))
+            Category.Colour = hexColour;
     }
 }

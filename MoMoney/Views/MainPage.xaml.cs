@@ -1,3 +1,5 @@
+using CommunityToolkit.Maui.Behaviors;
+using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.Messaging;
 using MoMoney.Core.Helpers;
 
@@ -9,42 +11,47 @@ public partial class MainPage : ContentPage
 	{
 		InitializeComponent();
 
-		MainTabView.SelectedTabChanged += (s, e) =>
+		MainTabView.SelectionChanged += (s, e) =>
 		{
-			if (e.Data.ToString() == "1")
+			if (e.NewIndex == 1)
 			{
 				var args = new TransactionEventArgs(null, TransactionEventArgs.CRUD.Read);
 				WeakReferenceMessenger.Default.Send(new UpdateTransactionsMessage(args));
 			}
 		};
 
-		// Initialize the tabs so they load faster when navigated to for the first time
-		TransactionsPageTab.Command.Execute(null);
-		SettingsPageTab.Command.Execute(null);
-		StatsPageTab.Command.Execute(null);
-		AddTransactionPageTab.Command.Execute(null);
-		HomePageTab.Command.Execute(null);
-
 		WeakReferenceMessenger.Default.Register<ChangeTabMessage>(this, (r, m) =>
 		{
-			switch (m.Value)
-			{
-				case 0:
-					HomePageTab.Command.Execute(null);
-					break;
-				case 1:
-					TransactionsPageTab.Command.Execute(null);
-					break;
-				case 2:
-					AddTransactionPageTab.Command.Execute(null);
-					break;
-				case 3:
-					StatsPageTab.Command.Execute(null);
-					break;
-				case 4:
-					SettingsPageTab.Command.Execute(null);
-					break;
-			}
+			MainTabView.SelectedIndex = m.Value;
+		});
+
+		Application.Current!.RequestedThemeChanged += (s, e) => UpdateStatusBar();
+		UpdateStatusBar();
+	}
+
+	/// <summary>
+	/// Update Status bar colour to match requested theme
+	/// (Doesn't work in xaml, has to be here)
+	/// </summary>
+	void UpdateStatusBar()
+	{
+		var isDark = Application.Current!.UserAppTheme switch
+		{
+			AppTheme.Dark => true,
+			AppTheme.Light => false,
+			_ => Application.Current.RequestedTheme == AppTheme.Dark
+		};
+
+		var statusBarColor = Utilities.GetColour("secondaryContainer", "secondaryContainerDark");
+		var statusBarStyle = isDark
+			? StatusBarStyle.LightContent
+			: StatusBarStyle.DarkContent;
+
+		Behaviors.Clear();
+		Behaviors.Add(new StatusBarBehavior
+		{
+			StatusBarColor = statusBarColor,
+			StatusBarStyle = statusBarStyle
 		});
 	}
 }

@@ -13,14 +13,14 @@ public class PositiveNegativeColourConverter : IValueConverter
         if (decimal.TryParse(value?.ToString(), out decimal amount))
         {
             if (amount > 0)
-                return Utilities.GetColour("Green"); // green
+                return Utilities.GetColour("primary", "primaryDark"); // green
             else if (amount < 0)
-                return Utilities.GetColour("Red"); // red
+                return Utilities.GetColour("errorVariant", "errorVariantDark"); // red
             else
-                return Utilities.GetColour("Black", "White"); // black or white
+                return Utilities.GetColour("onSurface", "onSurfaceDark"); // black or white
         }
 
-        return Utilities.GetColour("Gray400"); ; // error = gray
+        return Utilities.GetColour("outline", "outlineDark"); ; // error = gray
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

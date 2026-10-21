@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MoMoney.Core.Models;
 using MoMoney.Core.Helpers;
-using MoMoney.Core.Exceptions;
 using MoMoney.Core.Services.Interfaces;
 
 namespace MoMoney.Core.ViewModels.Settings;
@@ -13,6 +12,8 @@ namespace MoMoney.Core.ViewModels.Settings;
 public partial class LoggingViewModel : ObservableObject
 {
     readonly ILoggerService<LoggingViewModel> logger;
+
+    [ObservableProperty] bool isBusy = false;
 
     [ObservableProperty] bool isExpanded = false;
     [ObservableProperty] bool isChecked = true;
@@ -58,7 +59,7 @@ public partial class LoggingViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(LoadLogs), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -82,11 +83,11 @@ public partial class LoggingViewModel : ObservableObject
     /// </summary>
     async Task UpdateFilter()
     {
-        Shell.Current.IsBusy = true;
+        IsBusy = true;
         Logs = await logger.GetFilteredLogs(Level, ClassName, ExceptionType);
         LoadedLogs.Clear();
         await LoadMoreItems();
-        Shell.Current.IsBusy = false;
+        IsBusy = false;
     }
 
 
@@ -147,17 +148,12 @@ public partial class LoggingViewModel : ObservableObject
             if (log.ExceptionType != "")
                 sb.Append($"Exception: {log.ExceptionType}\n\n");
             sb.Append($"Message: {log.Message}");
-            await Shell.Current.DisplayAlert("Details", sb.ToString(), "OK");
-        }
-        catch (LogNotFoundException ex)
-        {
-            await logger.LogError(nameof(OpenPopup), ex);
-            await Shell.Current.DisplayAlert("Log Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Details", sb.ToString(), "OK");
         }
         catch (Exception ex)
         {
             await logger.LogError(nameof(OpenPopup), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 }

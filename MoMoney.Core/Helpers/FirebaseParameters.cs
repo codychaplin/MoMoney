@@ -14,6 +14,7 @@ public class FirebaseParameters
     public static string EVENT_BULK_REPLACE => "Bulk_Replace";
     public static string EVENT_OPENAI_CALL => "OpenAI_Call";
     public static string EVENT_DEVELOPER_MODE_TOGGLED => "Developer_Mode_Toggled";
+    public static string EVENT_MATERIAL_YOU_TOGGLED => "Material_You_Toggled";
 
     public static string EVENT_WARNING_LOG => "Warning_Log";
     public static string EVENT_ERROR_LOG => "Error_Log";
@@ -55,6 +56,10 @@ public class FirebaseParameters
     public static string EVENT_IMPORT_LOGS => "Import_Logs";
     public static string EVENT_EXPORT_LOGS => "Export_Logs";
     public static string EVENT_REMOVE_ALL_LOGS => "Remove_All_Logs";
+
+    public static string EVENT_IMPORT_MAPPING_RULES => "Import_Mapping_Rules";
+    public static string EVENT_EXPORT_MAPPING_RULES => "Export_Mapping_Rules";
+    public static string EVENT_REMOVE_ALL_MAPPING_RULES => "Remove_All_Mapping_Rules";
 
     public static string EVENT_REMOVE_ALL_DATA => "Remove_All_Data";
 

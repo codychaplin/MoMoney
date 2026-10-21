@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="MoMoney.Views.Tabs.TransactionsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:MoMoney.Components"
+    xmlns:converters="clr-namespace:MoMoney.Converters"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:viewmodel="clr-namespace:MoMoney.Core.ViewModels.Tabs;assembly=MoMoney.Core"
+    x:DataType="viewmodel:TransactionsViewModel">
+
+    <!--  main page  -->
+    <Grid RowDefinitions="Auto,*">
+
+        <!--  filters  -->
+        <toolkit:Expander>
+
+            <!--  title  -->
+            <toolkit:Expander.Header>
+                <components:PageHeader Title="{Binding PageTitle}" ShowBackButton="False">
+                    <components:PageHeader.RightContent>
+                        <Image
+                            HeightRequest="30"
+                            WidthRequest="30"
+                            Source="{FontImageSource FontFamily=MaterialRoundedFilled,
+                                     Color={AppThemeBinding Light={DynamicResource onSurface},
+                                                            Dark={DynamicResource onSurfaceDark}},
+                                    Glyph={x:Static m:MaterialOutlined.Tune}}">
+                        </Image>
+                    </components:PageHeader.RightContent>
+                </components:PageHeader>
+            </toolkit:Expander.Header>
+
+            <!--  filters  -->
+            <Grid
+                RowDefinitions="*,*,*,*,*"
+                ColumnDefinitions="*,*"
+                ColumnSpacing="5"
+                RowSpacing="5"
+                Margin="20,5">
+                <!--  date range pickers  -->
+                <components:DateField
+                    Title="From"
+                    Date="{Binding From}" />
+                <components:DateField
+                    Grid.Column="1"
+                    Title="To"
+                    Date="{Binding To}" />
+
+                <!--  account picker  -->
+                <components:AccountField
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    ItemsSource="{Binding Accounts}"
+                    SelectedItem="{Binding Account}"
+                    SelectedValueChangedCommand="{Binding UpdateFilterCommand}" />
+
+                <!--  amount range fields  -->
+                <components:AmountField
+                    Grid.Row="2"
+                    Title="Min"
+                    Text="{Binding AmountRangeStart}"
+                    TextChanged="OnAmountRangeStartChanged" />
+                <components:AmountField
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Title="Max"
+                    Text="{Binding AmountRangeEnd}"
+                    TextChanged="OnAmountRangeEndChanged" />
+
+                <!--  category and subcategory pickers  -->
+                <components:CategorySubcategoryField
+                    Grid.Row="3"
+                    Grid.ColumnSpan="2"
+                    Categories="{Binding Categories}"
+                    Category="{Binding Category, Mode=TwoWay}"
+                    CategoryChangedCommand="{Binding CategoryChangedCommand}"
+                    Orientation="Horizontal"
+                    Subcategories="{Binding Subcategories}"
+                    Subcategory="{Binding Subcategory, Mode=TwoWay}"
+                    SubcategoryChangedCommand="{Binding UpdateFilterCommand}" />
+
+                <!--  payee search bar  -->
+                <components:PayeeField
+                    Grid.Row="4"
+                    Grid.ColumnSpan="2"
+                    PayeeText="{Binding Payee, Mode=TwoWay}"
+                    IsTransferAccountVisible="False"
+                    Payees="{Binding Payees}" />
+            </Grid>
+        </toolkit:Expander>
+
+        <!--  list of transactions  -->
+        <CollectionView
+            x:Name="collectionView"
+            Grid.Row="1"
+            Margin="0,5"
+            ItemTemplate="{StaticResource TransactionFrame}"
+            ItemsSource="{Binding LoadedTransactions}"
+            RemainingItemsThreshold="0"
+            RemainingItemsThresholdReachedCommand="{Binding LoadMoreItemsCommand}"
+            VerticalScrollBarVisibility="Always">
+            <CollectionView.EmptyView>
+                <Label
+                    Margin="10,20"
+                    HorizontalOptions="Center"
+                    Text="No Transactions Found" />
+            </CollectionView.EmptyView>
+        </CollectionView>
+    </Grid>
+</ContentView>

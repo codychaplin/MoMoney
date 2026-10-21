@@ -1,28 +1,31 @@
 ﻿using SQLite;
 using CsvHelper.Configuration.Attributes;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MoMoney.Core.Models;
 
 #pragma warning disable CS0659
-public class Account
+public partial class Account : ObservableObject
 #pragma warning restore CS0659
 {
     [PrimaryKey, AutoIncrement, CsvHelper.Configuration.Attributes.Ignore]
     public int AccountID { get; set; }
-    [Index(0)]
-    public string AccountName { get; set; } = string.Empty;
-    [Index(1)]
-    public string AccountType { get; set; } = string.Empty;
-    [Index(2)]
-    public decimal StartingBalance { get; set; }
+    [Index(0), ObservableProperty]
+    public partial string AccountName { get; set; } = string.Empty;
+    [Index(1), ObservableProperty]
+    public partial string? AccountType { get; set; } = null;
+    [Index(2), ObservableProperty]
+    public partial decimal? StartingBalance { get; set; }
     [CsvHelper.Configuration.Attributes.Ignore]
     public decimal CurrentBalance { get; set; }
     [Index(3)]
     public bool Enabled { get; set; }
+    [Index(4), ObservableProperty]
+    public partial string Colour { get; set; } = string.Empty;
 
     public Account() { }
 
-    public Account(int accountID, string accountName, string accountType, decimal startingBalance, decimal currentBalance, bool enabled)
+    public Account(int accountID, string accountName, string accountType, decimal? startingBalance, decimal currentBalance, bool enabled, string colour)
     {
         AccountID = accountID;
         AccountName = accountName;
@@ -30,6 +33,7 @@ public class Account
         StartingBalance = startingBalance;
         CurrentBalance = currentBalance;
         Enabled = enabled;
+        Colour = colour;
     }
 
     public Account(Account account)
@@ -40,6 +44,7 @@ public class Account
         StartingBalance= account.StartingBalance;
         CurrentBalance = account.CurrentBalance;
         Enabled = account.Enabled;
+        Colour = account.Colour;
     }
 
     public override bool Equals(object? obj)

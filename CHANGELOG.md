@@ -1,4 +1,49 @@
-# MoMoney v1.2.2
+# MoMoney v1.0.2
+
+### Changes
+* Update packages
+* Remove database lazy loading
+* Add bank-specific CSV importing
+* Connect subcategories to parents by ID instead of name
+* Gracefully try to edit opposite side of transfers
+* Add easy date pickers to home page
+* Consolidated transaction view/editing logic
+* Removed Syncfusion license dependency
+* Add payees for recent transactions in prompt for more accurate responses
+* Switch to OpenRouter for AI features
+* Add user-selectable themes
+* Add more default categories
+
+### Fixes
+
+* Fixed stock price parsing
+
+# MoMoney v1.0.1
+
+### Fixes
+
+* Fixed breakdown page crash
+* Made AI feature more reliable
+
+### Changes
+
+* Hide AI usage unless dev mode is enabled
+* Switched to OpenAI's official nuget package
+
+# MoMoney v1.0.0
+
+### Fixes
+
+* Fixed some sensitive values showing when not supposed to
+
+### Changes
+
+* Updated converter names
+* Updated to .NET 9
+* Switched to Syncfusion tabs
+* Added db encryption
+
+# MoMoney v0.2.2
 
 ### Fixes
 
@@ -24,7 +69,7 @@
 * Stopped using Syncfusion ListView
 * Switched to open source Syncfusion controls where possible
 
-# MoMoney v1.2.1
+# MoMoney v0.2.1
 
 ### Fixes
 
@@ -43,7 +88,7 @@
 * Separated Stock symbol and market
 * Added component for CRUD buttons
 
-# MoMoney v1.2.0
+# MoMoney v0.2.0
 
 ### Fixes
 
@@ -70,7 +115,7 @@
 * Reverted back to Syncfusion AutoComplete control
 * Moved CalculateAccountBalances() to TransactionService
 
-# MoMoney v1.1.4
+# MoMoney v0.1.4
 
 ### Fixes
 
@@ -104,7 +149,7 @@
 * Added exporting of accounts, categories, and stocks
 * Added adaptive icon
 
-# MoMoney v1.1.3
+# MoMoney v0.1.3
 
 ### Fixes
 
@@ -118,7 +163,7 @@
 
 * Added confirmation and count when importing, exporting, adding, and deleting bulk data
 
-# MoMoney v1.1.2
+# MoMoney v0.1.2
 
 ### Fixes
 
@@ -134,7 +179,7 @@
 * Removed unnecessary ObervableObject inheritances
 * Added year view to BreakdownPage
 
-# MoMoney v1.1.1
+# MoMoney v0.1.1
 
 ### Fixes
 
@@ -152,7 +197,7 @@
 * Updated Settings namespace structure
 * Added BulkEditingPage
 
-# MoMoney v1.1.0
+# MoMoney v0.1.0
 
 ### Fixes
 
@@ -170,7 +215,7 @@
 * Refactored/cleaned up UI and logic
 * Split up settings page
 
-# MoMoney v1.0.3
+# MoMoney v0.0.3
 
 ### Fixes
 
@@ -185,7 +230,7 @@
 * Updated USD to CAD exchange rate to 1.35 (will make it dynamic in the future)
 
 
-# MoMoney v1.0.2
+# MoMoney v0.0.2
 
 ### Changes
 
@@ -196,7 +241,7 @@
 * Updated Syncfusion controls to v21.1.39.
 
 
-# MoMoney v1.0.1
+# MoMoney v0.0.1
 
 ### Fixes
 
@@ -205,6 +250,6 @@
 * Subcategory picker now stays disabled if Transfer is selected
 
 
-# MoMoney v1.0.0
+# MoMoney v0.0.0
 
 Initial release

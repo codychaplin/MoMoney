@@ -34,7 +34,7 @@ public partial class StocksViewModel : ObservableObject
         catch (Exception ex)
         {
             await logger.LogError(nameof(LoadStocks), ex);
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 

@@ -1,0 +1,24 @@
+{
+    "label": "Publish MoMoney Android Release",
+    "command": "dotnet",
+    "args": [
+        "publish",
+        "-f",
+        "net10.0-android36.0",
+        "-c",
+        "Release",
+        "-p:AndroidSigningKeyStore=${workspaceFolder}/pherda-apps.keystore",
+        "${workspaceFolder}/MoMoney/MoMoney.csproj"
+    ],
+    "problemMatcher": "$msCompile",
+    "group": {
+        "kind": "build",
+        "isDefault": false
+    },
+    "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+    }
+}

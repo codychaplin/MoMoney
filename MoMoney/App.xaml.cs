@@ -1,5 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using MoMoney.Core;
+﻿using System.Text.Json;
+using CommunityToolkit.Mvvm.Input;
+using MoMoney.Core.Helpers;
 using MoMoney.Views;
 
 namespace MoMoney;
@@ -7,12 +8,16 @@ namespace MoMoney;
 public partial class App : Application
 {
     public App()
-	{
-        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(Secret.SfLicenseKey);
-
+    {
         InitializeComponent();
-		MainPage = new AppShell();
+        Utilities.ApplyTheme(Utilities.CurrentTheme);
     }
+    
+    protected override Window CreateWindow(IActivationState? activationState)
+    {
+        return new Window(new AppShell());
+    }
+
 
     /// <summary>
     /// Goes to EditTransactionsPage with a transaction ID as the parameter.

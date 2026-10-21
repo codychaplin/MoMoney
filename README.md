@@ -1,9 +1,10 @@
-# MoMoney v1.2.2
+# MoMoney v1.0.2
 ## About
 MoMoney is a personal finance tracker Android app made with .NET MAUI.
 Works on Android 10.0 and later.
 
 ## Features
+* SQlite encrypted database
 * Filtering and sorting of transactions
 * Add/update/remove transactions, accounts, categories, and stocks
 * Add transactions with AI
@@ -18,7 +19,6 @@ Works on Android 10.0 and later.
 
 ## How to Use
 * Accounts and categories are needed before transactions are added
-* Must have a Syncfusion license key declared in `Secret.cs` called `SfLicenseKey`
 * See below for import formats
 
 ## How to Import Data
@@ -30,7 +30,7 @@ Works on Android 10.0 and later.
 * NOTE: Uses Google Finance's exchange names
 
 ## Technologies Used
-* .NET 8
+* .NET 10
 * SQLite
 * CommunityToolkit.Maui
 * Syncfusion.Maui.Toolkit
