@@ -6,18 +6,20 @@ import {
   ExposedDropdownMenuBox,
   Host,
   Icon,
+  IconButton,
   OutlinedButton,
   OutlinedTextField,
+  Row,
   Text as ComposeText,
   useNativeState,
 } from '@expo/ui/jetpack-compose';
-import { fillMaxWidth, height, menuAnchor } from '@expo/ui/jetpack-compose/modifiers';
+import { fillMaxWidth, height, menuAnchor, padding, size } from '@expo/ui/jetpack-compose/modifiers';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useEffect, useMemo, useState } from 'react';
 
 const NONE = '__none__';
 
-/** Material 3 exposed dropdown (Jetpack Compose). `allowClear` adds a "None" entry. */
+/** Material 3 exposed dropdown (Jetpack Compose) */
 export function PickerField<T extends string | number>({
   label,
   compact,
@@ -25,7 +27,7 @@ export function PickerField<T extends string | number>({
   options,
   onChange,
   disabled,
-  allowClear,
+  allowClear = true,
 }: {
   label?: string;
   compact?: boolean;
@@ -38,8 +40,10 @@ export function PickerField<T extends string | number>({
   const host = useHostTheme();
   const onSurface = useCSSVariable('--color-on-surface') as string;
   const arrow = useMemo(() => MaterialDesignIcons.getImageSourceSync('menu-down', 24, onSurface) ?? undefined, [onSurface]);
+  const clearIcon = useMemo(() => MaterialDesignIcons.getImageSourceSync('close', 20, onSurface) ?? undefined, [onSurface]);
+  const showClear = !!allowClear && value != null && !disabled;
   const [expanded, setExpanded] = useState(false);
-  const items: { label: string; value: T | typeof NONE }[] = [...(allowClear ? [{ label: 'None', value: NONE as typeof NONE }] : []), ...options];
+  const items: { label: string; value: T | typeof NONE }[] = [...(allowClear && compact ? [{ label: 'None', value: NONE as typeof NONE }] : []), ...options];
   const selectedLabel = options.find((o) => o.value === value)?.label ?? '';
   const text = useNativeState(selectedLabel);
   useEffect(() => {
@@ -47,7 +51,11 @@ export function PickerField<T extends string | number>({
   }, [selectedLabel, text]);
 
   return (
-    <Host {...host} matchContents={compact ? { vertical: true, horizontal: true } : { vertical: true }} style={compact ? undefined : { width: '100%' }}>
+    <Host
+      {...host}
+      matchContents={compact ? { vertical: true, horizontal: true } : { vertical: true }}
+      style={compact ? undefined : { width: '100%' }}
+    >
       <ExposedDropdownMenuBox expanded={expanded && !disabled} onExpandedChange={setExpanded}>
         {compact ? (
           <OutlinedButton
@@ -60,14 +68,37 @@ export function PickerField<T extends string | number>({
             {arrow ? <Icon source={arrow} size={24} tint={null} /> : null}
           </OutlinedButton>
         ) : (
-          <OutlinedTextField value={text} readOnly singleLine enabled={!disabled} modifiers={[menuAnchor(), fillMaxWidth()]}>
+          <OutlinedTextField
+            value={text}
+            readOnly
+            singleLine
+            enabled={!disabled}
+            modifiers={[menuAnchor(), fillMaxWidth()]}
+          >
             {label ? (
               <OutlinedTextField.Label>
                 <ComposeText>{label}</ComposeText>
               </OutlinedTextField.Label>
             ) : null}
             <OutlinedTextField.TrailingIcon>
-              {arrow ? <Icon source={arrow} size={24} tint={null} /> : null}
+              <Row
+                verticalAlignment="center"
+                horizontalArrangement={{ spacedBy: 0 }}
+                modifiers={showClear ? [padding(0, 0, 12, 0)] : []}
+              >
+                {showClear && clearIcon ? (
+                  <IconButton
+                    modifiers={[size(28, 28)]}
+                    onClick={() => {
+                      onChange(null);
+                      setExpanded(false);
+                    }}
+                  >
+                    <Icon source={clearIcon} tint={null} />
+                  </IconButton>
+                ) : null}
+                {arrow ? <Icon source={arrow} size={24} tint={null} /> : null}
+              </Row>
             </OutlinedTextField.TrailingIcon>
           </OutlinedTextField>
         )}

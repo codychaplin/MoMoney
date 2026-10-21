@@ -23,7 +23,13 @@ export default function HomeScreen() {
       <Card className="h-56 p-2">
         {data ? <BalanceChart data={data.series} bucket={data.bucket} showValues={show} /> : null}
       </Card>
-      <SegmentedField options={DATE_RANGES} value={range} onChange={setRange} pill small />
+      <SegmentedField
+        options={DATE_RANGES}
+        value={range}
+        onChange={setRange}
+        pill
+        small
+      />
 
       <SectionTitle action="View All" onAction={() => router.navigate('/stats' as Href)}>Statistics</SectionTitle>
       <Card className="p-4">

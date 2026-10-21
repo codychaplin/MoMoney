@@ -53,11 +53,19 @@ export default function AdminScreen() {
   };
 
   return (
-    <Page title="Administration" back contentClassName="gap-0">
+    <Page
+      title="Administration"
+      back
+      contentClassName="gap-0"
+    >
 
       <Subtitle>Data Maintenance</Subtitle>
       {isAdmin ? <ListRow label="Logging" chevron onPress={() => router.push('/settings/logging' as Href)} /> : null}
-      <ListRow label="Bulk Editing" chevron onPress={() => router.push('/settings/bulk-editing' as Href)} />
+      <ListRow
+        label="Bulk Editing"
+        chevron
+        onPress={() => router.push('/settings/bulk-editing' as Href)}
+      />
 
       <Subtitle>Data Removal</Subtitle>
       <ListRow label="Remove All Transactions" onPress={removeAll('transactions', () => removeAllTransactions(db))} />
@@ -70,7 +78,11 @@ export default function AdminScreen() {
       {isAdmin ? (
         <>
           <Subtitle>Experimental Features</Subtitle>
-          <SwitchRow label="Transaction Dictation" value={dictationEnabled} onChange={setDictationEnabled} />
+          <SwitchRow
+            label="Transaction Dictation"
+            value={dictationEnabled}
+            onChange={setDictationEnabled}
+          />
         </>
       ) : null}
     </Page>

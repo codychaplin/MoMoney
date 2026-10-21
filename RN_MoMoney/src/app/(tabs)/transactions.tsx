@@ -81,14 +81,20 @@ export default function TransactionsScreen() {
   const subs = categories.filter((c) => c.parentId === categoryId);
 
   return (
-    <Page title={`Transactions - ${rows.length}/${total}`}
+    <Page
+      title={`Transactions - ${rows.length}/${total}`}
       scroll={false}
       right={
         <Pressable onPress={() => setOpen((o) => !o)} hitSlop={12}>
-          <MaterialDesignIcons name="tune" size={26} color={icon} />
+          <MaterialDesignIcons
+            name="tune"
+            size={26}
+            color={icon}
+          />
           {hasFilters && <View className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-primary" />}
         </Pressable>
-      }>
+      }
+    >
       <FlashList
         data={rows}
         keyExtractor={(t) => String(t.id)}
@@ -103,7 +109,11 @@ export default function TransactionsScreen() {
         }
         ListEmptyComponent={<Text className="m-6 text-center text-on-surface-variant">No Transactions Found</Text>}
       />
-      <BottomSheet isPresented={open} onDismiss={() => setOpen(false)} containerColor={sheetBg}>
+      <BottomSheet
+        isPresented={open}
+        onDismiss={() => setOpen(false)}
+        containerColor={sheetBg}
+      >
         <RNHostView matchContents={{ vertical: true }}>
           <ScrollView keyboardShouldPersistTaps="handled" style={{ maxHeight: height * 0.7 }}>
             <View className="gap-2 px-3 pb-6 pt-2">
@@ -114,7 +124,6 @@ export default function TransactionsScreen() {
                 <PickerField
                   label="Account"
                   value={accountId}
-                  allowClear
                   options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))}
                   onChange={setAccountId}
                 />
@@ -127,7 +136,6 @@ export default function TransactionsScreen() {
                     <PickerField
                       label="Category"
                       value={categoryId}
-                      allowClear
                       options={parents.map((c) => ({ label: c.name, value: c.id, colour: c.colour }))}
                       onChange={(v) => {
                         setCategoryId(v);
@@ -139,14 +147,18 @@ export default function TransactionsScreen() {
                     <PickerField
                       label="Subcategory"
                       value={subcategoryId}
-                      allowClear
                       disabled={categoryId == null}
                       options={subs.map((c) => ({ label: c.name, value: c.id, colour: c.colour }))}
                       onChange={setSubcategoryId}
                     />
                   </View>
                 </View>
-                <Autocomplete label="Payee" value={payeeText} onChangeText={setPayeeText} suggestions={payees} />
+                <Autocomplete
+                  label="Payee"
+                  value={payeeText}
+                  onChangeText={setPayeeText}
+                  suggestions={payees}
+                />
               </View>
           </ScrollView>
         </RNHostView>

@@ -12,7 +12,12 @@ export default function AccountsScreen() {
   const { money } = useMoney();
 
   return (
-    <Page title="Accounts" back contentClassName="gap-2 px-3" overlay={<Fab onPress={() => router.push('/settings/account/new' as Href)} />}>
+    <Page
+      title="Accounts"
+      back
+      contentClassName="gap-2 px-3"
+      overlay={<Fab onPress={() => router.push('/settings/account/new' as Href)} />}
+    >
       {accounts.length === 0 ? <Text className="p-6 text-center text-on-surface-variant">No accounts yet</Text> : null}
       {accounts.map((a) => (
         <ListRow

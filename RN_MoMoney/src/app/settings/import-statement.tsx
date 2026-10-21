@@ -143,17 +143,54 @@ export default function ImportStatementScreen() {
   const ready = !!rows && counts.NeedsVerification === 0 && importable(rows).length > 0;
 
   return (
-    <Page title="Import Statement" back keyboard contentClassName="gap-3 px-4 pb-8" overlay={<BusyOverlay visible={busy} />}>
+    <Page
+      title="Import Statement"
+      back
+      keyboard
+      contentClassName="gap-3 px-4 pb-8"
+      overlay={<BusyOverlay visible={busy} />}
+    >
 
-      <PickerField label="Account" value={accountId} options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))} onChange={setAccountId} />
-      <PickerField label="Bank" value={bank} options={BANK_TYPES.map((b) => ({ label: b, value: b }))} onChange={setBank} />
+      <PickerField
+        label="Account"
+        value={accountId}
+        options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))}
+        onChange={setAccountId}
+      />
+      <PickerField
+        label="Bank"
+        value={bank}
+        options={BANK_TYPES.map((b) => ({ label: b, value: b }))}
+        onChange={setBank}
+      />
       <View className="flex-row gap-2">
-        <Button label="Upload File" className="flex-1" onPress={upload} />
-        <Button label="Update Rules" variant="secondary" className="flex-1" onPress={() => (bank ? router.push(`/settings/mapping-rules?bank=${bank}` as Href) : toast.error('Please select a bank first'))} />
+        <Button
+          label="Upload File"
+          className="flex-1"
+          onPress={upload}
+        />
+        <Button
+          label="Update Rules"
+          variant="secondary"
+          className="flex-1"
+          onPress={() => (bank ? router.push(`/settings/mapping-rules?bank=${bank}` as Href) : toast.error('Please select a bank first'))}
+        />
       </View>
       <View className="flex-row gap-2">
-        <Button label="Run Again" variant="outlined" className="flex-1" disabled={!rows} onPress={rerun} />
-        <Button label="Clear" variant="error" className="flex-1" disabled={!rows} onPress={clear} />
+        <Button
+          label="Run Again"
+          variant="outlined"
+          className="flex-1"
+          disabled={!rows}
+          onPress={rerun}
+        />
+        <Button
+          label="Clear"
+          variant="error"
+          className="flex-1"
+          disabled={!rows}
+          onPress={clear}
+        />
       </View>
 
       {rows && current ? (
@@ -167,7 +204,12 @@ export default function ImportStatementScreen() {
             </View>
             <Pressable hitSlop={12} onPress={next}><MaterialDesignIcons name="chevron-right" size={32} color={icon} /></Pressable>
           </View>
-          <TextField label="Text" value={current.record.raw} editable={false} multiline />
+          <TextField
+            label="Text"
+            value={current.record.raw}
+            editable={false}
+            multiline
+          />
 
           <View className="my-1 h-px bg-outline-variant" />
           <View className="flex-row items-center justify-between">
@@ -183,28 +225,55 @@ export default function ImportStatementScreen() {
           </View>
           <View className="flex-row gap-2">
             <View className="flex-1">
-              <PickerField label="Category" value={current.categoryId} allowClear disabled={!editable} options={parents.map(opt)} onChange={(v) => patch(current, { categoryId: v, subcategoryId: null })} />
+              <PickerField
+                label="Category"
+                value={current.categoryId}
+                disabled={!editable}
+                options={parents.map(opt)}
+                onChange={(v) => patch(current, { categoryId: v, subcategoryId: null })}
+              />
             </View>
             <View className="flex-1">
-              <PickerField label="Subcategory" value={current.subcategoryId} allowClear disabled={!editable || current.categoryId == null} options={subs.map(opt)} onChange={(v) => patch(current, { subcategoryId: v })} />
+              <PickerField
+                label="Subcategory"
+                value={current.subcategoryId}
+                disabled={!editable || current.categoryId == null}
+                options={subs.map(opt)}
+                onChange={(v) => patch(current, { subcategoryId: v })}
+              />
             </View>
           </View>
           {isTransfer ? (
             <PickerField
               label="Transfer Account"
               value={current.transferAccountId}
-              allowClear
               disabled={!editable}
               options={accounts.filter((a) => a.id !== current.accountId).map((a) => ({ label: a.name, value: a.id, colour: a.colour }))}
               onChange={(v) => patch(current, { transferAccountId: v })}
             />
           ) : (
-            <Autocomplete label="Payee" value={current.payee} editable={editable} onChangeText={(t) => patch(current, { payee: t })} suggestions={payees} />
+            <Autocomplete
+              label="Payee"
+              value={current.payee}
+              editable={editable}
+              onChangeText={(t) => patch(current, { payee: t })}
+              suggestions={payees}
+            />
           )}
           <View className="flex-row items-center gap-2">
             <View className="flex-1"><SwitchRow label="Manual Edit" value={manual} onChange={setManual} className="rounded-lg" /></View>
-            <Button label="Skip" variant="outlined" className="px-5" onPress={skip} />
-            <Button label="Approve" className="px-5" disabled={!editable || !canApprove(current)} onPress={approve} />
+            <Button
+              label="Skip"
+              variant="outlined"
+              className="px-5"
+              onPress={skip}
+            />
+            <Button
+              label="Approve"
+              className="px-5"
+              disabled={!editable || !canApprove(current)}
+              onPress={approve}
+            />
           </View>
         </>
       ) : rows ? (
@@ -227,7 +296,11 @@ export default function ImportStatementScreen() {
           <Text className="text-sm text-on-surface-variant">
             {ready ? `${importable(rows).length} transactions ready for import` : counts.NeedsVerification > 0 ? `${counts.NeedsVerification} still need verification` : 'Nothing to import yet'}
           </Text>
-          <Button label="Commit" disabled={!ready} onPress={commit} />
+          <Button
+            label="Commit"
+            disabled={!ready}
+            onPress={commit}
+          />
         </>
       ) : null}
     </Page>

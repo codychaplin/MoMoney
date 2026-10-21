@@ -10,10 +10,11 @@ type Props = {
   suggestions: string[];
   placeholder?: string;
   editable?: boolean;
+  allowClear?: boolean;
 };
 
 /** Text field with a list of matching suggestions underneath (replaces AutoCompleteTextField). */
-export function Autocomplete({ label, value, onChangeText, suggestions, placeholder, editable = true }: Props) {
+export function Autocomplete({ label, value, onChangeText, suggestions, placeholder, editable = true, allowClear = true }: Props) {
   const [focused, setFocused] = useState(false);
   const q = value.trim().toLowerCase();
   const matches = q ? suggestions.filter((s) => s.toLowerCase().includes(q) && s.toLowerCase() !== q).slice(0, 5) : [];
@@ -25,6 +26,7 @@ export function Autocomplete({ label, value, onChangeText, suggestions, placehol
         value={value}
         placeholder={placeholder}
         editable={editable}
+        allowClear={allowClear}
         onChangeText={(t) => {
           setFocused(true);
           onChangeText(t);

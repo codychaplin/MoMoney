@@ -36,13 +36,33 @@ export default function SettingsScreen() {
     <Page title="Settings" contentClassName="gap-0">
 
       <Subtitle>Edit</Subtitle>
-      <ListRow label="Accounts" chevron onPress={go('/settings/accounts')} />
-      <ListRow label="Categories" chevron onPress={go('/settings/categories')} />
-      <ListRow label="Mapping Rules" chevron onPress={go('/settings/mapping-rules')} />
+      <ListRow
+        label="Accounts"
+        chevron
+        onPress={go('/settings/accounts')}
+      />
+      <ListRow
+        label="Categories"
+        chevron
+        onPress={go('/settings/categories')}
+      />
+      <ListRow
+        label="Mapping Rules"
+        chevron
+        onPress={go('/settings/mapping-rules')}
+      />
 
       <Subtitle>Import/Export</Subtitle>
-      <ListRow label="Import Data from Bank Statement" chevron onPress={go('/settings/import-statement')} />
-      <ListRow label="Import/Export MoMoney Data" chevron onPress={go('/settings/import-export')} />
+      <ListRow
+        label="Import Data from Bank Statement"
+        chevron
+        onPress={go('/settings/import-statement')}
+      />
+      <ListRow
+        label="Import/Export MoMoney Data"
+        chevron
+        onPress={go('/settings/import-export')}
+      />
 
       <Subtitle>Appearance</Subtitle>
       <View className="h-14 flex-row items-center justify-between bg-surface px-4">
@@ -60,17 +80,34 @@ export default function SettingsScreen() {
           ))}
         </View>
       </View>
-      <SwitchRow label="Material You" value={materialYou} onChange={setMaterialYou} />
+      <SwitchRow
+        label="Material You"
+        value={materialYou}
+        onChange={setMaterialYou}
+      />
       <View className="min-h-14 flex-row items-center justify-between bg-surface px-4 py-2">
         <Text className="text-base text-on-surface">Theme</Text>
-        <PickerField compact value={theme} options={themes} onChange={(v) => v && setTheme(v)} />
+        <PickerField
+          compact
+          value={theme}
+          options={themes}
+          onChange={(v) => v && setTheme(v)}
+        />
       </View>
 
       <Subtitle>Privacy</Subtitle>
-      <SwitchRow label="Show Sensitive Values" value={showValues} onChange={setShowValues} />
+      <SwitchRow
+        label="Show Sensitive Values"
+        value={showValues}
+        onChange={setShowValues}
+      />
 
       <Subtitle>Admin</Subtitle>
-      <ListRow label="Data" chevron onPress={go('/settings/admin')} />
+      <ListRow
+        label="Data"
+        chevron
+        onPress={go('/settings/admin')}
+      />
 
       <Pressable delayLongPress={5000} onLongPress={toggleDeveloperMode}>
         <Text className="m-4 mt-6 text-outline">MoMoney {Constants.expoConfig?.version}</Text>

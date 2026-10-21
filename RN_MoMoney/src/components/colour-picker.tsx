@@ -24,7 +24,13 @@ export function ColourField({ value, onChange }: { value?: string | null; onChan
         <Text className="text-base text-on-surface">Colour</Text>
         <ColourDot colour={value} size={30} />
       </Pressable>
-      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)} statusBarTranslucent>
+      <Modal
+        visible={open}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setOpen(false)}
+        statusBarTranslucent
+      >
         <Pressable className="flex-1 items-center justify-center bg-black/50" onPress={() => setOpen(false)}>
           <Pressable className="max-h-[80%] w-[310px] rounded-2xl bg-surface p-3" onPress={() => {}}>
             <ScrollView contentContainerClassName="gap-2.5">

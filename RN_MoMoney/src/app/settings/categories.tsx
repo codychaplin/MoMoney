@@ -14,12 +14,28 @@ export default function CategoriesScreen() {
   const open = (id: number) => router.push(`/settings/category/${id}` as Href);
 
   return (
-    <Page title="Categories" back contentClassName="gap-1 px-3 pb-24" overlay={<Fab onPress={() => router.push('/settings/category/new' as Href)} />}>
+    <Page
+      title="Categories"
+      back
+      contentClassName="gap-1 px-3 pb-24"
+      overlay={<Fab onPress={() => router.push('/settings/category/new' as Href)} />}
+    >
       {groups.map(({ parent, children }) => (
         <View key={parent.id} className="mb-2 gap-1">
-          <ListRow label={parent.name} className="rounded-xl bg-secondary-container" left={<ColourDot colour={parent.colour} />} onPress={() => open(parent.id)} />
+          <ListRow
+            label={parent.name}
+            className="rounded-xl bg-secondary-container"
+            left={<ColourDot colour={parent.colour} />}
+            onPress={() => open(parent.id)}
+          />
           {children.map((c) => (
-            <ListRow key={c.id} label={c.name} className="ml-4 rounded-xl" left={<ColourDot colour={c.colour} size={22} />} onPress={() => open(c.id)} />
+            <ListRow
+              key={c.id}
+              label={c.name}
+              className="ml-4 rounded-xl"
+              left={<ColourDot colour={c.colour} size={22} />}
+              onPress={() => open(c.id)}
+            />
           ))}
         </View>
       ))}

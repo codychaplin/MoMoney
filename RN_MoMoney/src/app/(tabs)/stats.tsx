@@ -20,8 +20,16 @@ export default function StatsScreen() {
       <View className="flex-row flex-wrap gap-3 pt-2">
       {tiles.map(({ title, icon, href }) => {
         return (
-          <Pressable key={title} onPress={() => router.push(href as Href)} className="h-32 w-[48%] items-center justify-center gap-2 rounded-xl bg-surface-high active:opacity-80">
-            <MaterialDesignIcons name={icon} size={56} color={color} />
+          <Pressable
+            key={title}
+            onPress={() => router.push(href as Href)}
+            className="h-32 w-[48%] items-center justify-center gap-2 rounded-xl bg-surface-high active:opacity-80"
+          >
+            <MaterialDesignIcons
+              name={icon}
+              size={56}
+              color={color}
+            />
             <Text className="text-lg font-bold text-on-surface">{title}</Text>
           </Pressable>
         );

@@ -50,7 +50,11 @@ export default function LoggingScreen() {
       scroll={false}
       right={
         <Pressable onPress={() => setOpen((o) => !o)} hitSlop={12}>
-          <MaterialDesignIcons name="tune" size={26} color={icon} />
+          <MaterialDesignIcons
+            name="tune"
+            size={26}
+            color={icon}
+          />
           {hasFilters && <View className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-primary" />}
         </Pressable>
       }
@@ -81,17 +85,34 @@ export default function LoggingScreen() {
           </Pressable>
         )}
       />
-      <BottomSheet isPresented={open} onDismiss={() => setOpen(false)} containerColor={sheetBg}>
+      <BottomSheet
+        isPresented={open}
+        onDismiss={() => setOpen(false)}
+        containerColor={sheetBg}
+      >
         <RNHostView matchContents={{ vertical: true }}>
           <ScrollView keyboardShouldPersistTaps="handled" style={{ maxHeight: height * 0.7 }}>
             <View className="gap-2 px-3 pb-6 pt-2">
-              <CheckboxRow label="Large Tiles" checked={large} onChange={setLarge} />
-              <PickerField label="Log Level" value={level} allowClear options={LOG_LEVELS.map((l) => ({ label: l, value: l }))} onChange={(v) => setLevel(v as LogLevel | null)} />
-              <PickerField label="Class" value={className} allowClear options={(options?.classes ?? []).map((c) => ({ label: c, value: c }))} onChange={setClassName} />
+              <CheckboxRow
+                label="Large Tiles"
+                checked={large}
+                onChange={setLarge}
+              />
+              <PickerField
+                label="Log Level"
+                value={level}
+                options={LOG_LEVELS.map((l) => ({ label: l, value: l }))}
+                onChange={(v) => setLevel(v as LogLevel | null)}
+              />
+              <PickerField
+                label="Class"
+                value={className}
+                options={(options?.classes ?? []).map((c) => ({ label: c, value: c }))}
+                onChange={setClassName}
+              />
               <PickerField
                 label="Exception"
                 value={exceptionType}
-                allowClear
                 options={(options?.exceptions ?? []).map((c) => ({ label: c || 'None', value: c }))}
                 onChange={setExceptionType}
               />

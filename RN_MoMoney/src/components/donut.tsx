@@ -9,7 +9,12 @@ export function Donut({ data, inner = '60%', height = 240 }: { data: DonutDatum[
   if (rows.length === 0) return <View style={{ height }} />;
   return (
     <View style={{ height }}>
-      <PolarChart data={rows} colorKey="color" valueKey="value" labelKey="label">
+      <PolarChart
+        data={rows}
+        colorKey="color"
+        valueKey="value"
+        labelKey="label"
+      >
         <Pie.Chart innerRadius={inner} />
       </PolarChart>
     </View>

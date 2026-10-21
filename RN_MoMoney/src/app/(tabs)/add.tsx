@@ -115,10 +115,29 @@ export default function AddScreen() {
   };
 
   return (
-    <Page title="Add Transaction" keyboard contentClassName="gap-1">
-      <SegmentedField options={KINDS} value={kind} onChange={changeKind} pill />
-      <DateField value={date} onChange={setDate} />
-      <TextField label="Amount" value={amountText} onChangeText={setAmountText} placeholder="0.00" keyboardType="decimal-pad" />
+    <Page
+      title="Add Transaction"
+      keyboard
+      contentClassName="gap-1"
+    >
+      <SegmentedField
+        options={KINDS}
+        value={kind}
+        onChange={changeKind}
+        pill
+      />
+      <DateField
+        value={date}
+        onChange={setDate}
+        onClear={() => setDate(todayISO())}
+      />
+      <TextField
+        label="Amount"
+        value={amountText}
+        onChangeText={setAmountText}
+        placeholder="0.00"
+        keyboardType="decimal-pad"
+      />
       <PickerField
         label="Account"
         value={accountId}
@@ -156,11 +175,26 @@ export default function AddScreen() {
           onChange={setTransferAccountId}
         />
       ) : (
-        <Autocomplete label="Payee" value={payee} onChangeText={setPayee} suggestions={payees} />
+        <Autocomplete
+          label="Payee"
+          value={payee}
+          onChangeText={setPayee}
+          suggestions={payees}
+        />
       )}
       <View className="mt-1 flex-row items-center gap-3">
-        <Button label="Clear" variant="tertiary" className="flex-1" onPress={clearAll} />
-        <Button label="Accept" className="flex-1" onPress={submit} disabled={busy} />
+        <Button
+          label="Clear"
+          variant="tertiary"
+          className="flex-1"
+          onPress={clearAll}
+        />
+        <Button
+          label="Accept"
+          className="flex-1"
+          onPress={submit}
+          disabled={busy}
+        />
       </View>
     </Page>
   );

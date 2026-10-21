@@ -106,10 +106,25 @@ export default function EditTransactionScreen() {
   };
 
   return (
-    <Page title="Edit Transaction" back keyboard>
+    <Page
+      title="Edit Transaction"
+      back
+      keyboard
+    >
       <DateField value={date || tx.date} onChange={setDate} />
-      <TextField label="Amount" value={amountText} onChangeText={setAmountText} placeholder="0.00" keyboardType="decimal-pad" />
-      <PickerField label="Account" value={accountId} options={accountOptions} onChange={setAccountId} />
+      <TextField
+        label="Amount"
+        value={amountText}
+        onChangeText={setAmountText}
+        placeholder="0.00"
+        keyboardType="decimal-pad"
+      />
+      <PickerField
+        label="Account"
+        value={accountId}
+        options={accountOptions}
+        onChange={setAccountId}
+      />
       <View className="flex-row gap-2">
         <View className="flex-1">
           <PickerField
@@ -141,9 +156,19 @@ export default function EditTransactionScreen() {
           onChange={setTransferAccountId}
         />
       ) : (
-        <Autocomplete label="Payee" value={payee} onChangeText={setPayee} suggestions={payees} />
+        <Autocomplete
+          label="Payee"
+          value={payee}
+          onChangeText={setPayee}
+          suggestions={payees}
+        />
       )}
-      <ActionButtons isEdit onClear={clear} onDelete={remove} onSubmit={update} />
+      <ActionButtons
+        isEdit
+        onClear={clear}
+        onDelete={remove}
+        onSubmit={update}
+      />
     </Page>
   );
 }

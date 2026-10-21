@@ -58,7 +58,11 @@ export default function TabsLayout() {
                   backgroundColor: focused ? indicator : 'transparent',
                 }}
               >
-                <MaterialDesignIcons name={focused ? selectedIcon : icon} size={size - 2} color={color} />
+                <MaterialDesignIcons
+                  name={focused ? selectedIcon : icon}
+                  size={size - 2}
+                  color={color}
+                />
               </View>
             ),
           }}

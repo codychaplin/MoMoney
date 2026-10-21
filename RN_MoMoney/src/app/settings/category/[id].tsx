@@ -54,13 +54,21 @@ export default function EditCategoryScreen() {
   };
 
   return (
-    <Page title={isEdit ? 'Edit Category' : 'Add Category'} back keyboard>
+    <Page
+      title={isEdit ? 'Edit Category' : 'Add Category'}
+      back
+      keyboard
+    >
       {locked ? <Text className="px-1 text-sm text-on-surface-variant">Only the {category?.name} category&apos;s colour can be edited.</Text> : null}
-      <TextField label="Name" value={name} onChangeText={setName} editable={!locked} />
+      <TextField
+        label="Name"
+        value={name}
+        onChangeText={setName}
+        editable={!locked}
+      />
       <PickerField
         label="Parent Category"
         value={parentId}
-        allowClear
         disabled={locked || hasChildren}
         options={parentOptions}
         onChange={setParentId}

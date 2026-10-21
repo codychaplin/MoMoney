@@ -26,13 +26,38 @@ function SidePanel({ title, value, onChange, payees }: { title: string; value: S
   return (
     <View className="gap-2">
       <Text className="text-xl font-bold text-on-surface">{title}</Text>
-      <PickerField label="Account" value={value.accountId} allowClear options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))} onChange={(v) => onChange({ ...value, accountId: v })} />
-      <PickerField label="Category" value={value.categoryId} allowClear options={parents.map(opt)} onChange={(v) => onChange({ ...value, categoryId: v, subcategoryId: null })} />
-      <PickerField label="Subcategory" value={value.subcategoryId} allowClear disabled={value.categoryId == null} options={subs.map(opt)} onChange={(v) => onChange({ ...value, subcategoryId: v })} />
+      <PickerField
+        label="Account"
+        value={value.accountId}
+        options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))}
+        onChange={(v) => onChange({ ...value, accountId: v })}
+      />
+      <PickerField
+        label="Category"
+        value={value.categoryId}
+        options={parents.map(opt)}
+        onChange={(v) => onChange({ ...value, categoryId: v, subcategoryId: null })}
+      />
+      <PickerField
+        label="Subcategory"
+        value={value.subcategoryId}
+        disabled={value.categoryId == null}
+        options={subs.map(opt)}
+        onChange={(v) => onChange({ ...value, subcategoryId: v })}
+      />
       {payees ? (
-        <Autocomplete label="Payee" value={value.payee} onChangeText={(t) => onChange({ ...value, payee: t })} suggestions={payees} />
+        <Autocomplete
+          label="Payee"
+          value={value.payee}
+          onChangeText={(t) => onChange({ ...value, payee: t })}
+          suggestions={payees}
+        />
       ) : (
-        <TextField label="Payee" value={value.payee} onChangeText={(t) => onChange({ ...value, payee: t })} />
+        <TextField
+          label="Payee"
+          value={value.payee}
+          onChangeText={(t) => onChange({ ...value, payee: t })}
+        />
       )}
     </View>
   );
@@ -83,24 +108,45 @@ export default function BulkEditingScreen() {
   };
 
   return (
-    <Page title="Bulk Editing" back keyboard contentClassName="gap-4 px-4 pb-8">
+    <Page
+      title="Bulk Editing"
+      back
+      keyboard
+      contentClassName="grow gap-4 px-4 pb-8"
+    >
       <View className="flex-row gap-3">
         <View className="flex-1">
-          <SidePanel title="Find..." value={find} onChange={(s) => { setFind(s); reset(); }} payees={payees} />
+          <SidePanel
+            title="Find..."
+            value={find}
+            onChange={(s) => { setFind(s); reset(); }}
+            payees={payees}
+          />
         </View>
         <View className="flex-1">
-          <SidePanel title="Replace..." value={replace} onChange={setReplace} />
+          <SidePanel
+            title="Replace..."
+            value={replace}
+            onChange={setReplace}
+          />
         </View>
       </View>
       <View className="flex-row gap-3">
-        <Button label="Find" className="flex-1" onPress={() => run(doFind, 'find')} />
-        <Button label="Replace" variant="secondary" className="flex-1" onPress={doReplace} />
+        <Button
+          label="Find"
+          className="flex-1"
+          onPress={() => run(doFind, 'find')}
+        />
+        <Button
+          label="Replace"
+          variant="secondary"
+          className="flex-1"
+          onPress={doReplace}
+        />
       </View>
-      {info ? (
-        <Card className="p-4">
-          <Text className="text-base leading-6 text-on-surface">{info}</Text>
-        </Card>
-      ) : null}
+      <Card className="flex-1 p-4">
+        <Text className="text-base leading-6 text-on-surface">{info}</Text>
+      </Card>
     </Page>
   );
 }

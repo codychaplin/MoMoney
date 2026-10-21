@@ -30,10 +30,23 @@ export function BalanceChart({ data, bucket, showValues }: Props) {
       }}>
       {({ points, chartBounds }) => (
         <>
-          <Area points={points.balance} y0={chartBounds.bottom} curveType="monotoneX">
-            <LinearGradient start={vec(0, chartBounds.top)} end={vec(0, chartBounds.bottom)} colors={[primary + '88', primary + '00']} />
+          <Area
+            points={points.balance}
+            y0={chartBounds.bottom}
+            curveType="monotoneX"
+          >
+            <LinearGradient
+              start={vec(0, chartBounds.top)}
+              end={vec(0, chartBounds.bottom)}
+              colors={[primary + '88', primary + '00']}
+            />
           </Area>
-          <Line points={points.balance} color={primary} strokeWidth={3} curveType="monotoneX" />
+          <Line
+            points={points.balance}
+            color={primary}
+            strokeWidth={3}
+            curveType="monotoneX"
+          />
         </>
       )}
     </CartesianChart>

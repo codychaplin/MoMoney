@@ -32,10 +32,22 @@ export function PageTitle({ children, right, back }: { children: string; right?:
   const router = useRouter();
   const color = (useCSSVariable('--color-on-secondary-container') as string) ?? '#364b3f';
   return (
-    <View pointerEvents="box-none" className="absolute inset-x-0 top-0 flex-row items-center gap-2 px-3" style={{ paddingTop: top + 8, zIndex: 10 }}>
+    <View
+      pointerEvents="box-none"
+      className="absolute inset-x-0 top-0 flex-row items-center gap-2 px-3"
+      style={{ paddingTop: top + 8, zIndex: 10 }}
+    >
       {back ? (
-        <Pressable hitSlop={8} onPress={() => router.back()} className="size-10 items-center justify-center rounded-full bg-secondary-container/90 active:opacity-80">
-          <MaterialDesignIcons name="arrow-left" size={24} color={color} />
+        <Pressable
+          hitSlop={8}
+          onPress={() => router.back()}
+          className="size-10 items-center justify-center rounded-full bg-secondary-container/90 active:opacity-80"
+        >
+          <MaterialDesignIcons
+            name="arrow-left"
+            size={24}
+            color={color}
+          />
         </Pressable>
       ) : null}
       <View className="h-10 shrink justify-center rounded-full bg-secondary-container/90 px-4">
@@ -82,7 +94,11 @@ export function Page({
     <Screen>
       <PageTitle back={back} right={right}>{title}</PageTitle>
       {!scroll ? children : keyboard ? (
-        <KeyboardAwareScrollView contentContainerClassName={contentClasses} keyboardShouldPersistTaps="handled" bottomOffset={24}>{body}</KeyboardAwareScrollView>
+        <KeyboardAwareScrollView
+          contentContainerClassName={contentClasses}
+          keyboardShouldPersistTaps="handled"
+          bottomOffset={24}
+        >{body}</KeyboardAwareScrollView>
       ) : (
         <ScrollView contentContainerClassName={contentClasses}>{body}</ScrollView>
       )}
@@ -124,7 +140,11 @@ export function Button({
   const bg = { primary: 'bg-primary', tertiary: 'bg-tertiary', secondary: 'bg-secondary', error: 'bg-error', outlined: 'border border-on-surface' }[variant];
   const fg = { primary: 'text-on-primary', tertiary: 'text-on-tertiary', secondary: 'text-on-secondary', error: 'text-on-error', outlined: 'text-on-surface' }[variant];
   return (
-    <Pressable onPress={onPress} disabled={disabled} className={cn('h-12 items-center justify-center rounded-full active:opacity-80', disabled ? 'border-0 bg-outline' : bg, className)}>
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      className={cn('h-12 items-center justify-center rounded-full active:opacity-80', disabled ? 'border-0 bg-outline' : bg, className)}
+    >
       <Text className={cn('text-base font-medium', disabled ? 'text-on-surface-variant' : fg)}>{label}</Text>
     </Pressable>
   );
@@ -148,9 +168,19 @@ export function ActionButtons({
 }) {
   return (
     <View className="mt-2 flex-row items-center gap-2">
-      <Button label="Clear" variant="tertiary" className="flex-1" onPress={onClear} />
+      <Button
+        label="Clear"
+        variant="tertiary"
+        className="flex-1"
+        onPress={onClear}
+      />
       {isEdit ? <Button label="Delete" variant="error" className="w-28" onPress={onDelete} disabled={deleteDisabled} /> : null}
-      <Button label={isEdit ? 'Update' : 'Accept'} className="flex-1" onPress={onSubmit} disabled={submitDisabled} />
+      <Button
+        label={isEdit ? 'Update' : 'Accept'}
+        className="flex-1"
+        onPress={onSubmit}
+        disabled={submitDisabled}
+      />
     </View>
   );
 }
@@ -224,7 +254,11 @@ export function Fab({ onPress }: { onPress: () => void }) {
     <Pressable
       onPress={onPress}
       style={{ marginBottom: bottom, backgroundColor: primaryContainer }} className="absolute bottom-5 right-5 h-14 w-14 items-center justify-center rounded-full shadow-lg active:opacity-80">
-      <MaterialDesignIcons name="plus" size={30} color={onPrimaryContainer} />
+      <MaterialDesignIcons
+        name="plus"
+        size={30}
+        color={onPrimaryContainer}
+      />
     </Pressable>
   );
 }

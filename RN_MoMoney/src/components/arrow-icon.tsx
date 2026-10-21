@@ -26,16 +26,30 @@ type Props = { kind: Kind; size?: number };
 export function ArrowIcon({ kind, size = 24 }: Props) {
   const { id, from, to, rotate } = PALETTE[kind];
   return (
-    <Svg width={size} height={size} viewBox="0 0 32 32">
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+    >
       <Defs>
-        <LinearGradient id={id} x1="0%" y1="0%" x2="100%" y2="0%">
+        <LinearGradient
+          id={id}
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="0%"
+        >
           <Stop offset="0%" stopColor={from} />
           <Stop offset="50%" stopColor={from} />
           <Stop offset="50%" stopColor={to} />
           <Stop offset="100%" stopColor={to} />
         </LinearGradient>
       </Defs>
-      <Path transform={`rotate(${rotate} 16 16)`} fill={`url(#${id})`} d={ARROW_PATH} />
+      <Path
+        transform={`rotate(${rotate} 16 16)`}
+        fill={`url(#${id})`}
+        d={ARROW_PATH}
+      />
     </Svg>
   );
 }

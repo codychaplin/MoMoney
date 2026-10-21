@@ -24,8 +24,17 @@ export default function InsightsScreen() {
   const label = (cents: number) => (cents === 0 ? '' : show ? `$${Math.round(cents / 100)}` : '$?');
 
   return (
-    <Page title="Insights" back contentClassName="gap-3 px-3 pb-6">
-      <PickerField label="Select a Year" value={year} options={years.map((y) => ({ label: String(y), value: y }))} onChange={(v) => v != null && setYear(v)} />
+    <Page
+      title="Insights"
+      back
+      contentClassName="gap-3 px-3 pb-6"
+    >
+      <PickerField
+        label="Select a Year"
+        value={year}
+        options={years.map((y) => ({ label: String(y), value: y }))}
+        onChange={(v) => v != null && setYear(v)}
+      />
 
       <Text className="text-lg font-semibold text-on-surface">Income &amp; Expenses</Text>
       <Card className="gap-2 p-3">
@@ -50,12 +59,20 @@ export default function InsightsScreen() {
       <Text className="text-lg font-semibold text-on-surface">Totals</Text>
       <View className="flex-row gap-3">
         <Card className="flex-1 gap-1 p-4">
-          <MaterialDesignIcons name="trending-up" size={28} color={incomeColour} />
+          <MaterialDesignIcons
+            name="trending-up"
+            size={28}
+            color={incomeColour}
+          />
           <Text className="text-sm text-on-surface-variant">Income</Text>
           <Text className="text-lg font-bold text-income">{money(data?.totalIncomeCents ?? 0)}</Text>
         </Card>
         <Card className="flex-1 gap-1 p-4">
-          <MaterialDesignIcons name="trending-down" size={28} color={redColour} />
+          <MaterialDesignIcons
+            name="trending-down"
+            size={28}
+            color={redColour}
+          />
           <Text className="text-sm text-on-surface-variant">Expenses</Text>
           <Text className="text-lg font-bold text-red">{money(data?.totalExpenseCents ?? 0)}</Text>
         </Card>

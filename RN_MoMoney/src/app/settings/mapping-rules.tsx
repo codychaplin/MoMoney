@@ -92,7 +92,12 @@ export default function MappingRulesScreen() {
   };
 
   return (
-    <Page title="Mapping Rules" back keyboard contentClassName="gap-3 px-4 pb-8">
+    <Page
+      title="Mapping Rules"
+      back
+      keyboard
+      contentClassName="gap-3 px-4 pb-8"
+    >
       <PickerField
         label="Bank"
         value={bank}
@@ -112,7 +117,12 @@ export default function MappingRulesScreen() {
             onChange={setRuleId}
           />
         </View>
-        <Button label="Add Rule" variant="secondary" className="px-4" onPress={() => (bank ? setRuleId('new') : toast.error('Please select a bank first'))} />
+        <Button
+          label="Add Rule"
+          variant="secondary"
+          className="px-4"
+          onPress={() => (bank ? setRuleId('new') : toast.error('Please select a bank first'))}
+        />
       </View>
 
       {ruleId != null ? (
@@ -120,23 +130,51 @@ export default function MappingRulesScreen() {
           <Text className="text-sm leading-5 text-on-surface-variant">
             A rule applies when its pattern (a regular expression, not case sensitive) matches the transaction text. Rules are checked in order and the first values found are used.
           </Text>
-          <TextField label="Name" value={name} onChangeText={setName} />
-          <TextField label="Pattern" value={pattern} onChangeText={setPattern} />
-          <SwitchRow label="Skip matching transactions" value={skip} onChange={setSkip} className="rounded-lg" />
+          <TextField
+            label="Name"
+            value={name}
+            onChangeText={setName}
+          />
+          <TextField
+            label="Pattern"
+            value={pattern}
+            onChangeText={setPattern}
+          />
+          <SwitchRow
+            label="Skip matching transactions"
+            value={skip}
+            onChange={setSkip}
+            className="rounded-lg"
+          />
           {!skip ? (
             <>
               <View className="flex-row gap-2">
-                <View className="flex-1"><PickerField label="Category" value={categoryId} allowClear options={parents.map(opt)} onChange={(v) => { setCategoryId(v); setSubcategoryId(null); }} /></View>
-                <View className="flex-1"><PickerField label="Subcategory" value={subcategoryId} allowClear disabled={categoryId == null} options={subs.map(opt)} onChange={setSubcategoryId} /></View>
+                <View className="flex-1"><PickerField label="Category" value={categoryId} options={parents.map(opt)} onChange={(v) => { setCategoryId(v); setSubcategoryId(null); }} /></View>
+                <View className="flex-1"><PickerField label="Subcategory" value={subcategoryId} disabled={categoryId == null} options={subs.map(opt)} onChange={setSubcategoryId} /></View>
               </View>
               {isTransfer ? (
-                <PickerField label="Transfer Account" value={transferAccountId} allowClear options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))} onChange={setTransferAccountId} />
+                <PickerField
+                  label="Transfer Account"
+                  value={transferAccountId}
+                  options={accounts.map((a) => ({ label: a.name, value: a.id, colour: a.colour }))}
+                  onChange={setTransferAccountId}
+                />
               ) : (
-                <Autocomplete label="Payee" value={payee} onChangeText={setPayee} suggestions={payees} />
+                <Autocomplete
+                  label="Payee"
+                  value={payee}
+                  onChangeText={setPayee}
+                  suggestions={payees}
+                />
               )}
             </>
           ) : null}
-          <ActionButtons isEdit={typeof ruleId === 'number'} onClear={clearForm} onDelete={remove} onSubmit={save} />
+          <ActionButtons
+            isEdit={typeof ruleId === 'number'}
+            onClear={clearForm}
+            onDelete={remove}
+            onSubmit={save}
+          />
         </>
       ) : null}
     </Page>

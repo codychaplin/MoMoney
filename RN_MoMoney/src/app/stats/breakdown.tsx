@@ -46,12 +46,30 @@ export default function BreakdownScreen() {
         </Pressable>
       }>
       <View className="flex-row items-center justify-between">
-        <Pressable disabled={!canGoBack} onPress={() => step(-1)} hitSlop={12} className={canGoBack ? '' : 'opacity-30'}>
-          <MaterialDesignIcons name="chevron-left" size={30} color={icon} />
+        <Pressable
+          disabled={!canGoBack}
+          onPress={() => step(-1)}
+          hitSlop={12}
+          className={canGoBack ? '' : 'opacity-30'}
+        >
+          <MaterialDesignIcons
+            name="chevron-left"
+            size={30}
+            color={icon}
+          />
         </Pressable>
         <Text className="text-xl font-bold text-on-surface">{format(cursor, mode === 'Month' ? 'MMM yyyy' : 'yyyy')}</Text>
-        <Pressable disabled={!canGoForward} onPress={() => step(1)} hitSlop={12} className={canGoForward ? '' : 'opacity-30'}>
-          <MaterialDesignIcons name="chevron-right" size={30} color={icon} />
+        <Pressable
+          disabled={!canGoForward}
+          onPress={() => step(1)}
+          hitSlop={12}
+          className={canGoForward ? '' : 'opacity-30'}
+        >
+          <MaterialDesignIcons
+            name="chevron-right"
+            size={30}
+            color={icon}
+          />
         </Pressable>
       </View>
 
