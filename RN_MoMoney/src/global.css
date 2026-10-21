@@ -26,8 +26,9 @@
       --color-on-surface-variant: #464947;
       --color-outline: #767977;
       --color-outline-variant: #c6c9c6;
-      --color-income: #28aa74;
-      --color-expense: #df4759;
+      --color-income: #42ba96;
+      --color-expense: #e54949;
+      --color-red: #df4759;
       --color-error: #ba1a1a;
       --color-on-error: #ffffff;
       --color-error-container: #ffdad6;
@@ -59,16 +60,17 @@
       --color-on-surface-variant: #c6c9c6;
       --color-outline: #909391;
       --color-outline-variant: #464947;
-      --color-income: #42ba96;
-      --color-expense: #ff7777;
+      --color-income: #53f4c4;
+      --color-expense: #e43e3e;
+      --color-red: #ff8290;
       --color-error: #ffb4ab;
       --color-on-error: #690005;
       --color-error-container: #93000a;
-      --color-status-verified: #53f4c4;
-      --color-status-approved: #75aeff;
-      --color-status-review: #ff8290;
-      --color-status-auto-skipped: #a875e0;
-      --color-status-skipped: #d49866;
+      --color-status-verified: #42ba96;
+      --color-status-approved: #3b74c5;
+      --color-status-review: #df4759;
+      --color-status-auto-skipped: #7e3bc5;
+      --color-status-skipped: #b1723e;
     }
   }
 }

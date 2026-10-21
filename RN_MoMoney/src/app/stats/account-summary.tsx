@@ -29,7 +29,7 @@ export default function AccountSummaryScreen() {
               <View key={a.id} className="flex-row items-center gap-3 py-1">
                 <ColourDot colour={a.colour} size={18} />
                 <Text className="flex-1 text-base text-on-surface">{a.name}</Text>
-                <Text className={a.balanceCents < 0 ? 'text-base text-expense' : 'text-base text-on-surface-variant'}>{money(a.balanceCents)}</Text>
+                <Text className="text-base text-on-surface-variant">{money(a.balanceCents)}</Text>
               </View>
             ))}
           </Card>

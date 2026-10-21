@@ -41,7 +41,7 @@ export default function BreakdownScreen() {
       back
       contentClassName="gap-3 px-3 pb-6"
       right={
-        <Pressable onPress={() => setMode((m) => (m === 'Month' ? 'Year' : 'Month'))} className="rounded-full bg-secondary-container px-4 py-2">
+        <Pressable onPress={() => setMode((m) => (m === 'Month' ? 'Year' : 'Month'))} className="rounded-full px-4 py-2">
           <Text className="text-sm font-semibold text-on-secondary-container">{mode}</Text>
         </Pressable>
       }>
@@ -59,11 +59,8 @@ export default function BreakdownScreen() {
         options={TABS}
         value={tab}
         onChange={setTab}
+        labels={{ Expenses: `Expenses ${money(data?.expenseCents ?? 0)}`, Income: `Income ${money(data?.incomeCents ?? 0)}` }}
       />
-      <Text className="text-center text-lg font-semibold text-on-surface">
-        {tab === 'Expenses' ? 'Expenses ' : 'Income '}
-        {money(tab === 'Expenses' ? (data?.expenseCents ?? 0) : (data?.incomeCents ?? 0))}
-      </Text>
 
       <Card>
         <Donut data={slices.map((s) => ({ label: s.name, value: s.amountCents, color: s.colour }))} inner={tab === 'Expenses' ? '60%' : '50%'} />

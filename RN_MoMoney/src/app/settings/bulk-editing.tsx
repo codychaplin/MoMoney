@@ -84,8 +84,14 @@ export default function BulkEditingScreen() {
 
   return (
     <Page title="Bulk Editing" back keyboard contentClassName="gap-4 px-4 pb-8">
-      <SidePanel title="Find..." value={find} onChange={(s) => { setFind(s); reset(); }} payees={payees} />
-      <SidePanel title="Replace..." value={replace} onChange={setReplace} />
+      <View className="flex-row gap-3">
+        <View className="flex-1">
+          <SidePanel title="Find..." value={find} onChange={(s) => { setFind(s); reset(); }} payees={payees} />
+        </View>
+        <View className="flex-1">
+          <SidePanel title="Replace..." value={replace} onChange={setReplace} />
+        </View>
+      </View>
       <View className="flex-row gap-3">
         <Button label="Find" className="flex-1" onPress={() => run(doFind, 'find')} />
         <Button label="Replace" variant="secondary" className="flex-1" onPress={doReplace} />

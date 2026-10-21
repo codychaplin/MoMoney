@@ -42,10 +42,10 @@ export default function ImportExportScreen() {
   };
 
   return (
-    <Page title="Import / Export" back contentClassName="pb-8" overlay={<BusyOverlay visible={busy} />}>
+    <Page title="Import / Export" back contentClassName="gap-0 px-0" overlay={<BusyOverlay visible={busy} />}>
       <Text className="px-4 pb-2 text-sm font-semibold text-primary">Import/Export from CSV</Text>
       {ROWS.map((r, i) => (
-        <View key={r.kind} className={`h-14 flex-row items-center gap-2 px-4 ${i % 2 ? 'bg-surface-container' : 'bg-surface'}`}>
+        <View key={r.kind} className={`flex-row items-center gap-2 px-4 py-2 ${i % 2 ? 'bg-surface-high' : 'bg-surface-container'}`}>
           <Text className="flex-1 text-base text-on-surface">{r.label}</Text>
           <Button label="Import" variant="secondary" className="h-9 px-4" onPress={doImport(r.kind, r.label)} />
           <Button label="Export" variant="secondary" className="h-9 px-4" onPress={doExport(r.kind, r.label)} />

@@ -8,6 +8,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { twMerge } from 'tailwind-merge';
 import { useCSSVariable } from 'uniwind';
 
+import { useSettings } from '@/store/settings';
+import { resolvePalette } from '@/theme/palettes';
+
 export const cn = (...v: Parameters<typeof clsx>) => twMerge(clsx(v));
 
 /** Edge-to-edge page: content scrolls under the transparent system bars. */
@@ -27,7 +30,7 @@ export function TopSpacer() {
 export function PageTitle({ children, right, back }: { children: string; right?: ReactNode; back?: boolean }) {
   const { top } = useSafeAreaInsets();
   const router = useRouter();
-  const color = (useCSSVariable('--color-on-surface') as string) ?? '#171d19';
+  const color = (useCSSVariable('--color-on-secondary-container') as string) ?? '#364b3f';
   return (
     <View pointerEvents="box-none" className="absolute inset-x-0 top-0 flex-row items-center gap-2 px-3" style={{ paddingTop: top + 8, zIndex: 10 }}>
       {back ? (
@@ -36,7 +39,7 @@ export function PageTitle({ children, right, back }: { children: string; right?:
         </Pressable>
       ) : null}
       <View className="h-10 shrink justify-center rounded-full bg-secondary-container/90 px-4">
-        <Text className="text-lg font-semibold text-on-surface" numberOfLines={1}>{children}</Text>
+        <Text className="text-lg font-semibold text-on-secondary-container" numberOfLines={1}>{children}</Text>
       </View>
       <View className="flex-1" />
       {right ? <View className="h-10 items-center justify-center rounded-full bg-secondary-container/90 px-3">{right}</View> : null}
@@ -118,11 +121,11 @@ export function Button({
   onPress?: () => void;
   disabled?: boolean;
 }) {
-  const bg = { primary: 'bg-primary', tertiary: 'bg-surface-high', secondary: 'bg-secondary-container', error: 'bg-error', outlined: 'border border-on-surface' }[variant];
-  const fg = { primary: 'text-on-primary', tertiary: 'text-on-surface', secondary: 'text-on-secondary-container', error: 'text-on-error', outlined: 'text-on-surface' }[variant];
+  const bg = { primary: 'bg-primary', tertiary: 'bg-tertiary', secondary: 'bg-secondary', error: 'bg-error', outlined: 'border border-on-surface' }[variant];
+  const fg = { primary: 'text-on-primary', tertiary: 'text-on-tertiary', secondary: 'text-on-secondary', error: 'text-on-error', outlined: 'text-on-surface' }[variant];
   return (
-    <Pressable onPress={onPress} disabled={disabled} className={cn('h-12 items-center justify-center rounded-full active:opacity-80', bg, disabled && 'opacity-40', className)}>
-      <Text className={cn('text-base font-medium', fg)}>{label}</Text>
+    <Pressable onPress={onPress} disabled={disabled} className={cn('h-12 items-center justify-center rounded-full active:opacity-80', disabled ? 'border-0 bg-outline' : bg, className)}>
+      <Text className={cn('text-base font-medium', disabled ? 'text-on-surface-variant' : fg)}>{label}</Text>
     </Pressable>
   );
 }
@@ -159,7 +162,6 @@ export function ListRow({
   right,
   onPress,
   chevron,
-  dim,
   className,
 }: {
   label: string;
@@ -167,7 +169,6 @@ export function ListRow({
   right?: ReactNode;
   onPress?: () => void;
   chevron?: boolean;
-  dim?: boolean;
   className?: string;
 }) {
   const color = (useCSSVariable('--color-on-surface-variant') as string) ?? '#404943';
@@ -175,9 +176,9 @@ export function ListRow({
     <Pressable
       onPress={onPress}
       disabled={!onPress}
-      className={cn('min-h-12 flex-row items-center gap-3 bg-surface px-4 active:opacity-80', dim && 'opacity-60', className)}>
+      className={cn('min-h-12 flex-row items-center gap-3 bg-surface px-4 active:opacity-80', className)}>
       {left}
-      <Text className="flex-1 text-base text-on-surface" numberOfLines={1}>{label}</Text>
+      <Text className="flex-1 text-md text-on-surface" numberOfLines={1}>{label}</Text>
       {right}
       {chevron ? <MaterialDesignIcons name="chevron-right" size={20} color={color} /> : null}
     </Pressable>
@@ -185,10 +186,18 @@ export function ListRow({
 }
 
 export function SwitchRow({ label, value, onChange, className }: { label: string; value: boolean; onChange: (v: boolean) => void; className?: string }) {
+  const primary = (useCSSVariable('--color-primary') as string) ?? '#246a4b';
+  const secondary = (useCSSVariable('--color-secondary') as string) ?? '#4d6356';
+  const outline = (useCSSVariable('--color-outline') as string) ?? '#707972';
   return (
     <View className={cn('min-h-12 flex-row items-center justify-between bg-surface px-4', className)}>
       <Text className="flex-1 text-base text-on-surface">{label}</Text>
-      <Switch value={value} onValueChange={onChange} />
+      <Switch
+        value={value}
+        onValueChange={onChange}
+        trackColor={{ false: undefined, true: secondary }}
+        thumbColor={value ? primary : outline}
+      />
     </View>
   );
 }
@@ -205,15 +214,17 @@ export function CheckboxRow({ label, checked, onChange, right }: { label: string
   );
 }
 
-/** Round floating add button, bottom right (btnAdd). */
+/** Round floating add button, bottom right (btnAdd). MAUI binds it to the light-scheme colours in both modes. */
 export function Fab({ onPress }: { onPress: () => void }) {
   const { bottom } = useSafeAreaInsets();
-  const color = (useCSSVariable('--color-on-secondary-container') as string) ?? '#364b3f';
+  const themeName = useSettings((s) => s.themeName);
+  const materialYou = useSettings((s) => s.materialYou);
+  const { primaryContainer, onPrimaryContainer } = resolvePalette(themeName, materialYou, 'light');
   return (
     <Pressable
       onPress={onPress}
-      style={{ marginBottom: bottom }} className="absolute bottom-5 right-5 h-14 w-14 items-center justify-center rounded-full bg-primary-container shadow-lg active:opacity-80">
-      <MaterialDesignIcons name="plus" size={30} color={color} />
+      style={{ marginBottom: bottom, backgroundColor: primaryContainer }} className="absolute bottom-5 right-5 h-14 w-14 items-center justify-center rounded-full shadow-lg active:opacity-80">
+      <MaterialDesignIcons name="plus" size={30} color={onPrimaryContainer} />
     </Pressable>
   );
 }

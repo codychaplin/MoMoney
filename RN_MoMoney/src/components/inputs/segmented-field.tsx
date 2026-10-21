@@ -8,6 +8,7 @@ type Props<T extends string> = {
   options: readonly T[];
   value: T | null;
   onChange: (v: T) => void;
+  labels?: Partial<Record<T, string>>;
   pill?: boolean;
   small?: boolean;
 };
@@ -17,7 +18,7 @@ export function SegmentedField<T extends string>({ pill, small, ...props }: Prop
 }
 
 /** Material 3 single-choice segmented button row (Jetpack Compose). */
-function NativeSegmented<T extends string>({ options, value, onChange }: Omit<Props<T>, 'pill' | 'small'>) {
+function NativeSegmented<T extends string>({ options, value, onChange, labels }: Omit<Props<T>, 'pill' | 'small'>) {
   const host = useHostTheme();
   const outline = useCSSVariable('--color-outline') as string;
   const onSurface = useCSSVariable('--color-on-surface') as string;
@@ -37,7 +38,7 @@ function NativeSegmented<T extends string>({ options, value, onChange }: Omit<Pr
         {options.map((o) => (
           <SegmentedButton key={o} selected={o === value} colors={colors} onClick={() => onChange(o)}>
             <SegmentedButton.Label>
-              <ComposeText>{o}</ComposeText>
+              <ComposeText>{labels?.[o] ?? o}</ComposeText>
             </SegmentedButton.Label>
           </SegmentedButton>
         ))}
@@ -47,14 +48,14 @@ function NativeSegmented<T extends string>({ options, value, onChange }: Omit<Pr
 }
 
 /** Pill selector (Custom) */
-function PillSegmented<T extends string>({ options, value, onChange, small }: Omit<Props<T>, 'pill'>) {
+function PillSegmented<T extends string>({ options, value, onChange, small, labels }: Omit<Props<T>, 'pill'>) {
   return (
     <View className="flex-row rounded-full bg-secondary-container p-1">
       {options.map((o) => {
         const on = o === value;
         return (
           <Pressable key={o} onPress={() => onChange(o)} className={cn('flex-1 items-center rounded-full', small ? 'py-1' : 'py-2.5', on && 'bg-secondary')}>
-            <Text className={cn(small ? 'text-xs' : 'text-sm', on ? 'font-semibold text-on-secondary' : 'text-on-surface')}>{o}</Text>
+            <Text className={cn(small ? 'text-xs' : 'text-sm', on ? 'font-semibold text-on-secondary' : 'text-on-surface')}>{labels?.[o] ?? o}</Text>
           </Pressable>
         );
       })}

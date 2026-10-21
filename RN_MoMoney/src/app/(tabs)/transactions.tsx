@@ -36,7 +36,7 @@ export default function TransactionsScreen() {
   const { data: accounts = [] } = useAccounts();
   const { data: categories = [] } = useCategories();
   const { data: payees = [] } = usePayees();
-  const icon = (useCSSVariable('--color-on-surface') as string) ?? '#171d19';
+  const icon = (useCSSVariable('--color-on-secondary-container') as string) ?? '#364b3f';
 
   const { height } = useWindowDimensions();
   const sheetBg = (useCSSVariable('--color-surface') as string) ?? '#ffffff';

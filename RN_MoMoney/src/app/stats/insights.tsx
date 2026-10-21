@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
+import { useCSSVariable } from 'uniwind';
 
 import { Card, Page } from '@/components/ui';
 import { PickerField } from '@/components/inputs/picker-field';
@@ -13,6 +14,8 @@ import { useMoney } from '@/store/settings';
 export default function InsightsScreen() {
   const db = useDb();
   const { money, show } = useMoney();
+  const incomeColour = (useCSSVariable('--color-income') as string) ?? '#42ba96';
+  const redColour = (useCSSVariable('--color-red') as string) ?? '#df4759';
   const [year, setYear] = useState(new Date().getFullYear());
   const { data: years = [year] } = useQuery({ queryKey: ['stats', 'years'], queryFn: () => getInsightYears(db) });
   const { data } = useQuery({ queryKey: ['stats', 'insights', year], queryFn: () => getInsights(db, year) });
@@ -32,7 +35,7 @@ export default function InsightsScreen() {
             <View className="flex-1 gap-1">
               {[
                 { v: data?.income[i] ?? 0, cls: 'bg-income', text: 'text-income' },
-                { v: data?.expense[i] ?? 0, cls: 'bg-expense', text: 'text-expense' },
+                { v: data?.expense[i] ?? 0, cls: 'bg-red', text: 'text-red' },
               ].map((bar, k) => (
                 <View key={k} className="h-4 flex-row items-center gap-1">
                   <View className={`h-3 rounded-sm ${bar.cls}`} style={{ width: `${Math.max(bar.v ? 1 : 0, (bar.v / max) * 82)}%` }} />
@@ -47,14 +50,14 @@ export default function InsightsScreen() {
       <Text className="text-lg font-semibold text-on-surface">Totals</Text>
       <View className="flex-row gap-3">
         <Card className="flex-1 gap-1 p-4">
-          <MaterialDesignIcons name="trending-up" size={28} color="#42ba96" />
+          <MaterialDesignIcons name="trending-up" size={28} color={incomeColour} />
           <Text className="text-sm text-on-surface-variant">Income</Text>
           <Text className="text-lg font-bold text-income">{money(data?.totalIncomeCents ?? 0)}</Text>
         </Card>
         <Card className="flex-1 gap-1 p-4">
-          <MaterialDesignIcons name="trending-down" size={28} color="#df4759" />
+          <MaterialDesignIcons name="trending-down" size={28} color={redColour} />
           <Text className="text-sm text-on-surface-variant">Expenses</Text>
-          <Text className="text-lg font-bold text-expense">{money(data?.totalExpenseCents ?? 0)}</Text>
+          <Text className="text-lg font-bold text-red">{money(data?.totalExpenseCents ?? 0)}</Text>
         </Card>
       </View>
     </Page>

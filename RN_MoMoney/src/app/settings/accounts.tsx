@@ -12,16 +12,15 @@ export default function AccountsScreen() {
   const { money } = useMoney();
 
   return (
-    <Page title="Accounts" back contentClassName="gap-2 px-3 pb-24" overlay={<Fab onPress={() => router.push('/settings/account/new' as Href)} />}>
+    <Page title="Accounts" back contentClassName="gap-2 px-3" overlay={<Fab onPress={() => router.push('/settings/account/new' as Href)} />}>
       {accounts.length === 0 ? <Text className="p-6 text-center text-on-surface-variant">No accounts yet</Text> : null}
       {accounts.map((a) => (
         <ListRow
           key={a.id}
           label={a.name}
-          dim={!a.enabled}
-          className="rounded-xl"
+          className={a.enabled ? 'rounded-xl bg-surface-high' : 'rounded-xl bg-surface'}
           left={<ColourDot colour={a.colour} />}
-          right={a.enabled ? <Text className="text-base text-on-surface">{money(a.balanceCents)}</Text> : null}
+          right={a.enabled ? <Text className="text-md text-on-surface">{money(a.balanceCents)}</Text> : null}
           onPress={() => router.push(`/settings/account/${a.id}` as Href)}
         />
       ))}

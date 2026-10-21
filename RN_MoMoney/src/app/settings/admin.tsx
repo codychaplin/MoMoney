@@ -53,7 +53,7 @@ export default function AdminScreen() {
   };
 
   return (
-    <Page title="Administration" back contentClassName="pb-8">
+    <Page title="Administration" back contentClassName="gap-0">
 
       <Subtitle>Data Maintenance</Subtitle>
       {isAdmin ? <ListRow label="Logging" chevron onPress={() => router.push('/settings/logging' as Href)} /> : null}

@@ -183,11 +183,24 @@ const levelOf = (s: string): LogLevel => {
   return (LOG_LEVELS.find((l) => l.toLowerCase() === v) ?? 'Info') as LogLevel;
 };
 
+/** ISO strings as-is; otherwise local date-times from the old app (e.g. 10/19/2026 19:44:30), keeping the time. */
+function parseLogTimestamp(s: string): string | null {
+  const t = s.trim();
+  if (/^\d{4}-\d{2}-\d{2}T/.test(t)) {
+    const d = new Date(t);
+    return isValid(d) ? d.toISOString() : null;
+  }
+  for (const f of ['M/d/yyyy H:mm:ss', 'MM/dd/yyyy HH:mm:ss', 'M/d/yyyy h:mm:ss a', 'yyyy-MM-dd HH:mm:ss', 'M/d/yyyy H:mm', 'M/d/yyyy', 'yyyy-MM-dd']) {
+    const d = parseDate(t, f, new Date());
+    if (isValid(d)) return d.toISOString();
+  }
+  return null;
+}
+
 export async function importLogs(db: Db, text: string): Promise<number> {
   const rows = readRows(text);
   const values = rows.map((r, i) => {
-    const d = new Date(r[0] ?? '');
-    const iso = isValid(d) ? d.toISOString() : parseCsvDate(r[0] ?? '');
+    const iso = parseLogTimestamp(r[0] ?? '');
     if (!iso) throw bad('Log', i + 1, r[0] ?? '', 'Timestamp');
     return { timestamp: iso, level: levelOf(r[1] ?? ''), className: r[2] ?? '', exceptionType: r[3] ?? '', message: r[4] ?? '' };
   });

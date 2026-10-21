@@ -32,7 +32,7 @@ export default function HomeScreen() {
         {data?.accountTotals.map((a) => (
           <View key={a.type} className="h-9 flex-row items-center justify-between px-1">
             <Text className="text-base text-on-surface">{a.type}</Text>
-            <Text className={a.totalCents < 0 && show ? 'text-base text-expense' : 'text-base text-on-surface'}>{money(a.totalCents)}</Text>
+            <Text className="text-base text-on-surface">{money(a.totalCents)}</Text>
           </View>
         ))}
       </Card>
