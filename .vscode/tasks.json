@@ -26,25 +26,29 @@
             }
         },
         {
-            "label": "EAS: Build Android Preview (APK)",
+            "label": "EAS: Build Android Production (AAB)",
             "type": "shell",
-            "command": "npx eas build -p android --profile preview",
+            "command": "eas build -p android --profile production",
             "options": { "cwd": "${workspaceFolder}/RN_MoMoney" },
             "problemMatcher": [],
             "presentation": { "reveal": "always", "focus": true, "panel": "dedicated" }
         },
         {
-            "label": "EAS: Build Android Production (AAB)",
+            "label": "EAS: Build Android Production Locally (AAB)",
             "type": "shell",
-            "command": "npx eas build -p android --profile production",
-            "options": { "cwd": "${workspaceFolder}/RN_MoMoney" },
+            "command": "eas build --platform android --profile production --local",
+            "options": {
+                "cwd": "${workspaceFolder}/RN_MoMoney",
+                "env": { "ANDROID_HOME": "${env:HOME}/Android/Sdk" }
+            },
             "problemMatcher": [],
+            "group": "build",
             "presentation": { "reveal": "always", "focus": true, "panel": "dedicated" }
         },
         {
             "label": "EAS: Submit Latest Android Build",
             "type": "shell",
-            "command": "npx eas submit -p android --profile production --latest",
+            "command": "eas submit -p android --profile production --latest",
             "options": { "cwd": "${workspaceFolder}/RN_MoMoney" },
             "problemMatcher": [],
             "presentation": { "reveal": "always", "focus": true, "panel": "dedicated" }
@@ -52,7 +56,7 @@
         {
             "label": "EAS: Build + Submit Android Production",
             "type": "shell",
-            "command": "npx eas build -p android --profile production --auto-submit",
+            "command": "eas build -p android --profile production --auto-submit",
             "options": { "cwd": "${workspaceFolder}/RN_MoMoney" },
             "problemMatcher": [],
             "presentation": { "reveal": "always", "focus": true, "panel": "dedicated" }
