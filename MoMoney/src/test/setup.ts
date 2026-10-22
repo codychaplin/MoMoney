@@ -97,7 +97,7 @@ jest.mock('@shopify/flash-list', () => {
 
 jest.mock('expo-system-ui', () => ({ setBackgroundColorAsync: jest.fn(async () => undefined) }));
 jest.mock('expo-status-bar', () => ({ StatusBar: () => null }));
-jest.mock('expo-router/build/react-navigation', () => {
+jest.mock('expo-router/build/react-navigation/index', () => {
   const { Pressable } = require('react-native');
   return { PlatformPressable: Pressable };
 }, { virtual: true });

@@ -1,6 +1,6 @@
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { Tabs } from 'expo-router';
-import { PlatformPressable } from 'expo-router/build/react-navigation';
+import { PlatformPressable } from 'expo-router/build/react-navigation/index';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCSSVariable } from 'uniwind';
