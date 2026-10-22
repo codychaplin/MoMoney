@@ -98,10 +98,6 @@ export async function getAllCategories(db: Db): Promise<Category[]> {
   return db.select().from(categories).orderBy(asc(categories.id));
 }
 
-export async function getParentCategories(db: Db): Promise<Category[]> {
-  return db.select().from(categories).where(isNull(categories.parentId)).orderBy(asc(categories.id));
-}
-
 /** Parent categories of expenses (id >= 5). */
 export async function getExpenseCategories(db: Db): Promise<Category[]> {
   return db

@@ -25,7 +25,7 @@ export function DateField({ label = 'Date', value, onChange, disabled }: Props) 
 
   return (
     <View>
-      <Pressable disabled={disabled} onPress={() => setOpen(true)}>
+      <Pressable testID="date-field" disabled={disabled} onPress={() => setOpen(true)}>
         <View pointerEvents="none">
           <Host
             {...host}

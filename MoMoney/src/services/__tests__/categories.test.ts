@@ -1,13 +1,11 @@
 import type { Db } from '@/db/db';
 import { DEFAULT_CATEGORIES, NECESSARY_CATEGORIES } from '@/db/seed';
-import { DuplicateError, InvalidError } from '@/lib/errors';
+import { DuplicateError, InvalidError, NotFoundError } from '@/lib/errors';
 import { addAccount } from '@/services/accounts';
 import {
-  addCategories, addCategory, categoryKeyMap, categoryLabel, getAllCategories, getCategoryGroups, getExpenseCategories,
+  addCategories, addCategory, categoryKeyMap, categoryLabel, getAllCategories, getCategory, getCategoryGroups, getExpenseCategories,
   getSubcategories, removeAllCategories, removeCategory, updateCategory,
 } from '@/services/categories';
-import { countLogs, createLogger, getLogFilterOptions, getLogs } from '@/services/logger';
-import { addRules, getRules, parseMapping, saveRule } from '@/services/mappingRules';
 import { addTransaction } from '@/services/transactions';
 import { createTestDb } from '@/test/db';
 
@@ -47,6 +45,22 @@ describe('categories', () => {
     await updateCategory(db, 5, { name: 'Job' }); // Work (child of Income) is editable
   });
 
+  it('update validates names, parents and duplicates', async () => {
+    await expect(updateCategory(db, 9999, { name: 'x' })).rejects.toThrow(NotFoundError);
+    await expect(updateCategory(db, 14, { name: '  ' })).rejects.toThrow('Invalid name');
+    await expect(updateCategory(db, 12, { parentId: 12 })).rejects.toThrow('own parent');
+    await expect(updateCategory(db, 14, { name: 'Groceries' })).rejects.toThrow(DuplicateError);
+    await updateCategory(db, 14, { name: 'Dining', colour: '#123456' });
+    expect(await getCategory(db, 14)).toMatchObject({ name: 'Dining', colour: '#123456' });
+  });
+
+  it('moves a subcategory to another parent and rejects a missing parent', async () => {
+    const id = await addCategory(db, 'Pets', null);
+    await updateCategory(db, 14, { parentId: id });
+    expect((await getCategory(db, 14)).parentId).toBe(id);
+    await expect(updateCategory(db, 14, { parentId: 9999 })).rejects.toThrow(NotFoundError);
+  });
+
   it('removal is refused for system, parent-with-children and in-use categories', async () => {
     await expect(removeCategory(db, 1)).rejects.toThrow(InvalidError);
     await expect(removeCategory(db, 12)).rejects.toThrow('subcategories');
@@ -76,43 +90,5 @@ describe('categories', () => {
     expect(map.get('groceries,food')?.id).toBe(13);
     expect(map.get('food,')?.id).toBe(12);
     expect((await getCategoryGroups(db))[0].children.map((c) => c.name)).toEqual(['Debit', 'Credit']);
-  });
-});
-
-describe('mapping rules', () => {
-  const rule = (over = {}) => ({ bankType: 'Tangerine', name: 'Groceries', pattern: 'loblaws|sobeys', mapping: { Category: '12', Subcategory: '13', Payee: 'Loblaws' }, ...over });
-
-  it('saves, replaces and lists per bank', async () => {
-    const id = await saveRule(db, rule());
-    await saveRule(db, rule({ name: 'Renamed' }), id);
-    await saveRule(db, rule({ bankType: 'Wealthsimple' }));
-    const tangerine = await getRules(db, 'Tangerine');
-    expect(tangerine).toHaveLength(1);
-    expect(tangerine[0].name).toBe('Renamed');
-    expect(parseMapping(tangerine[0].mappingJson)).toEqual({ Category: '12', Subcategory: '13', Payee: 'Loblaws' });
-    expect(await getRules(db)).toHaveLength(2);
-  });
-
-  it('rejects invalid regex, bank and blanks', async () => {
-    await expect(saveRule(db, rule({ pattern: '(' }))).rejects.toThrow('not a valid regular expression');
-    await expect(saveRule(db, rule({ bankType: 'Nope' }))).rejects.toThrow('Invalid bank');
-    await expect(addRules(db, [rule(), rule({ name: '' })])).rejects.toThrow('Invalid name');
-    expect(await getRules(db)).toHaveLength(0);
-  });
-});
-
-describe('logger', () => {
-  it('writes, filters, counts and lists filter options', async () => {
-    const a = createLogger(db, 'AlphaService');
-    const b = createLogger(db, 'BetaService');
-    await a.info('started');
-    await a.error('doThing', new InvalidError('bad'));
-    await b.warn('other', new Error('oops'));
-    expect(await countLogs(db)).toBe(3);
-    expect(await countLogs(db, { level: 'Error' })).toBe(1);
-    expect(await countLogs(db, { className: 'AlphaService', exceptionType: '' })).toBe(1);
-    expect((await getLogs(db, { className: 'BetaService' }))[0]).toMatchObject({ level: 'Warning', exceptionType: 'Error' });
-    expect(await getLogs(db, { limit: 2, offset: 2 })).toHaveLength(1);
-    expect(await getLogFilterOptions(db)).toEqual({ classes: ['AlphaService', 'BetaService'], exceptions: ['', 'Error', 'InvalidError'] });
   });
 });

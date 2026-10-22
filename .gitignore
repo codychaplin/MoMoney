@@ -47,3 +47,6 @@ yarn-error.*
 # misc
 example
 __pycache__
+
+# test coverage
+coverage/

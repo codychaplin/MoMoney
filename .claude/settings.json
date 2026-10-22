@@ -11,6 +11,7 @@
       "Bash(npm test *)",
       "Bash(npx vite *)",
       "Bash(npx tsc *)",
+      "Bash(npx jest *)",
       "Bash(cd *)",
       "Bash(ls *)",
       "Bash(grep *)",

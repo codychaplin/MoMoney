@@ -25,20 +25,22 @@ export function ColourField({ value, onChange }: { value?: string | null; onChan
         <ColourDot colour={value} size={30} />
       </Pressable>
       <Modal
+        testID="colour-modal"
         visible={open}
         transparent
         animationType="fade"
         onRequestClose={() => setOpen(false)}
         statusBarTranslucent
       >
-        <Pressable className="flex-1 items-center justify-center bg-black/50" onPress={() => setOpen(false)}>
-          <Pressable className="max-h-[80%] w-[310px] rounded-2xl bg-surface p-3" onPress={() => {}}>
+        <Pressable accessibilityLabel="Close colours" className="flex-1 items-center justify-center bg-black/50" onPress={() => setOpen(false)}>
+          <Pressable accessibilityLabel="Colour palette" className="max-h-[80%] w-[310px] rounded-2xl bg-surface p-3" onPress={() => {}}>
             <ScrollView contentContainerClassName="gap-2.5">
               {BASE_COLOURS.map((base) => (
                 <View key={base} className="flex-row justify-between">
                   {shades(base).map((hex) => (
                     <Pressable
                       key={hex}
+                      accessibilityLabel={`Colour ${hex}`}
                       onPress={() => {
                         onChange(hex);
                         setOpen(false);

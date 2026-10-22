@@ -49,7 +49,7 @@ export default function LoggingScreen() {
       title={`Logs - ${rows.length}/${total}`}
       scroll={false}
       right={
-        <Pressable onPress={() => setOpen((o) => !o)} hitSlop={12}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Filters" onPress={() => setOpen((o) => !o)} hitSlop={12}>
           <MaterialDesignIcons
             name="tune"
             size={26}

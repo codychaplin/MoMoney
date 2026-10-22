@@ -13,7 +13,8 @@ All app code lives in `MoMoney/`. Also read `MoMoney/AGENTS.md`: Expo APIs chang
 ## Commands (run from `MoMoney/`)
 
 ```bash
-npm test               # jest (src/**/*.test.ts)
+npm test               # jest (src/**/*.test.{ts,tsx})
+npm run test:coverage  # with coverage report and thresholds
 npx jest src/services/__tests__/accounts.test.ts   # single test file
 npm run lint           # expo lint
 npm run typecheck      # tsc --noEmit
@@ -37,11 +38,15 @@ Run lint and typecheck before calling a task done.
 - `store/settings.ts`: Zustand store persisted to MMKV (theme, Material You, admin, dictation). `showValues` is session-only.
 - `lib/`: constants, money formatting and masking, dates, errors, confirm/notify, files.
 - `theme/`: palette JSONs plus `applyPalette()`, which sets CSS variables for Uniwind (Tailwind v4). A device/Material You theme is also available.
-- `test/db.ts`: `createTestDb()` returns an in-memory better-sqlite3 DB with migrations and seed applied.
+- `test/`: shared test helpers.
+  - `db.ts`: `createTestDb()` returns an in-memory better-sqlite3 DB with migrations and seed applied.
+  - `setup.ts`: global Jest mocks for native modules (MMKV, uniwind, Skia/victory charts, FlashList, Compose UI via `compose-mock.tsx`, expo-router via `router-mock.tsx`).
+  - `render.tsx`: `renderWithProviders` / `renderHookWithProviders` wrap a real test DB (`DbContext`) and a fresh QueryClient.
+  - `alert.ts` (auto-answer `Alert.alert`), `interact.ts` (`choose` a dropdown option, `type`, `tap`), `seed.ts` (`seedBasic`).
 
 ## Key Libraries
 
-expo-router, drizzle-orm + expo-sqlite (SQLCipher), @tanstack/react-query, zustand + react-native-mmkv, uniwind/tailwindcss, react-hook-form + zod, papaparse, date-fns, victory-native + Skia, @shopify/flash-list, sonner-native, @expo/ui. Jest uses jest-expo with better-sqlite3.
+expo-router, drizzle-orm + expo-sqlite (SQLCipher), @tanstack/react-query, zustand + react-native-mmkv, uniwind/tailwindcss, react-hook-form + zod, papaparse, date-fns, victory-native + Skia, @shopify/flash-list, sonner-native, @expo/ui. Jest uses jest-expo with better-sqlite3 and @testing-library/react-native v14 (`render`, `renderHook` and `fireEvent` are async: always `await` them).
 
 ## Conventions
 
@@ -59,6 +64,32 @@ expo-router, drizzle-orm + expo-sqlite (SQLCipher), @tanstack/react-query, zusta
   - Transactions: `Date, Account, Amount, Category, Subcategory, Payee`
   - Accounts: `Name, Type, Starting Balance, Status`
   - Categories: `Parent, Subcategory, Status`
+
+## Test-Driven Development (required)
+
+All behaviour changes (features and bug fixes) follow red-green-refactor. No exceptions without the user's say-so.
+
+1. **Red:** write or update the test first. Run only that test (`npx jest <file> -t '<name>'`) and confirm it fails *for the expected reason*, not because of a typo or a missing import. Show the failing output.
+2. **Green:** write the minimum production code that makes it pass. Do not change the test to fit the code.
+3. **Refactor:** clean up with the suite green. Run `npm test` after each refactor step.
+4. **Done:** `npm run test:coverage` passes, including the thresholds. Then run lint and typecheck.
+
+Rules:
+- Bug fix: first write a test that reproduces the bug, then fix it.
+- Never weaken, skip (`.skip`/`.only`), or delete a test to get green. If a test is wrong, say so and get agreement first.
+- Never lower the coverage thresholds to get green.
+- Test behaviour through the public API: services against the real test DB, screens through what the user sees and taps. Don't test private helpers or implementation details.
+- Assert exact values. Every test needs an assertion that would fail if the behaviour broke: no `toBeTruthy()` on a label that always exists, no render-only tests, no `toBeDefined()` where a value is known.
+- Prefer one meaningful test over several shallow ones, and don't duplicate a case already covered at another layer.
+- Pure refactors with no behaviour change need no new test, but the existing suite must be green before and after.
+- Exempt (no test needed): pure config/layout files (`app/(tabs)/_layout.tsx`, `app.json`, `plugins/`), styling-only tweaks, and docs. Say so when you skip a test for this reason.
+
+## Testing
+
+- Services and lib run against a real in-memory SQLite DB, not mocks. Screens render with RNTL against that same DB; only native modules are mocked.
+- Query screens by accessibility label/role/text. Add an `accessibilityLabel` to icon-only buttons instead of querying by component type.
+- Alerts never resolve under Jest unless you mock them: use `mockAlert('yes' | 'no' | '<button label>')`.
+- Coverage thresholds are in the `jest` block of `package.json`. `db/client.ts` (native SQLCipher) is excluded and left to E2E.
 
 ## Caveman Mode
 

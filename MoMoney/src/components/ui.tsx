@@ -39,6 +39,8 @@ export function PageTitle({ children, right, back }: { children: string; right?:
     >
       {back ? (
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Back"
           hitSlop={8}
           onPress={() => router.back()}
           className="size-10 items-center justify-center rounded-full bg-secondary-container/90 active:opacity-80"
@@ -252,6 +254,8 @@ export function Fab({ onPress }: { onPress: () => void }) {
   const { primaryContainer, onPrimaryContainer } = resolvePalette(themeName, materialYou, 'light');
   return (
     <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="Add"
       onPress={onPress}
       style={{ marginBottom: bottom, backgroundColor: primaryContainer }} className="absolute bottom-5 right-5 h-14 w-14 items-center justify-center rounded-full shadow-lg active:opacity-80">
       <MaterialDesignIcons

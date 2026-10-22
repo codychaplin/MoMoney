@@ -71,6 +71,8 @@ export default function SettingsScreen() {
           {THEMES.map(({ name, colour }) => (
             <Pressable
               key={name}
+              accessibilityRole="button"
+              accessibilityLabel={`Theme ${name}`}
               onPress={() => setThemeName(name)}
               className="h-7 w-7 items-center justify-center rounded-full"
               style={{ backgroundColor: colour ?? wallpaper, borderWidth: themeName === name ? 3 : 0, borderColor: '#ffffff88' }}

@@ -47,6 +47,8 @@ export default function BreakdownScreen() {
       }>
       <View className="flex-row items-center justify-between">
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Previous period"
           disabled={!canGoBack}
           onPress={() => step(-1)}
           hitSlop={12}
@@ -60,6 +62,8 @@ export default function BreakdownScreen() {
         </Pressable>
         <Text className="text-xl font-bold text-on-surface">{format(cursor, mode === 'Month' ? 'MMM yyyy' : 'yyyy')}</Text>
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Next period"
           disabled={!canGoForward}
           onPress={() => step(1)}
           hitSlop={12}

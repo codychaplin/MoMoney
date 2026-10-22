@@ -136,7 +136,3 @@ export async function getAccountsByName(db: Db): Promise<Map<string, Account>> {
   const rows = await db.select().from(accounts);
   return new Map(rows.map((r) => [r.name, r]));
 }
-
-export async function getAccountCount(db: Db): Promise<number> {
-  return (await db.select({ id: accounts.id }).from(accounts)).length;
-}

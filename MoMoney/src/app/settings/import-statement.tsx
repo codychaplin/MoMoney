@@ -197,12 +197,12 @@ export default function ImportStatementScreen() {
         <>
           <View className="my-1 h-px bg-outline-variant" />
           <View className="flex-row items-center justify-between">
-            <Pressable hitSlop={12} onPress={() => setIndex((i) => Math.max(0, i - 1))}><MaterialDesignIcons name="chevron-left" size={32} color={icon} /></Pressable>
+            <Pressable accessibilityRole="button" accessibilityLabel="Previous record" hitSlop={12} onPress={() => setIndex((i) => Math.max(0, i - 1))}><MaterialDesignIcons name="chevron-left" size={32} color={icon} /></Pressable>
             <View className="items-center">
               <Text className="text-lg font-semibold text-on-surface">CSV Record</Text>
               <Text className="text-sm text-on-surface-variant">{Math.min(index, visible.length - 1) + 1} / {visible.length}</Text>
             </View>
-            <Pressable hitSlop={12} onPress={next}><MaterialDesignIcons name="chevron-right" size={32} color={icon} /></Pressable>
+            <Pressable accessibilityRole="button" accessibilityLabel="Next record" hitSlop={12} onPress={next}><MaterialDesignIcons name="chevron-right" size={32} color={icon} /></Pressable>
           </View>
           <TextField
             label="Text"

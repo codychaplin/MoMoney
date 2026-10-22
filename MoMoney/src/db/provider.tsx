@@ -4,7 +4,7 @@ import { ActivityIndicator, Text, View } from 'react-native';
 import { openDb } from './client';
 import type { Db } from './db';
 
-const DbContext = createContext<Db | null>(null);
+export const DbContext = createContext<Db | null>(null);
 
 /** Opens the database once and renders children only when it is ready. */
 export function DbProvider({ children }: { children: ReactNode }) {
