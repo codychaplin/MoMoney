@@ -1,0 +1,76 @@
+@import 'tailwindcss';
+@import 'uniwind';
+
+/* Defaults = green theme. Theme colours are replaced at runtime by applyPalette (src/theme/palettes.ts). */
+@layer theme {
+  :root {
+    @variant light {
+      --color-background: #f9fbf9;
+      --color-surface: #edefed;
+      --color-surface-container: #edefed;
+      --color-surface-high: #e2e4e2;
+      --color-primary: #4c8068;
+      --color-primary-transparent: #4c806888;
+      --color-on-primary: #ffffff;
+      --color-primary-container: #c5efd7;
+      --color-on-primary-container: #005234;
+      --color-secondary: #4d634e;
+      --color-on-secondary: #ffffff;
+      --color-secondary-container: #d2e8d0;
+      --color-on-secondary-container: #364b3f;
+      --color-tertiary: #3c6472;
+      --color-on-tertiary: #ffffff;
+      --color-tertiary-container: #c0e9fa;
+      --color-on-tertiary-container: #234c5a;
+      --color-on-surface: #1b1d1c;
+      --color-on-surface-variant: #464947;
+      --color-outline: #767977;
+      --color-outline-variant: #c6c9c6;
+      --color-income: #42ba96;
+      --color-expense: #e54949;
+      --color-red: #df4759;
+      --color-error: #ba1a1a;
+      --color-on-error: #ffffff;
+      --color-error-container: #ffdad6;
+      --color-status-verified: #42ba96;
+      --color-status-approved: #3b74c5;
+      --color-status-review: #df4759;
+      --color-status-auto-skipped: #7e3bc5;
+      --color-status-skipped: #b1723e;
+    }
+    @variant dark {
+      --color-background: #131514;
+      --color-surface: #202020;
+      --color-surface-container: #202020;
+      --color-surface-high: #343635;
+      --color-primary: #90d5af;
+      --color-primary-transparent: #90d5af88;
+      --color-on-primary: #003823;
+      --color-primary-container: #005234;
+      --color-on-primary-container: #abf2ca;
+      --color-secondary: #b4ccbc;
+      --color-on-secondary: #203529;
+      --color-secondary-container: #364b3f;
+      --color-on-secondary-container: #d0e8d7;
+      --color-tertiary: #a4cddd;
+      --color-on-tertiary: #053542;
+      --color-tertiary-container: #4b7381;
+      --color-on-tertiary-container: #ffffff;
+      --color-on-surface: #e2e4e2;
+      --color-on-surface-variant: #c6c9c6;
+      --color-outline: #909391;
+      --color-outline-variant: #464947;
+      --color-income: #53f4c4;
+      --color-expense: #e43e3e;
+      --color-red: #ff8290;
+      --color-error: #ffb4ab;
+      --color-on-error: #690005;
+      --color-error-container: #93000a;
+      --color-status-verified: #42ba96;
+      --color-status-approved: #3b74c5;
+      --color-status-review: #df4759;
+      --color-status-auto-skipped: #7e3bc5;
+      --color-status-skipped: #b1723e;
+    }
+  }
+}

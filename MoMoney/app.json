@@ -1,0 +1,77 @@
+{
+  "expo": {
+    "name": "MoMoney",
+    "slug": "momoney",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "momoney",
+    "userInterfaceStyle": "automatic",
+    "android": {
+      "predictiveBackGestureEnabled": false,
+      "package": "com.pherda.momoney",
+      "versionCode": 17,
+      "permissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.INTERNET",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "./plugins/with-transparent-bars",
+      "./plugins/with-svg-app-icon",
+      "./plugins/with-faster-gradle-build",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#000000",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200
+        }
+      ],
+      [
+        "expo-sqlite",
+        {
+          "useSQLCipher": true
+        }
+      ],
+      "expo-secure-store",
+      "expo-sharing",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Allow MoMoney to record audio for transaction dictation."
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-asset",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 29,
+            "targetSdkVersion": 37,
+            "compileSdkVersion": 37
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c3cd3b94-2521-456b-a77d-2ad214f52245"
+      }
+    },
+    "owner": "pherda-studios",
+    "ios": {
+      "bundleIdentifier": "com.pherda.momoney"
+    }
+  }
+}
