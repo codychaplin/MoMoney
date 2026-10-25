@@ -18,11 +18,20 @@ let db: Db;
 beforeEach(async () => {
   resetRouter();
   jest.clearAllMocks();
-  useSettings.setState({ showValues: true, isAdmin: false, themeName: 'green', materialYou: false, theme: 'system' });
+  useSettings.setState({ showValues: true, isAdmin: false, themeName: 'green', materialYou: false, theme: 'system', hideAds: false });
   db = await createTestDb();
 });
 
 describe('Home', () => {
+  it('shows a banner ad above the Statistics title, unless ads are hidden', async () => {
+    await renderWithProviders(<HomeScreen />, db);
+    const tree = JSON.stringify(screen.toJSON());
+    expect(tree.indexOf('banner-ad')).toBeGreaterThan(-1);
+    expect(tree.indexOf('banner-ad')).toBeLessThan(tree.indexOf('Statistics'));
+    await act(async () => useSettings.setState({ hideAds: true }));
+    expect(screen.queryByTestId('banner-ad')).toBeNull();
+  });
+
   it('shows an empty state with no transactions', async () => {
     await renderWithProviders(<HomeScreen />, db);
     await waitFor(() => expect(screen.getByText('No Transactions Found')).toBeTruthy());
@@ -196,6 +205,13 @@ describe('Settings', () => {
     await fireEvent.press(screen.getByRole('button', { name: 'System' }));
     await fireEvent.press(screen.getByText('Dark'));
     expect(useSettings.getState().theme).toBe('dark');
+  });
+
+  it('Hide Ads switch under Admin toggles the stored preference', async () => {
+    await renderWithProviders(<SettingsScreen />, db);
+    expect(screen.getByText('Hide Ads')).toBeOnTheScreen();
+    await fireEvent(screen.getAllByRole('switch')[2], 'valueChange', true);
+    expect(useSettings.getState().hideAds).toBe(true);
   });
 
   it('long-pressing the version toggles developer mode', async () => {

@@ -18,3 +18,10 @@ export const BANK_TYPES = ['Tangerine', 'Wealthsimple'] as const;
 export type BankType = (typeof BANK_TYPES)[number];
 
 export const isExpense = (categoryId: number) => categoryId >= EXPENSE_THRESHOLD;
+
+/** AdMob ad unit IDs */
+export const AD_UNITS = {
+  home: 'ca-app-pub-6983383854683496/7361477006',
+  add: 'ca-app-pub-6983383854683496/7877104449',
+  ai: 'ca-app-pub-6983383854683496/2357310763',
+} as const;

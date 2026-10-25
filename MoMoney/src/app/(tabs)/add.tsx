@@ -9,14 +9,14 @@ import { TextField } from '@/components/inputs/text-field';
 import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
 import { useActiveAccounts, useCategories, usePayees, useRefresh } from '@/hooks/data';
-import { CREDIT_ID, DEBIT_ID, EXPENSE_THRESHOLD, INCOME_ID, TRANSFER_ID } from '@/lib/constants';
+import { AD_UNITS, CREDIT_ID, DEBIT_ID, EXPENSE_THRESHOLD, INCOME_ID, TRANSFER_ID } from '@/lib/constants';
 import { todayISO } from '@/lib/dates';
 import { isDomainError } from '@/lib/errors';
 import { notify } from '@/lib/confirm';
 import { parseCents } from '@/lib/money';
+import { AdBanner } from '@/components/ad-banner';
 import { createLogger } from '@/services/logger';
 import { addTransaction } from '@/services/transactions';
-import { Column, Host, TextInput, TextInputRef } from '@expo/ui';
 
 const KINDS = ['Income', 'Expense', 'Transfer'] as const;
 type Kind = (typeof KINDS)[number];
@@ -181,7 +181,7 @@ export default function AddScreen() {
           suggestions={payees}
         />
       )}
-      <View className="mt-1 flex-row items-center gap-3">
+      <View className="my-2 flex-row items-center gap-3">
         <Button
           label="Clear"
           variant="tertiary"
@@ -195,6 +195,7 @@ export default function AddScreen() {
           disabled={busy}
         />
       </View>
+      <AdBanner unitId={AD_UNITS.add} />
     </Page>
   );
 }

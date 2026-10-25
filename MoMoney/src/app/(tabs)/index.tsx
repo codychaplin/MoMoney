@@ -1,12 +1,13 @@
 import { useRouter, type Href } from 'expo-router';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
-
+import { AdBanner } from '@/components/ad-banner';
 import { BalanceChart } from '@/components/balance-chart';
 import { TransactionRow } from '@/components/transaction-row';
 import { Card, Page, SectionTitle } from '@/components/ui';
 import { SegmentedField } from '@/components/inputs/segmented-field';
 import { useHomeData, useLookups } from '@/hooks/data';
+import { AD_UNITS } from '@/lib/constants';
 import { DATE_RANGES, type DateRange } from '@/lib/dates';
 import { useMoney } from '@/store/settings';
 
@@ -30,6 +31,8 @@ export default function HomeScreen() {
         pill
         small
       />
+
+      <AdBanner unitId={AD_UNITS.home} />
 
       <SectionTitle action="View All" onAction={() => router.navigate('/stats' as Href)}>Statistics</SectionTitle>
       <Card className="p-4">

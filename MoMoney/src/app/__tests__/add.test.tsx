@@ -10,6 +10,7 @@ import * as transactions from '@/services/transactions';
 import { getFilteredTransactions } from '@/services/transactions';
 import { mockAlert, shownAlerts } from '@/test/alert';
 import { createTestDb } from '@/test/db';
+import { useSettings } from '@/store/settings';
 import { choose, tap, type } from '@/test/interact';
 import { renderWithProviders } from '@/test/render';
 import { seedBasic } from '@/test/seed';
@@ -17,6 +18,7 @@ import { seedBasic } from '@/test/seed';
 let db: Db;
 beforeEach(async () => {
   jest.clearAllMocks();
+  useSettings.setState({ hideAds: false });
   db = await createTestDb();
   await seedBasic(db);
   // seedBasic added 3 transactions; tests below look at rows added after those
@@ -34,6 +36,14 @@ async function waitForAccounts() {
 }
 
 describe('Add transaction', () => {
+  it('shows a banner ad below the Clear/Accept buttons, unless ads are hidden', async () => {
+    await waitForAccounts();
+    const tree = JSON.stringify(screen.toJSON());
+    expect(tree.indexOf('banner-ad')).toBeGreaterThan(tree.lastIndexOf('Accept'));
+    await act(async () => useSettings.setState({ hideAds: true }));
+    expect(screen.queryByTestId('banner-ad')).toBeNull();
+  });
+
   it('rejects each missing field in order', async () => {
     await waitForAccounts();
     await tap('Accept');

@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { format, subMonths } from 'date-fns';
 
 import AdminScreen from '@/app/settings/admin';
@@ -26,7 +26,7 @@ let db: Db;
 beforeEach(async () => {
   resetRouter();
   jest.clearAllMocks();
-  useSettings.setState({ showValues: true, isAdmin: false, dictationEnabled: false });
+  useSettings.setState({ showValues: true, isAdmin: false, dictationEnabled: false, hideAds: false });
   db = await createTestDb();
 });
 afterEach(() => jest.restoreAllMocks());
@@ -40,13 +40,64 @@ describe('Admin', () => {
     expect(mockRouter.push).toHaveBeenCalledWith('/settings/bulk-editing');
   });
 
-  it('shows logging and dictation in developer mode', async () => {
+  it('shows logging in developer mode', async () => {
     useSettings.setState({ isAdmin: true });
     await renderWithProviders(<AdminScreen />, db);
     await tap('Logging');
     expect(mockRouter.push).toHaveBeenCalledWith('/settings/logging');
-    await fireEvent(screen.getByRole('switch'), 'valueChange', true);
-    expect(useSettings.getState().dictationEnabled).toBe(true);
+  });
+
+  describe('Transaction Dictation switch', () => {
+    const ad = require('react-native-google-mobile-ads').__rewarded;
+    const flip = (v: boolean) => fireEvent(screen.getByRole('switch'), 'valueChange', v);
+    const settle = () => act(async () => new Promise((r) => setImmediate(r)));
+    beforeEach(async () => {
+      useSettings.setState({ isAdmin: true });
+      await renderWithProviders(<AdminScreen />, db);
+    });
+
+    it('enables only after the rewarded ad is watched', async () => {
+      await flip(true);
+      await settle();
+      expect(useSettings.getState().dictationEnabled).toBe(false);
+      await act(async () => {
+        ad.emit('rewarded_loaded');
+        ad.emit('rewarded_earned_reward');
+        ad.emit('closed');
+      });
+      await waitFor(() => expect(useSettings.getState().dictationEnabled).toBe(true));
+    });
+
+    it('stays off when the ad is closed early', async () => {
+      await flip(true);
+      await settle();
+      await act(async () => {
+        ad.emit('rewarded_loaded');
+        ad.emit('closed');
+      });
+      expect(useSettings.getState().dictationEnabled).toBe(false);
+    });
+
+    it('enables anyway when no ad can be loaded', async () => {
+      await flip(true);
+      await settle();
+      await act(async () => ad.emit('error'));
+      await waitFor(() => expect(useSettings.getState().dictationEnabled).toBe(true));
+    });
+
+    it('skips the ad when ads are hidden', async () => {
+      await act(async () => useSettings.setState({ hideAds: true }));
+      await flip(true);
+      expect(useSettings.getState().dictationEnabled).toBe(true);
+      expect(ad.load).not.toHaveBeenCalled();
+    });
+
+    it('turning it off never shows an ad', async () => {
+      await act(async () => useSettings.setState({ dictationEnabled: true }));
+      await flip(false);
+      expect(useSettings.getState().dictationEnabled).toBe(false);
+      expect(ad.load).not.toHaveBeenCalled();
+    });
   });
 
   it('removes all transactions after confirmation', async () => {

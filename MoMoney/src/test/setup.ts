@@ -102,3 +102,42 @@ jest.mock('expo-router/build/react-navigation/index', () => {
   return { PlatformPressable: Pressable };
 }, { virtual: true });
 jest.mock('react-native-gesture-handler', () => ({ GestureHandlerRootView: jest.requireActual('react-native').View }));
+
+// Native AdMob: capture BannerAd props so tests can drive load callbacks, and expose a controllable rewarded ad.
+jest.mock('react-native-google-mobile-ads', () => {
+  const React = require('react');
+  const initialize = jest.fn(async () => []);
+  const listeners = new Map<string, () => void>();
+  const createForAdRequest = jest.fn();
+  const rewarded = {
+    load: jest.fn(),
+    show: jest.fn(),
+    addAdEventListener: jest.fn(),
+    /** Re-arm default behaviour (suites call jest.restoreAllMocks, which strips jest.fn implementations). */
+    reset: () => {
+      listeners.clear();
+      createForAdRequest.mockImplementation(() => rewarded);
+      rewarded.show.mockImplementation(async () => undefined);
+      rewarded.addAdEventListener.mockImplementation((type: string, cb: () => void) => {
+        listeners.set(type, cb);
+        return () => listeners.delete(type);
+      });
+    },
+    /** Test helper: fire an ad event as the native SDK would. */
+    emit: (type: string) => listeners.get(type)?.(),
+    listenerCount: () => listeners.size,
+  };
+  return {
+    __esModule: true,
+    default: () => ({ initialize }),
+    TestIds: { BANNER: 'test-banner', ADAPTIVE_BANNER: 'test-banner', REWARDED: 'test-rewarded' },
+    BannerAdSize: { ANCHORED_ADAPTIVE_BANNER: 'ANCHORED_ADAPTIVE_BANNER' },
+    AdEventType: { ERROR: 'error', CLOSED: 'closed' },
+    RewardedAdEventType: { LOADED: 'rewarded_loaded', EARNED_REWARD: 'rewarded_earned_reward' },
+    RewardedAd: { createForAdRequest },
+    __rewarded: rewarded,
+    BannerAd: (props: any) => React.createElement('BannerAd', { testID: 'banner-ad', ...props }),
+  };
+});
+
+beforeEach(() => require('react-native-google-mobile-ads').__rewarded.reset());

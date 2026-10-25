@@ -1,10 +1,12 @@
 import { useRouter, type Href } from 'expo-router';
+import { useRef } from 'react';
 import { Text } from 'react-native';
-
 import { ListRow, Page, SwitchRow } from '@/components/ui';
 import { useDb } from '@/db/provider';
 import { useAction } from '@/hooks/action';
+import { AD_UNITS } from '@/lib/constants';
 import { choose, confirm, notify } from '@/lib/confirm';
+import { showRewardedAd } from '@/lib/rewarded-ad';
 import { removeAllAccounts } from '@/services/accounts';
 import { resetAllData } from '@/services/admin';
 import { removeAllCategories } from '@/services/categories';
@@ -21,7 +23,20 @@ export default function AdminScreen() {
   const db = useDb();
   const router = useRouter();
   const run = useAction('Admin');
-  const { isAdmin, dictationEnabled, setDictationEnabled } = useSettings();
+  const { isAdmin, dictationEnabled, setDictationEnabled, hideAds } = useSettings();
+  const watchingAd = useRef(false);
+
+  /** Turning dictation on needs a rewarded ad, unless ads are hidden or none can load. */
+  const toggleDictation = async (on: boolean) => {
+    if (!on || hideAds) return setDictationEnabled(on);
+    if (watchingAd.current) return;
+    watchingAd.current = true;
+    try {
+      if ((await showRewardedAd(AD_UNITS.ai)) !== 'dismissed') setDictationEnabled(true);
+    } finally {
+      watchingAd.current = false;
+    }
+  };
 
   /** confirm -> delete -> "Success" alert with the count */
   const removeAll = (what: string, fn: () => Promise<number | void>, guard?: () => Promise<string | null>) => async () => {
@@ -81,7 +96,7 @@ export default function AdminScreen() {
           <SwitchRow
             label="Transaction Dictation"
             value={dictationEnabled}
-            onChange={setDictationEnabled}
+            onChange={(on) => void toggleDictation(on)}
           />
         </>
       ) : null}

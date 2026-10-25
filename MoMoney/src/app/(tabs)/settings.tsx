@@ -24,7 +24,14 @@ export default function SettingsScreen() {
   const router = useRouter();
   const go = (href: string) => () => router.push(href as Href);
   const db = useDb();
-  const { showValues, setShowValues, isAdmin, setIsAdmin, theme, setTheme, themeName, setThemeName, materialYou, setMaterialYou } = useSettings();
+  const {
+    showValues, setShowValues,
+    isAdmin, setIsAdmin,
+    theme, setTheme,
+    themeName, setThemeName,
+    materialYou, setMaterialYou,
+    hideAds, setHideAds
+  } = useSettings();
   const wallpaper = useMaterialColors().primary;
 
   const toggleDeveloperMode = () => {
@@ -109,6 +116,11 @@ export default function SettingsScreen() {
         label="Data"
         chevron
         onPress={go('/settings/admin')}
+      />
+      <SwitchRow
+        label="Hide Ads"
+        value={hideAds}
+        onChange={setHideAds}
       />
 
       <Pressable delayLongPress={5000} onLongPress={toggleDeveloperMode}>

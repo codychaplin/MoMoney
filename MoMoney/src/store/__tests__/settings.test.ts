@@ -12,7 +12,7 @@ beforeEach(() => {
 describe('settings store', () => {
   it('has sensible defaults', () => {
     const s = useSettings.getState();
-    expect(s).toMatchObject({ showValues: true, isAdmin: false, dictationEnabled: false, theme: 'system', themeName: 'green', materialYou: false });
+    expect(s).toMatchObject({ showValues: true, isAdmin: false, dictationEnabled: false, theme: 'system', themeName: 'green', materialYou: false, hideAds: false });
   });
 
   it('turning admin off also turns off dictation', () => {
@@ -40,9 +40,10 @@ describe('settings store', () => {
 
   it('persists everything except showValues and rehydrates the theme', async () => {
     useSettings.getState().setShowValues(false);
+    useSettings.getState().setHideAds(true);
     useSettings.getState().setThemeName('teal');
     const stored = JSON.parse(require('react-native-mmkv').createMMKV({ id: 'momoney-settings' }).getString('momoney-settings'));
-    expect(stored.state).toMatchObject({ themeName: 'teal' });
+    expect(stored.state).toMatchObject({ themeName: 'teal', hideAds: true });
     expect(stored.state).not.toHaveProperty('showValues');
 
     jest.clearAllMocks();

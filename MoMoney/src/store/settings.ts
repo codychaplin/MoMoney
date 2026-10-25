@@ -18,11 +18,13 @@ type SettingsState = {
   theme: ThemeMode;
   themeName: string;
   materialYou: boolean;
+  hideAds: boolean;
   setIsAdmin: (v: boolean) => void;
   setDictationEnabled: (v: boolean) => void;
   setTheme: (v: ThemeMode) => void;
   setThemeName: (v: string) => void;
   setMaterialYou: (v: boolean) => void;
+  setHideAds: (v: boolean) => void;
 };
 
 const mmkv = createMMKV({ id: 'momoney-settings' });
@@ -46,6 +48,7 @@ export const useSettings = create<SettingsState>()(
       theme: 'system',
       themeName: DEFAULT_THEME,
       materialYou: false,
+      hideAds: false,
       // turning developer mode off also turns off experimental features
       setIsAdmin: (isAdmin) => set(isAdmin ? { isAdmin } : { isAdmin, dictationEnabled: false }),
       setDictationEnabled: (dictationEnabled) => set({ dictationEnabled }),
@@ -61,6 +64,7 @@ export const useSettings = create<SettingsState>()(
         applyPalette(get().themeName, materialYou);
         set({ materialYou });
       },
+      setHideAds: (hideAds) => set({ hideAds }),
     }),
     {
       name: 'momoney-settings',
@@ -70,7 +74,7 @@ export const useSettings = create<SettingsState>()(
         Uniwind.setTheme(state.theme);
         applyPalette(state.themeName, state.materialYou);
       },
-      partialize: ({ isAdmin, dictationEnabled, theme, themeName, materialYou }) => ({ isAdmin, dictationEnabled, theme, themeName, materialYou }),
+      partialize: ({ isAdmin, dictationEnabled, theme, themeName, materialYou, hideAds }) => ({ isAdmin, dictationEnabled, theme, themeName, materialYou, hideAds }),
     },
   ),
 );
