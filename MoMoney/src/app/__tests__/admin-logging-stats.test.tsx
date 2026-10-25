@@ -13,6 +13,7 @@ import { countLogs, createLogger } from '@/services/logger';
 import { getRules, saveRule } from '@/services/mappingRules';
 import { addTransaction, countTransactions, removeAllTransactions } from '@/services/transactions';
 import { useSettings } from '@/store/settings';
+import { lastParams, sentEvents } from '@/test/analytics';
 import { mockAlert, mockAlertByTitle, shownAlerts } from '@/test/alert';
 import { createTestDb } from '@/test/db';
 import { choose, tap } from '@/test/interact';
@@ -107,6 +108,8 @@ describe('Admin', () => {
     await tap('Remove All Transactions');
     await waitFor(() => expect(shownAlerts(alert).at(-1)).toEqual(['Success', 'Removed 3 transactions']));
     expect(await countTransactions(db)).toBe(0);
+    expect(sentEvents()).toEqual(['remove_all_transactions']);
+    expect(lastParams('remove_all_transactions')).toMatchObject({ count: 3 });
   });
 
   it('keeps data when the confirmation is declined', async () => {
@@ -116,6 +119,7 @@ describe('Admin', () => {
     await tap('Remove All Transactions');
     await waitFor(() => expect(alert).toHaveBeenCalled());
     expect(await countTransactions(db)).toBe(3);
+    expect(sentEvents()).toEqual([]);
   });
 
   it('blocks removing accounts while transactions exist', async () => {
@@ -134,6 +138,7 @@ describe('Admin', () => {
     await renderWithProviders(<AdminScreen />, db);
     await tap('Remove All Accounts');
     await waitFor(async () => expect(await getAccounts(db)).toHaveLength(0));
+    expect(sentEvents()).toEqual(['remove_all_accounts']);
   });
 
   it('removes mapping rules and logs', async () => {
@@ -145,6 +150,7 @@ describe('Admin', () => {
     await waitFor(async () => expect(await getRules(db)).toHaveLength(0));
     await tap('Remove All Logs');
     await waitFor(async () => expect(await countLogs(db)).toBe(0));
+    expect(sentEvents()).toEqual(['remove_all_mapping_rules', 'remove_all_logs']);
   });
 
   it('resets categories when both dialogs are accepted', async () => {
@@ -153,6 +159,7 @@ describe('Admin', () => {
     await tap('Remove All Categories');
     await waitFor(() => expect(alert.mock.calls.at(-1)![0]).toBe('Success'));
     expect(await getAllCategories(db)).toHaveLength(DEFAULT_CATEGORIES.length);
+    expect(sentEvents()).toEqual(['remove_all_categories']);
   });
 
   it('does nothing when the category dialog is cancelled', async () => {
@@ -207,6 +214,7 @@ describe('Admin', () => {
     await waitFor(() => expect(shownAlerts(alert).at(-1)).toEqual(['Success', 'All data removed']));
     expect(await getAccounts(db)).toHaveLength(0);
     expect(await countTransactions(db)).toBe(0);
+    expect(sentEvents()).toEqual(['remove_all_data']);
   });
 });
 

@@ -1,3 +1,4 @@
+import { EVENTS, type EventName } from '@/lib/analytics';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
@@ -7,6 +8,21 @@ import { useAction } from '@/hooks/action';
 import { notify } from '@/lib/confirm';
 import { pickCsv, shareTextFile } from '@/lib/files';
 import { CSV_FILE_NAMES, EXPORTERS, IMPORTERS, type CsvKind } from '@/services/csv';
+
+const IMPORT_EVENTS: Record<CsvKind, EventName> = {
+  accounts: EVENTS.importAccounts,
+  categories: EVENTS.importCategories,
+  transactions: EVENTS.importTransactions,
+  mappingRules: EVENTS.importMappingRules,
+  logs: EVENTS.importLogs,
+};
+const EXPORT_EVENTS: Record<CsvKind, EventName> = {
+  accounts: EVENTS.exportAccounts,
+  categories: EVENTS.exportCategories,
+  transactions: EVENTS.exportTransactions,
+  mappingRules: EVENTS.exportMappingRules,
+  logs: EVENTS.exportLogs,
+};
 
 const ROWS: { kind: CsvKind; label: string }[] = [
   { kind: 'accounts', label: 'Accounts' },
@@ -29,14 +45,14 @@ export default function ImportExportScreen() {
       const file = await pickCsv();
       if (!file) return void (cancelled = true);
       count = await IMPORTERS[kind](db, file.text);
-    }, `import ${kind}`);
+    }, `import ${kind}`, () => (cancelled ? null : { name: IMPORT_EVENTS[kind], params: { count } }));
     setBusy(false);
     if (ok && !cancelled) await notify('Success', `Imported ${count} ${label.toLowerCase()}`);
   };
 
   const doExport = (kind: CsvKind, label: string) => async () => {
     setBusy(true);
-    const ok = await run(async () => shareTextFile(CSV_FILE_NAMES[kind], await EXPORTERS[kind](db)), `export ${kind}`);
+    const ok = await run(async () => shareTextFile(CSV_FILE_NAMES[kind], await EXPORTERS[kind](db)), `export ${kind}`, EXPORT_EVENTS[kind]);
     setBusy(false);
     if (!ok) await notify('Error', `Could not export ${label.toLowerCase()}`);
   };

@@ -1,3 +1,4 @@
+import { EVENTS } from '@/lib/analytics';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -78,7 +79,7 @@ export default function MappingRulesScreen() {
     let id = 0;
     const ok = await run(async () => {
       id = await saveRule(db, { bankType: bank, name, pattern, mapping }, typeof ruleId === 'number' ? ruleId : undefined);
-    }, 'save');
+    }, 'save', typeof ruleId === 'number' ? EVENTS.editMappingRule : EVENTS.addMappingRule);
     if (ok) {
       toast.success('Rule saved');
       setRuleId(id);
@@ -88,7 +89,7 @@ export default function MappingRulesScreen() {
   const remove = async () => {
     if (typeof ruleId !== 'number') return;
     if (!(await confirm('Delete Rule', 'Are you sure you want to delete this rule?'))) return;
-    if (await run(() => removeRule(db, ruleId), 'remove')) setRuleId(null);
+    if (await run(() => removeRule(db, ruleId), 'remove', EVENTS.deleteMappingRule)) setRuleId(null);
   };
 
   return (

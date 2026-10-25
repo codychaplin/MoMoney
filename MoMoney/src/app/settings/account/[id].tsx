@@ -1,3 +1,4 @@
+import { EVENTS } from '@/lib/analytics';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -42,13 +43,13 @@ export default function EditAccountScreen() {
     const cents = parseCents(balanceText);
     if (!name.trim() || !type || cents == null) return toast.error('Validation Error: Information not valid');
     const input = { name, type, startingBalanceCents: cents, colour, enabled };
-    const ok = await run(() => (isEdit ? updateAccount(db, accountId, input) : addAccount(db, input)), 'submit');
+    const ok = await run(() => (isEdit ? updateAccount(db, accountId, input) : addAccount(db, input)), 'submit', isEdit ? EVENTS.editAccount : EVENTS.addAccount);
     if (ok) router.back();
   };
 
   const remove = async () => {
     if (!(await confirm('Delete Account', `Are you sure you want to delete "${account?.name}"?`))) return;
-    if (await run(() => removeAccount(db, accountId), 'remove')) router.back();
+    if (await run(() => removeAccount(db, accountId), 'remove', EVENTS.deleteAccount)) router.back();
   };
 
   const clear = () => {

@@ -5,6 +5,7 @@ import type { Db } from '@/db/db';
 import { InvalidError } from '@/lib/errors';
 import { pickCsv, shareTextFile } from '@/lib/files';
 import { getAccounts } from '@/services/accounts';
+import { lastParams, sentEvents } from '@/test/analytics';
 import { mockAlert, shownAlerts } from '@/test/alert';
 import { createTestDb } from '@/test/db';
 import { renderWithProviders } from '@/test/render';
@@ -31,6 +32,7 @@ describe('Import / Export', () => {
     const [name, text] = (shareTextFile as jest.Mock).mock.calls[0];
     expect(name).toMatch(/\.csv$/);
     expect(text).toContain('Chequing');
+    expect(sentEvents()).toEqual(['export_accounts']);
   });
 
   it('reports a failed export', async () => {
@@ -40,6 +42,7 @@ describe('Import / Export', () => {
     await press('Export', 2);
     await waitFor(() => expect(shownAlerts(alert).map((a) => a[0])).toEqual(['Error', 'Error']));
     expect(shownAlerts(alert)[1][1]).toBe('Could not export transactions');
+    expect(sentEvents()).toEqual(['error_log']);
   });
 
   it('imports accounts from a picked file and reports the count', async () => {
@@ -49,6 +52,8 @@ describe('Import / Export', () => {
     await press('Import', 0);
     await waitFor(() => expect(shownAlerts(alert)).toEqual([['Success', 'Imported 2 accounts']]));
     expect((await getAccounts(db)).map((a) => a.name).sort()).toEqual(['Daily', 'Savings Plus']);
+    expect(sentEvents()).toEqual(['import_accounts']);
+    expect(lastParams('import_accounts')).toMatchObject({ count: 2 });
   });
 
   it('does nothing when the picker is cancelled', async () => {
@@ -58,6 +63,7 @@ describe('Import / Export', () => {
     await press('Import', 1);
     await waitFor(() => expect(pickCsv).toHaveBeenCalled());
     expect(alert).not.toHaveBeenCalled();
+    expect(sentEvents()).toEqual([]);
   });
 
   it('shows a warning for a bad file', async () => {

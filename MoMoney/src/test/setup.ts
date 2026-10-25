@@ -140,4 +140,36 @@ jest.mock('react-native-google-mobile-ads', () => {
   };
 });
 
-beforeEach(() => require('react-native-google-mobile-ads').__rewarded.reset());
+jest.mock('@react-native-firebase/analytics', () => {
+  const handle = {};
+  return {
+    __esModule: true,
+    getAnalytics: jest.fn(() => handle),
+    logEvent: jest.fn(async () => undefined),
+    logScreenView: jest.fn(async () => undefined),
+    setAnalyticsCollectionEnabled: jest.fn(async () => undefined),
+  };
+});
+jest.mock('@react-native-firebase/crashlytics', () => {
+  const handle = {};
+  return {
+    __esModule: true,
+    getCrashlytics: jest.fn(() => handle),
+    recordError: jest.fn(),
+    setCrashlyticsCollectionEnabled: jest.fn(async () => undefined),
+  };
+});
+
+beforeEach(() => {
+  require('react-native-google-mobile-ads').__rewarded.reset();
+  const analytics = require('@react-native-firebase/analytics');
+  const crashlytics = require('@react-native-firebase/crashlytics');
+  [...Object.values(analytics), ...Object.values(crashlytics)].forEach((f: any) => f.mockClear?.());
+  analytics.getAnalytics.mockImplementation(() => ({}));
+  analytics.logEvent.mockImplementation(async () => undefined);
+  analytics.logScreenView.mockImplementation(async () => undefined);
+  analytics.setAnalyticsCollectionEnabled.mockImplementation(async () => undefined);
+  crashlytics.getCrashlytics.mockImplementation(() => ({}));
+  crashlytics.recordError.mockImplementation(() => undefined);
+  crashlytics.setCrashlyticsCollectionEnabled.mockImplementation(async () => undefined);
+});

@@ -1,3 +1,4 @@
+import { EVENTS } from '@/lib/analytics';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -86,13 +87,14 @@ export default function EditTransactionScreen() {
           transferAccountId: isTransfer ? transferAccountId : null,
         }),
       'update',
+      EVENTS.editTransaction,
     );
     if (ok) router.back();
   };
 
   const remove = async () => {
     if (!(await confirm('Delete Transaction', 'Are you sure you want to delete this transaction?'))) return;
-    const ok = await run(() => removeTransaction(db, txId), 'remove');
+    const ok = await run(() => removeTransaction(db, txId), 'remove', EVENTS.deleteTransaction);
     if (ok) router.back();
   };
 

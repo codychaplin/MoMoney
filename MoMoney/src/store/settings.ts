@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { Uniwind } from 'uniwind';
 
+import { EVENTS, setAnalyticsEnabled, trackEvent } from '@/lib/analytics';
 import { formatMoney, MASK_MONEY, MASK_PERCENT, formatPercent } from '@/lib/money';
 import { applyPalette, DEFAULT_THEME } from '@/theme/palettes';
 
@@ -19,6 +20,8 @@ type SettingsState = {
   themeName: string;
   materialYou: boolean;
   hideAds: boolean;
+  shareAnalytics: boolean;
+  setShareAnalytics: (v: boolean) => void;
   setIsAdmin: (v: boolean) => void;
   setDictationEnabled: (v: boolean) => void;
   setTheme: (v: ThemeMode) => void;
@@ -41,7 +44,10 @@ export const useSettings = create<SettingsState>()(
   persist(
     (set, get) => ({
       showValues: true,
-      setShowValues: (showValues) => set({ showValues }),
+      setShowValues: (showValues) => {
+        trackEvent(EVENTS.showValuesToggled, { value: String(showValues) });
+        set({ showValues });
+      },
 
       isAdmin: false,
       dictationEnabled: false,
@@ -49,22 +55,42 @@ export const useSettings = create<SettingsState>()(
       themeName: DEFAULT_THEME,
       materialYou: false,
       hideAds: false,
+      shareAnalytics: true,
+      setShareAnalytics: (shareAnalytics) => {
+        // report the opt-out before collection stops, the opt-in after it starts
+        if (shareAnalytics) setAnalyticsEnabled(true);
+        trackEvent(EVENTS.shareAnalyticsToggled, { value: String(shareAnalytics) });
+        if (!shareAnalytics) setAnalyticsEnabled(false);
+        set({ shareAnalytics });
+      },
       // turning developer mode off also turns off experimental features
-      setIsAdmin: (isAdmin) => set(isAdmin ? { isAdmin } : { isAdmin, dictationEnabled: false }),
-      setDictationEnabled: (dictationEnabled) => set({ dictationEnabled }),
+      setIsAdmin: (isAdmin) => {
+        trackEvent(EVENTS.developerModeToggled, { value: String(isAdmin) });
+        set(isAdmin ? { isAdmin } : { isAdmin, dictationEnabled: false });
+      },
+      setDictationEnabled: (dictationEnabled) => {
+        trackEvent(EVENTS.dictationToggled, { value: String(dictationEnabled) });
+        set({ dictationEnabled });
+      },
       setTheme: (theme) => {
         Uniwind.setTheme(theme);
+        trackEvent(EVENTS.themeChanged, { value: theme });
         set({ theme });
       },
       setThemeName: (themeName) => {
         applyPalette(themeName, get().materialYou);
+        trackEvent(EVENTS.themeNameChanged, { value: themeName });
         set({ themeName });
       },
       setMaterialYou: (materialYou) => {
         applyPalette(get().themeName, materialYou);
+        trackEvent(EVENTS.materialYouToggled, { value: String(materialYou) });
         set({ materialYou });
       },
-      setHideAds: (hideAds) => set({ hideAds }),
+      setHideAds: (hideAds) => {
+        trackEvent(EVENTS.hideAdsToggled, { value: String(hideAds) });
+        set({ hideAds });
+      },
     }),
     {
       name: 'momoney-settings',
@@ -73,8 +99,9 @@ export const useSettings = create<SettingsState>()(
         if (!state) return;
         Uniwind.setTheme(state.theme);
         applyPalette(state.themeName, state.materialYou);
+        setAnalyticsEnabled(state.shareAnalytics);
       },
-      partialize: ({ isAdmin, dictationEnabled, theme, themeName, materialYou, hideAds }) => ({ isAdmin, dictationEnabled, theme, themeName, materialYou, hideAds }),
+      partialize: ({ isAdmin, dictationEnabled, theme, themeName, materialYou, hideAds, shareAnalytics }) => ({ isAdmin, dictationEnabled, theme, themeName, materialYou, hideAds, shareAnalytics }),
     },
   ),
 );

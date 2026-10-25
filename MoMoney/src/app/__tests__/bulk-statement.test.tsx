@@ -7,6 +7,7 @@ import type { Db } from '@/db/db';
 import { pickCsv } from '@/lib/files';
 import { saveRule } from '@/services/mappingRules';
 import { addTransaction, getFilteredTransactions } from '@/services/transactions';
+import { lastParams, sentEvents } from '@/test/analytics';
 import { mockAlert, shownAlerts } from '@/test/alert';
 import { createTestDb } from '@/test/db';
 import { choose, tap, type } from '@/test/interact';
@@ -41,6 +42,7 @@ describe('Bulk editing', () => {
     await tap('Find');
     await waitFor(() => expect(screen.getByText(/Transactions Found: 1/)).toBeTruthy());
     expect(screen.getByText(/Total Transactions: 3/)).toBeTruthy();
+    expect(sentEvents()).toEqual(['bulk_find']);
   });
 
   it('finds by account, category and subcategory', async () => {
@@ -63,6 +65,8 @@ describe('Bulk editing', () => {
     await waitFor(() => expect(screen.getByText(/Transactions Replaced: 1/)).toBeTruthy());
     expect((await rows()).some((r) => r.payee === 'Superstore')).toBe(true);
     expect((await rows()).some((r) => r.payee === 'Loblaws')).toBe(false);
+    expect(sentEvents()).toEqual(['bulk_replace']);
+    expect(lastParams('bulk_replace')).toMatchObject({ count: 1 });
   });
 
   it('warns when nothing is chosen to replace with', async () => {
@@ -188,6 +192,8 @@ describe('Import statement', () => {
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Imported 2 transactions'));
     const payees = (await getFilteredTransactions(db, {})).map((t) => t.payee);
     expect(payees).toEqual(expect.arrayContaining(['Loblaws', 'Mystery Shop']));
+    expect(sentEvents()).toEqual(['import_statement']);
+    expect(lastParams('import_statement')).toMatchObject({ count: 2 });
   });
 
   it('refuses to approve an incomplete record', async () => {
@@ -254,10 +260,12 @@ describe('Import statement', () => {
     await upload();
     await tap('Commit');
     await waitFor(() => expect(toast.success).not.toHaveBeenCalled());
+    expect(sentEvents()).toEqual([]);
     jest.restoreAllMocks();
     mockAlert('Add new');
     await tap('Commit');
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Imported 1 transactions'));
+    expect(sentEvents()).toEqual(['import_statement']);
   });
 
   it('Run Again re-applies rules, Clear discards after confirmation', async () => {

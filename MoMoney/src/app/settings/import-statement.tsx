@@ -1,3 +1,4 @@
+import { EVENTS } from '@/lib/analytics';
 import { useRouter, type Href } from 'expo-router';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useMemo, useState } from 'react';
@@ -115,6 +116,7 @@ export default function ImportStatementScreen() {
   const commit = async () => {
     if (!rows) return;
     setBusy(true);
+    let imported: number | null = null;
     await run(async () => {
       const dupes = await findDuplicates(db, rows);
       let skipSet = new Set<ImportRow>();
@@ -124,9 +126,10 @@ export default function ImportStatementScreen() {
         if (choice === 'Skip Duplicates') skipSet = dupes;
       }
       const n = await commitImport(db, rows, skipSet);
+      imported = n;
       toast.success(`Imported ${n} transactions`);
       setRows(null);
-    }, 'commit');
+    }, 'commit', () => (imported == null ? null : { name: EVENTS.importStatement, params: { count: imported, bank: bank ?? '' } }));
     setBusy(false);
   };
 

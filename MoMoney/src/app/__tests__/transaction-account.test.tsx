@@ -10,6 +10,7 @@ import { useSettings } from '@/store/settings';
 import { addAccount, getAccount, getAccounts, updateAccount } from '@/services/accounts';
 import * as transactions from '@/services/transactions';
 import { addTransaction, getFilteredTransactions, getTransaction } from '@/services/transactions';
+import { sentEvents } from '@/test/analytics';
 import { mockAlert, shownAlerts } from '@/test/alert';
 import { createTestDb } from '@/test/db';
 import { choose, tap, type } from '@/test/interact';
@@ -67,6 +68,7 @@ describe('Edit transaction', () => {
     await tap('Update');
     await waitFor(() => expect(mockRouter.back).toHaveBeenCalled());
     expect(await getTransaction(db, t.id)).toMatchObject({ amountCents: -2000, payee: 'Loblaws 2' });
+    expect(sentEvents()).toEqual(['edit_transaction']);
   });
 
   it('keeps income positive', async () => {
@@ -120,6 +122,7 @@ describe('Edit transaction', () => {
     await tap('Delete');
     await waitFor(() => expect(mockRouter.back).toHaveBeenCalled());
     await expect(getTransaction(db, t.id)).rejects.toThrow(NotFoundError);
+    expect(sentEvents()).toEqual(['delete_transaction']);
   });
 
   it('keeps the transaction when delete is declined', async () => {
@@ -130,6 +133,7 @@ describe('Edit transaction', () => {
     await tap('Delete');
     await waitFor(() => expect(mockRouter.back).not.toHaveBeenCalled());
     expect(await getTransaction(db, t.id)).toBeDefined();
+    expect(sentEvents()).toEqual([]);
   });
 
   it('edits a transfer: destination account and no payee field', async () => {
@@ -194,6 +198,7 @@ describe('Edit account', () => {
     await waitFor(() => expect(mockRouter.back).toHaveBeenCalled());
     const created = (await getAccounts(db)).find((a) => a.name === 'Brokerage')!;
     expect(created).toMatchObject({ type: 'Investments', startingBalanceCents: 25075, colour: '#3cffae' });
+    expect(sentEvents()).toEqual(['add_account']);
   });
 
   it('validates before saving', async () => {
@@ -236,6 +241,7 @@ describe('Edit account', () => {
     await tap('Update');
     await waitFor(() => expect(mockRouter.back).toHaveBeenCalled());
     expect(await getAccount(db, chequing)).toMatchObject({ name: 'Main', enabled: false });
+    expect(sentEvents()).toEqual(['edit_account']);
   });
 
   it('deletes an unused account after confirmation', async () => {
@@ -248,6 +254,7 @@ describe('Edit account', () => {
     await tap('Delete');
     await waitFor(() => expect(mockRouter.back).toHaveBeenCalled());
     expect((await getAccounts(db)).find((a) => a.id === id)).toBeUndefined();
+    expect(sentEvents()).toEqual(['delete_account']);
   });
 
   it('does not delete when declined', async () => {

@@ -1,6 +1,8 @@
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { toast } from 'sonner-native';
+import { useCSSVariable } from 'uniwind';
 import { Autocomplete } from '@/components/autocomplete';
 import { DateField } from '@/components/inputs/date-field';
 import { Button, Page } from '@/components/ui';
@@ -11,10 +13,12 @@ import { useDb } from '@/db/provider';
 import { useActiveAccounts, useCategories, usePayees, useRefresh } from '@/hooks/data';
 import { AD_UNITS, CREDIT_ID, DEBIT_ID, EXPENSE_THRESHOLD, INCOME_ID, TRANSFER_ID } from '@/lib/constants';
 import { todayISO } from '@/lib/dates';
+import { EVENTS, trackError, trackEvent } from '@/lib/analytics';
 import { isDomainError } from '@/lib/errors';
 import { notify } from '@/lib/confirm';
 import { parseCents } from '@/lib/money';
 import { AdBanner } from '@/components/ad-banner';
+import { useSettings } from '@/store/settings';
 import { createLogger } from '@/services/logger';
 import { addTransaction } from '@/services/transactions';
 
@@ -99,13 +103,17 @@ export default function AddScreen() {
         transferAccountId: kind === 'Transfer' ? transferAccountId : null,
       });
       await refresh();
+      trackEvent(EVENTS.addTransaction, { kind });
       // keep date, account, category and payee so repeated entry is quick
       setAmountText('');
       setTransferAccountId(null);
       toast.success('Transaction added');
     } catch (e) {
-      if (isDomainError(e)) await notify('Warning', e.message);
-      else {
+      if (isDomainError(e)) {
+        trackEvent(EVENTS.warningLog, { class_name: 'AddTransaction', function_name: 'submit', exception: e.name });
+        await notify('Warning', e.message);
+      } else {
+        trackError(e, 'AddTransaction', 'submit');
         await createLogger(db, 'AddTransaction').error('submit', e);
         await notify('Error', e instanceof Error ? e.message : String(e));
       }
@@ -114,9 +122,19 @@ export default function AddScreen() {
     }
   };
 
+  const dictationEnabled = useSettings((st) => st.dictationEnabled);
+  const icon = (useCSSVariable('--color-on-secondary-container') as string) ?? '#364b3f';
+
   return (
     <Page
       title="Add Transaction"
+      right={
+        dictationEnabled ? (
+          <Pressable accessibilityRole="button" accessibilityLabel="Dictate" hitSlop={12} onPress={() => trackEvent(EVENTS.dictationUsed)}>
+            <MaterialDesignIcons name="microphone" size={26} color={icon} />
+          </Pressable>
+        ) : undefined
+      }
       keyboard
       contentClassName="gap-1"
     >

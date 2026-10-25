@@ -1,3 +1,4 @@
+import { EVENTS } from '@/lib/analytics';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -44,13 +45,14 @@ export default function EditCategoryScreen() {
     const ok = await run(
       () => (isEdit ? updateCategory(db, categoryId, { name, parentId, colour }) : addCategory(db, name, parentId, colour)),
       'submit',
+      isEdit ? EVENTS.editCategory : EVENTS.addCategory,
     );
     if (ok) router.back();
   };
 
   const remove = async () => {
     if (!(await confirm('Delete Category', `Are you sure you want to delete "${category?.name}"?`))) return;
-    if (await run(() => removeCategory(db, categoryId), 'remove')) router.back();
+    if (await run(() => removeCategory(db, categoryId), 'remove', EVENTS.deleteCategory)) router.back();
   };
 
   return (

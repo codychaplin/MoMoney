@@ -1,3 +1,6 @@
+import { logScreenView } from '@react-native-firebase/analytics';
+import { resetRouter, setSegments } from '@/test/router-mock';
+import { sentEvents } from '@/test/analytics';
 import { act, render, waitFor } from '@testing-library/react-native';
 import * as SystemUI from 'expo-system-ui';
 import { AppState } from 'react-native';
@@ -15,6 +18,7 @@ describe('RootLayout', () => {
   const remove = jest.fn();
   beforeEach(async () => {
     jest.clearAllMocks();
+    resetRouter();
     (openDb as jest.Mock).mockResolvedValue(await createTestDb());
     jest.spyOn(AppState, 'addEventListener').mockImplementation(((_: string, cb: (s: string) => void) => {
       listener = cb;
@@ -22,6 +26,30 @@ describe('RootLayout', () => {
     }) as never);
   });
   afterEach(() => jest.restoreAllMocks());
+
+  it('reports open_app once per launch', async () => {
+    const { rerender } = await render(<RootLayout />);
+    await rerender(<RootLayout />);
+    expect(sentEvents()).toEqual(['open_app']);
+  });
+
+  it('reports a screen view per route change, named by route pattern without groups or ids', async () => {
+    const { rerender } = await render(<RootLayout />);
+    expect(sentEvents()).toEqual(['open_app']);
+    await act(async () => setSegments(['(tabs)']));
+    await rerender(<RootLayout />);
+    await act(async () => setSegments(['(tabs)', 'stats']));
+    await rerender(<RootLayout />);
+    await rerender(<RootLayout />);
+    await act(async () => setSegments(['transaction', '[id]']));
+    await rerender(<RootLayout />);
+    expect(sentEvents()).toEqual(['open_app']);
+    expect((logScreenView as jest.Mock).mock.calls.map((c) => c[1])).toEqual([
+      { screen_name: 'index', screen_class: 'index' },
+      { screen_name: 'stats', screen_class: 'stats' },
+      { screen_name: 'transaction/[id]', screen_class: 'transaction/[id]' },
+    ]);
+  });
 
   it('opens the database and sets the system background', async () => {
     await render(<RootLayout />);

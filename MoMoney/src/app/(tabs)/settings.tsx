@@ -30,7 +30,8 @@ export default function SettingsScreen() {
     theme, setTheme,
     themeName, setThemeName,
     materialYou, setMaterialYou,
-    hideAds, setHideAds
+    hideAds, setHideAds,
+    shareAnalytics, setShareAnalytics,
   } = useSettings();
   const wallpaper = useMaterialColors().primary;
 
@@ -109,6 +110,11 @@ export default function SettingsScreen() {
         label="Show Sensitive Values"
         value={showValues}
         onChange={setShowValues}
+      />
+      <SwitchRow
+        label="Share Analytics"
+        value={shareAnalytics}
+        onChange={setShareAnalytics}
       />
 
       <Subtitle>Admin</Subtitle>

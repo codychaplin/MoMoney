@@ -1,3 +1,4 @@
+import { EVENTS, type EventName } from '@/lib/analytics';
 import { useRouter, type Href } from 'expo-router';
 import { useRef } from 'react';
 import { Text } from 'react-native';
@@ -39,14 +40,14 @@ export default function AdminScreen() {
   };
 
   /** confirm -> delete -> "Success" alert with the count */
-  const removeAll = (what: string, fn: () => Promise<number | void>, guard?: () => Promise<string | null>) => async () => {
+  const removeAll = (what: string, event: EventName, fn: () => Promise<number | void>, guard?: () => Promise<string | null>) => async () => {
     const blocked = await guard?.();
     if (blocked) return notify('Warning', blocked);
     if (!(await confirm('Delete', `Are you sure you want to delete ALL ${what}?`))) return;
     let count: number | void = undefined;
     const ok = await run(async () => {
       count = await fn();
-    }, `remove ${what}`);
+    }, `remove ${what}`, () => ({ name: event, params: typeof count === 'number' ? { count } : undefined }));
     if (ok) await notify('Success', typeof count === 'number' ? `Removed ${count} ${what}` : `Removed all ${what}`);
   };
 
@@ -59,12 +60,12 @@ export default function AdminScreen() {
     const blocked = await needsNoTransactions('categories')();
     if (blocked) return notify('Warning', blocked);
     if (!(await confirm('Delete', 'Are you sure you want to delete ALL categories?'))) return;
-    if (await run(() => removeAllCategories(db, choice === 'Default'), 'remove categories')) await notify('Success', 'Categories reset');
+    if (await run(() => removeAllCategories(db, choice === 'Default'), 'remove categories', EVENTS.removeAllCategories)) await notify('Success', 'Categories reset');
   };
 
   const removeEverything = async () => {
     if (!(await confirm('Delete', 'Are you sure you want to delete ALL data? This cannot be undone.'))) return;
-    if (await run(() => resetAllData(db), 'reset')) await notify('Success', 'All data removed');
+    if (await run(() => resetAllData(db), 'reset', EVENTS.removeAllData)) await notify('Success', 'All data removed');
   };
 
   return (
@@ -83,11 +84,11 @@ export default function AdminScreen() {
       />
 
       <Subtitle>Data Removal</Subtitle>
-      <ListRow label="Remove All Transactions" onPress={removeAll('transactions', () => removeAllTransactions(db))} />
-      <ListRow label="Remove All Accounts" onPress={removeAll('accounts', () => removeAllAccounts(db), needsNoTransactions('accounts'))} />
+      <ListRow label="Remove All Transactions" onPress={removeAll('transactions', EVENTS.removeAllTransactions, () => removeAllTransactions(db))} />
+      <ListRow label="Remove All Accounts" onPress={removeAll('accounts', EVENTS.removeAllAccounts, () => removeAllAccounts(db), needsNoTransactions('accounts'))} />
       <ListRow label="Remove All Categories" onPress={removeCategories} />
-      <ListRow label="Remove All Mapping Rules" onPress={removeAll('mapping rules', () => removeAllRules(db))} />
-      <ListRow label="Remove All Logs" onPress={removeAll('logs', () => removeAllLogs(db))} />
+      <ListRow label="Remove All Mapping Rules" onPress={removeAll('mapping rules', EVENTS.removeAllMappingRules, () => removeAllRules(db))} />
+      <ListRow label="Remove All Logs" onPress={removeAll('logs', EVENTS.removeAllLogs, () => removeAllLogs(db))} />
       <ListRow label="Remove Everything" onPress={removeEverything} />
 
       {isAdmin ? (

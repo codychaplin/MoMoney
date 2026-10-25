@@ -10,6 +10,8 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { Toaster } from 'sonner-native';
 
 import { DbProvider } from '@/db/provider';
+import { EVENTS, trackEvent } from '@/lib/analytics';
+import { useTrackScreens } from '@/hooks/track';
 import { useSettings } from '@/store/settings';
 import { applyPalette, DEVICE_THEME } from '@/theme/palettes';
 import { useCSSVariable } from 'uniwind';
@@ -21,6 +23,12 @@ export default function RootLayout() {
   useEffect(() => {
     SystemUI.setBackgroundColorAsync(background);
   }, [background]);
+
+  useTrackScreens();
+
+  useEffect(() => {
+    trackEvent(EVENTS.openApp);
+  }, []);
 
   // wallpaper colours may have changed while the app was in the background
   useEffect(() => {

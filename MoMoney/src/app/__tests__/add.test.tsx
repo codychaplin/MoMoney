@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from '@testing-library/react-native';
+import { act, screen, waitFor, fireEvent } from '@testing-library/react-native';
 import { toast } from 'sonner-native';
 
 import AddScreen from '@/app/(tabs)/add';
@@ -8,6 +8,7 @@ import { getAccounts } from '@/services/accounts';
 import { countLogs } from '@/services/logger';
 import * as transactions from '@/services/transactions';
 import { getFilteredTransactions } from '@/services/transactions';
+import { lastParams, sentEvents } from '@/test/analytics';
 import { mockAlert, shownAlerts } from '@/test/alert';
 import { createTestDb } from '@/test/db';
 import { useSettings } from '@/store/settings';
@@ -18,7 +19,7 @@ import { seedBasic } from '@/test/seed';
 let db: Db;
 beforeEach(async () => {
   jest.clearAllMocks();
-  useSettings.setState({ hideAds: false });
+  useSettings.setState({ hideAds: false, dictationEnabled: false });
   db = await createTestDb();
   await seedBasic(db);
   // seedBasic added 3 transactions; tests below look at rows added after those
@@ -36,6 +37,17 @@ async function waitForAccounts() {
 }
 
 describe('Add transaction', () => {
+  it('shows a Dictate mic button in the title bar only while dictation is enabled', async () => {
+    await waitForAccounts();
+    expect(screen.queryByLabelText('Dictate')).toBeNull();
+    await act(async () => useSettings.setState({ dictationEnabled: true }));
+    expect(screen.getByRole('button', { name: 'Dictate' })).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole('button', { name: 'Dictate' }));
+    expect(sentEvents()).toEqual(['dictation_used']);
+    await act(async () => useSettings.setState({ dictationEnabled: false }));
+    expect(screen.queryByLabelText('Dictate')).toBeNull();
+  });
+
   it('shows a banner ad below the Clear/Accept buttons, unless ads are hidden', async () => {
     await waitForAccounts();
     const tree = JSON.stringify(screen.toJSON());
@@ -80,6 +92,8 @@ describe('Add transaction', () => {
     // amount is cleared, payee is kept
     expect(screen.getByLabelText('Amount').props.defaultValue).toBe('');
     expect(screen.getByLabelText('Payee').props.defaultValue).toBe('Costco');
+    expect(sentEvents()).toEqual(['add_transaction']);
+    expect(lastParams('add_transaction')).toMatchObject({ kind: 'Expense' });
   });
 
   it('suggests known payees', async () => {
@@ -114,6 +128,7 @@ describe('Add transaction', () => {
     expect(transfers).toHaveLength(2);
     expect(transfers.find((t) => t.accountId === chequing.id)?.amountCents).toBe(-7500);
     expect(transfers.find((t) => t.accountId === savings.id)?.amountCents).toBe(7500);
+    expect(lastParams('add_transaction')).toMatchObject({ kind: 'Transfer' });
   });
 
   it('requires a transfer account', async () => {
@@ -169,6 +184,8 @@ describe('Add transaction', () => {
     await tap('Accept');
     await waitFor(() => expect(shownAlerts(alert)).toEqual([['Warning', 'nope']]));
     expect(await countLogs(db)).toBe(0);
+    expect(sentEvents()).toEqual(['warning_log']);
+    expect(lastParams('warning_log')).toMatchObject({ class_name: 'AddTransaction', function_name: 'submit', exception: 'InvalidError' });
   });
 
   it('logs and shows an Error alert for unexpected failures', async () => {
@@ -183,5 +200,7 @@ describe('Add transaction', () => {
     await tap('Accept');
     await waitFor(() => expect(shownAlerts(alert)).toEqual([['Error', 'disk full']]));
     expect(await countLogs(db, { level: 'Error', className: 'AddTransaction' })).toBe(1);
+    expect(sentEvents()).toEqual(['error_log']);
+    expect(lastParams('error_log')).toMatchObject({ class_name: 'AddTransaction', function_name: 'submit', exception: 'Error' });
   });
 });

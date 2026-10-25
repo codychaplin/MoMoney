@@ -1,3 +1,4 @@
+import { lastParams, sentEvents } from '@/test/analytics';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { toast } from 'sonner-native';
 
@@ -210,8 +211,18 @@ describe('Settings', () => {
   it('Hide Ads switch under Admin toggles the stored preference', async () => {
     await renderWithProviders(<SettingsScreen />, db);
     expect(screen.getByText('Hide Ads')).toBeOnTheScreen();
-    await fireEvent(screen.getAllByRole('switch')[2], 'valueChange', true);
+    await fireEvent(screen.getAllByRole('switch')[3], 'valueChange', true);
     expect(useSettings.getState().hideAds).toBe(true);
+  });
+
+  it('Share Analytics switch under Privacy opts out of collection', async () => {
+    await renderWithProviders(<SettingsScreen />, db);
+    expect(screen.getByText('Share Analytics')).toBeOnTheScreen();
+    expect(screen.getAllByRole('switch')[2].props.value).toBe(true);
+    await fireEvent(screen.getAllByRole('switch')[2], 'valueChange', false);
+    expect(useSettings.getState().shareAnalytics).toBe(false);
+    expect(sentEvents()).toEqual(['share_analytics_toggled']);
+    expect(lastParams('share_analytics_toggled')).toMatchObject({ value: 'false' });
   });
 
   it('long-pressing the version toggles developer mode', async () => {

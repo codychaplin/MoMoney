@@ -1,3 +1,4 @@
+import { EVENTS } from '@/lib/analytics';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
@@ -99,7 +100,7 @@ export default function BulkEditingScreen() {
     let n = 0;
     const ok = await run(async () => {
       n = await bulkReplace(db, rows.map((r) => r.id), toFilter(replace));
-    }, 'replace');
+    }, 'replace', () => ({ name: EVENTS.bulkReplace, params: { count: n } }));
     if (ok) {
       setInfo((i) => `${i}\nTransactions Replaced: ${n}`);
       setFound(null);
@@ -135,7 +136,7 @@ export default function BulkEditingScreen() {
         <Button
           label="Find"
           className="flex-1"
-          onPress={() => run(doFind, 'find')}
+          onPress={() => run(doFind, 'find', EVENTS.bulkFind)}
         />
         <Button
           label="Replace"

@@ -9,6 +9,7 @@ import { getAllCategories, getCategory } from '@/services/categories';
 import { getRules, parseMapping, saveRule } from '@/services/mappingRules';
 import { addAccount } from '@/services/accounts';
 import { addTransaction } from '@/services/transactions';
+import { sentEvents } from '@/test/analytics';
 import { mockAlert, shownAlerts } from '@/test/alert';
 import { createTestDb } from '@/test/db';
 import { choose, tap, type } from '@/test/interact';
@@ -46,6 +47,7 @@ describe('Edit category', () => {
     await tap('Accept');
     await waitFor(() => expect(mockRouter.back).toHaveBeenCalled());
     expect((await getAllCategories(db)).find((c) => c.name === 'Pets')).toMatchObject({ parentId: null });
+    expect(sentEvents()).toEqual(['add_category']);
   });
 
   it('adds a subcategory with a colour', async () => {
@@ -59,6 +61,7 @@ describe('Edit category', () => {
     await tap('Accept');
     await waitFor(() => expect(mockRouter.back).toHaveBeenCalled());
     expect((await getAllCategories(db)).find((c) => c.name === 'Vet')).toMatchObject({ parentId: 12, colour: '#3cffae' });
+    expect(sentEvents()).toEqual(['add_category']);
   });
 
   it('requires a name', async () => {
@@ -96,6 +99,7 @@ describe('Edit category', () => {
     await tap('Update');
     await waitFor(() => expect(mockRouter.back).toHaveBeenCalled());
     expect((await getCategory(db, 14)).name).toBe('Dining');
+    expect(sentEvents()).toEqual(['edit_category']);
   });
 
   it('locks system categories (colour only) and disables delete', async () => {
@@ -124,6 +128,7 @@ describe('Edit category', () => {
     await tap('Delete');
     await waitFor(() => expect(mockRouter.back).toHaveBeenCalled());
     expect((await getAllCategories(db)).find((c) => c.id === 14)).toBeUndefined();
+    expect(sentEvents()).toEqual(['delete_category']);
   });
 
   it('keeps the category when delete is declined', async () => {
@@ -172,6 +177,7 @@ describe('Mapping rules', () => {
     const [rule] = await getRules(db, 'Tangerine');
     expect(rule).toMatchObject({ name: 'Groceries', pattern: 'loblaws|sobeys' });
     expect(parseMapping(rule.mappingJson)).toEqual(food);
+    expect(sentEvents()).toEqual(['add_mapping_rule']);
     // saved rule becomes the selected one, so the button now reads Update
     expect(screen.getByText('Update')).toBeTruthy();
   });
@@ -228,6 +234,7 @@ describe('Mapping rules', () => {
     expect((await getRules(db, 'Tangerine'))[0].name).toBe('Renamed');
     await tap('Delete');
     await waitFor(async () => expect(await getRules(db, 'Tangerine')).toHaveLength(0));
+    expect(sentEvents()).toEqual(['edit_mapping_rule', 'delete_mapping_rule']);
     expect(screen.queryByText('Update')).toBeNull();
   });
 

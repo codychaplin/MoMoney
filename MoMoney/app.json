@@ -56,7 +56,9 @@
           "androidAppId": "ca-app-pub-6983383854683496~9446081843",
           "iosAppId": "ca-app-pub-6983383854683496~9446081843"
         }
-      ]
+      ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/crashlytics"
     ],
     "experiments": {
       "typedRoutes": true,
