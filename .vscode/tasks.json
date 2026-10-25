@@ -2,6 +2,14 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Expo: Prebuild Android",
+            "type": "shell",
+            "command": "npx expo prebuild --platform android",
+            "options": { "cwd": "${workspaceFolder}/MoMoney" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "focus": true, "panel": "dedicated" }
+        },
+        {
             "label": "EAS: Build Android Production (AAB)",
             "type": "shell",
             "command": "eas build -p android --profile production",
