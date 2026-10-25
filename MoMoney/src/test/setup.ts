@@ -173,3 +173,19 @@ beforeEach(() => {
   crashlytics.recordError.mockImplementation(() => undefined);
   crashlytics.setCrashlyticsCollectionEnabled.mockImplementation(async () => undefined);
 });
+
+jest.mock('expo-audio', () => {
+  const recorder = { prepareToRecordAsync: jest.fn(async () => undefined), record: jest.fn(), stop: jest.fn(async () => undefined), uri: 'file:///cache/recording.m4a' };
+  return {
+    __recorder: recorder,
+    useAudioRecorder: () => recorder,
+    requestRecordingPermissionsAsync: jest.fn(async () => ({ granted: true })),
+    setAudioModeAsync: jest.fn(async () => undefined),
+    IOSOutputFormat: { MPEG4AAC: 'aac ' },
+    AudioQuality: { MEDIUM: 64 },
+  };
+});
+
+// ESM-only packages that Jest can't load; the dictation tests drive `generateText` directly.
+jest.mock('ai', () => ({ generateText: jest.fn(), Output: { object: (o: unknown) => o } }));
+jest.mock('@ai-sdk/openai-compatible', () => ({ createOpenAICompatible: () => ({ chatModel: (id: string) => ({ id }) }) }));

@@ -6,6 +6,7 @@ import type { Db } from '@/db/db';
 import { InvalidError } from '@/lib/errors';
 import { getAccounts } from '@/services/accounts';
 import { countLogs } from '@/services/logger';
+import * as dictation from '@/services/dictation';
 import * as transactions from '@/services/transactions';
 import { getFilteredTransactions } from '@/services/transactions';
 import { lastParams, sentEvents } from '@/test/analytics';
@@ -43,9 +44,65 @@ describe('Add transaction', () => {
     await act(async () => useSettings.setState({ dictationEnabled: true }));
     expect(screen.getByRole('button', { name: 'Dictate' })).toBeOnTheScreen();
     await fireEvent.press(screen.getByRole('button', { name: 'Dictate' }));
-    expect(sentEvents()).toEqual(['dictation_used']);
+    await waitFor(() => expect(sentEvents()).toEqual(['dictation_used']));
     await act(async () => useSettings.setState({ dictationEnabled: false }));
     expect(screen.queryByLabelText('Dictate')).toBeNull();
+  });
+
+  it('records, fills the form from the dictation and links the AI rows when saved', async () => {
+    const accounts = await getAccounts(db);
+    const chequing = accounts.find((a) => a.name === 'Chequing')!;
+    jest.spyOn(dictation, 'dictateTransaction').mockResolvedValue({
+      response: { date: '2020-04-07', account: 'Chequing', amount: 12.5, category: 'Food', subcategory: 'Groceries', payee: 'Costco', transfer_account: '' },
+      callIds: { whisperId: 1, chatId: 2 },
+    });
+    const link = jest.spyOn(dictation, 'linkDictationCalls').mockResolvedValue(undefined);
+    await act(async () => useSettings.setState({ dictationEnabled: true }));
+    await waitForAccounts();
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Dictate' })); // start
+    await fireEvent.press(await screen.findByRole('button', { name: 'Dictate' })); // stop
+    await waitFor(() => expect(dictation.dictateTransaction).toHaveBeenCalledWith(db, 'file:///cache/recording.m4a', 'Expense'));
+    await waitFor(() => expect(toast).toHaveBeenCalledWith('New payee detected'));
+    expect(toast).toHaveBeenCalledWith('Warning: Date is not in the current year');
+
+    await tap('Accept');
+    await waitFor(() => expect(link).toHaveBeenCalled());
+    const [added] = (await rows()).slice(-1);
+    expect(added).toMatchObject({ accountId: chequing.id, amountCents: -1250, categoryId: 12, subcategoryId: 13, payee: 'Costco', date: '2020-04-07' });
+    expect(link).toHaveBeenCalledWith(db, added.id, { whisperId: 1, chatId: 2 });
+  });
+
+  it('keeps existing form values for anything the dictation leaves out', async () => {
+    const savings = (await getAccounts(db)).find((a) => a.name === 'Savings')!;
+    jest.spyOn(dictation, 'dictateTransaction').mockResolvedValue({
+      response: { date: null, account: '', amount: 20, category: '', subcategory: '', payee: 'Costco', transfer_account: '' },
+      callIds: { whisperId: 1, chatId: 2 },
+    });
+    jest.spyOn(dictation, 'linkDictationCalls').mockResolvedValue(undefined);
+    await act(async () => useSettings.setState({ dictationEnabled: true }));
+    await waitForAccounts();
+    await choose('Account', 'Savings');
+    await choose('Category', 'Food');
+    await choose('Subcategory', 'Groceries');
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Dictate' }));
+    await fireEvent.press(await screen.findByRole('button', { name: 'Dictate' }));
+    await waitFor(() => expect(dictation.dictateTransaction).toHaveBeenCalled());
+    await waitFor(() => expect(screen.getByDisplayValue('20.00')).toBeTruthy());
+
+    await tap('Accept');
+    await waitFor(async () => expect(await rows()).toHaveLength(4));
+    expect((await rows()).slice(-1)[0]).toMatchObject({ accountId: savings.id, amountCents: -2000, categoryId: 12, subcategoryId: 13, payee: 'Costco' });
+  });
+
+  it('asks for mic permission and does not record when it is denied', async () => {
+    require('expo-audio').requestRecordingPermissionsAsync.mockResolvedValueOnce({ granted: false });
+    await act(async () => useSettings.setState({ dictationEnabled: true }));
+    await waitForAccounts();
+    await fireEvent.press(screen.getByRole('button', { name: 'Dictate' }));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Please allow audio recording permissions'));
+    expect(require('expo-audio').__recorder.record).not.toHaveBeenCalled();
   });
 
   it('shows a banner ad below the Clear/Accept buttons, unless ads are hidden', async () => {

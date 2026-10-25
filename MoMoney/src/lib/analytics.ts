@@ -2,6 +2,8 @@ import { getAnalytics, logEvent, logScreenView, setAnalyticsCollectionEnabled } 
 import { getCrashlytics, recordError, setCrashlyticsCollectionEnabled } from '@react-native-firebase/crashlytics';
 import Constants from 'expo-constants';
 
+import { debugLog } from '@/lib/debug';
+
 /** Firebase event names (snake_case). Never attach amounts, payees or account/category names as params. */
 export const EVENTS = {
   openApp: 'open_app',
@@ -9,6 +11,7 @@ export const EVENTS = {
   bulkFind: 'bulk_find',
   bulkReplace: 'bulk_replace',
   dictationUsed: 'dictation_used',
+  aiCall: 'ai_call',
 
   dictationToggled: 'dictation_toggled',
   developerModeToggled: 'developer_mode_toggled',
@@ -90,6 +93,7 @@ export function trackScreen(name: string): void {
 
 /** Sends a non-fatal to Crashlytics plus an error_log event carrying only class, function and exception type. */
 export function trackError(e: unknown, className: string, fnName: string): void {
+  debugLog('error', `${className}.${fnName}:`, e);
   try {
     recordError(getCrashlytics(), e instanceof Error ? e : new Error(String(e)));
   } catch {
