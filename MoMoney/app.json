@@ -2,15 +2,16 @@
   "expo": {
     "name": "MoMoney",
     "slug": "momoney",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "scheme": "momoney",
     "userInterfaceStyle": "automatic",
     "android": {
       "predictiveBackGestureEnabled": false,
       "package": "com.pherda.momoney",
-      "versionCode": 17,
-      "permissions": []
+      "permissions": [
+        "com.google.android.gms.permission.AD_ID"
+      ]
     },
     "plugins": [
       "expo-router",

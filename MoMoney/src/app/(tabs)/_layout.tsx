@@ -18,10 +18,11 @@ const tabs: { name: string; title: string; icon: IconName, selectedIcon: IconNam
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
   
-  const background = (useCSSVariable('--color-background') as string) ?? '#f5fbf4';
-  const primary = (useCSSVariable('--color-primary') as string) ?? '#246a4b';
-  const muted = (useCSSVariable('--color-on-surface-variant') as string) ?? '#404943';
-  const indicator = (useCSSVariable('--color-secondary-container') as string) ?? '#abf2ca';
+  const background = (useCSSVariable('--color-background') as string);
+  const surfaceContainerHighest = (useCSSVariable('--color-surface-high') as string);
+  const primary = (useCSSVariable('--color-primary') as string);
+  const muted = (useCSSVariable('--color-on-surface-variant') as string);
+  const indicator = (useCSSVariable('--color-secondary-container') as string);
 
   return (
     <Tabs
@@ -34,7 +35,8 @@ export default function TabsLayout() {
           backgroundColor: background,
           height: 43 + insets.bottom,
           paddingTop: 5,
-          borderTopWidth: 0,
+          borderTopWidth: 2,
+          borderTopColor: surfaceContainerHighest,
           elevation: 0,
           shadowOpacity: 0
         },

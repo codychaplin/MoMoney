@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - RN_MoMoney/**
+      - MoMoney/**
       - '!**/*.md'
 
 jobs:
