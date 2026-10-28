@@ -1,24 +1,49 @@
 {
-    "label": "Publish MoMoney Android Release",
-    "command": "dotnet",
-    "args": [
-        "publish",
-        "-f",
-        "net10.0-android36.0",
-        "-c",
-        "Release",
-        "-p:AndroidSigningKeyStore=${workspaceFolder}/pherda-apps.keystore",
-        "${workspaceFolder}/MoMoney/MoMoney.csproj"
-    ],
-    "problemMatcher": "$msCompile",
-    "group": {
-        "kind": "build",
-        "isDefault": false
-    },
-    "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
-    }
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Expo: Prebuild Android",
+            "type": "shell",
+            "command": "npx expo prebuild --platform android",
+            "options": { "cwd": "${workspaceFolder}/MoMoney" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "focus": true, "panel": "dedicated" }
+        },
+        {
+            "label": "EAS: Build Android Production (AAB)",
+            "type": "shell",
+            "command": "eas build -p android --profile production",
+            "options": { "cwd": "${workspaceFolder}/MoMoney" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "focus": true, "panel": "dedicated" }
+        },
+        {
+            "label": "EAS: Build Android Production Locally (AAB)",
+            "type": "shell",
+            "command": "eas build --platform android --profile production --local",
+            "options": {
+                "cwd": "${workspaceFolder}/MoMoney",
+                "env": { "ANDROID_HOME": "${env:HOME}/Android/Sdk" }
+            },
+            "problemMatcher": [],
+            "group": "build",
+            "presentation": { "reveal": "always", "focus": true, "panel": "dedicated" }
+        },
+        {
+            "label": "EAS: Submit Latest Android Build",
+            "type": "shell",
+            "command": "eas submit -p android --profile production --latest",
+            "options": { "cwd": "${workspaceFolder}/MoMoney" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "focus": true, "panel": "dedicated" }
+        },
+        {
+            "label": "EAS: Build + Submit Android Production",
+            "type": "shell",
+            "command": "eas build -p android --profile production --auto-submit",
+            "options": { "cwd": "${workspaceFolder}/MoMoney" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "focus": true, "panel": "dedicated" }
+        }
+    ]
 }

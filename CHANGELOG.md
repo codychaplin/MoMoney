@@ -1,4 +1,9 @@
-# MoMoney v1.0.2
+# MoMoney v1.0.0
+
+### Changes
+ * Migrate to React Native
+
+# MoMoney v0.3.2
 
 ### Changes
 * Update packages
@@ -18,7 +23,7 @@
 
 * Fixed stock price parsing
 
-# MoMoney v1.0.1
+# MoMoney v0.3.1
 
 ### Fixes
 
@@ -30,7 +35,7 @@
 * Hide AI usage unless dev mode is enabled
 * Switched to OpenAI's official nuget package
 
-# MoMoney v1.0.0
+# MoMoney v0.3.0
 
 ### Fixes
 

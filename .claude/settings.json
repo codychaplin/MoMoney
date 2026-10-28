@@ -1,0 +1,48 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(./CLAUDE.md)",
+      "Read(./AGENTS.md)",
+      "Read(./**)",
+      "Edit(./**)",
+      "Bash(npm run *)",
+      "Bash(npx vitest *)",
+      "Bash(npx eslint *)",
+      "Bash(npm test *)",
+      "Bash(npx vite *)",
+      "Bash(npx tsc *)",
+      "Bash(npx jest *)",
+      "Bash(cd *)",
+      "Bash(ls *)",
+      "Bash(grep *)",
+      "Bash(sed -n *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Bash(rm *)",
+      "Bash(sudo *)",
+      "Bash(git push *)",
+      "Bash(git reset *)",
+      "Bash(git clean *)",
+      "Bash(git branch -D *)",
+      "Bash(git branch -d *)",
+      "Bash(git tag -d *)",
+      "Bash(git rm *)",
+      "Bash(mv *)",
+      "Bash(dd *)",
+      "Bash(mkfs *)",
+      "Bash(chmod -R *)",
+      "Bash(chown -R *)",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(> *)"
+    ],
+    "blockReadsOutsideWorkingDirectories": true
+  },
+  "enabledPlugins": {
+    "expo@claude-plugins-official": true
+  }
+}
