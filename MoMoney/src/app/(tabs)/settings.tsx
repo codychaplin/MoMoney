@@ -30,7 +30,7 @@ export default function SettingsScreen() {
     theme, setTheme,
     themeName, setThemeName,
     materialYou, setMaterialYou,
-    hideAds, setHideAds,
+    showAds, setShowAds,
     shareAnalytics, setShareAnalytics,
   } = useSettings();
   const wallpaper = useMaterialColors().primary;
@@ -121,17 +121,17 @@ export default function SettingsScreen() {
         value={shareAnalytics}
         onChange={setShareAnalytics}
       />
+      <SwitchRow
+        label="Show Ads"
+        value={showAds}
+        onChange={setShowAds}
+      />
 
       <Subtitle>Admin</Subtitle>
       <ListRow
         label="Data"
         chevron
         onPress={go('/settings/admin')}
-      />
-      <SwitchRow
-        label="Hide Ads"
-        value={hideAds}
-        onChange={setHideAds}
       />
 
       <Pressable delayLongPress={5000} onLongPress={toggleDeveloperMode}>

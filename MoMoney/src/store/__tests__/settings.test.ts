@@ -14,7 +14,7 @@ beforeEach(() => {
 describe('settings store', () => {
   it('has sensible defaults', () => {
     const s = useSettings.getState();
-    expect(s).toMatchObject({ showValues: true, isAdmin: false, dictationEnabled: false, theme: 'system', themeName: 'green', materialYou: false, hideAds: false });
+    expect(s).toMatchObject({ showValues: true, isAdmin: false, dictationEnabled: false, theme: 'system', themeName: 'green', materialYou: false, showAds: true });
   });
 
   it('turning admin off also turns off dictation', () => {
@@ -42,10 +42,10 @@ describe('settings store', () => {
 
   it('persists everything except showValues and rehydrates the theme', async () => {
     useSettings.getState().setShowValues(false);
-    useSettings.getState().setHideAds(true);
+    useSettings.getState().setShowAds(false);
     useSettings.getState().setThemeName('teal');
     const stored = JSON.parse(require('react-native-mmkv').createMMKV({ id: 'momoney-settings' }).getString('momoney-settings'));
-    expect(stored.state).toMatchObject({ themeName: 'teal', hideAds: true });
+    expect(stored.state).toMatchObject({ themeName: 'teal', showAds: false });
     expect(stored.state).not.toHaveProperty('showValues');
 
     jest.clearAllMocks();
@@ -64,11 +64,11 @@ describe('settings analytics', () => {
     s.setTheme('dark');
     s.setThemeName('blue');
     s.setShowValues(false);
-    s.setHideAds(true);
+    s.setShowAds(false);
     s.setIsAdmin(false);
     expect(sentEvents()).toEqual([
       'developer_mode_toggled', 'dictation_toggled', 'material_you_toggled', 'theme_changed',
-      'theme_name_changed', 'show_values_toggled', 'hide_ads_toggled', 'developer_mode_toggled',
+      'theme_name_changed', 'show_values_toggled', 'show_ads_toggled', 'developer_mode_toggled',
     ]);
     expect(lastParams('dictation_toggled')).toMatchObject({ value: 'true' });
     expect(lastParams('theme_changed')).toMatchObject({ value: 'dark' });

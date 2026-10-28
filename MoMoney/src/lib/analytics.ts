@@ -19,7 +19,7 @@ export const EVENTS = {
   themeChanged: 'theme_changed',
   themeNameChanged: 'theme_name_changed',
   showValuesToggled: 'show_values_toggled',
-  hideAdsToggled: 'hide_ads_toggled',
+  showAdsToggled: 'show_ads_toggled',
   shareAnalyticsToggled: 'share_analytics_toggled',
 
   warningLog: 'warning_log',

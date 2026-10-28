@@ -25,12 +25,12 @@ export default function AdminScreen() {
   const db = useDb();
   const router = useRouter();
   const run = useAction('Admin');
-  const { isAdmin, dictationEnabled, setDictationEnabled, hideAds } = useSettings();
+  const { isAdmin, dictationEnabled, setDictationEnabled, showAds } = useSettings();
   const watchingAd = useRef(false);
 
-  /** Turning dictation on needs a rewarded ad, unless ads are hidden or none can load. */
+  /** Turning dictation on needs a rewarded ad, unless ads are off or none can load. */
   const toggleDictation = async (on: boolean) => {
-    if (!on || hideAds) return setDictationEnabled(on);
+    if (!on || !showAds) return setDictationEnabled(on);
     if (watchingAd.current) return;
     watchingAd.current = true;
     try {

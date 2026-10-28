@@ -19,7 +19,7 @@ type SettingsState = {
   theme: ThemeMode;
   themeName: string;
   materialYou: boolean;
-  hideAds: boolean;
+  showAds: boolean;
   shareAnalytics: boolean;
   setShareAnalytics: (v: boolean) => void;
   setIsAdmin: (v: boolean) => void;
@@ -27,7 +27,7 @@ type SettingsState = {
   setTheme: (v: ThemeMode) => void;
   setThemeName: (v: string) => void;
   setMaterialYou: (v: boolean) => void;
-  setHideAds: (v: boolean) => void;
+  setShowAds: (v: boolean) => void;
 };
 
 const mmkv = createMMKV({ id: 'momoney-settings' });
@@ -54,7 +54,7 @@ export const useSettings = create<SettingsState>()(
       theme: 'system',
       themeName: DEFAULT_THEME,
       materialYou: false,
-      hideAds: false,
+      showAds: true,
       shareAnalytics: true,
       setShareAnalytics: (shareAnalytics) => {
         // report the opt-out before collection stops, the opt-in after it starts
@@ -87,9 +87,9 @@ export const useSettings = create<SettingsState>()(
         trackEvent(EVENTS.materialYouToggled, { value: String(materialYou) });
         set({ materialYou });
       },
-      setHideAds: (hideAds) => {
-        trackEvent(EVENTS.hideAdsToggled, { value: String(hideAds) });
-        set({ hideAds });
+      setShowAds: (showAds) => {
+        trackEvent(EVENTS.showAdsToggled, { value: String(showAds) });
+        set({ showAds });
       },
     }),
     {
@@ -101,7 +101,7 @@ export const useSettings = create<SettingsState>()(
         applyPalette(state.themeName, state.materialYou);
         setAnalyticsEnabled(state.shareAnalytics);
       },
-      partialize: ({ isAdmin, dictationEnabled, theme, themeName, materialYou, hideAds, shareAnalytics }) => ({ isAdmin, dictationEnabled, theme, themeName, materialYou, hideAds, shareAnalytics }),
+      partialize: ({ isAdmin, dictationEnabled, theme, themeName, materialYou, showAds, shareAnalytics }) => ({ isAdmin, dictationEnabled, theme, themeName, materialYou, showAds, shareAnalytics }),
     },
   ),
 );

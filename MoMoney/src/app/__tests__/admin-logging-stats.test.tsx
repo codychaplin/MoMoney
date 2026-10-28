@@ -28,7 +28,7 @@ let db: Db;
 beforeEach(async () => {
   resetRouter();
   jest.clearAllMocks();
-  useSettings.setState({ showValues: true, isAdmin: false, dictationEnabled: false, hideAds: false });
+  useSettings.setState({ showValues: true, isAdmin: false, dictationEnabled: false, showAds: true });
   db = await createTestDb();
 });
 afterEach(() => jest.restoreAllMocks());
@@ -88,7 +88,7 @@ describe('Admin', () => {
     });
 
     it('skips the ad when ads are hidden', async () => {
-      await act(async () => useSettings.setState({ hideAds: true }));
+      await act(async () => useSettings.setState({ showAds: false }));
       await flip(true);
       expect(useSettings.getState().dictationEnabled).toBe(true);
       expect(ad.load).not.toHaveBeenCalled();

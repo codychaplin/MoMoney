@@ -7,7 +7,7 @@ import { useSettings } from '@/store/settings';
 describe('AdBanner', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useSettings.setState({ hideAds: false });
+    useSettings.setState({ showAds: true });
   });
 
   it('initialises the SDK and shows the banner with the test unit in dev', async () => {
@@ -34,7 +34,7 @@ describe('AdBanner', () => {
   });
 
   it('neither loads nor shows an ad when ads are hidden', async () => {
-    useSettings.setState({ hideAds: true });
+    useSettings.setState({ showAds: false });
     await render(<AdBanner unitId="ca-app-pub-1/2" />);
     expect(screen.queryByTestId('banner-ad')).toBeNull();
     expect(mobileAds().initialize).not.toHaveBeenCalled();

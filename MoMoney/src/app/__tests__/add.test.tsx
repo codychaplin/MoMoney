@@ -20,7 +20,7 @@ import { seedBasic } from '@/test/seed';
 let db: Db;
 beforeEach(async () => {
   jest.clearAllMocks();
-  useSettings.setState({ hideAds: false, dictationEnabled: false });
+  useSettings.setState({ showAds: true, dictationEnabled: false });
   db = await createTestDb();
   await seedBasic(db);
   // seedBasic added 3 transactions; tests below look at rows added after those
@@ -109,7 +109,7 @@ describe('Add transaction', () => {
     await waitForAccounts();
     const tree = JSON.stringify(screen.toJSON());
     expect(tree.indexOf('banner-ad')).toBeGreaterThan(tree.lastIndexOf('Accept'));
-    await act(async () => useSettings.setState({ hideAds: true }));
+    await act(async () => useSettings.setState({ showAds: false }));
     expect(screen.queryByTestId('banner-ad')).toBeNull();
   });
 

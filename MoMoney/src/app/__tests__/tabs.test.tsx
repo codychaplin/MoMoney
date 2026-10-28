@@ -19,7 +19,7 @@ let db: Db;
 beforeEach(async () => {
   resetRouter();
   jest.clearAllMocks();
-  useSettings.setState({ showValues: true, isAdmin: false, themeName: 'green', materialYou: false, theme: 'system', hideAds: false });
+  useSettings.setState({ showValues: true, isAdmin: false, themeName: 'green', materialYou: false, theme: 'system', showAds: true });
   db = await createTestDb();
 });
 
@@ -29,7 +29,7 @@ describe('Home', () => {
     const tree = JSON.stringify(screen.toJSON());
     expect(tree.indexOf('banner-ad')).toBeGreaterThan(-1);
     expect(tree.indexOf('banner-ad')).toBeLessThan(tree.indexOf('Statistics'));
-    await act(async () => useSettings.setState({ hideAds: true }));
+    await act(async () => useSettings.setState({ showAds: false }));
     expect(screen.queryByTestId('banner-ad')).toBeNull();
   });
 
@@ -223,11 +223,11 @@ describe('Settings', () => {
     expect(useSettings.getState().theme).toBe('dark');
   });
 
-  it('Hide Ads switch under Admin toggles the stored preference', async () => {
+  it('Show Ads switch under Privacy toggles the stored preference', async () => {
     await renderWithProviders(<SettingsScreen />, db);
-    expect(screen.getByText('Hide Ads')).toBeOnTheScreen();
-    await fireEvent(screen.getAllByRole('switch')[3], 'valueChange', true);
-    expect(useSettings.getState().hideAds).toBe(true);
+    expect(screen.getByText('Show Ads')).toBeOnTheScreen();
+    await fireEvent(screen.getAllByRole('switch')[3], 'valueChange', false);
+    expect(useSettings.getState().showAds).toBe(false);
   });
 
   it('Share Analytics switch under Privacy opts out of collection', async () => {
