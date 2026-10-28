@@ -8,7 +8,7 @@ import { getAccounts } from '@/services/accounts';
 import { countLogs } from '@/services/logger';
 import * as dictation from '@/services/dictation';
 import * as transactions from '@/services/transactions';
-import { getFilteredTransactions } from '@/services/transactions';
+import { getFilteredTransactions, getTransactionTags } from '@/services/transactions';
 import { lastParams, sentEvents } from '@/test/analytics';
 import { mockAlert, shownAlerts } from '@/test/alert';
 import { createTestDb } from '@/test/db';
@@ -151,6 +151,27 @@ describe('Add transaction', () => {
     expect(screen.getByLabelText('Payee').props.defaultValue).toBe('Costco');
     expect(sentEvents()).toEqual(['add_transaction']);
     expect(lastParams('add_transaction')).toMatchObject({ kind: 'Expense' });
+  });
+
+  it('saves tags, including a half-typed one, keeps them for repeat entry and Clear removes them', async () => {
+    await waitForAccounts();
+    await choose('Account', 'Chequing');
+    await type('Amount', '12.50');
+    await choose('Category', 'Food');
+    await choose('Subcategory', 'Groceries');
+    await type('Payee', 'Costco');
+    await type('Tags', 'Japan Trip');
+    await fireEvent.press(screen.getByLabelText('Add tag'));
+    await type('Tags', 'Gift');
+    await tap('Accept');
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Transaction added'));
+    const added = (await rows()).find((r) => r.payee === 'Costco')!;
+    expect((await getTransactionTags(db, added.id)).map((t) => t.name)).toEqual(['Gift', 'Japan Trip']);
+    expect(screen.getByLabelText('Remove tag Japan Trip')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Remove tag Gift')).toBeOnTheScreen();
+    await tap('Clear');
+    expect(screen.queryByLabelText('Remove tag Japan Trip')).toBeNull();
+    expect(screen.queryByLabelText('Remove tag Gift')).toBeNull();
   });
 
   it('suggests known payees', async () => {

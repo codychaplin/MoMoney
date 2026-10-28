@@ -1,6 +1,7 @@
 import type { Db } from '@/db/db';
 import { addAccount } from '@/services/accounts';
 import { bulkFind, bulkReplace } from '@/services/bulk';
+import { addTag, getTagIdsFor } from '@/services/tags';
 import { addTransactions, getTransaction } from '@/services/transactions';
 import { createTestDb } from '@/test/db';
 
@@ -53,5 +54,23 @@ describe('bulkReplace', () => {
     [{ payee: '   ' }, 'Payee cannot be blank'],
   ])('validates %j', async (replace, message) => {
     await expect(bulkReplace(db, [1], replace)).rejects.toThrow(message);
+  });
+});
+
+describe('bulk tags', () => {
+  it('finds by tag and adds a tag to the found rows without losing existing ones', async () => {
+    const trip = await addTag(db, 'Trip');
+    const gift = await addTag(db, 'Gift');
+    const [shop, cafe] = await bulkFind(db, { accountId: a });
+    expect(await bulkReplace(db, [shop.id], { tagId: trip })).toBe(1);
+    expect((await bulkFind(db, { tagId: trip })).map((t) => t.id)).toEqual([shop.id]);
+    await bulkReplace(db, [shop.id, cafe.id], { tagId: gift });
+    const links = await getTagIdsFor(db, [shop.id, cafe.id]);
+    expect(links.get(shop.id)).toEqual([trip, gift]);
+    expect(links.get(cafe.id)).toEqual([gift]);
+  });
+
+  it('rejects an unknown tag', async () => {
+    await expect(bulkReplace(db, [1], { tagId: 999 })).rejects.toThrow("Could not find Tag with ID '999'.");
   });
 });

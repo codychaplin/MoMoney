@@ -1,15 +1,17 @@
 import { eq, inArray } from 'drizzle-orm';
 
 import { Db, withTx } from '@/db/db';
-import { accounts, categories, transactions, type Transaction } from '@/db/schema';
+import { accounts, categories, transactions, transactionTags, type Transaction } from '@/db/schema';
 import { TRANSFER_ID } from '@/lib/constants';
 import { InvalidError } from '@/lib/errors';
+import { getTag } from '@/services/tags';
 import { getFilteredTransactions } from '@/services/transactions';
 
-export type BulkFind = { accountId?: number | null; categoryId?: number | null; subcategoryId?: number | null; payee?: string | null };
-export type BulkReplace = { accountId?: number | null; categoryId?: number | null; subcategoryId?: number | null; payee?: string | null };
+export type BulkFind = { accountId?: number | null; categoryId?: number | null; subcategoryId?: number | null; payee?: string | null; tagId?: number | null };
+/** `tagId` is added to the transactions; their other tags are kept. */
+export type BulkReplace = { accountId?: number | null; categoryId?: number | null; subcategoryId?: number | null; payee?: string | null; tagId?: number | null };
 
-export const hasAny = (f: BulkFind) => !!(f.accountId || f.categoryId || f.subcategoryId || f.payee);
+export const hasAny = (f: BulkFind) => !!(f.accountId || f.categoryId || f.subcategoryId || f.payee || f.tagId);
 
 /** Transactions matching the filters. Transfers are excluded: their rows come in linked pairs. */
 export async function bulkFind(db: Db, f: BulkFind): Promise<Transaction[]> {
@@ -30,6 +32,7 @@ export async function bulkReplace(db: Db, ids: number[], r: BulkReplace): Promis
     const sub = (await db.select().from(categories).where(eq(categories.id, r.subcategoryId)))[0];
     if (!sub || sub.parentId !== r.categoryId) throw new InvalidError('Invalid Subcategory');
   }
+  if (r.tagId) await getTag(db, r.tagId);
   if (ids.length === 0) return 0;
 
   const patch: Partial<typeof transactions.$inferInsert> = {};
@@ -40,7 +43,9 @@ export async function bulkReplace(db: Db, ids: number[], r: BulkReplace): Promis
 
   await withTx(db, async () => {
     for (let i = 0; i < ids.length; i += 500) {
-      await db.update(transactions).set(patch).where(inArray(transactions.id, ids.slice(i, i + 500)));
+      const chunk = ids.slice(i, i + 500);
+      if (Object.keys(patch).length) await db.update(transactions).set(patch).where(inArray(transactions.id, chunk));
+      if (r.tagId) await db.insert(transactionTags).values(chunk.map((transactionId) => ({ transactionId, tagId: r.tagId! }))).onConflictDoNothing();
     }
   });
   return ids.length;

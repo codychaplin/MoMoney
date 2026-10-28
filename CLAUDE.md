@@ -6,7 +6,7 @@ Guidance for Claude Code working in this repo.
 
 **MoMoney** is a personal finance tracker for Android, built with Expo (SDK 58) / React Native 0.88.
 
-Features: accounts, categories (with subcategories), transactions (including linked transfer pairs), home/stats screens (breakdown, insights, account summary, balance chart), CSV import/export, bank statement import (Tangerine, Wealthsimple) with regex mapping rules, bulk editing, local logging, and an admin page.
+Features: accounts, categories (with subcategories), tags (many per transaction, mirrored across a transfer pair), transactions (including linked transfer pairs), home/stats screens (breakdown, insights, account summary, balance chart), CSV import/export, bank statement import (Tangerine, Wealthsimple) with regex mapping rules, bulk editing, local logging, and an admin page.
 
 All app code lives in `MoMoney/`. Also read `MoMoney/AGENTS.md`: Expo APIs change each SDK, so check the versioned docs rather than relying on memory.
 
@@ -56,14 +56,16 @@ expo-router, drizzle-orm + expo-sqlite (SQLCipher), @tanstack/react-query, zusta
 - Account balance = starting balance + sum of its transactions. It is computed, never stored.
 - Category IDs 1–4 are reserved (Transfer, Debit, Credit, Income). IDs `>= 5` are user categories, and `isExpense(id)` uses this threshold. ID 5 (Work) is a required Income subcategory.
 - A transfer is two rows joined by `linkedTransactionId` / `transferAccountId`.
+- Tags live in `tag` + `transaction_tag` (no FKs, so services clean up links). `TransactionInput.tags` is names; unknown ones are created, `undefined` on update keeps current tags.
 - Services throw `NotFoundError`, `DuplicateError` or `InvalidError` (`lib/errors.ts`) for domain violations.
 - Use the `@/` import alias for `src/`.
 - Native config goes in `app.json` and `plugins/` (CNG). Never edit `android/` or `ios/` by hand.
 - Logging is local only (the `log` table, viewable on the Logging page). There is no Firebase.
 - CSV files have no header row and use the column orders:
-  - Transactions: `Date, Account, Amount, Category, Subcategory, Payee`
+  - Transactions: `Date, Account, Amount, Category, Subcategory, Payee, Tags` (Tags optional, `|` separated names)
   - Accounts: `Name, Type, Starting Balance, Status`
   - Categories: `Parent, Subcategory, Status`
+  - Tags: `Name, Colour`
 
 ## Test-Driven Development (required)
 

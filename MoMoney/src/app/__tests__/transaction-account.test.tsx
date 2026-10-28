@@ -8,8 +8,9 @@ import type { Db } from '@/db/db';
 import { NotFoundError } from '@/lib/errors';
 import { useSettings } from '@/store/settings';
 import { addAccount, getAccount, getAccounts, updateAccount } from '@/services/accounts';
+import { ensureTagIds, setTransactionTags } from '@/services/tags';
 import * as transactions from '@/services/transactions';
-import { addTransaction, getFilteredTransactions, getTransaction } from '@/services/transactions';
+import { addTransaction, getFilteredTransactions, getTransaction, getTransactionTags } from '@/services/transactions';
 import { sentEvents } from '@/test/analytics';
 import { mockAlert, shownAlerts } from '@/test/alert';
 import { createTestDb } from '@/test/db';
@@ -47,6 +48,24 @@ describe('Edit transaction', () => {
     await seedBasic(db);
     await open((await firstOf()).id);
     await waitFor(() => expect(screen.getByLabelText('Amount').props.defaultValue).toBe('84.37'));
+  });
+
+  it('shows the tags and saves a tags-only change', async () => {
+    await seedBasic(db);
+    const t = await firstOf();
+    await setTransactionTags(db, t.id, await ensureTagIds(db, ['Trip', 'Gift']));
+    const spy = jest.spyOn(transactions, 'updateTransaction');
+    await open(t.id);
+    await waitFor(() => expect(screen.getByLabelText('Remove tag Trip')).toBeOnTheScreen());
+    expect(screen.getByLabelText('Remove tag Gift')).toBeOnTheScreen();
+    await tap('Update');
+    expect(spy).not.toHaveBeenCalled(); // nothing changed
+    await fireEvent.press(screen.getByLabelText('Remove tag Trip'));
+    await type('Tags', 'Party');
+    await tap('Update');
+    await waitFor(() => expect(mockRouter.back).toHaveBeenCalledTimes(2));
+    expect((await getTransactionTags(db, t.id)).map((x) => x.name)).toEqual(['Gift', 'Party']);
+    expect(sentEvents()).toEqual(['edit_transaction']);
   });
 
   it('going back without changes does not write', async () => {

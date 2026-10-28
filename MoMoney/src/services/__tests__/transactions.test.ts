@@ -4,8 +4,9 @@ import { InvalidError, NotFoundError } from '@/lib/errors';
 import { addAccount, getAccount } from '@/services/accounts';
 import {
   addTransaction, addTransactions, countTransactions, getFilteredTransactions, getPayees, getRecentPayees,
-  getTransaction, removeAllTransactions, removeTransaction, updateTransaction,
+  getTransaction, getTransactionTags, removeAllTransactions, removeTransaction, updateTransaction,
 } from '@/services/transactions';
+import { addTag, getTagIdsFor, getTags } from '@/services/tags';
 import { createTestDb } from '@/test/db';
 
 let db: Db;
@@ -205,5 +206,54 @@ describe('misc', () => {
   it('removeAllTransactions returns the count', async () => {
     await addTransactions(db, [expense(1), expense(2)]);
     expect(await removeAllTransactions(db)).toBe(2);
+  });
+});
+
+describe('tags', () => {
+  const tagNames = async (id: number) => (await getTransactionTags(db, id)).map((t) => t.name);
+
+  it('add creates missing tags and links them', async () => {
+    const trip = await addTag(db, 'Trip');
+    const id = await addTransaction(db, expense(500, { tags: ['trip', 'Gift'] }));
+    expect(await tagNames(id)).toEqual(['Gift', 'Trip']);
+    expect((await getTags(db)).map((t) => t.id)).toContain(trip);
+    expect(await getTags(db)).toHaveLength(2);
+  });
+
+  it('update replaces tags, keeps them when undefined, clears with []', async () => {
+    const id = await addTransaction(db, expense(500, { tags: ['A'] }));
+    await updateTransaction(db, id, expense(500, { payee: 'Sobeys' }));
+    expect(await tagNames(id)).toEqual(['A']);
+    await updateTransaction(db, id, expense(500, { tags: ['B'] }));
+    expect(await tagNames(id)).toEqual(['B']);
+    await updateTransaction(db, id, expense(500, { tags: [] }));
+    expect(await tagNames(id)).toEqual([]);
+  });
+
+  it('a transfer carries its tags on both rows', async () => {
+    const debit = await addTransaction(db, { date: '2026-03-10', accountId: chq, amountCents: -300, categoryId: TRANSFER_ID, subcategoryId: DEBIT_ID, transferAccountId: sav, tags: ['Move'] });
+    const credit = (await getTransaction(db, debit)).linkedTransactionId!;
+    expect(await tagNames(debit)).toEqual(['Move']);
+    expect(await tagNames(credit)).toEqual(['Move']);
+    await updateTransaction(db, debit, { date: '2026-03-10', accountId: chq, amountCents: -300, categoryId: TRANSFER_ID, subcategoryId: DEBIT_ID, transferAccountId: sav, tags: [] });
+    expect(await tagNames(credit)).toEqual([]);
+  });
+
+  it('bulk add tags every row; remove deletes links', async () => {
+    await addTransactions(db, [expense(1, { tags: ['A'] }), expense(2, { tags: ['A'] })]);
+    const all = await getFilteredTransactions(db);
+    expect([...(await getTagIdsFor(db, all.map((t) => t.id))).values()]).toHaveLength(2);
+    await removeTransaction(db, all[0].id);
+    expect((await getTagIdsFor(db, [all[0].id])).size).toBe(0);
+    await removeAllTransactions(db);
+    expect((await getTagIdsFor(db, [all[1].id])).size).toBe(0);
+  });
+
+  it('filters and counts by tag', async () => {
+    const [tagged] = [await addTransaction(db, expense(500, { tags: ['Trip'] })), await addTransaction(db, expense(700))];
+    const tagId = (await getTags(db))[0].id;
+    expect((await getFilteredTransactions(db, { tagId })).map((t) => t.id)).toEqual([tagged]);
+    expect(await countTransactions(db, { tagId })).toBe(1);
+    expect(await countTransactions(db, {})).toBe(2);
   });
 });

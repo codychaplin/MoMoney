@@ -12,6 +12,7 @@ import { CSV_FILE_NAMES, EXPORTERS, IMPORTERS, type CsvKind } from '@/services/c
 const IMPORT_EVENTS: Record<CsvKind, EventName> = {
   accounts: EVENTS.importAccounts,
   categories: EVENTS.importCategories,
+  tags: EVENTS.importTags,
   transactions: EVENTS.importTransactions,
   mappingRules: EVENTS.importMappingRules,
   logs: EVENTS.importLogs,
@@ -19,6 +20,7 @@ const IMPORT_EVENTS: Record<CsvKind, EventName> = {
 const EXPORT_EVENTS: Record<CsvKind, EventName> = {
   accounts: EVENTS.exportAccounts,
   categories: EVENTS.exportCategories,
+  tags: EVENTS.exportTags,
   transactions: EVENTS.exportTransactions,
   mappingRules: EVENTS.exportMappingRules,
   logs: EVENTS.exportLogs,
@@ -27,6 +29,7 @@ const EXPORT_EVENTS: Record<CsvKind, EventName> = {
 const ROWS: { kind: CsvKind; label: string }[] = [
   { kind: 'accounts', label: 'Accounts' },
   { kind: 'categories', label: 'Categories' },
+  { kind: 'tags', label: 'Tags' },
   { kind: 'transactions', label: 'Transactions' },
   { kind: 'mappingRules', label: 'Mapping Rules' },
   { kind: 'logs', label: 'Logs' },
@@ -83,7 +86,7 @@ export default function ImportExportScreen() {
         </View>
       ))}
       <Text className="px-4 pt-4 text-sm text-on-surface-variant">
-        Files have no header row. Import accounts and categories before transactions, and transactions before anything that refers to them.
+        Files have no header row. Import accounts, categories and tags before transactions, and transactions before anything that refers to them.
       </Text>
     </Page>
   );

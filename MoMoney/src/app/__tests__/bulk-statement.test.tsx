@@ -6,6 +6,7 @@ import ImportStatementScreen from '@/app/settings/import-statement';
 import type { Db } from '@/db/db';
 import { pickCsv } from '@/lib/files';
 import { saveRule } from '@/services/mappingRules';
+import { addTag, getTagIdsFor } from '@/services/tags';
 import { addTransaction, getFilteredTransactions } from '@/services/transactions';
 import { lastParams, sentEvents } from '@/test/analytics';
 import { mockAlert, shownAlerts } from '@/test/alert';
@@ -67,6 +68,22 @@ describe('Bulk editing', () => {
     expect((await rows()).some((r) => r.payee === 'Loblaws')).toBe(false);
     expect(sentEvents()).toEqual(['bulk_replace']);
     expect(lastParams('bulk_replace')).toMatchObject({ count: 1 });
+  });
+
+  it('finds by tag and adds a tag to the found transactions', async () => {
+    mockAlert('yes');
+    await seedBasic(db);
+    const trip = await addTag(db, 'Trip');
+    await renderWithProviders(<BulkEditingScreen />, db);
+    await choose('Account', 'Chequing');
+    await choose('Add Tag', 'Trip');
+    await tap('Replace');
+    await waitFor(() => expect(screen.getByText(/Transactions Replaced: 3/)).toBeTruthy());
+    const all = await rows();
+    expect([...(await getTagIdsFor(db, all.map((r) => r.id))).values()]).toEqual([[trip], [trip], [trip]]);
+    await choose('Tag', 'Trip');
+    await tap('Find');
+    await waitFor(() => expect(screen.getByText(/Transactions Found: 3/)).toBeTruthy());
   });
 
   it('warns when nothing is chosen to replace with', async () => {

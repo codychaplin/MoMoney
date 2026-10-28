@@ -2,10 +2,11 @@ import type { Db } from '@/db/db';
 import { InvalidError } from '@/lib/errors';
 import { addAccount, getAccounts } from '@/services/accounts';
 import { addCategory, getAllCategories } from '@/services/categories';
-import { EXPORTERS, IMPORTERS, exportLogs, exportMappingRules, importAccounts, importCategories, importLogs, importMappingRules, importTransactions, parseCsvDate } from '@/services/csv';
+import { EXPORTERS, IMPORTERS, exportLogs, exportMappingRules, exportTags, exportTransactions, importAccounts, importCategories, importLogs, importMappingRules, importTags, importTransactions, parseCsvDate } from '@/services/csv';
 import { countLogs, createLogger, getLogs } from '@/services/logger';
 import { getRules, saveRule } from '@/services/mappingRules';
-import { addTransactions, getFilteredTransactions } from '@/services/transactions';
+import { addTag, getTags } from '@/services/tags';
+import { addTransactions, getFilteredTransactions, getTransactionTags } from '@/services/transactions';
 import { createTestDb } from '@/test/db';
 
 describe('parseCsvDate', () => {
@@ -95,10 +96,45 @@ describe('MAUI-format files', () => {
     await expect(importTransactions(db, '2026-03-02,Chq,-5,Nope,Groceries,x')).rejects.toThrow("'Nope' is not a valid value for 'Category'");
   });
 
+  it('imports a 7th Tags column (| separated) and still accepts 6 columns', async () => {
+    await importAccounts(db, 'Chq,Checkings,0,True\nSav,Savings,0,True');
+    await importTransactions(
+      db,
+      [
+        '2026-03-01,Chq,-12.50,Food,Groceries,Loblaws,Trip|Gift',
+        '2026-03-02,Chq,-9.00,Food,Groceries,Sobeys',
+        '2026-03-03,Sav,50.00,Transfer,Credit,,',
+        '2026-03-03,Chq,-50.00,Transfer,Debit,,Move',
+      ].join('\n'),
+    );
+    const rows = await getFilteredTransactions(db);
+    const names = async (payee: string) => (await getTransactionTags(db, rows.find((r) => r.payee === payee)!.id)).map((t) => t.name);
+    expect(await names('Loblaws')).toEqual(['Gift', 'Trip']);
+    expect(await names('Sobeys')).toEqual([]);
+    for (const r of rows.filter((r) => r.categoryId === 1)) expect((await getTransactionTags(db, r.id)).map((t) => t.name)).toEqual(['Move']);
+  });
+
   it('rejects a transfer row whose subcategory is neither debit nor credit', async () => {
     await addCategory(db, 'Odd', 1);
     await importAccounts(db, 'Chq,Checkings,0,True');
     await expect(importTransactions(db, '2026-01-01,Chq,-5,Transfer,Odd,\n')).rejects.toThrow(/Subcategory/);
+  });
+});
+
+describe('tags file', () => {
+  it('imports Name,Colour rows, skipping existing names, and exports them alphabetically', async () => {
+    const db = await createTestDb();
+    await addTag(db, 'trip', '#111111');
+    expect(await importTags(db, 'Wedding,#ff0000\nTrip,#222222\nPlain\n')).toBe(2);
+    expect((await getTags(db)).map((t) => [t.name, t.colour])).toEqual([['Plain', ''], ['trip', '#111111'], ['Wedding', '#ff0000']]);
+    expect(await exportTags(db)).toBe('Plain,\r\ntrip,#111111\r\nWedding,#ff0000');
+  });
+
+  it('exports transaction tags in the 7th column', async () => {
+    const db = await createTestDb();
+    const chq = await addAccount(db, { name: 'Chq', type: 'Checkings', startingBalanceCents: 0 });
+    await addTransactions(db, [{ date: '2026-01-05', accountId: chq, amountCents: -1999, categoryId: 12, subcategoryId: 13, payee: 'Shop', tags: ['Trip', 'Gift'] }]);
+    expect(await exportTransactions(db)).toBe('2026-01-05,Chq,-19.99,Food,Groceries,Shop,Gift|Trip');
   });
 });
 
@@ -109,17 +145,18 @@ describe('export then import is lossless', () => {
     const sav = await addAccount(a, { name: 'Sav', type: 'Savings', startingBalanceCents: 0, enabled: false });
     await addCategory(a, 'Pets', null, '#abcdef');
     await addTransactions(a, [
-      { date: '2026-01-05', accountId: chq, amountCents: -1999, categoryId: 12, subcategoryId: 13, payee: 'Shop "Quoted"' },
-      { date: '2026-01-06', accountId: chq, amountCents: -5000, categoryId: 1, subcategoryId: 2, transferAccountId: sav },
+      { date: '2026-01-05', accountId: chq, amountCents: -1999, categoryId: 12, subcategoryId: 13, payee: 'Shop "Quoted"', tags: ['Trip'] },
+      { date: '2026-01-06', accountId: chq, amountCents: -5000, categoryId: 1, subcategoryId: 2, transferAccountId: sav, tags: ['Move'] },
       { date: '2026-01-06', accountId: sav, amountCents: 7000, categoryId: 4, subcategoryId: 6, payee: 'Bank' },
     ]);
+    await addTag(a, 'Unused', '#010101');
     await saveRule(a, { bankType: 'Tangerine', name: 'Groceries', pattern: 'loblaws', mapping: { Category: '12', Subcategory: '13', Payee: 'Loblaws' } });
     await saveRule(a, { bankType: 'Wealthsimple', name: 'Skip fees', pattern: 'fee', mapping: { Skip: 'true' } });
 
     const files = Object.fromEntries(await Promise.all((Object.keys(EXPORTERS) as (keyof typeof EXPORTERS)[]).map(async (k) => [k, await EXPORTERS[k](a)])));
     const b = await createTestDb();
-    for (const k of ['accounts', 'categories', 'transactions', 'mappingRules'] as const) await IMPORTERS[k](b, files[k]);
-    for (const k of ['accounts', 'categories', 'transactions', 'mappingRules'] as const) expect(await EXPORTERS[k](b)).toBe(files[k]);
+    for (const k of ['accounts', 'categories', 'tags', 'transactions', 'mappingRules'] as const) await IMPORTERS[k](b, files[k]);
+    for (const k of ['accounts', 'categories', 'tags', 'transactions', 'mappingRules'] as const) expect(await EXPORTERS[k](b)).toBe(files[k]);
     expect((await getAccounts(b)).find((x) => x.name === 'Chq, Main')!.balanceCents).toBe(100050 - 1999 - 5000);
   });
 });

@@ -69,4 +69,19 @@ export const MIGRATIONS: string[][] = [
   ],
   // v2: stock tracking removed
   [`DROP TABLE IF EXISTS stock`],
+  // v3: transaction tags
+  [
+    `CREATE TABLE tag (
+      tag_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      tag_name TEXT NOT NULL,
+      colour TEXT NOT NULL DEFAULT ''
+    )`,
+    `CREATE UNIQUE INDEX idx_tag_name ON tag (tag_name COLLATE NOCASE)`,
+    `CREATE TABLE transaction_tag (
+      transaction_id INTEGER NOT NULL,
+      tag_id INTEGER NOT NULL,
+      PRIMARY KEY (transaction_id, tag_id)
+    )`,
+    `CREATE INDEX idx_transaction_tag_tag ON transaction_tag (tag_id)`,
+  ],
 ];

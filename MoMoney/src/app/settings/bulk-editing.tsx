@@ -9,17 +9,18 @@ import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
 import type { Transaction } from '@/db/schema';
 import { useAction } from '@/hooks/action';
-import { useAccounts, useCategories, usePayees } from '@/hooks/data';
+import { useAccounts, useCategories, usePayees, useTags } from '@/hooks/data';
 import { confirm, notify } from '@/lib/confirm';
 import { bulkFind, bulkReplace, hasAny } from '@/services/bulk';
 import { useQueryClient } from '@tanstack/react-query';
 import { getTransactionCount } from '@/services/transactions';
 
-type Side = { accountId: number | null; categoryId: number | null; subcategoryId: number | null; payee: string };
-const empty: Side = { accountId: null, categoryId: null, subcategoryId: null, payee: '' };
+type Side = { accountId: number | null; categoryId: number | null; subcategoryId: number | null; payee: string; tagId: number | null };
+const empty: Side = { accountId: null, categoryId: null, subcategoryId: null, payee: '', tagId: null };
 
-function SidePanel({ title, value, onChange, payees }: { title: string; value: Side; onChange: (s: Side) => void; payees?: string[] }) {
+function SidePanel({ title, tagLabel, value, onChange, payees }: { title: string; tagLabel: string; value: Side; onChange: (s: Side) => void; payees?: string[] }) {
   const { data: accounts = [] } = useAccounts();
+  const { data: tags = [] } = useTags();
   const { data: categories = [] } = useCategories();
   const parents = categories.filter((c) => c.parentId == null && c.id !== 1);
   const subs = categories.filter((c) => c.parentId === value.categoryId);
@@ -60,6 +61,12 @@ function SidePanel({ title, value, onChange, payees }: { title: string; value: S
           onChangeText={(t) => onChange({ ...value, payee: t })}
         />
       )}
+      <PickerField
+        label={tagLabel}
+        value={value.tagId}
+        options={tags.map((t) => ({ label: t.name, value: t.id, colour: t.colour }))}
+        onChange={(v) => onChange({ ...value, tagId: v })}
+      />
     </View>
   );
 }
@@ -74,7 +81,7 @@ export default function BulkEditingScreen() {
   const [found, setFound] = useState<Transaction[] | null>(null);
   const [info, setInfo] = useState('');
 
-  const toFilter = (s: Side) => ({ accountId: s.accountId, categoryId: s.categoryId, subcategoryId: s.subcategoryId, payee: s.payee.trim() || null });
+  const toFilter = (s: Side) => ({ accountId: s.accountId, categoryId: s.categoryId, subcategoryId: s.subcategoryId, payee: s.payee.trim() || null, tagId: s.tagId });
   const reset = () => {
     setFound(null);
     setInfo('');
@@ -119,6 +126,7 @@ export default function BulkEditingScreen() {
         <View className="flex-1">
           <SidePanel
             title="Find..."
+            tagLabel="Tag"
             value={find}
             onChange={(s) => { setFind(s); reset(); }}
             payees={payees}
@@ -127,6 +135,7 @@ export default function BulkEditingScreen() {
         <View className="flex-1">
           <SidePanel
             title="Replace..."
+            tagLabel="Add Tag"
             value={replace}
             onChange={setReplace}
           />

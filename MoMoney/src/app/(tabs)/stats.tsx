@@ -9,6 +9,7 @@ const tiles = [
   { title: 'Accounts', icon: 'bank', href: '/stats/account-summary' },
   { title: 'Breakdown', icon: 'chart-pie', href: '/stats/breakdown' },
   { title: 'Insights', icon: 'chart-bar', href: '/stats/insights' },
+  { title: 'Tags', icon: 'tag-multiple', href: '/stats/tags' },
 ] as const;
 
 export default function StatsScreen() {

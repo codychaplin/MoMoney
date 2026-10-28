@@ -47,6 +47,14 @@ export const EVENTS = {
   exportCategories: 'export_categories',
   removeAllCategories: 'remove_all_categories',
 
+  addTag: 'add_tag',
+  editTag: 'edit_tag',
+  deleteTag: 'delete_tag',
+  mergeTags: 'merge_tags',
+  importTags: 'import_tags',
+  exportTags: 'export_tags',
+  removeAllTags: 'remove_all_tags',
+
   addMappingRule: 'add_mapping_rule',
   editMappingRule: 'edit_mapping_rule',
   deleteMappingRule: 'delete_mapping_rule',

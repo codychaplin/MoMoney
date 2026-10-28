@@ -77,7 +77,8 @@ describe('Stats tab', () => {
     await fireEvent.press(screen.getByText('Accounts'));
     await fireEvent.press(screen.getByText('Breakdown'));
     await fireEvent.press(screen.getByText('Insights'));
-    expect(mockRouter.push.mock.calls.map((c) => c[0])).toEqual(['/stats/account-summary', '/stats/breakdown', '/stats/insights']);
+    await fireEvent.press(screen.getByText('Tags'));
+    expect(mockRouter.push.mock.calls.map((c) => c[0])).toEqual(['/stats/account-summary', '/stats/breakdown', '/stats/insights', '/stats/tags']);
   });
 });
 
@@ -102,6 +103,20 @@ describe('Transactions', () => {
     await fireEvent.press(screen.getByLabelText('Filters'));
     await fireEvent.press(screen.getByLabelText('Account'));
     await fireEvent.press(screen.getByRole('menuitem', { name: 'Savings' }));
+    await waitFor(() => expect(screen.getByText('Transactions - 1/1')).toBeTruthy());
+    expect(screen.getByText('Corner Store')).toBeTruthy();
+    expect(screen.queryByText('Loblaws')).toBeNull();
+  });
+
+  it('shows tags on rows and filters by tag from the filter sheet', async () => {
+    const { savings, day } = await seedBasic(db);
+    await addTransaction(db, { date: day(0), accountId: savings, amountCents: -500, categoryId: 12, subcategoryId: 13, payee: 'Corner Store', tags: ['Trip', 'Gift'] });
+    await renderWithProviders(<TransactionsScreen />, db);
+    await waitFor(() => expect(screen.getByText('Transactions - 4/4')).toBeTruthy());
+    expect(screen.getByText('#Gift #Trip')).toBeOnTheScreen();
+    await fireEvent.press(screen.getByLabelText('Filters'));
+    await fireEvent.press(screen.getByLabelText('Tag'));
+    await fireEvent.press(screen.getByRole('menuitem', { name: 'Trip' }));
     await waitFor(() => expect(screen.getByText('Transactions - 1/1')).toBeTruthy());
     expect(screen.getByText('Corner Store')).toBeTruthy();
     expect(screen.queryByText('Loblaws')).toBeNull();
@@ -186,11 +201,11 @@ describe('Transactions', () => {
 describe('Settings', () => {
   it('navigates to each settings page', async () => {
     await renderWithProviders(<SettingsScreen />, db);
-    for (const label of ['Accounts', 'Categories', 'Mapping Rules', 'Import Data from Bank Statement', 'Import/Export MoMoney Data', 'Data']) {
+    for (const label of ['Accounts', 'Categories', 'Tags', 'Mapping Rules', 'Import Data from Bank Statement', 'Import/Export MoMoney Data', 'Data']) {
       await fireEvent.press(screen.getByText(label));
     }
     expect(mockRouter.push.mock.calls.map((c) => c[0])).toEqual([
-      '/settings/accounts', '/settings/categories', '/settings/mapping-rules', '/settings/import-statement', '/settings/import-export', '/settings/admin',
+      '/settings/accounts', '/settings/categories', '/settings/tags', '/settings/mapping-rules', '/settings/import-statement', '/settings/import-export', '/settings/admin',
     ]);
   });
 

@@ -1,11 +1,13 @@
 import { differenceInCalendarDays, format, parseISO } from 'date-fns';
+import { eq } from 'drizzle-orm';
 
 import type { Db } from '@/db/db';
-import type { Transaction } from '@/db/schema';
+import { transactionTags, transactions, type Tag, type Transaction } from '@/db/schema';
 import { ACCOUNT_TYPES, EXPENSE_THRESHOLD, INCOME_ID, TRANSFER_ID } from '@/lib/constants';
 import { rangeStart, toISO, type DateRange } from '@/lib/dates';
 import { getActiveAccounts } from '@/services/accounts';
 import { getAllCategories } from '@/services/categories';
+import { getTag, getTags } from '@/services/tags';
 import { getFirstTransaction, getFilteredTransactions, getTransactionsFromTo } from '@/services/transactions';
 
 export type Bucket = 'day' | 'month' | 'year';
@@ -217,4 +219,56 @@ export async function getInsightYears(db: Db, today = new Date()): Promise<numbe
   const thisYear = today.getFullYear();
   const firstYear = first ? Number(first.date.slice(0, 4)) : thisYear;
   return Array.from({ length: thisYear - Math.min(firstYear, thisYear) + 1 }, (_, i) => thisYear - i);
+}
+
+// ---------- Tags ----------
+
+type TagTx = Pick<Transaction, 'categoryId' | 'amountCents'>;
+
+/** Spending and income net of refunds; transfers move money between accounts and count as neither. */
+function tagTotals(txs: TagTx[]) {
+  let expense = 0;
+  let income = 0;
+  for (const t of txs) {
+    if (t.categoryId === INCOME_ID) income += t.amountCents;
+    else if (t.categoryId >= EXPENSE_THRESHOLD) expense += t.amountCents;
+  }
+  return { spentCents: Math.max(0, -expense), incomeCents: Math.max(0, income) };
+}
+
+export type TagSummary = Tag & { count: number; spentCents: number; incomeCents: number; firstDate: string | null; lastDate: string | null };
+
+/** Every tag with its totals: most recently used first, unused tags last (alphabetical). */
+export async function getTagSummaries(db: Db): Promise<TagSummary[]> {
+  const rows = await db
+    .select({ tagId: transactionTags.tagId, date: transactions.date, categoryId: transactions.categoryId, amountCents: transactions.amountCents })
+    .from(transactionTags)
+    .innerJoin(transactions, eq(transactions.id, transactionTags.transactionId));
+  const byTag = new Map<number, typeof rows>();
+  for (const r of rows) byTag.set(r.tagId, [...(byTag.get(r.tagId) ?? []), r]);
+  const list = (await getTags(db)).map((tag) => {
+    const txs = byTag.get(tag.id) ?? [];
+    const dates = txs.map((t) => t.date).sort();
+    return { ...tag, count: txs.length, ...tagTotals(txs), firstDate: dates[0] ?? null, lastDate: dates[dates.length - 1] ?? null };
+  });
+  return list.sort((a, b) => (a.lastDate && b.lastDate ? b.lastDate.localeCompare(a.lastDate) : a.lastDate ? -1 : b.lastDate ? 1 : 0) || a.name.localeCompare(b.name));
+}
+
+export type TagStats = {
+  tag: Tag;
+  spentCents: number;
+  incomeCents: number;
+  netCents: number;
+  /** Tagged rows, transfers included. */
+  count: number;
+  breakdown: Breakdown;
+};
+
+/** Totals and category breakdown of every transaction carrying the tag. */
+export async function getTagStats(db: Db, tagId: number): Promise<TagStats> {
+  const tag = await getTag(db, tagId);
+  const txs = await getFilteredTransactions(db, { tagId });
+  const cats = new Map((await getAllCategories(db)).map((c) => [c.id, c]));
+  const { spentCents, incomeCents } = tagTotals(txs);
+  return { tag, spentCents, incomeCents, netCents: incomeCents - spentCents, count: txs.length, breakdown: buildBreakdown(txs, cats) };
 }

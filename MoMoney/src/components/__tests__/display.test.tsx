@@ -86,9 +86,10 @@ const lookups = {
   accountName: (id: number | null | undefined) => (id === 1 ? 'Chequing' : id === 2 ? 'Savings' : ''),
   categoryLabel: (id: number) => `cat${id}`,
   categoryColour: () => '',
+  tagNames: (ids: number[] | undefined) => (ids ?? []).map((id) => (id === 1 ? 'Trip' : id === 2 ? 'Gift' : '')).filter(Boolean).sort(),
 } as Lookups;
 
-const tx = (over: Partial<Transaction> = {}): Transaction => ({
+const tx = (over: Partial<Transaction & { tagIds: number[] }> = {}): Transaction => ({
   id: 7, date: '2026-02-03', accountId: 1, amountCents: -1234, categoryId: 12, subcategoryId: 13, payee: 'Loblaws',
   transferAccountId: null, linkedTransactionId: null, ...over,
 } as Transaction);
@@ -101,6 +102,11 @@ describe('TransactionRow', () => {
     expect(screen.getByText('Loblaws')).toBeTruthy();
     expect(screen.getByText('2026-02-03')).toBeTruthy();
     expect(screen.getByText(/12\.34/)).toBeTruthy();
+  });
+  it('shows the tags after the payee, alphabetically', async () => {
+    await render(<TransactionRow t={tx({ tagIds: [1, 2] })} lookups={lookups} />);
+    expect(screen.getByText('#Gift #Trip')).toBeOnTheScreen();
+    expect(screen.getByText('Loblaws')).toBeOnTheScreen();
   });
   it('masks the amount when values are hidden', async () => {
     useSettings.setState({ showValues: false });

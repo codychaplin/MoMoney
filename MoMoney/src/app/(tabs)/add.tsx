@@ -7,6 +7,7 @@ import { Autocomplete } from '@/components/autocomplete';
 import { DateField } from '@/components/inputs/date-field';
 import { Button, Page } from '@/components/ui';
 import { SegmentedField } from '@/components/inputs/segmented-field';
+import { TagField, withDraft } from '@/components/inputs/tag-field';
 import { TextField } from '@/components/inputs/text-field';
 import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
@@ -42,6 +43,8 @@ export default function AddScreen() {
   const [subcategoryId, setSubcategoryId] = useState<number | null>(null);
   const [payee, setPayee] = useState('');
   const [transferAccountId, setTransferAccountId] = useState<number | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagDraft, setTagDraft] = useState('');
   const [busy, setBusy] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
   const [callIds, setCallIds] = useState<DictationCallIds | null>(null);
@@ -77,6 +80,8 @@ export default function AddScreen() {
     setAmountText('');
     setPayee('');
     setTransferAccountId(null);
+    setTags([]);
+    setTagDraft('');
     setAccountId(null);
     setDate(todayISO());
     setCallIds(null);
@@ -98,6 +103,7 @@ export default function AddScreen() {
     if (kind !== 'Transfer' && !payee.trim()) return toast.error('Please Enter a Payee');
 
     setBusy(true);
+    const tagList = withDraft(tags, tagDraft);
     try {
       const id = await addTransaction(db, {
         date,
@@ -107,6 +113,7 @@ export default function AddScreen() {
         subcategoryId: kind === 'Transfer' ? DEBIT_ID : subcategoryId,
         payee,
         transferAccountId: kind === 'Transfer' ? transferAccountId : null,
+        tags: tagList,
       });
       if (callIds) {
         await linkDictationCalls(db, id, callIds);
@@ -114,7 +121,9 @@ export default function AddScreen() {
       }
       await refresh();
       trackEvent(EVENTS.addTransaction, { kind });
-      // keep date, account, category and payee so repeated entry is quick
+      // keep date, account, category, payee and tags so repeated entry is quick
+      setTags(tagList);
+      setTagDraft('');
       setAmountText('');
       setTransferAccountId(null);
       toast.success('Transaction added');
@@ -181,7 +190,10 @@ export default function AddScreen() {
       right={
         dictationEnabled ? (
           <Pressable accessibilityRole="button" accessibilityLabel="Dictate" accessibilityState={{ busy: transcribing }} hitSlop={12} disabled={transcribing} onPress={() => void dictate()}>
-            {transcribing ? <ActivityIndicator color={icon} /> : <MaterialDesignIcons name={mic.recording ? 'stop' : 'microphone'} size={26} color={mic.recording ? '#d32f2f' : icon} />}
+            {transcribing ?
+              <ActivityIndicator color={icon} /> :
+              <MaterialDesignIcons name={mic.recording ? 'stop' : 'microphone'} size={26} color={mic.recording ? '#d32f2f' : icon} />
+            }
           </Pressable>
         ) : undefined
       }
@@ -249,6 +261,7 @@ export default function AddScreen() {
           suggestions={payees}
         />
       )}
+      <TagField value={tags} onChange={setTags} draft={tagDraft} onDraftChange={setTagDraft} />
       <View className="my-2 flex-row items-center gap-3">
         <Button
           label="Clear"

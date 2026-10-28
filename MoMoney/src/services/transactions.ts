@@ -1,10 +1,11 @@
-import { and, asc, count, desc, eq, gte, lte, ne, sql, type SQL } from 'drizzle-orm';
+import { and, asc, count, desc, eq, gte, inArray, lte, ne, sql, type SQL } from 'drizzle-orm';
 
 import { Db, withTx } from '@/db/db';
-import { accounts, categories, transactions, type Transaction } from '@/db/schema';
+import { accounts, categories, tags, transactions, transactionTags, type Tag, type Transaction } from '@/db/schema';
 import { CREDIT_ID, DEBIT_ID, EXPENSE_THRESHOLD, INCOME_ID, TRANSFER_ID } from '@/lib/constants';
 import { isISODate } from '@/lib/dates';
 import { InvalidError, NotFoundError } from '@/lib/errors';
+import { ensureTagIds, setTransactionTags } from '@/services/tags';
 
 /**
  * Amounts are signed cents: expenses and transfer debits negative, income and credits positive.
@@ -20,6 +21,7 @@ export type TransactionInput = {
   payee?: string;
   /** Required for transfers: the other account. */
   transferAccountId?: number | null;
+  tags?: string[];
 };
 
 // ---------- validation ----------
@@ -91,6 +93,12 @@ async function insertTransfer(db: Db, t: TransactionInput): Promise<{ debitId: n
 }
 
 async function insertOne(db: Db, t: TransactionInput): Promise<number> {
+  const id = await insertRows(db, t);
+  if (t.tags?.length) await setTransactionTags(db, id, await ensureTagIds(db, t.tags));
+  return id;
+}
+
+async function insertRows(db: Db, t: TransactionInput): Promise<number> {
   if (t.categoryId === TRANSFER_ID) {
     const { debitId, creditId } = await insertTransfer(db, t);
     return t.amountCents < 0 ? debitId : creditId;
@@ -151,6 +159,7 @@ export async function updateTransaction(db: Db, id: number, t: TransactionInput)
   check(t);
 
   await withTx(db, async () => {
+    if (t.tags) await setTransactionTags(db, id, await ensureTagIds(db, t.tags));
     if (!wasTransfer) {
       await db
         .update(transactions)
@@ -184,16 +193,18 @@ export async function updateTransaction(db: Db, id: number, t: TransactionInput)
 /** Delete a row and, for a transfer, its partner. */
 export async function removeTransaction(db: Db, id: number): Promise<void> {
   const existing = await getTransaction(db, id);
+  const ids = existing.linkedTransactionId != null ? [id, existing.linkedTransactionId] : [id];
   await withTx(db, async () => {
-    await db.delete(transactions).where(eq(transactions.id, id));
-    if (existing.linkedTransactionId != null) {
-      await db.delete(transactions).where(eq(transactions.id, existing.linkedTransactionId));
-    }
+    await db.delete(transactionTags).where(inArray(transactionTags.transactionId, ids));
+    await db.delete(transactions).where(inArray(transactions.id, ids));
   });
 }
 
 export async function removeAllTransactions(db: Db): Promise<number> {
-  return withTx(db, async () => (await db.delete(transactions).returning({ id: transactions.id })).length);
+  return withTx(db, async () => {
+    await db.delete(transactionTags);
+    return (await db.delete(transactions).returning({ id: transactions.id })).length;
+  });
 }
 
 // ---------- queries ----------
@@ -216,6 +227,8 @@ export type TransactionFilter = {
   subcategoryId?: number | null;
   /** Exact match. */
   payee?: string | null;
+  /** Only transactions carrying this tag. */
+  tagId?: number | null;
   limit?: number;
   offset?: number;
 };
@@ -230,7 +243,22 @@ function whereFor(f: TransactionFilter): SQL | undefined {
   if (f.categoryId) c.push(eq(transactions.categoryId, f.categoryId));
   if (f.subcategoryId) c.push(eq(transactions.subcategoryId, f.subcategoryId));
   if (f.payee) c.push(eq(transactions.payee, f.payee));
+  if (f.tagId) {
+    c.push(
+      sql`exists (select 1 from ${transactionTags} where ${transactionTags.transactionId} = ${transactions.id} and ${transactionTags.tagId} = ${f.tagId})`,
+    );
+  }
   return c.length ? and(...c) : undefined;
+}
+
+/** Tags on a transaction, alphabetical. */
+export async function getTransactionTags(db: Db, id: number): Promise<Tag[]> {
+  return db
+    .select({ id: tags.id, name: tags.name, colour: tags.colour })
+    .from(transactionTags)
+    .innerJoin(tags, eq(tags.id, transactionTags.tagId))
+    .where(eq(transactionTags.transactionId, id))
+    .orderBy(sql`${tags.name} COLLATE NOCASE`);
 }
 
 /** Newest first; ties by id ascending (as in MAUI). */

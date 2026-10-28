@@ -1,4 +1,4 @@
-import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { integer, primaryKey, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 // The SQL that creates these tables lives in migrations.ts. Keep the two in sync.
 
@@ -34,6 +34,22 @@ export const transactions = sqliteTable('transaction', {
   linkedTransactionId: integer('linked_transaction_id'),
 });
 
+export const tags = sqliteTable('tag', {
+  id: integer('tag_id').primaryKey({ autoIncrement: true }),
+  name: text('tag_name').notNull(),
+  colour: text('colour').notNull().default(''),
+});
+
+/** Links a transaction to a tag. A transfer's two rows carry the same tags. */
+export const transactionTags = sqliteTable(
+  'transaction_tag',
+  {
+    transactionId: integer('transaction_id').notNull(),
+    tagId: integer('tag_id').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.transactionId, t.tagId] })],
+);
+
 export const mappingRules = sqliteTable('mapping_rule', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   bankType: text('bank_type').notNull(),
@@ -67,8 +83,9 @@ export const aiCalls = sqliteTable('ai_call', {
 export type Account = typeof accounts.$inferSelect;
 export type Category = typeof categories.$inferSelect;
 export type Transaction = typeof transactions.$inferSelect;
+export type Tag = typeof tags.$inferSelect;
 export type MappingRule = typeof mappingRules.$inferSelect;
 export type Log = typeof logs.$inferSelect;
 export type AiCall = typeof aiCalls.$inferSelect;
 
-export const schema = { accounts, categories, transactions, mappingRules, logs, aiCalls };
+export const schema = { accounts, categories, transactions, tags, transactionTags, mappingRules, logs, aiCalls };

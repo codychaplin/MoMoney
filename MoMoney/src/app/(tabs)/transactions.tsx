@@ -14,10 +14,11 @@ import { Page, TopSpacer } from '@/components/ui';
 import { TextField } from '@/components/inputs/text-field';
 import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
-import { useAccounts, useCategories, useLookups, usePayees } from '@/hooks/data';
+import { useAccounts, useCategories, useLookups, usePayees, useTags } from '@/hooks/data';
 import { LOAD_COUNT } from '@/lib/constants';
 import { todayISO } from '@/lib/dates';
 import { parseCents } from '@/lib/money';
+import { getTagIdsFor } from '@/services/tags';
 import { countTransactions, getFilteredTransactions, type TransactionFilter } from '@/services/transactions';
 
 /** Re-evaluates `value` only after it has been stable for `ms`. */
@@ -36,6 +37,7 @@ export default function TransactionsScreen() {
   const { data: accounts = [] } = useAccounts();
   const { data: categories = [] } = useCategories();
   const { data: payees = [] } = usePayees();
+  const { data: tags = [] } = useTags();
   const icon = (useCSSVariable('--color-on-secondary-container') as string) ?? '#364b3f';
 
   const { height } = useWindowDimensions();
@@ -49,6 +51,7 @@ export default function TransactionsScreen() {
   const [minText, setMinText] = useState('');
   const [maxText, setMaxText] = useState('');
   const [payeeText, setPayeeText] = useState('');
+  const [tagId, setTagId] = useState<number | null>(null);
 
   const min = useDebounced(parseCents(minText), 600);
   const max = useDebounced(parseCents(maxText), 600);
@@ -61,21 +64,25 @@ export default function TransactionsScreen() {
   }, [min, max]);
 
   const filter: TransactionFilter = useMemo(
-    () => ({ from, to, accountId, categoryId, subcategoryId, minCents: min, maxCents: max, payee }),
-    [from, to, accountId, categoryId, subcategoryId, min, max, payee],
+    () => ({ from, to, accountId, categoryId, subcategoryId, minCents: min, maxCents: max, payee, tagId }),
+    [from, to, accountId, categoryId, subcategoryId, min, max, payee, tagId],
   );
 
   const { data: total = 0 } = useQuery({ queryKey: ['transactions', 'count', filter], queryFn: () => countTransactions(db, filter) });
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ['transactions', 'list', filter],
     initialPageParam: 0,
-    queryFn: ({ pageParam }) => getFilteredTransactions(db, { ...filter, limit: LOAD_COUNT, offset: pageParam }),
+    queryFn: async ({ pageParam }) => {
+      const page = await getFilteredTransactions(db, { ...filter, limit: LOAD_COUNT, offset: pageParam });
+      const links = await getTagIdsFor(db, page.map((t) => t.id));
+      return page.map((t) => ({ ...t, tagIds: links.get(t.id) ?? [] }));
+    },
     getNextPageParam: (last, all) => (last.length < LOAD_COUNT ? undefined : all.length * LOAD_COUNT),
   });
   const rows = useMemo(() => data?.pages.flat() ?? [], [data]);
 
   const hasFilters =
-    from !== `${new Date().getFullYear()}-01-01` || to !== todayISO() || accountId != null || categoryId != null || subcategoryId != null || minText !== '' || maxText !== '' || payeeText !== '';
+    from !== `${new Date().getFullYear()}-01-01` || to !== todayISO() || accountId != null || categoryId != null || subcategoryId != null || minText !== '' || maxText !== '' || payeeText !== '' || tagId != null;
 
   const parents = categories.filter((c) => c.parentId == null);
   const subs = categories.filter((c) => c.parentId === categoryId);
@@ -174,6 +181,12 @@ export default function TransactionsScreen() {
                   value={payeeText}
                   onChangeText={setPayeeText}
                   suggestions={payees}
+                />
+                <PickerField
+                  label="Tag"
+                  value={tagId}
+                  options={tags.map((t) => ({ label: t.name, value: t.id, colour: t.colour }))}
+                  onChange={setTagId}
                 />
               </View>
           </ScrollView>

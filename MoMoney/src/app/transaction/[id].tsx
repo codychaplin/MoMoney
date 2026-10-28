@@ -8,6 +8,7 @@ import { toast } from 'sonner-native';
 import { Autocomplete } from '@/components/autocomplete';
 import { DateField } from '@/components/inputs/date-field';
 import { ActionButtons, Page } from '@/components/ui';
+import { TagField, withDraft } from '@/components/inputs/tag-field';
 import { TextField } from '@/components/inputs/text-field';
 import { PickerField } from '@/components/inputs/picker-field';
 import { useDb } from '@/db/provider';
@@ -18,7 +19,7 @@ import { confirm } from '@/lib/confirm';
 import { todayISO } from '@/lib/dates';
 import { centsToDecimal, parseCents } from '@/lib/money';
 import { getAccounts } from '@/services/accounts';
-import { getTransaction, removeTransaction, updateTransaction } from '@/services/transactions';
+import { getTransaction, getTransactionTags, removeTransaction, updateTransaction } from '@/services/transactions';
 
 export default function EditTransactionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -27,6 +28,7 @@ export default function EditTransactionScreen() {
   const router = useRouter();
   const run = useAction('EditTransaction');
   const { data: tx } = useQuery({ queryKey: ['transaction', txId], queryFn: () => getTransaction(db, txId) });
+  const { data: savedTags } = useQuery({ queryKey: ['transaction', txId, 'tags'], queryFn: async () => (await getTransactionTags(db, txId)).map((t) => t.name) });
   const { data: allAccounts = [] } = useQuery({ queryKey: ['accounts', 'all'], queryFn: () => getAccounts(db) });
   const { data: categories = [] } = useCategories();
   const { data: payees = [] } = usePayees();
@@ -38,6 +40,8 @@ export default function EditTransactionScreen() {
   const [subcategoryId, setSubcategoryId] = useState<number | null>(null);
   const [payee, setPayee] = useState('');
   const [transferAccountId, setTransferAccountId] = useState<number | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagDraft, setTagDraft] = useState('');
 
   // Amounts are shown positive; the sign comes from the transaction type on save.
   useEffect(() => {
@@ -50,6 +54,9 @@ export default function EditTransactionScreen() {
     setPayee(tx.payee);
     setTransferAccountId(tx.transferAccountId);
   }, [tx]);
+  useEffect(() => {
+    if (savedTags) setTags(savedTags);
+  }, [savedTags]);
 
   if (!tx) return <Page title="Edit Transaction" back />;
 
@@ -71,7 +78,11 @@ export default function EditTransactionScreen() {
       return toast.error('Validation Error: Please fill out all fields');
     }
     if (isTransfer ? transferAccountId == null : !payee.trim()) return toast.error('Validation Error: Please fill out all fields');
+    const tagList = withDraft(tags, tagDraft);
+    // tags are only sent once loaded, so an early Update cannot clear them
+    const tagsChanged = !!savedTags && (tagList.length !== savedTags.length || tagList.some((n) => !savedTags.includes(n)));
     const unchanged =
+      !tagsChanged &&
       date === tx.date && accountId === tx.accountId && sign * cents === tx.amountCents && categoryId === tx.categoryId &&
       subcategoryId === tx.subcategoryId && payee.trim() === tx.payee && (transferAccountId ?? null) === tx.transferAccountId;
     if (unchanged) return router.back();
@@ -85,6 +96,7 @@ export default function EditTransactionScreen() {
           subcategoryId,
           payee,
           transferAccountId: isTransfer ? transferAccountId : null,
+          tags: savedTags ? tagList : undefined,
         }),
       'update',
       EVENTS.editTransaction,
@@ -103,6 +115,8 @@ export default function EditTransactionScreen() {
     setAccountId(null);
     setAmountText('');
     setPayee('');
+    setTags([]);
+    setTagDraft('');
     if (!isIncome) {
       setCategoryId(null);
       setSubcategoryId(null);
@@ -167,6 +181,7 @@ export default function EditTransactionScreen() {
           suggestions={payees}
         />
       )}
+      <TagField value={tags} onChange={setTags} draft={tagDraft} onDraftChange={setTagDraft} />
       <ActionButtons
         isEdit
         onClear={clear}

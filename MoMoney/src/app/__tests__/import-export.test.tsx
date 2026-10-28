@@ -20,7 +20,7 @@ beforeEach(async () => {
 });
 afterEach(() => jest.restoreAllMocks());
 
-// rows are in order: Accounts, Categories, Transactions, Mapping Rules, Logs
+// rows are in order: Accounts, Categories, Tags, Transactions, Mapping Rules, Logs
 const press = (button: 'Import' | 'Export', row: number) => fireEvent.press(screen.getAllByText(button)[row]);
 
 describe('Import / Export', () => {
@@ -39,7 +39,7 @@ describe('Import / Export', () => {
     const alert = mockAlert();
     (shareTextFile as jest.Mock).mockRejectedValue(new Error('no space'));
     await renderWithProviders(<ImportExportScreen />, db);
-    await press('Export', 2);
+    await press('Export', 3);
     await waitFor(() => expect(shownAlerts(alert).map((a) => a[0])).toEqual(['Error', 'Error']));
     expect(shownAlerts(alert)[1][1]).toBe('Could not export transactions');
     expect(sentEvents()).toEqual(['error_log']);
@@ -54,6 +54,18 @@ describe('Import / Export', () => {
     expect((await getAccounts(db)).map((a) => a.name).sort()).toEqual(['Daily', 'Savings Plus']);
     expect(sentEvents()).toEqual(['import_accounts']);
     expect(lastParams('import_accounts')).toMatchObject({ count: 2 });
+  });
+
+  it('imports and exports tags', async () => {
+    const alert = mockAlert();
+    (shareTextFile as jest.Mock).mockResolvedValue(undefined);
+    (pickCsv as jest.Mock).mockResolvedValue({ name: 't.csv', text: 'Trip,#ff0000\nGift\n' });
+    await renderWithProviders(<ImportExportScreen />, db);
+    await press('Import', 2);
+    await waitFor(() => expect(shownAlerts(alert)).toEqual([['Success', 'Imported 2 tags']]));
+    await press('Export', 2);
+    await waitFor(() => expect(shareTextFile).toHaveBeenCalledWith('tags.csv', 'Gift,\r\nTrip,#ff0000'));
+    expect(sentEvents()).toEqual(['import_tags', 'export_tags']);
   });
 
   it('does nothing when the picker is cancelled', async () => {

@@ -3,7 +3,9 @@ import { INCOME_ID } from '@/lib/constants';
 import { addAccount } from '@/services/accounts';
 import {
   bucketFor, buildBalanceSeries, buildBreakdown, buildInsights, getAccountSummary, getBreakdown, getHomeData, getInsightYears, getInsights,
+  getTagStats, getTagSummaries,
 } from '@/services/stats';
+import { addTag } from '@/services/tags';
 import { addTransactions } from '@/services/transactions';
 import { createTestDb } from '@/test/db';
 
@@ -171,5 +173,59 @@ describe('db-backed stats', () => {
     expect((await getBreakdown(db, 2026, null)).expenseCents).toBe(900);
     expect((await getInsights(db, 2025)).totalExpenseCents).toBe(100);
     expect(await getInsightYears(db, new Date(2026, 5, 1))).toEqual([2026, 2025]);
+  });
+});
+
+describe('tag stats', () => {
+  let db: Db;
+  let chq: number;
+  let sav: number;
+  let trip: number;
+  let empty: number;
+  beforeEach(async () => {
+    db = await createTestDb();
+    chq = await addAccount(db, { name: 'Chq', type: 'Checkings', startingBalanceCents: 0 });
+    sav = await addAccount(db, { name: 'Sav', type: 'Savings', startingBalanceCents: 0 });
+    trip = await addTag(db, 'Trip', '#112233');
+    empty = await addTag(db, 'Empty');
+    const groceries = { categoryId: 12, subcategoryId: 13 };
+    const tags = ['Trip'];
+    await addTransactions(db, [
+      { date: '2026-03-01', accountId: chq, amountCents: -10000, ...groceries, payee: 'Shop', tags },
+      { date: '2026-03-01', accountId: sav, amountCents: -2500, categoryId: 12, subcategoryId: 14, payee: 'Cafe', tags },
+      { date: '2026-03-03', accountId: chq, amountCents: -5000, ...groceries, payee: 'Shop', tags },
+      { date: '2026-03-03', accountId: chq, amountCents: 1000, ...groceries, payee: 'Shop', tags }, // refund
+      { date: '2026-03-04', accountId: chq, amountCents: 30000, categoryId: INCOME_ID, subcategoryId: 5, payee: 'Friend', tags },
+      { date: '2026-03-04', accountId: chq, amountCents: -999, ...groceries, payee: 'Untagged' },
+    ]);
+  });
+
+  it('totals, count and category breakdown', async () => {
+    const s = await getTagStats(db, trip);
+    expect(s.tag).toEqual({ id: trip, name: 'Trip', colour: '#112233' });
+    expect(s).toMatchObject({ spentCents: 16500, incomeCents: 30000, netCents: 13500, count: 5 });
+    expect(s.breakdown.expenses.map((x) => [x.name, x.amountCents])).toEqual([['Food', 16500]]);
+  });
+
+  it('a tag with no transactions has zero stats', async () => {
+    const s = await getTagStats(db, empty);
+    expect(s).toMatchObject({ spentCents: 0, incomeCents: 0, netCents: 0, count: 0 });
+    expect(s.breakdown.expenses).toEqual([]);
+  });
+
+  it('transfers count as tagged rows but not as spending or income', async () => {
+    await addTransactions(db, [{ date: '2026-03-05', accountId: chq, amountCents: -7000, categoryId: 1, subcategoryId: 2, transferAccountId: sav, tags: ['Trip'] }]);
+    const s = await getTagStats(db, trip);
+    expect(s).toMatchObject({ spentCents: 16500, incomeCents: 30000, count: 7 });
+  });
+
+  it('summaries list the most recently used tag first, unused ones after', async () => {
+    const other = await addTag(db, 'Alpha');
+    await addTransactions(db, [{ date: '2026-04-01', accountId: chq, amountCents: -300, categoryId: 12, subcategoryId: 13, payee: 'Shop', tags: ['Alpha'] }]);
+    expect(await getTagSummaries(db)).toEqual([
+      { id: other, name: 'Alpha', colour: '', count: 1, spentCents: 300, incomeCents: 0, firstDate: '2026-04-01', lastDate: '2026-04-01' },
+      { id: trip, name: 'Trip', colour: '#112233', count: 5, spentCents: 16500, incomeCents: 30000, firstDate: '2026-03-01', lastDate: '2026-03-04' },
+      { id: empty, name: 'Empty', colour: '', count: 0, spentCents: 0, incomeCents: 0, firstDate: null, lastDate: null },
+    ]);
   });
 });

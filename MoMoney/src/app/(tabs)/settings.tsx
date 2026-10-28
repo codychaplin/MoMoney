@@ -55,6 +55,11 @@ export default function SettingsScreen() {
         onPress={go('/settings/categories')}
       />
       <ListRow
+        label="Tags"
+        chevron
+        onPress={go('/settings/tags')}
+      />
+      <ListRow
         label="Mapping Rules"
         chevron
         onPress={go('/settings/mapping-rules')}

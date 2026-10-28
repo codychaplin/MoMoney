@@ -11,14 +11,16 @@ import { addAccounts, getAccounts, getAccountsByName } from '@/services/accounts
 import { addCategories, categoryKeyMap, getAllCategories } from '@/services/categories';
 import { LOG_LEVELS, type LogLevel } from '@/services/logger';
 import { addRules, getRules, parseMapping, type RuleMapping } from '@/services/mappingRules';
+import { addTags, getTagIdsFor, getTags } from '@/services/tags';
 import { addTransactions, getFilteredTransactions, type TransactionInput } from '@/services/transactions';
 
 /** All files are headerless, comma separated, with the column orders of the MAUI app. */
-export type CsvKind = 'transactions' | 'accounts' | 'categories' | 'mappingRules' | 'logs';
+export type CsvKind = 'transactions' | 'accounts' | 'categories' | 'tags' | 'mappingRules' | 'logs';
 export const CSV_FILE_NAMES: Record<CsvKind, string> = {
   transactions: 'transactions.csv',
   accounts: 'accounts.csv',
   categories: 'categories.csv',
+  tags: 'tags.csv',
   mappingRules: 'mapping_rules.csv',
   logs: 'logs.csv',
 };
@@ -91,13 +93,30 @@ export async function importCategories(db: Db, text: string): Promise<number> {
   return added;
 }
 
+// ---------- tags ----------
+
+/** Columns: name, colour. */
+export async function exportTags(db: Db): Promise<string> {
+  return writeRows((await getTags(db)).map((t) => [t.name, t.colour]));
+}
+
+/** Existing names are skipped. */
+export async function importTags(db: Db, text: string): Promise<number> {
+  return addTags(db, readRows(text).map((r) => ({ name: r[0] ?? '', colour: r[1]?.trim() ?? '' })));
+}
+
 // ---------- transactions ----------
+
+const TAG_SEPARATOR = '|';
+const splitTags = (s: string | undefined) => (s ?? '').split(TAG_SEPARATOR).map((t) => t.trim()).filter(Boolean);
 
 /** Oldest first, each transfer's debit directly followed by its credit. */
 export async function exportTransactions(db: Db): Promise<string> {
   const [rows, accounts, cats] = [await getFilteredTransactions(db), await getAccounts(db), await getAllCategories(db)];
   const accountName = new Map(accounts.map((a) => [a.id, a.name]));
   const catName = new Map(cats.map((c) => [c.id, c.name]));
+  const tagName = new Map((await getTags(db)).map((t) => [t.id, t.name]));
+  const tagIds = await getTagIdsFor(db, rows.map((r) => r.id));
   const byId = new Map(rows.map((r) => [r.id, r]));
   const ordered = [...rows].sort((a, b) => a.date.localeCompare(b.date) || a.id - b.id);
   const out: (string | number)[][] = [];
@@ -110,14 +129,14 @@ export async function exportTransactions(db: Db): Promise<string> {
     group.sort((a, b) => (a.subcategoryId === DEBIT_ID ? -1 : b.subcategoryId === DEBIT_ID ? 1 : 0));
     for (const g of group) {
       done.add(g.id);
-      out.push([g.date, accountName.get(g.accountId) ?? '', centsToDecimal(g.amountCents), catName.get(g.categoryId) ?? '', catName.get(g.subcategoryId) ?? '', g.payee]);
+      out.push([g.date, accountName.get(g.accountId) ?? '', centsToDecimal(g.amountCents), catName.get(g.categoryId) ?? '', catName.get(g.subcategoryId) ?? '', g.payee, (tagIds.get(g.id) ?? []).map((id) => tagName.get(id) ?? '').sort((a, b) => a.localeCompare(b)).join(TAG_SEPARATOR)]);
     }
   }
   return writeRows(out);
 }
 
 /**
- * Columns: date, account, amount, category, subcategory, payee. Names are resolved to ids.
+ * Columns: date, account, amount, category, subcategory, payee, tags (optional, `|` separated). Names are resolved to ids.
  * A transfer is written as a Debit row and a Credit row; each credit is matched to the latest
  * unmatched debit with the same date and opposite amount, in either row order (not necessarily adjacent).
  */
@@ -126,7 +145,7 @@ export async function importTransactions(db: Db, text: string): Promise<number> 
   const catMap = categoryKeyMap(await getAllCategories(db));
   const rows = readRows(text);
   const list: TransactionInput[] = [];
-  const pendingCredits: { date: string; amountCents: number; accountId: number; row: number }[] = [];
+  const pendingCredits: { date: string; amountCents: number; accountId: number; row: number; tags: string[] }[] = [];
   const pendingDebits: { date: string; amountCents: number; accountId: number; index: number }[] = [];
 
   rows.forEach((r, i) => {
@@ -142,27 +161,29 @@ export async function importTransactions(db: Db, text: string): Promise<number> 
     const sub = catMap.get(`${(r[4] ?? '').trim()},${category.name}`.toLowerCase());
     if (!sub) throw bad('Transaction', n, r[4] ?? '', 'Subcategory');
     const payee = (r[5] ?? '').trim();
+    const tags = splitTags(r[6]);
 
     if (category.id === TRANSFER_ID) {
       if (sub.id === DEBIT_ID) {
         const k = pendingCredits.findLastIndex((c) => c.date === date && c.amountCents === -cents);
         const [credit] = k < 0 ? [] : pendingCredits.splice(k, 1);
         if (!credit) pendingDebits.push({ date, amountCents: cents, accountId: account.id, index: list.length });
-        list.push({ date, accountId: account.id, amountCents: cents, categoryId: TRANSFER_ID, subcategoryId: DEBIT_ID, transferAccountId: credit?.accountId ?? null });
+        list.push({ date, accountId: account.id, amountCents: cents, categoryId: TRANSFER_ID, subcategoryId: DEBIT_ID, transferAccountId: credit?.accountId ?? null, tags: [...tags, ...(credit?.tags ?? [])] });
       } else if (sub.id === CREDIT_ID) {
         const k = pendingDebits.findLastIndex((d) => d.date === date && d.amountCents === -cents);
         if (k < 0) {
-          pendingCredits.push({ date, amountCents: cents, accountId: account.id, row: n });
+          pendingCredits.push({ date, amountCents: cents, accountId: account.id, row: n, tags });
         } else {
           const [debit] = pendingDebits.splice(k, 1);
           list[debit.index].transferAccountId = account.id; // the credit row's account is the destination
+          list[debit.index].tags = [...list[debit.index].tags!, ...tags]; // either row of a pair may carry the tags
         }
       } else {
         throw bad('Transaction', n, r[4] ?? '', 'Subcategory');
       }
     } else {
       if (!payee) throw new InvalidError(`Transaction ${n}: Payee cannot be blank`);
-      list.push({ date, accountId: account.id, amountCents: cents, categoryId: category.id, subcategoryId: sub.id, payee });
+      list.push({ date, accountId: account.id, amountCents: cents, categoryId: category.id, subcategoryId: sub.id, payee, tags });
     }
   });
   if (pendingCredits.length) throw new InvalidError(`Transaction ${pendingCredits[0].row}: transfer credit has no matching debit`);
@@ -263,6 +284,7 @@ export const EXPORTERS: Record<CsvKind, (db: Db) => Promise<string>> = {
   transactions: exportTransactions,
   accounts: exportAccounts,
   categories: exportCategories,
+  tags: exportTags,
   mappingRules: exportMappingRules,
   logs: exportLogs,
 };
@@ -271,6 +293,7 @@ export const IMPORTERS: Record<CsvKind, (db: Db, text: string) => Promise<number
   transactions: importTransactions,
   accounts: importAccounts,
   categories: importCategories,
+  tags: importTags,
   mappingRules: importMappingRules,
   logs: importLogs,
 };

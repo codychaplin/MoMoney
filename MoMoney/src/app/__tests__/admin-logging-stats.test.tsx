@@ -7,10 +7,11 @@ import AccountSummaryScreen from '@/app/stats/account-summary';
 import BreakdownScreen from '@/app/stats/breakdown';
 import InsightsScreen from '@/app/stats/insights';
 import type { Db } from '@/db/db';
-import { getAccounts } from '@/services/accounts';
+import { addAccount, getAccounts } from '@/services/accounts';
 import { getAllCategories } from '@/services/categories';
 import { countLogs, createLogger } from '@/services/logger';
 import { getRules, saveRule } from '@/services/mappingRules';
+import { getTags } from '@/services/tags';
 import { addTransaction, countTransactions, removeAllTransactions } from '@/services/transactions';
 import { useSettings } from '@/store/settings';
 import { lastParams, sentEvents } from '@/test/analytics';
@@ -139,6 +140,17 @@ describe('Admin', () => {
     await tap('Remove All Accounts');
     await waitFor(async () => expect(await getAccounts(db)).toHaveLength(0));
     expect(sentEvents()).toEqual(['remove_all_accounts']);
+  });
+
+  it('removes all tags but keeps the transactions', async () => {
+    mockAlert('yes');
+    const account = await addAccount(db, { name: 'A', type: 'Checkings', startingBalanceCents: 0 });
+    await addTransaction(db, { date: '2026-01-01', accountId: account, amountCents: -100, categoryId: 12, subcategoryId: 13, payee: 'Shop', tags: ['Trip'] });
+    await renderWithProviders(<AdminScreen />, db);
+    await tap('Remove All Tags');
+    await waitFor(async () => expect(await getTags(db)).toHaveLength(0));
+    expect(await countTransactions(db)).toBe(1);
+    expect(sentEvents()).toEqual(['remove_all_tags']);
   });
 
   it('removes mapping rules and logs', async () => {
